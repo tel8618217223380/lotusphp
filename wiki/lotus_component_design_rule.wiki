@@ -1,0 +1,5 @@
+#lotus component 开发应该遵循的原则
+
+  * component class要实例化才能用，不滥用static，因为要考虑到用户可能extends这个class
+  * component class本身并不实现singleton模式（就是说component不提供getInstance()之类的方法），更不能依赖singleton，用户可以用Singleton class来实现所有类的singleton模式（Singleton::getInstance("ComponentName")）
+  * 每个component有单独的xxxConfig类还是直接把config作为component的property？
