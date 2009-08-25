@@ -9,4 +9,16 @@ include $lotusHome . "/runtime/Url/UrlConfig.php";
 /*
  * 初始化Url配置，设定默认的pattern
  */
-Url::singleton(array("pattern" => "rewrite"));
+class Singleton
+{
+	static public function getInstance($className)
+	{
+		static $instances;
+		if (!isset($instances[$className]))
+		{
+			$instances[$className] = new $className;
+		}
+		return $instances[$className];
+	}
+}
+Singleton::getInstance("Url")->conf->patern = "rewrite";
