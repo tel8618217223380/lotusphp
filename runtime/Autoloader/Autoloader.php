@@ -13,7 +13,7 @@ class Autoloader
 
 	public function scanDir($directories)
 	{
-		$mapping = array();
+		$mapping = array("class" => array(), "function" => array());
 		$i = 0;
 		while (isset($directories[$i]) && $files = scandir($directories[$i]))
 		{
@@ -34,7 +34,7 @@ class Autoloader
 						}
 						else
 						{
-							$mapping["non-class"] = $currentFile;
+							$mapping["function"] = $currentFile;
 						}
 					}
 				}
@@ -46,5 +46,15 @@ class Autoloader
 			$i ++;
 		}
 		return $mapping;
+	}
+
+	public function init($mapping)
+	{
+		foreach ($mapping["function"] as $functionFile)
+		{
+			include $functionFile;
+		}
+		$this->classFileMapping = $mapping["class"];
+		spl_autoload_register(array($this, "loadClass"));
 	}
 }
