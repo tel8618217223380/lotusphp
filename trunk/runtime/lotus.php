@@ -1,4 +1,16 @@
 <?php
-require dirname(__FILE__) . DIRECTORY_SEPARATOR . "Autoloader/Autoloader.php";
-$autoloader = new Autoloader;
-print_r($autoloader->scanDir(array(dirname(__FILE__) . DIRECTORY_SEPARATOR)));
+class Lotus
+{
+	public function initAutoloader()
+	{
+		$lotusRuntime = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+		require $lotusRuntime . "Autoloader/Autoloader.php";
+		$autoloader = new Autoloader;
+		$autoloader->init($autoloader->scanDir(array($lotusRuntime)));
+	}
+
+	public function init()
+	{
+		$this->initAutoloader();
+	}
+}
