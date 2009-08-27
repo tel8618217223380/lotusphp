@@ -13,6 +13,10 @@ class Autoloader
 
 	public function scanDir($directories)
 	{
+		if (is_string($directories))
+		{
+			$directories = array($directories);
+		}
 		$mapping = array("class" => array(), "function" => array());
 		$i = 0;
 		while (isset($directories[$i]) && $files = scandir($directories[$i]))
