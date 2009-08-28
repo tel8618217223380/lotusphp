@@ -5,9 +5,10 @@ class Autoloader
 
 	public function loadClass($className)
 	{
-		if (isset($this->classFileMapping[$className]))
+		$key = strtolower($className);
+		if (isset($this->classFileMapping[$key]))
 		{
-			require $this->classFileMapping[$className];
+			include $this->classFileMapping[$key];
 		}
 	}
 
@@ -33,7 +34,7 @@ class Autoloader
 						{
 							foreach($classes[1] as $key => $class)
 							{
-								$mapping["class"][$class] = $currentFile;
+								$mapping["class"][strtolower($class)] = $currentFile;
 							}
 						}
 						else
