@@ -15,13 +15,16 @@ class Lotus
 
 	public function init()
 	{
+		$lotusRuntime = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+		$lotusClass = array(
+			"Cache" => $lotusRuntime . "Cache/Cache.php",
+		);
 		/**
 		 * @todo if ("dev" != $this->envMode) {$this->autoloadFiles = apc_get($cacheKey)}
 		 */
 		/**
 		 * Initial the autoloader
 		 */
-		$lotusRuntime = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 		require $lotusRuntime . "Autoloader/Autoloader.php";
 		$autoloader = new Autoloader;
 		if (!$this->autoloadFiles)
@@ -41,3 +44,5 @@ class Lotus
 		}
 	}
 }
+$lotus = new Lotus;
+$lotus->init();
