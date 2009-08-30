@@ -5,10 +5,9 @@ class Autoloader
 
 	public function loadClass($className)
 	{
-		$key = strtolower($className);
-		if (isset($this->classFileMapping[$key]))
+		if (isset($this->classFileMapping[$className]))
 		{
-			include $this->classFileMapping[$key];
+			include $this->classFileMapping[$className];
 		}
 	}
 
@@ -28,7 +27,7 @@ class Autoloader
 				if (is_file($currentFile))
 				{
 					$extension = pathinfo($file, PATHINFO_EXTENSION);
-					if ($extension == 'php' || $extension == 'inc')// we will judge the file extension, we only accept 'php' and 'inc' file.
+					if (in_array($extension, array("php", "inc")))// we will judge the file extension, we only accept 'php' and 'inc' file.
 					{
 						if(preg_match_all('~^\s*(?:abstract\s+|final\s+)?(?:class|interface)\s+(\w+).*~mi', trim(file_get_contents($currentFile)), $classes) > 0)
 						{
@@ -43,7 +42,7 @@ class Autoloader
 						}
 					}
 				}
-				else if('.' != $file && '..' != $file && '.svn' != $file)// if $currentFile is a directory, pass through the next loop.
+				else if(!in_array($file, array(".", "..", ".svn")))// if $currentFile is a directory, pass through the next loop.
 				{
 					$directories[] = $currentFile . DIRECTORY_SEPARATOR;
 				}
