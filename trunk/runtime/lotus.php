@@ -4,45 +4,55 @@ class Lotus
 	public $appConfig;
 	public $appOption;
 	public $autoloadFiles;
+	public $lotusCoreClass = array();
+	public $lotusRuntimeDir;
+
+	public function __construct()
+	{
+		$this->lotusRuntimeDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+	}
+
+	public function prepareAutoloader()
+	{
+		require $this->lotusCoreClass["Autoloader"];
+		$autoloader = new Autoloader;
+		if (!$this->autoloadFiles)
+		{
+			$this->autoloadFiles = $autoloader->scanDir($this->lotusRuntimeDir);
+		}
+		$autoloader->init($this->autoloadFiles);
+	}
 
 	public function initConfig()
 	{
+		echo "init config\n";
 	}
 
 	public function initDb()
 	{
+		echo "init db\n";
 	}
 
-	public function init()
+	public function boot()
 	{
-		$lotusRuntime = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 		$lotusClass = array(
-			"Cache" => $lotusRuntime . "Cache/Cache.php",
+			"Autoloader" => $this->lotusRuntimeDir . "Autoloader/Autoloader.php",
+			"Cache" => $this->lotusRuntimeDir . "Cache/Cache.php",
 		);
+		$this->lotusCoreClass = array_merge($lotusClass, $this->lotusCoreClass);
 		/**
 		 * @todo if ("dev" != $this->envMode) {$this->autoloadFiles = apc_get($cacheKey)}
 		 */
-		/**
-		 * Initial the autoloader
-		 */
-		require $lotusRuntime . "Autoloader/Autoloader.php";
-		$autoloader = new Autoloader;
-		if (!$this->autoloadFiles)
-		{
-			$this->autoloadFiles = $autoloader->scanDir(array($lotusRuntime));
-		}
-		$autoloader->init($this->autoloadFiles);
+		$this->prepareAutoloader();
 		/**
 		 * Initial other components
 		 */
 		foreach (get_class_methods($this) as $method)
 		{
-			if (4 < strlen($method) && "init" == substr($method, 0, 4))
+			if ("init" == substr($method, 0, 4))
 			{
 				$this->$method();
 			}
 		}
 	}
 }
-$lotus = new Lotus;
-$lotus->init();
