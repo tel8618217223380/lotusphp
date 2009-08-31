@@ -11,7 +11,7 @@ include $lotusHome . "/runtime/Cache/CacheAdapterXcache.php";
  * Load rumtime class end
  */
 
-$cache = new Cache();
+$cache = new LtCache;
 $cache->init("xcache");
 $cache->add("test_key","hello cache");
 echo $cache->get("test_key");

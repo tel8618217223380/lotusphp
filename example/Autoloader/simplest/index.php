@@ -8,7 +8,7 @@ include $lotusHome . "/runtime/Autoloader/Autoloader.php";
  * Load rumtime class end
  */
 
-$autoloader = new Autoloader;
+$autoloader = new LtAutoloader;
 $autoloader->init($autoloader->scanDir(array($lotusHome . DIRECTORY_SEPARATOR . "runtime" . DIRECTORY_SEPARATOR)));
-$url = new Url;
+$url = new LtUrl;
 var_dump($url);

@@ -1,11 +1,11 @@
 <?php
-class Cache
+class LtCache
 {
 	public $adapter;
 
 	public function init($adapter, $options = array())
 	{
-		$adapterClassName = "CacheAdapter" . ucfirst($adapter);
+		$adapterClassName = "LtCacheAdapter" . ucfirst($adapter);
 		$this->adapter = new $adapterClassName;
 	}
 	

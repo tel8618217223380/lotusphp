@@ -1,5 +1,5 @@
 <?php
-class UrlConfig
+class LtUrlConfig
 {
 	public $bootstrapFile;
 	public $patern;

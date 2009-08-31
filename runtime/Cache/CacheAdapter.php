@@ -1,9 +1,9 @@
 <?php
-abstract class CacheAdapter
+interface LtCacheAdapter
 {
-	abstract public function add($key, $value);
+	public function add($key, $value);
 	
-	abstract public function del($key);
+	public function del($key);
 	
-	abstract public function get($key);
+	public function get($key);
 }

@@ -1,5 +1,5 @@
 <?php
-class Autoloader
+class LtAutoloader
 {
 	public $classFileMapping;
 
@@ -8,6 +8,14 @@ class Autoloader
 		if (isset($this->classFileMapping[$className]))
 		{
 			include $this->classFileMapping[$className];
+		}
+		else 
+		{
+			$key = strtolower($className);
+			if (isset($this->classFileMapping[$key]))
+			{
+				include $this->classFileMapping[$key];
+			}
 		}
 	}
 
@@ -38,7 +46,7 @@ class Autoloader
 						}
 						else
 						{
-							$mapping["function"] = $currentFile;
+							$mapping["function"][] = $currentFile;
 						}
 					}
 				}
@@ -54,9 +62,11 @@ class Autoloader
 
 	public function init($mapping)
 	{
-		foreach ($mapping["function"] as $functionFile)
+		$i = 0;
+		while(isset($mapping["function"][$i]))
 		{
-			include $functionFile;
+			include $mapping["function"][$i];
+			$i ++;
 		}
 		$this->classFileMapping = $mapping["class"];
 		spl_autoload_register(array($this, "loadClass"));
