@@ -1,5 +1,5 @@
 <?php
-class CacheAdapterApc
+class LtCacheAdapterApc implements LtCacheAdapter
 {
 	public function add($key, $value)
 	{

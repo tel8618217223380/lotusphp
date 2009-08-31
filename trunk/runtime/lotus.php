@@ -15,7 +15,7 @@ class Lotus
 	public function prepareAutoloader()
 	{
 		require $this->lotusCoreClass["Autoloader"];
-		$autoloader = new Autoloader;
+		$autoloader = new LtAutoloader;
 		if (!$this->autoloadFiles)
 		{
 			$this->autoloadFiles = $autoloader->scanDir($this->lotusRuntimeDir);

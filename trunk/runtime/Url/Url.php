@@ -1,11 +1,11 @@
 <?php
-class Url
+class LtUrl
 {
 	public $conf;
 
 	public function __construct()
 	{
-		$this->conf = new UrlConfig();
+		$this->conf = new LtUrlConfig();
 	}
 
 	public function link($string)

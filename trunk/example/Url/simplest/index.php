@@ -9,7 +9,7 @@ include $lotusHome . "/runtime/Url/UrlConfig.php";
  * Load rumtime class end
  */
 
-$url = new Url;
+$url = new LtUrl;
 $url->conf->pattern = "standard";
 $url->link(__LINE__);
 $url->link(__LINE__);
