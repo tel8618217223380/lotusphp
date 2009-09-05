@@ -1,5 +1,5 @@
 <?php
 function C($className)
 {
-	return Singleton::getInstance("Lt" . $className);
+	return ObjectUtil::singleton("Lt" . $className);
 }
