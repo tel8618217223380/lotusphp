@@ -1,11 +1,15 @@
 =lotus component 开发应该遵循的原则=
 总的目标:所有组件都有一样的原则,互相不知道其他组件的存在
  # 不和其他组件耦合,开发某个组件的时候,不能假定(或要求)其他组件存在
+ # 类名唯一
  # 尽量回避static属性和方法(也有例外,ObjectUtil类就有两个static方法),要允许用户继承,须实例化才能运行.
  # 提供init()方法,初始化必要的资源
  # 使用简单,少用getter/setter方法
  # 配置单独放在xxxConfig类里,xxx->conf = new xxxConfig;
- # 命名空间
-  * component class要实例化才能用，不滥用static，因为要考虑到用户可能extends这个class
-  * component class本身并不实现singleton模式（就是说component不提供getInstance()之类的方法），更不能依赖singleton，用户可以用Singleton class来实现所有类的singleton模式（Singleton::getInstance("ComponentName")）
-  * 每个component有单独的xxxConfig类还是直接把config作为component的property？
+ # 命名空间,组件类都以Lt开头,如class LtCache
+ # component class本身并不实现singleton模式（就是说component不提供getInstance()之类的方法），更不能依赖singleton，用户可以用ObjectUtil::singleton()来实现所有类的singleton模式:ObjectUtil::singleton("ComponentName")
+ # 若组件由多个类组成,不处理各类之间的包含关系,不用include/require,文件包含由用户自行解决,例如使用lotusphp的autoloader,或者直接include/require进来
+ # 组件的php文件只有class定义,没有自动执行的语句.当这些文件被include时,除了定义这些类,不会发生其他动作(比如输出字串,发送header,创建文件,变量赋值等等)
+ # 不依赖绝对路径,可配置
+ # 涉及界面输出的地方不能写死,允许用户自定义,比如分页类输出的html是什么风格,应该让用户自定义
+ # 提供simplest, work with lotus两种示例
