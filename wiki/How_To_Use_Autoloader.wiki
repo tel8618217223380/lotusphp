@@ -68,7 +68,8 @@ $hello->sayHello();
  # 当然这种Autoload机制导致类库的class名字不能重复，在多年的实践中，我们发现，与“类名不要跟文件路径耦合”这个问题比起来，类名唯一引起的痛苦要小得多。
 
 == 常见问题 ==
- # Q:类名是不是必须得唯一?如果重名怎么办?       A:类名必须唯一,如果重名会被覆盖
+ # Q:类名是不是必须得唯一?如果重名怎么办?
+   A:类名必须唯一,如果重名会被覆盖
  # Q:Autoloader会不会把所有的class都加载进来?   A:不会,只有在new HelloWorld()的时候,才把HelloWorld所在的文件include进来,绝对的按需加载!
  # Q:怎么在Lotus里没看到__autoload()函数?       A:Lotus Autoloader自动加载的函数实际是LtAutoloader->loadClass(),spl_autoload_register(array($this, "loadClass"));这个语句等于是告诉 php引擎:当你找__autoload()的时候,就直接去找LtAutoloader->loadClass()吧.
  # Q:什么是php5的__autoload()?                  A:详细情况参见: http://php.net/manual/en/language.oop5.autoload.php
