@@ -25,10 +25,10 @@ include $lotusHome . "/runtime/Autoloader/Autoloader.php";
 $autoloader = new LtAutoloader;
 //初始化Autoloader类
 $directories = array("./Classes Will Be Autoloaded/");
-//指定需要自动加载的目录,array里的也可以换成您想自动加载的目录,例子中的目录为example/Autoloader/simplest/Classes Will Be Autoloaded
+//指定需要自动加载的目录,array里的也可以换成您想自动加载的目录,也可以指定多个目录,例子中的目录为example/Autoloader/simplest/Classes Will Be Autoloaded
 $autoloader->init($autoloader->scanDir($directories));
 //这里就开始自动加载您刚指定目录中的以.php,.inc结尾的文件
-//注：下面的类看上去没有定义，但其实系统根据spl_autoload_register提供的路径会自动去example/Autoloader/simplest/Classes Will Be Autoloaded下搜索.php,.inc文件，如果没找到才报错。 
+//注：下面的类看上去没有定义，其实系统就会寻找有没有自动加载的函数,在Lotus Autoloader里自动加载的函数实际是LtAutoloader->loadClass()。 
 
 /*
  * 初始化Autoloader类
@@ -67,6 +67,11 @@ $hello->sayHello();
  # Zend Framework和QeePHP的Autoloader机制是通过类名翻译出文件路径，而Lotus Autoloader是查找一个 array("类名" => "文件")数组，原因是我们（Lotusphp开发者）希望类名不要跟文件路径耦合，这样PHP程序员写程序时不必关注类的路径，只要名字写对了，就可以加载，重构的时候调整了类文件的目录或者名字，也不影响调用他的程序；另一个好处是这种方案兼容性较好，Zend Framework的组件也能被Lotus Autoloader自动加载。而Zend Framework和Qee则希望基于他们建立的应用程序命名更规范。
  # 当然这种Autoload机制导致类库的class名字不能重复，在多年的实践中，我们发现，与“类名不要跟文件路径耦合”这个问题比起来，类名唯一引起的痛苦要小得多。
 
+== 常见问题 ==
+ # Q:类名是不是必须得唯一?如果重名怎么办?       A:类名必须唯一,如果重名会被覆盖
+ # Q:Autoloader会不会把所有的class都加载进来?   A:不会,只有在new HelloWorld()的时候,才把HelloWorld所在的文件include进来,绝对的按需加载!
+ # Q:怎么在Lotus里没看到__autoload()函数?       A:Lotus Autoloader自动加载的函数实际是LtAutoloader->loadClass(),spl_autoload_register(array($this, "loadClass"));这个语句等于是告诉 php引擎:当你找__autoload()的时候,就直接去找LtAutoloader->loadClass()吧.
+ # Q:什么是php5的__autoload()?                  A:详细情况参见: http://php.net/manual/en/language.oop5.autoload.php
 = 鸣谢 =
  # Autoload的理念来自Symfony，我是用Symfony做应用的时候享受Autoload的好处才在kiwiphp中加入Autoloader的。
  # QeePHP的作者dualface等人让我知道了PHP5的autoload()机制，我才放弃了原本那个笨拙的办法：把所有类库打包成一个大文件，然后包含进来，我还为这个打包机制设计了黑白名单。详细讨论过程参见：http://www.phpchina.com/bbs/viewthread.php?tid=142775
