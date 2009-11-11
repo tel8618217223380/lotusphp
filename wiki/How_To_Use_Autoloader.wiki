@@ -1,6 +1,7 @@
 #labels 文档
 = 系统需求 =
-php 5（lotusphp所有组件都要求php5环境）
+ # 只支持php 5（lotusphp所有组件都要求php5环境）
+ # 不要求Web服务器，可运行于命令行下
 
 = 用法 =
 == 运行lotus自带的例子 ==
@@ -10,6 +11,7 @@ php 5（lotusphp所有组件都要求php5环境）
  * 看一下simplest/index.php和HelloWorld.php的源码能帮助你理解这个示例，他们非常简单，还有中文注释
 
 == 示例1：最简单的用法 ==
+
 == 示例2：在生产环境获取更好的性能 ==
 == 示例3：和lotusphp框架的其它组件一起工作 ==
 
