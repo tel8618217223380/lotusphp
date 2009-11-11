@@ -11,7 +11,37 @@
  * 看一下simplest/index.php和HelloWorld.php的源码能帮助你理解这个示例，他们非常简单，还有中文注释
 
 == 示例1：最简单的用法 ==
+{{{
+<?php
+$lotusHome = dirname(dirname(dirname(dirname(__FILE__))));
+//获取lotusphp所在的路径
+include $lotusHome . "/runtime/Autoloader/Autoloader.php";
+//加载Autoloader类文件
 
+/*
+ * 初始化Autoloader类
+ * 将example/Autoloader/simplest/Classes Will Be Autoloaded目录加到“自动加载目录列表中”
+ */
+$autoloader = new LtAutoloader;
+//初始化Autoloader类
+$directories = array("./Classes Will Be Autoloaded/");
+//指定需要自动加载的目录,array里的也可以换成您想自动加载的目录,例子中的目录为example/Autoloader/simplest/Classes Will Be Autoloaded
+$autoloader->init($autoloader->scanDir($directories));
+//这里就开始自动加载您刚指定目录中的以.php,.inc结尾的文件
+//注：下面的类看上去没有定义，但其实系统根据spl_autoload_register提供的路径会自动去example/Autoloader/simplest/Classes Will Be Autoloaded下搜索.php,.inc文件，如果没找到才报错。 
+
+/*
+ * 初始化Autoloader类
+ */
+
+/*
+ * 初始化完成，开始享受Autoloader的便利
+ * 之前你并没有手工include/require HelloWorld.php文件
+ * 当你new HelloWorld()的时候，Autoloader便会为你自动把HelloWorld.php包含进来
+ */
+$hello = new HelloWorld();
+$hello->sayHello();
+}}}
 == 示例2：在生产环境获取更好的性能 ==
 == 示例3：和lotusphp框架的其它组件一起工作 ==
 
