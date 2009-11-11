@@ -65,6 +65,7 @@ $hello->sayHello();
 
 == 和其它Autoloader有什么不同 ==
  # Zend Framework和QeePHP的Autoloader机制是通过类名翻译出文件路径，而Lotus Autoloader是查找一个 array("类名" => "文件")数组，原因是我们（Lotusphp开发者）希望类名不要跟文件路径耦合，这样PHP程序员写程序时不必关注类的路径，只要名字写对了，就可以加载，重构的时候调整了类文件的目录或者名字，也不影响调用他的程序；另一个好处是这种方案兼容性较好，Zend Framework的组件也能被Lotus Autoloader自动加载。而Zend Framework和Qee则希望基于他们建立的应用程序命名更规范。
+ # 当然这种Autoload机制导致类库的class名字不能重复，在多年的实践中，我们发现，与“类名不要跟文件路径耦合”这个问题比起来，类名唯一引起的痛苦要小得多。
 
 = 鸣谢 =
  # Autoload的理念来自Symfony，我是用Symfony做应用的时候享受Autoload的好处才在kiwiphp中加入Autoloader的。
