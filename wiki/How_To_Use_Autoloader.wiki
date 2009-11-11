@@ -46,15 +46,13 @@ $hello->sayHello();
 == 示例3：和lotusphp框架的其它组件一起工作 ==
 
 = 延伸阅读：我们为什么要做Autoloader =
-黑话解释 *类库文件* 本文档中所说的类库文件是指被包含（include/require）的公共文件，他们通常定义一些class, function
+黑话解释： *类库文件* 本文档中所说的类库文件是指被包含（include/require）的公共文件，他们通常定义一些class, function
 
 == 传统include/require的不足 ==
 在没用Autoloader的时候，怎样加载类库文件？最容易想到的是用include/require来包含类库文件，这种文件包含通常会有如下问题：
 
  # *目录名和文件名变化引起程序代码变化* 当类库文件目录名或者文件名需要更改的时候，所有include了这个文件的php文件也要随着修改，这加大了源代码目录结构重构的负担。Windows和Linux对文件路径大小写和目录分隔符（斜线和反斜线）的处理不同，也使得PHP程序员需要花费相当一部分精力来应对文件名和文件路径问题。
-
  # *相对路径的性能问题* 我们不会把类库文件的绝对路径写死在代码里，于是采用相对路径，一种做法是设置php.ini和include_path值，然后给include()传入一个相对路径，Zend Framework和雅虎就是这样做的，这种方案存在显而易见的性能问题，include_path的值越多，性能损失就越大。php引擎处理include_path的机制参见[http://www.php.net/manual/en/ini.core.php#ini.include-path]。包含文件时使用绝对路径也能让APC，eAccelerator等Opcode Cache更有效地缓存他们。另一种流行的方法是利用__FILE__魔术变量取得应用的根路径，include的时候使用基于“应用的根路径”的绝对路径,如include($appRoot . "conf/db.php")，这个方法很好的解决了相对路径带来的性能问题，CakePHP，Symfony等就是用的这种方案。
-
  # *类库文件间相互依赖的问题* 类库文件之间存在依赖，为了保证运行时不出现“类定义找不到”的情况，类库文件会用将需要的更基础的类库包含进来，又为了保证不重复包含，通常要用include_once/require_once，Zend Framework就是这样做的。include_once比include慢。
 
 当团队里不同水平，不同喜好的成员共同维护一份代码时，这些问题尤其严重。
