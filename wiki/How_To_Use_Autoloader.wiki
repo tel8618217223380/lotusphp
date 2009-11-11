@@ -70,8 +70,8 @@ $hello->sayHello();
 == 常见问题 ==
  # Q:类名是不是必须得唯一?如果重名怎么办?<br>A:类名必须唯一,如果重名会被覆盖
  # Q:Autoloader会不会把所有的class都加载进来?<br>A:不会,只有在new HelloWorld()的时候,才把HelloWorld所在的文件include进来,绝对的按需加载!
- # Q:怎么在Lotus里没看到__autoload()函数?<br>A:Lotus Autoloader自动加载的函数实际是LtAutoloader->loadClass(),spl_autoload_register(array($this, "loadClass"));这个语句等于是告诉 php引擎:当你找__autoload()的时候,就直接去找LtAutoloader->loadClass()吧.
- # Q:什么是php5的__autoload()?<br>A:详细情况参见: http://php.net/manual/en/language.oop5.autoload.php
+ # Q:怎么在Lotus里没看到__autoload()函数?<br>A:Lotus Autoloader自动加载的函数实际是LtAutoloader->loadClass(),spl_autoload_register(array($this, "loadClass"));这个语句等于是告诉 php引擎:当你找__autoload()的时候,就直接去找LtAutoloader->loadClass()吧.通过spl_autoload_register注册了自己的函数，PHP就不会调用__autoload()函数，而会调用自定义的函数,也就是loadClass
+
 = 鸣谢 =
  # Autoload的理念来自Symfony，我是用Symfony做应用的时候享受Autoload的好处才在kiwiphp中加入Autoloader的。
  # QeePHP的作者dualface等人让我知道了PHP5的autoload()机制，我才放弃了原本那个笨拙的办法：把所有类库打包成一个大文件，然后包含进来，我还为这个打包机制设计了黑白名单。详细讨论过程参见：http://www.phpchina.com/bbs/viewthread.php?tid=142775
