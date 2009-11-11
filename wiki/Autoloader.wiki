@@ -6,7 +6,10 @@ php 5（lotusphp所有组件都要求php5环境）
 
 = 用法 =
 == 运行lotus自带的例子 ==
-* 下载
+* 在http://code.google.com/p/lotusphp/downloads/list?q=Autoloader下载最新版本，解压后放到任意目录（如果想通过Web访问，请放到相应的网站目录）
+* 运行example\Autoloader\simplest\index.php，通过Web访问（http://localhost/lotusphp/example/Autoloader/simplest/index.php），或者通过命令行访问都可以
+* 屏幕上打印“Hello”说明运行成功
+
 == 示例1：最简单的用法 ==
 == 示例2：在生产环境获取更好的性能 ==
 == 示例3：和lotusphp框架的其它组件一起工作 ==
