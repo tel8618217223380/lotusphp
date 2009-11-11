@@ -1,3 +1,4 @@
+#labels 文档
 = 系统需求 =
 php 5（lotusphp所有组件都要求php5环境）
 
