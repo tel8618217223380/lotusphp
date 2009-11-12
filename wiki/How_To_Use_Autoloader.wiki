@@ -32,6 +32,8 @@ $class = new ClassA();//只要ClassA的文件在前面你指定的"目录1","目
 == 示例3：和lotusphp框架的其它组件一起工作 ==
 
 = 扩展Autoloader类 =
+= 利用Lotus Autoloader加载第三方类库 =
+
 = 延伸阅读：我们为什么要做Autoloader =
 黑话解释
  # *类库文件* 本文档中所说的类库文件是指被包含（include/require）的公共文件，他们通常定义一些class, function
