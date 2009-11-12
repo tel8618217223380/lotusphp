@@ -61,14 +61,18 @@ $directories = array("./Classes Will Be Autoloaded/");
 $autoloader->initWithApc($directories);
 }}}
 = 利用Lotus Autoloader加载第三方类库 =
+我们以ZendFramework-1.9.2为例,一般大家最容易想到的就是把Zend的全路径告诉给Autoloader,然后会被自动加载的.但这种是行不通的,因为ZF依靠include_path和require_once()包含文件,所以有以下两种方案供您选择.
 方案一：
-注释require_once后，Zend_Db_Adapter_Pdo_Mysql就是靠LtAutoloader加载的了
+注释ZendFramework里所有的require_once,这样所用到的类就会靠LtAutoloader加载.
 
 方案二：
-set_include_path( get_include_path() . "; ZendFramework library所在的路径" );
-之后，Zend_Db_Adapter_Pdo_Mysql就是靠Zend_Loader::include(Zend\Db\Adapter\Pdo\Mysql.php)加载的了
+set_include_path( get_include_path() . "; ZendFramework library所在的路径" );这样所用到的类是靠Zend_Loader::include来加载.
 
-两种方案取其一即可，在生产环境，我推荐方案一，开发环境，方案二比较方便
+两种方案的优缺点:
+  方案一的优点是没了require_once,相对要快;缺点是修改了Zend的源码
+  方案二的优点是不用改zend的源码;缺点是有require_once(比require慢),且是相对路径（比绝对路径慢）
+
+两种方案您可以任选一种,我们建议在生产环境:推荐方案一,开发环境:推荐方案二
 {{{
 
 set_include_path( get_include_path() . ";D:/ZendFramework-1.9.2/library/" );
