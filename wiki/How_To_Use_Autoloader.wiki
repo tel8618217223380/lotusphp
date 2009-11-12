@@ -42,6 +42,24 @@ $autoloader->init( apc_fetch('autoloader_cache_key') );
 == 示例3：和lotusphp框架的其它组件一起工作 ==
 
 = 扩展Autoloader类 =
+ 就是说你想定制属于自己的autoloader，可以extends它，例如：class myAutoloader extends LtAutoloader 实例化的时候就new myAutoloader
+{{{
+class myAutoloader extends LtAutoloader
+{
+    public function initWithApc($directories)
+    {
+        if ( !apc_fetch('autoloader_cache_key') )
+        {
+            apc_add( 'autoloader_cache_key', $this->scanDir($directories) );
+            //apc_store( 'autoloader_cache_key', $this->scanDir($directories) ); apc_sotre也可以
+        }
+        $this->init( apc_fetch('autoloader_cache_key') );
+    }
+}
+$autoloader = new myAutoloader;
+$directories = array("./Classes Will Be Autoloaded/");
+$autoloader->initWithApc($directories);
+}}}
 = 利用Lotus Autoloader加载第三方类库 =
 
 = 延伸阅读：我们为什么要做Autoloader =
