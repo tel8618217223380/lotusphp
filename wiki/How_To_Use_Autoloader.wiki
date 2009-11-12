@@ -17,7 +17,7 @@
 include "/Autoloader所在目录/runtime/Autoloader/Autoloader.php";
 
 $autoloader = new LtAutoloader;
-//指定需要自动加载的目录,可以指定多个目录
+//指定需要自动加载的目录,可以指定多个目录,目录路径最好不要包含空格
 $directories = array("目录1","目录2");
 $autoloader->init($autoloader->scanDir($directories));
 //这里就开始自动加载您刚指定目录中的以.php,.inc结尾的文件
