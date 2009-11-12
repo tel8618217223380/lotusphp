@@ -10,10 +10,10 @@ include $lotusHome . "/runtime/Autoloader/Autoloader.php";
 
 /*
  * 初始化Autoloader类
- * 将example/Autoloader/simplest/Classes Will Be Autoloaded目录加到“自动加载目录列表中”
+ * 将example/Autoloader/simplest/Classes目录加到“自动加载目录列表中”
  */
 $autoloader = new LtAutoloader;
-$directories = array("./Classes Will Be Autoloaded/");
+$directories = array("Classes");
 $autoloader->init($autoloader->scanDir($directories));
 /*
  * 初始化Autoloader类
