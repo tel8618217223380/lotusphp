@@ -29,10 +29,10 @@ class LtAutoloader
 		$i = 0;
 		while (isset($directories[$i]) && $files = scandir($directories[$i]))
 		{
-			$directories[$i] = realpath($directories[$i]);
+			$currentDir = realpath($directories[$i]);
 			foreach ($files as $file)
 			{
-				$currentFile = realpath($directories[$i]) . DIRECTORY_SEPARATOR . $file;
+				$currentFile = $currentDir . DIRECTORY_SEPARATOR . $file;
 				if (is_file($currentFile))
 				{
 					$extension = pathinfo($file, PATHINFO_EXTENSION);
@@ -53,7 +53,7 @@ class LtAutoloader
 				}
 				else if(!in_array($file, array(".", "..", ".svn")))// if $currentFile is a directory, pass through the next loop.
 				{
-					$directories[] = $currentFile;
+					$directories[] = $directories[$i] . DIRECTORY_SEPARATOR . $file;
 				}
 			}
 			$i ++;
