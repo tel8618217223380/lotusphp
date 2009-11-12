@@ -20,7 +20,8 @@ class Lotus
 		{
 			$this->autoloadFiles = $autoloader->scanDir($this->lotusRuntimeDir);
 		}
-		$autoloader->init($this->autoloadFiles);
+		$autoloader->autoloadFiles = $this->autoloadFiles;
+		$autoloader->init();
 	}
 
 	public function initConfig()

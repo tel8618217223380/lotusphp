@@ -4,11 +4,19 @@ class LtObjectUtil
 	static public function singleton($className)
 	{
 		static $instances;
-		if (!isset($instances[$className]))
+		if (class_exists($className))
 		{
-			$instances[$className] = new $className;
+			$key = strtolower($className);
+			if (!isset($instances[$key]))
+			{
+				$instances[$key] = new $className;
+			}
+			return $instances[$key];
 		}
-		return $instances[$className];
+		else
+		{
+			return false;
+		}
 	}
 
 	static public function setProperties($object, $propArray)
