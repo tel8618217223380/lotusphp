@@ -61,6 +61,33 @@ $directories = array("./Classes Will Be Autoloaded/");
 $autoloader->initWithApc($directories);
 }}}
 = 利用Lotus Autoloader加载第三方类库 =
+方案一：
+注释require_once后，Zend_Db_Adapter_Pdo_Mysql就是靠LtAutoloader加载的了
+
+方案二：
+set_include_path( get_include_path() . "; ZendFramework library所在的路径" );
+之后，Zend_Db_Adapter_Pdo_Mysql就是靠Zend_Loader::include(Zend\Db\Adapter\Pdo\Mysql.php)加载的了
+
+两种方案取其一即可，在生产环境，我推荐方案一，开发环境，方案二比较方便
+{{{
+
+set_include_path( get_include_path() . ";D:/ZendFramework-1.9.2/library/" );
+
+$autoloader = new LtAutoloader;
+$directories = array("D:/ZendFramework-1.9.2/library/");
+$autoloader->init($autoloader->scanDir($directories));
+
+$params = array ('host'     => 'localhost',
+                 'username' => 'root',
+                 'password' => 'root',
+                 'dbname'   => 'mysql');
+
+$db = Zend_Db::factory('Pdo_Mysql', $params);
+Zend_Db_Table::setDefaultAdapter($db);
+$result = $db->query('SELECT * FROM user');
+$rows = $result->fetchAll();
+Zend_Debug::dump($rows);
+}}}
 
 = 延伸阅读：我们为什么要做Autoloader =
 黑话解释
