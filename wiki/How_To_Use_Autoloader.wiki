@@ -29,7 +29,7 @@ $class = new ClassA();//只要ClassA的文件在前面你指定的"目录1","目
 }}}
 
 == 示例2：在生产环境获取更好的性能 ==
- 请参照示例1那一节写的,$autoloader->init($autoloader->scanDir($directories));这个scanDir是很费时间的，在开发环境，类库文件可能经常增加或者改名(文件名,类名),生产环境有哪些类库文件基本是不变的这样，我们可以把$autoloader->scanDir($directories)的结果存到opcode cache(如APC)里,autoloader的性能会好很多倍.<br>现在只需要把$autoloader->init($autoloader->scanDir($directories));替换为下面的这段代码:
+ 请参照示例1那一节写的,$autoloader->init($autoloader->scanDir($directories));这个scanDir是很费时间的,在开发环境,类库文件可能经常增加或者改名(文件名,类名),生产环境有哪些类库文件基本是不变的这样，我们可以把$autoloader->scanDir($directories)的结果存到opcode cache(如APC)里,autoloader的性能会好很多倍.<br>现在只需要把$autoloader->init($autoloader->scanDir($directories));替换为下面的这段代码:
 {{{
 if ( !apc_fetch('autoloader_cache_key') )
 {
