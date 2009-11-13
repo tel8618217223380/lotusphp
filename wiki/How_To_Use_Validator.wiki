@@ -60,7 +60,7 @@ class myValidator extends LtValidator
          * 如: $result = mysql_query("SELECT id FROM user WHERE username = '$value'") or die("Could not perform select query - " . mysql_error());
          * $num_rows=mysql_num_rows($result);
         */
-        $num_rows = 1;
+        $num_rows = 1;//这里仅供测试用
         if ( 1 == $num_rows )
         {
             return true;
