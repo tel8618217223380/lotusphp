@@ -8,52 +8,52 @@ class LtValidator
 		$this->conf = new LtValidatorConfig();
 	}
 
-	private function _ban($value, $ruleValue)
+	protected function _ban($value, $ruleValue)
 	{
 		return !preg_match($ruleValue, $value);
 	}
 
-	private function _mask($value, $ruleValue)
+	protected function _mask($value, $ruleValue)
 	{
 		return preg_match($ruleValue, $value);
 	}
 
-	private function _equal_to($value, $ruleValue)
+	protected function _equal_to($value, $ruleValue)
 	{
 		return $value === $ruleValue;
 	}
 
-	private function _max_length($value, $ruleValue)
+	protected function _max_length($value, $ruleValue)
 	{
 		return mb_strlen($value) <= $ruleValue;
 	}
 
-	private function _min_length($value, $ruleValue)
+	protected function _min_length($value, $ruleValue)
 	{
 		return mb_strlen($value) >= $ruleValue;
 	}
 
-	private function _max_value($value, $ruleValue)
+	protected function _max_value($value, $ruleValue)
 	{
 		return $value <= $ruleValue;
 	}
 
-	private function _min_value($value, $ruleValue)
+	protected function _min_value($value, $ruleValue)
 	{
 		return $value >= $ruleValue;
 	}
 
-	private function _min_selected($value, $ruleValue)
+	protected function _min_selected($value, $ruleValue)
 	{
 		return count($value) >= $ruleValue;
 	}
 
-	private function _max_selected($value, $ruleValue)
+	protected function _max_selected($value, $ruleValue)
 	{
 		return count($value) <= $ruleValue;
 	}
 
-	private function _required($value, $ruleValue)
+	protected function _required($value, $ruleValue)
 	{
 		if (false == $ruleValue)
 		{
