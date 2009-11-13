@@ -81,7 +81,7 @@ $dtd = array(
 );
 
 $validator = new myValidator;
-$username = "Ymir";
+$username = "覃健祥";
 $result = $validator->validate($username,$dtd);
 var_dump($result);
 }}}
