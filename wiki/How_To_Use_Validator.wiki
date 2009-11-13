@@ -54,14 +54,14 @@ $result = $validator->validate($username,apc_fetch('validator_cache_key'));
 {{{
 class myValidator extends LtValidator
 {
-    protected function _is_used_username($value, $ruleValue = true)
+    protected function _username_can_be_used($value, $ruleValue = true)
     {
         /*此处定义您自己的数据查询,
          * 如: $result = mysql_query("SELECT id FROM user WHERE username = '$value'") or die("Could not perform select query - " . mysql_error());
          * $num_rows=mysql_num_rows($result);
         */
-        $num_rows = 1;//这里仅供测试用
-        if ( 1 == $num_rows )
+        $num_rows = 0;//这里仅供测试用
+        if ( 0 == $num_rows )
         {
             return true;
         }
@@ -72,11 +72,11 @@ $dtd = array(
     "label" => "Username",
     "rules" => array(
         "ban" => "/fuck/",
-        "is_used_username" => "true",
+        "username_can_be_used" => "true",
     ),
     "message" => array(
         "ban" => "用户名不能包含脏话",
-        "is_used_username" => "用户名重复"
+        "username_can_be_used" => "用户名重复"
     )
 );
 
