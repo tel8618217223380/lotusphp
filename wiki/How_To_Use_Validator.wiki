@@ -35,7 +35,17 @@ print_r($result);
 }}}
 
 == 示例2：在生产环境获取更好的性能 ==
+{{{
+if ( !apc_fetch('validator_cache_key') )
+{
+    apc_add( 'validator_cache_key', $dtd );
+    //apc_store( 'validator_cache_key', $dtd ); apc_sotre也可以
+}
 
+......
+
+$result = $validator->validate($username,apc_fetch('validator_cache_key'));
+}}}
 
 
 == 示例3：和lotusphp框架的其它组件一起工作 ==
