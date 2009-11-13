@@ -10,7 +10,29 @@
  * 看一下simplest/index.php的源码能帮助你理解这个示例，他们非常简单，还有中文注释
 
 == 示例1：最简单的用法 ==
+{{{
+<?php
+//加载Validator类文件
+include "/Validator所在目录/runtime/Validator/Validator.php";
+include "/Validator所在目录/runtime/Validator/ValidatorConfig.php";
+//构造验证规则
+$dtd = array(
+	"label" => "Username",
+	"rules" => array(
+		"ban" => "/fuck/",
+	),
+	"message" => array(
+		"ban" => "用户名不能包含脏话"
+	)
+);
 
+//初始化Validator，执行验证
+
+$validator = new LtValidator;
+$username = "fuck my life";
+$result = $validator->validate($username,$dtd);
+print_r($result);
+}}}
 
 == 示例2：在生产环境获取更好的性能 ==
 
