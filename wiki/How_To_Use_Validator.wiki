@@ -46,7 +46,7 @@ if ( !apc_fetch('validator_cache_key') )
 
 $result = $validator->validate($username,apc_fetch('validator_cache_key'));
 }}}
-
+关于APC,在Autoloader里已经详细介绍了.当验证项较多的时候,可以采用APC来提高效率.
 
 == 示例3：和lotusphp框架的其它组件一起工作 ==
 = Lotus Validator支持的验证方法 =
@@ -85,6 +85,7 @@ $username = "覃健祥";
 $result = $validator->validate($username,$dtd);
 var_dump($result);
 }}}
+通过这个示例我们可以看到,想让Validator具有什么样的功能都由您决定.基本上需要改动的很少.需要注意的是LtValidator的每个方法,return true是验证通过的意思.
 
 = 延伸阅读：我们为什么要做Validator =
 
