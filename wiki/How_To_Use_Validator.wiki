@@ -49,7 +49,7 @@ $result = $validator->validate($username,apc_fetch('validator_cache_key'));
 
 
 == 示例3：和lotusphp框架的其它组件一起工作 ==
-
+= Lotus Validator支持的验证方法 =
 = 扩展Validator类 =
 {{{
 class myValidator extends LtValidator
