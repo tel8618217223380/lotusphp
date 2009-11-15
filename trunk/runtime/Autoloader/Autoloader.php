@@ -51,11 +51,6 @@ class LtAutoloader
 		}
 	}
 
-	protected function addDir($dir)
-	{
-		$this->dirs[] = $dir;
-	}
-
 	protected function scanOneDir($dir)
 	{
   	$files = scandir($dir);
