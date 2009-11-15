@@ -12,12 +12,12 @@ $cacheKey = "autoloader_cache_key";
 if ($cachedFileMapping = apc_fetch($cacheKey))//若从apc中获取到了class file mapping，则不要扫描目录了
 {
 	$autoloader = new LtAutoloader();
-  $autoloader->setFileMapping($autoloader);
-  $autoloader->init();
+	$autoloader->setFileMapping($autoloader);
+	$autoloader->init();
 }
 else//若apc中没有class file mapping，则扫描目录获得之，并存入apc
 {
-  $directories = array("Classes");
+	$directories = array("Classes");
 	$autoloader = new LtAutoloader($directories);
 	$fileMapping = $autoloader->getFileMapping();
 	apc_add($cacheKey, $fileMapping);
