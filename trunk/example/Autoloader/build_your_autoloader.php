@@ -16,7 +16,7 @@ class MyAutoloader extends LtAutoloader
 	 */
 	public function init()
 	{
-    spl_autoload_register(array($this, "loadClass"));
+		spl_autoload_register(array($this, "loadClass"));
 	}
 }
 
