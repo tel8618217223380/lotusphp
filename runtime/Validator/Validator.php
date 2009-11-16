@@ -75,18 +75,17 @@ class LtValidator
 	public function validate($value, $dtd)
 	{
 		$errorMessages = array();
-		$label = $dtd['label'];
+		$label = $dtd->label;
 
-		if (is_array($dtd['rules']) && count($dtd['rules']))
+		if (is_array($dtd->rules) && count($dtd->rules))
 		{
-			$rules = $dtd['rules'];
-			$message = isset($dtd['message']) ? $dtd['message'] : array();
-			foreach ($rules as $key => $val)
+			$messages = isset($dtd->messages) ? $dtd->messages : array();
+			foreach ($dtd->rules as $key => $val)
 			{
 				$validateFunction = '_' . $key;
-				if ((is_bool($rules[$key]) || 0 < strlen($rules[$key])) && !$this->$validateFunction($value, $rules[$key]))
+				if ((is_bool($dtd->rules[$key]) || 0 < strlen($dtd->rules[$key])) && !$this->$validateFunction($value, $dtd->rules[$key]))
 				{
-					$errorMessages[$key] = sprintf((isset($message[$key]) && strlen($message[$key]) ? $message[$key] : $this->conf->errorMessage[$key]), $label, $rules[$key]);
+					$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this->conf->errorMessage[$key]), $label, $dtd->rules[$key]);
 				}
 			}
 		}
