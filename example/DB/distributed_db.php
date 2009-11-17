@@ -1,17 +1,17 @@
 <?php
 /*
- * 加载Autoloader类文件
+ * 加载Db类文件
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
-include $lotusHome . "/runtime/DB/DbServer.php";
+include $lotusHome . "/runtime/DB/DbConfig.php";
 
 /*
  * 配置分布式数据库连接
  */
-$dbServer = new DbServer();
-$dbServer->addGroup("group_0");
-$dbServer->addNode("node_0", "group_0");
-$dbServer->addHost(array(
+$dbConfig = new DbConfig();
+$dbConfig->addGroup("group_0");
+$dbConfig->addNode("node_0", "group_0");
+$dbConfig->addHost(array(
 	"host" => "10.0.0.1",
 	"username" => "root",
 	"password" => "123456",
@@ -19,11 +19,11 @@ $dbServer->addHost(array(
 	"adapter" => "pdoMysql"
 ), "master", "node_0", "group_0");
 
-$dbServer->addHost(array(
+$dbConfig->addHost(array(
 	"host" => "10.0.0.11",
 ), "slave", "node_0", "group_0");
-$dbServer->addHost(array(
+$dbConfig->addHost(array(
 	"host" => "10.0.0.12",
 ), "slave", "node_0", "group_0");
 
-print_r($dbServer->getServers());
+print_r($dbConfig->getServers());
