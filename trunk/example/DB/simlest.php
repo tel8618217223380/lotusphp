@@ -1,15 +1,15 @@
 <?php
 /*
- * 加载Autoloader类文件
+ * 加载Db类文件
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
-include $lotusHome . "/runtime/DB/DbServer.php";
+include $lotusHome . "/runtime/DB/DbConfig.php";
 
 /*
  * 配置数据库连接
  */
-$dbServer = new DbServer();
-$dbServer->addSingleHost(array(
+$dbConfig = new DbConfig();
+$dbConfig->addSingleHost(array(
 	"host" => "localhost",
 	"username" => "root",
 	"password" => "123456",
@@ -17,4 +17,4 @@ $dbServer->addSingleHost(array(
 	"adapter" => "pdoMysql"
 ));
 
-print_r($dbServer->getServers());
+print_r($dbConfig->getServers());
