@@ -15,13 +15,17 @@
 //加载Validator类文件
 include "/Validator所在目录/runtime/Validator/Validator.php";
 include "/Validator所在目录/runtime/Validator/ValidatorConfig.php";
+include "/Validator所在目录/runtime/Validator/ValidatorDtd.php";
 //构造验证规则
-$dtd = array(
-	"label" => "Username",
-	"rules" => array(
+$dtd = new LtValidatorDtd("用户名",
+	array(
+		"max_length" => 4,
+		"mask" => "/^[a-z0-9]+$/i",
 		"ban" => "/fuck/",
 	),
-	"message" => array(
+	array(
+		//"max_length" 使用默认的错误消息，在$this->conf->errorMessage里
+		"mask" => "户名只能由数字或字组成",
 		"ban" => "用户名不能包含脏话"
 	)
 );
@@ -30,7 +34,7 @@ $dtd = array(
 
 $validator = new LtValidator;
 $username = "fuck my life";
-$result = $validator->validate($username,$dtd);
+$result = $validator->validate($username, $dtd);
 print_r($result);
 }}}
 
@@ -85,6 +89,46 @@ $username = "覃健祥";
 $result = $validator->validate($username,$dtd);
 var_dump($result);
 }}}
+
+{{{
+$dtd = new LtValidatorDtd("IP",
+	array(
+		"is_ip" => true,
+	),
+	array(
+		"is_ip" => "只能在0~254之间"
+	)
+);
+class myValidator extends LtValidator
+{
+	protected function _is_ip($value, $ruleValue = true)
+	{
+		$ips = explode(".", $value);
+		$flag = 0;
+		for($i=0;$i<4;$i++)
+		{
+			if ( $ips[$i] < 0 || $ips[$i] > 254 )
+			{
+				$flag = 1;
+			}
+		}
+		if ( $flag == 1 )
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+}
+
+$validator = new myValidator;
+$ip = "192.168.1.256";
+$result = $validator->validate($ip, $dtd);
+print_r($result);
+}}}
+
 通过这个示例我们可以看到,想让Validator具有什么样的功能都由您决定.基本上需要改动的很少.需要注意的是LtValidator的每个方法,return true是验证通过的意思.
 
 = 延伸阅读：我们为什么要做Validator =
