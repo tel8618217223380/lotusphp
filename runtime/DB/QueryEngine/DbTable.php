@@ -211,9 +211,9 @@ class DbTable
 	 */
 	public function getAdapterInstance()
 	{
-		$nodeArray = array_keys(Config::$app["db_server"][$this->group]);
-		$masterIndexArray = array_keys(Config::$app["db_server"][$this->group][$nodeArray[0]]['master']);
-		$config = array_merge(Db::$defaultConfig, Config::$app["db_server"][$this->group][$nodeArray[0]]['master'][$masterIndexArray[0]]);
+		$nodeArray = array_keys(Db::$servers[$this->group]);
+		$masterIndexArray = array_keys(Db::$servers[$this->group][$nodeArray[0]]['master']);
+		$config = array_merge(Db::$defaultConfig, Db::$servers[$this->group][$nodeArray[0]]['master'][$masterIndexArray[0]]);
 		return Db::factory($config['adapter']);
 	}
 

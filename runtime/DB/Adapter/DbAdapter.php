@@ -75,33 +75,32 @@ abstract class DbAdapter
 	 */
 	protected function _getBasicConfig($group, $node, $role = 'master', $host = null)
 	{
-		$nodeArray = array_keys(Config::$app["db_server"][$group]);
-		$hostArray = array_keys(Config::$app["db_server"][$group][$node][$role]);
+		$nodeArray = array_keys(Db::$servers[$group]);
+		$hostArray = array_keys(Db::$servers[$group][$node][$role]);
 		if (!$host)
 		{
 			$host = $hostArray[0];
-			$config = Config::$app["db_server"][$group][$node][$role][$host];
+			$config = Db::$servers[$group][$node][$role][$host];
 		}
 		else
 		{
 			$config = array_merge(
-			Config::$app["db_server"][$group][$node][$role][$hostArray[0]],
-			Config::$app["db_server"][$group][$node][$role][$host]
+			Db::$servers[$group][$node][$role][$hostArray[0]],
+			Db::$servers[$group][$node][$role][$host]
 			);
 		}
 		if ('slave' == $role)
 		{
-			$masterIndexArray = array_keys(Config::$app["db_server"][$group][$node]['master']);
+			$masterIndexArray = array_keys(Db::$servers[$group][$node]['master']);
 			$config = array_merge(
-			Config::$app["db_server"][$group][$nodeArray[0]]['master'][$masterIndexArray[0]],
+			Db::$servers[$group][$nodeArray[0]]['master'][$masterIndexArray[0]],
 			$config
 			);
 		}
-		$firstNodeHostIndexArray = array_keys(Config::$app["db_server"][$group][$nodeArray[0]][$role]);
+		$firstNodeHostIndexArray = array_keys(Db::$servers[$group][$nodeArray[0]][$role]);
 		$config = array_merge(
 		$this->_config,
-		Db::$defaultConfig,
-		Config::$app["db_server"][$group][$nodeArray[0]][$role][$firstNodeHostIndexArray[0]],
+		Db::$servers[$group][$nodeArray[0]][$role][$firstNodeHostIndexArray[0]],
 		$config
 		);
 		return $config;
@@ -126,7 +125,7 @@ abstract class DbAdapter
 	 */
 	protected function _getConnection($role)
 	{
-		$hosts = Config::$app["db_server"][$this->getGroup()][$this->getNode()][$role];
+		$hosts = Db::$servers[$this->getGroup()][$this->getNode()][$role];
 		$connection = false;
 		foreach($hosts as $host => $hostConfig)
 		{
@@ -144,8 +143,8 @@ abstract class DbAdapter
 		}
 		if (!$connection)
 		{
-			$hostTotal = count(Config::$app["db_server"][$this->getGroup()][$this->getNode()][$role]);
-			$hostIndexArray = array_keys(Config::$app["db_server"][$this->getGroup()][$this->getNode()][$role]);
+			$hostTotal = count(Db::$servers[$this->getGroup()][$this->getNode()][$role]);
+			$hostIndexArray = array_keys(Db::$servers[$this->getGroup()][$this->getNode()][$role]);
 			while ($hostTotal)
 			{
 				$hashNumber = substr(microtime(),7,1) % $hostTotal;
@@ -213,7 +212,7 @@ abstract class DbAdapter
 		//~ fix issue 11
 		if (NULL === $this->_node)
 		{
-			$nodeArray = array_keys(Config::$app["db_server"][$this->getGroup()]);
+			$nodeArray = array_keys(Db::$servers[$this->getGroup()]);
 			if (1 === count($nodeArray))
 			{
 				$this->_node = $nodeArray[0];
@@ -243,6 +242,10 @@ abstract class DbAdapter
 	 */
 	public function getGroup()
 	{
+		if (1 == count(Db::$servers))
+		{
+			$this->_group = key(Db::$servers);
+		}
 		return $this->_group;
 	}
 
@@ -284,7 +287,7 @@ abstract class DbAdapter
 	public function query($sql, $bind = null, $useSlave = false)
 	{
 		$connection = null;
-		if ($useSlave && isset(Config::$app["db_server"][$this->getGroup()][$this->getNode()]['slave']))
+		if ($useSlave && isset(Db::$servers[$this->getGroup()][$this->getNode()]['slave']))
 		{
 			$connection = $this->_getConnection('slave');
 		}
@@ -351,7 +354,7 @@ abstract class DbAdapter
 	 */
 	public function setNode($node)
 	{
-		if (isset(Config::$app["db_server"][$this->getGroup()][$node]))
+		if (isset(Db::$servers[$this->getGroup()][$node]))
 		{
 			$this->_node = $node;
 		}
@@ -370,7 +373,7 @@ abstract class DbAdapter
 	 */
 	public function setGroup($group)
 	{
-		if (isset(Config::$app["db_server"][$group]))
+		if (isset(Db::$servers[$group]))
 		{
 			$this->_group = $group;
 		}
