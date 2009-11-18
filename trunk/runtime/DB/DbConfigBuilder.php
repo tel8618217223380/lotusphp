@@ -1,5 +1,5 @@
 <?php
-class DbConfig
+class DbConfigBuilder
 {
 	protected $servers = array();
 

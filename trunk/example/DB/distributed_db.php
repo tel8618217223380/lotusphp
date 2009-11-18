@@ -3,12 +3,12 @@
  * 加载Db类文件
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
-include $lotusHome . "/runtime/DB/DbConfig.php";
+include $lotusHome . "/runtime/DB/DbConfigBuilder.php";
 
 /*
  * 配置分布式数据库连接
  */
-$dbConfig = new DbConfig();
+$dbConfig = new DbConfigBuilder();
 $dbConfig->addGroup("group_0");
 $dbConfig->addNode("node_0", "group_0");
 $dbConfig->addHost(array(

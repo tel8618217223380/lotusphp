@@ -3,8 +3,8 @@
  * 加载Db类文件
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
+include $lotusHome . "/runtime/DB/DbConfigBuilder.php";
 include $lotusHome . "/runtime/DB/Db.php";
-include $lotusHome . "/runtime/DB/DbConfig.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapter.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapterPdo.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapterPdoMysql.php";
@@ -12,7 +12,7 @@ include $lotusHome . "/runtime/DB/Adapter/DbAdapterPdoMysql.php";
 /*
  * 配置数据库连接
  */
-$dbConfig = new DbConfig();
+$dbConfig = new DbConfigBuilder();
 $dbConfig->addSingleHost(array(
 	"host" => "localhost",
 	"username" => "root",
