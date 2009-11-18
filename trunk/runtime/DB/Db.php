@@ -11,23 +11,9 @@ class Db
 	 */
 	static public $connections = array();
 
-	/**
-	 * The default database configuration
-	 *
-	 * @var array
-	 */
-	static public $defaultConfig = array(
-		'host' => 'localhost',
-		'password' => '');
+	static public $servers;
 
-	/**
-	 * Constructor placeholder
-	 * Prevent the Db class from instantiating
-	 * Singleton Pattern
-	 */
-	private function __construct()
-	{
-	}
+	static public $tables;
 
 	/**
 	 * Factory for Adapter
@@ -71,22 +57,22 @@ class Db
 		{
 			return new $table;
 		}
-		if (isset(Config::$app["db_table"][$table]))
+		if (isset(Db::$tables[$table]))
 		{
 			$newDbTable = new DbTable();
-			$newDbTable->group = Config::$app["db_table"][$table]['group'];
-			$newDbTable->schema = Config::$app["db_table"][$table]['schema'];
-			if (isset(Config::$app["db_table"][$table]['created_column']))
+			$newDbTable->group = Db::$tables[$table]['group'];
+			$newDbTable->schema = Db::$tables[$table]['schema'];
+			if (isset(Db::$tables[$table]['created_column']))
 			{
-				$newDbTable->createdColumn = Config::$app["db_table"][$table]['created_column'];
+				$newDbTable->createdColumn = Db::$tables[$table]['created_column'];
 			}
-			if (isset(Config::$app["db_table"][$table]['modified_column']))
+			if (isset(Db::$tables[$table]['modified_column']))
 			{
-				$newDbTable->modifiedColumn = Config::$app["db_table"][$table]['modified_column'];
+				$newDbTable->modifiedColumn = Db::$tables[$table]['modified_column'];
 			}
-			if (isset(Config::$app["db_table"][$table]['table_name']))
+			if (isset(Db::$tables[$table]['table_name']))
 			{
-				$newDbTable->tableName = Config::$app["db_table"][$table]['table_name'];
+				$newDbTable->tableName = Db::$tables[$table]['table_name'];
 			}
 			$newDbTable->db = $newDbTable->getAdapterInstance();
 			$newDbTable->db->setGroup($newDbTable->group);
@@ -97,17 +83,6 @@ class Db
 		{
 			DebugHelper::debug('DB_TABLE_CONFIG_IS_MISSING', array('table' => $table));
 		}
-	}
-
-	/**
-	 * Set default config
-	 *
-	 * @param array $config
-	 * @return void
-	 */
-	static public function setDefaultConfig($config)
-	{
-		self::$defaultConfig = array_merge(self::$defaultConfig, $config);
 	}
 }
 
