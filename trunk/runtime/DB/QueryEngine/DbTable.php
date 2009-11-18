@@ -213,7 +213,7 @@ class DbTable
 	{
 		$nodeArray = array_keys(Db::$servers[$this->group]);
 		$masterIndexArray = array_keys(Db::$servers[$this->group][$nodeArray[0]]['master']);
-		$config = array_merge(Db::$defaultConfig, Db::$servers[$this->group][$nodeArray[0]]['master'][$masterIndexArray[0]]);
+		$config = array_merge(Db::$servers[$this->group][$nodeArray[0]]['master'][$masterIndexArray[0]]);
 		return Db::factory($config['adapter']);
 	}
 

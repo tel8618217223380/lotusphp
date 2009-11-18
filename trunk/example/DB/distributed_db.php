@@ -8,10 +8,10 @@ include $lotusHome . "/runtime/DB/DbConfigBuilder.php";
 /*
  * 配置分布式数据库连接
  */
-$dbConfig = new DbConfigBuilder();
-$dbConfig->addGroup("group_0");
-$dbConfig->addNode("node_0", "group_0");
-$dbConfig->addHost(array(
+$dbConfigBuilder = new DbConfigBuilder();
+$dbConfigBuilder->addGroup("group_0");
+$dbConfigBuilder->addNode("node_0", "group_0");
+$dbConfigBuilder->addHost(array(
 	"host" => "10.0.0.1",
 	"username" => "root",
 	"password" => "123456",
@@ -19,11 +19,11 @@ $dbConfig->addHost(array(
 	"adapter" => "pdoMysql"
 ), "master", "node_0", "group_0");
 
-$dbConfig->addHost(array(
+$dbConfigBuilder->addHost(array(
 	"host" => "10.0.0.11",
 ), "slave", "node_0", "group_0");
-$dbConfig->addHost(array(
+$dbConfigBuilder->addHost(array(
 	"host" => "10.0.0.12",
 ), "slave", "node_0", "group_0");
 
-print_r($dbConfig->getServers());
+print_r($dbConfigBuilder->getServers());
