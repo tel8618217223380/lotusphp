@@ -6,7 +6,7 @@
 = 用法 =
 == 运行lotus自带的例子 ==
  # 在[http://code.google.com/p/lotusphp/downloads/list?q=Autoloader]下载最新版本，解压后放到任意目录（如果想通过Web访问，请放到相应的网站目录）
- # 运行example\Autoloader\simplest\index.php，通过Web访问[http://localhost/lotusphp/example/Autoloader/simplest.php]，或者通过命令行访问都可以
+ # 运行example\Autoloader\simplest.php，通过Web访问[http://localhost/lotusphp/example/Autoloader/simplest.php]，或者通过命令行访问都可以
  # 屏幕上打印"Hello, this is sayHello() method of HelloWorld class"说明运行成功,仔细看看两个Array有什么不同,是不是发现这句话之前的那个Array没有HelloWorld.php,这就是按需加载.您可以试着再加个GoodBye.php里的class看看有什么不同.
  * 看一下Autoloader/simplest.php和HelloWorld.php的源码能帮助你理解这个示例，他们非常简单，还有中文注释
 
