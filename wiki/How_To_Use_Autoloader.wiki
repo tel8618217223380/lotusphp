@@ -53,23 +53,29 @@ else//若apc中没有class file mapping，则扫描目录获得之，并存入ap
 = 扩展Autoloader类 =
  就是说你想定制属于自己的autoloader，可以extends它，例如：class myAutoloader extends LtAutoloader 实例化的时候就new myAutoloader
 {{{
-class myAutoloader extends LtAutoloader
+class MyAutoloader extends LtAutoloader
 {
-    public function initWithApc($directories)
+    /*
+     * 覆盖LtAutoloader->init()方法
+     * 不加载非class文件
+     */
+    public function init()
     {
-        $cacheKey = "autoloader_cache_key";
-        if ( !apc_fetch($cacheKey) )//若从apc中获取到了class file mapping，则不要扫描目录了
-        {
-            $autoloader = new LtAutoloader($directories);
-            $fileMapping = $autoloader->getFileMapping();
-            apc_add($cacheKey, $fileMapping);
-        }
-        $autoloader->init();
+        spl_autoload_register(array($this, "loadClass"));
     }
 }
-$autoloader = new myAutoloader;
-$directories = array("./Classes Will Be Autoloaded/");
-$autoloader->initWithApc($directories);
+
+/*
+ * 试用MyAutoloader
+ */
+$directories = array("Classes", "function");
+$myAutoloader = new MyAutoloader($directories);
+
+/*
+ * 看看有哪些文件被包含进来了
+ * function目录下的文件全都没包含进来
+ */
+print_r(get_included_files());
 }}}
 = 利用Lotus Autoloader加载第三方类库 =
 我们以ZendFramework-1.9.2为例,一般大家最容易想到的就是把Zend的全路径告诉给Autoloader,然后会被自动加载的.恭喜你,这么做就成功了一半,不过ZF的一些类用了require_once(相对路径)来加载他依赖的类，所以我们还需要一小步来搞定这个问题,以下两种方案供您选择.<br>
