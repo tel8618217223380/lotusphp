@@ -16,10 +16,9 @@
 //加载Autoloader类文件
 include "/Autoloader所在目录/runtime/Autoloader/Autoloader.php";
 
-$autoloader = new LtAutoloader;
 //指定需要自动加载的目录,可以指定多个目录,目录路径最好不要包含空格
 $directories = array("目录1","目录2");
-$autoloader->init($autoloader->scanDir($directories));
+$autoloader = new LtAutoloader($directories);
 //这里就开始自动加载您刚指定目录中的以.php,.inc结尾的文件
 
 /*
@@ -31,15 +30,23 @@ $class = new ClassA();//只要ClassA的文件在前面你指定的"目录1","目
 == 示例2：在生产环境获取更好的性能 ==
 黑话解释
  # *生产环境* 本文档中所说的生产环境是指正式对外提供服务的环境，他他们通常在机房里
- 请参照示例1那一节写的,$autoloader->init($autoloader->scanDir($directories));这个scanDir是很费时间的,在开发环境,类库文件可能经常增加或者改名(文件名,类名),生产环境有哪些类库文件基本是不变的这样，我们可以把$autoloader->scanDir($directories)的结果存到opcode cache(如APC)里,autoloader的性能会好很多倍.<br>现在只需要把$autoloader->init($autoloader->scanDir($directories));替换为下面的这段代码:
+ 请参照示例1那一节写的,$autoloader = new LtAutoloader($directories);这个scanDirs是很费时间的,在开发环境,类库文件可能经常增加或者改名(文件名,类名),生产环境有哪些类库文件基本是不变的这样，我们可以把Autoloader返回的结果存到opcode cache(如APC)里,autoloader的性能会好很多倍.<br>现在只需要在$autoloader = new LtAutoloader($directories);增加下面的这段代码:
 注:本示例不适用于命令行下.(apc是web server管理的一块内存,所以多个http请求都可以共用这个内存;cli模式下，每次运行的pid都不一样，所以你存了apc,下次也取不到,同一个cli周期存取apc是可以的,但这样没有任何加速的意义)
 {{{
-if ( !apc_fetch('autoloader_cache_key') )
+$cacheKey = "autoloader_cache_key";
+if ($cachedFileMapping = apc_fetch($cacheKey))//若从apc中获取到了class file mapping，则不要扫描目录了
 {
-    apc_add( 'autoloader_cache_key', $autoloader->scanDir($directories) );
-    //apc_store( 'autoloader_cache_key', $autoloader->scanDir($directories) ); apc_sotre也可以
+    $autoloader = new LtAutoloader();
+    $autoloader->setFileMapping($autoloader);
+    $autoloader->init();
 }
-$autoloader->init( apc_fetch('autoloader_cache_key') );
+else//若apc中没有class file mapping，则扫描目录获得之，并存入apc
+{
+    $directories = array("Classes");
+    $autoloader = new LtAutoloader($directories);
+    $fileMapping = $autoloader->getFileMapping();
+    apc_add($cacheKey, $fileMapping);
+}
 }}}
 
 == 示例3：和lotusphp框架的其它组件一起工作 ==
@@ -51,12 +58,14 @@ class myAutoloader extends LtAutoloader
 {
     public function initWithApc($directories)
     {
-        if ( !apc_fetch('autoloader_cache_key') )
+        $cacheKey = "autoloader_cache_key";
+        if ( !apc_fetch($cacheKey) )//若从apc中获取到了class file mapping，则不要扫描目录了
         {
-            apc_add( 'autoloader_cache_key', $this->scanDir($directories) );
-            //apc_store( 'autoloader_cache_key', $this->scanDir($directories) ); apc_sotre也可以
+            $autoloader = new LtAutoloader($directories);
+            $fileMapping = $autoloader->getFileMapping();
+            apc_add($cacheKey, $fileMapping);
         }
-        $this->init( apc_fetch('autoloader_cache_key') );
+        $autoloader->init();
     }
 }
 $autoloader = new myAutoloader;
@@ -79,9 +88,8 @@ set_include_path( get_include_path() . "; ZendFramework library所在的路径" 
 
 set_include_path( get_include_path() . ";D:/ZendFramework-1.9.2/library/" );
 
-$autoloader = new LtAutoloader;
 $directories = array("D:/ZendFramework-1.9.2/library/");
-$autoloader->init($autoloader->scanDir($directories));
+$autoloader = new LtAutoloader($directories);
 
 $params = array ('host'     => 'localhost',
                  'username' => 'root',
