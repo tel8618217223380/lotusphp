@@ -1,0 +1,65 @@
+= 系统需求 =
+ # 只支持php 5（lotusphp所有组件都要求php5环境）
+ # 不要求Web服务器，可运行于命令行下
+ # 使用数据库组件必须安装这pdo扩展，并根据使用的数据库类型安装pdo_mysql或pdo_pgsql扩展。
+
+= 用法 =
+== 运行lotus自带的例子 ==
+ # 在[http://code.google.com/p/lotusphp/downloads/list?q=DB]下载最新版本，解压后放到任意目录（如果想通过Web访问，请放到相应的网站目录）
+ # 首先修改example\DB\simplest.php里22,23行的username,password,修改成你本地可以创建数据库的用户名和密码即可.
+ # 运行example\DB\simplest.php，通过Web访问[http://localhost/lotusphp/example/DB/simplest.php]，或者通过命令行访问都可以
+ # 屏幕上打印类似"Array ( [row_total] => 0 [rows] => Array ( ) ) Array ( [user_id] => 1 [username] => chin [age] => 30 [created] => 1258644384 [modified] => 1258644384 ) Array ( [0] => Array ( [user_id] => 2 [username] => kiwiphp ) [1] => Array ( [user_id] => 3 [username] => lotus ) ) "说明运行成功
+ * 看一下simplest.php的源码能帮助你理解这个示例，他们非常简单，还有中文注释
+
+== 示例1：最简单的用法 ==
+{{{
+<?php
+/*
+ * 加载Db类文件
+ * 加载的类很多，且需要注意先后顺序，推荐使用LtAutoloader自动加载
+ */
+include "/DB所在目录/runtime/DB/DbConfigBuilder.php";
+include "/DB所在目录/runtime/DB/Db.php";
+include "/DB所在目录/runtime/DB/Adapter/DbAdapter.php";
+include "/DB所在目录/runtime/DB/Adapter/DbAdapterPdo.php";
+include "/DB所在目录/runtime/DB/Adapter/DbAdapterPdoMysql.php";
+include "/DB所在目录/runtime/DB/QueryEngine/DbTable.php";
+/*
+ * 配置数据库连接
+ * 关键是给Db::$servers变量赋一个数组，这个数组维度比较复杂 ，所以用DbConfigBuilder构建不容易出错
+ * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给Db::$servers，效果是一样的
+ */
+$dbConfigBuilder = new DbConfigBuilder();
+$dbConfigBuilder->addSingleHost(array(
+	"host" => "localhost",
+	"username" => "root",
+	"password" => "root",
+	"dbname" => "lotus_db_test",
+	"adapter" => "pdoMysql",
+	"charset" => "UTF-8",
+));
+Db::$servers = $dbConfigBuilder->getServers();
+
+/*
+ * 直接执行执行SQL
+ */
+$dba = Db::factory("pdoMysql");
+$result = $dba->query("SELECT NOW();");
+print_r($result);
+}}}
+
+== 示例2：在生产环境获取更好的性能 ==
+
+== 示例3：和lotusphp框架的其它组件一起工作 ==
+= Lotus DB支持的验证方法 =
+= 扩展DB类 =
+
+= 延伸阅读：我们为什么要做DB =
+
+
+== Lotus DB如何解决这些问题 ==
+
+== 常见问题 ==
+
+
+= 鸣谢 =
