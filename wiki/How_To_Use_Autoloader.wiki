@@ -51,7 +51,7 @@ else//若apc中没有class file mapping，则扫描目录获得之，并存入ap
 == 示例3：和lotusphp框架的其它组件一起工作 ==
 
 = 扩展Autoloader类 =
- 就是说你想定制属于自己的autoloader，可以extends它，例如：class myAutoloader extends LtAutoloader 实例化的时候就new myAutoloader
+ 就是说你想定制属于自己的autoloader，可以extends它，例如：
 {{{
 class MyAutoloader extends LtAutoloader
 {
