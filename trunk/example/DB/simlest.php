@@ -51,7 +51,6 @@ print_r($result);
 /*
  * 配置数据表，和“配置数据库连接”一样，用别的方式构造一个数组并赋值给Db::$tables也可以
  */
-$dbConfigBuilder->addTable("user");
 Db::$tables = $dbConfigBuilder->getTables();
 
 /*

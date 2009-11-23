@@ -51,28 +51,34 @@ class Db
 	 * @param mixed $tableName
 	 * @return object DbTable
 	 */
-	static public function newDbTable($table, $tableName = null)
+	static public function newDbTable($table)
 	{
-		if (class_exists($table))
-		{
-			return new $table;
-		}
-		if (isset(Db::$tables[$table]))
+		if (isset(Db::$tables[$table]) || 1 == count(Db::$servers))
 		{
 			$newDbTable = new DbTable();
-			$newDbTable->group = Db::$tables[$table]['group'];
-			$newDbTable->schema = Db::$tables[$table]['schema'];
-			if (isset(Db::$tables[$table]['created_column']))
+			if (1 == count(Db::$servers))
 			{
-				$newDbTable->createdColumn = Db::$tables[$table]['created_column'];
+				$groupId = key(Db::$servers);
+				$newDbTable->group = $groupId;
+				$newDbTable->schema = $groupId;
+				$newDbTable->tableName = $table;
 			}
-			if (isset(Db::$tables[$table]['modified_column']))
+			else
 			{
-				$newDbTable->modifiedColumn = Db::$tables[$table]['modified_column'];
-			}
-			if (isset(Db::$tables[$table]['table_name']))
-			{
-				$newDbTable->tableName = Db::$tables[$table]['table_name'];
+				$newDbTable->group = Db::$tables[$table]['group'];
+				$newDbTable->schema = Db::$tables[$table]['schema'];
+				if (isset(Db::$tables[$table]['created_column']))
+				{
+					$newDbTable->createdColumn = Db::$tables[$table]['created_column'];
+				}
+				if (isset(Db::$tables[$table]['modified_column']))
+				{
+					$newDbTable->modifiedColumn = Db::$tables[$table]['modified_column'];
+				}
+				if (isset(Db::$tables[$table]['table_name']))
+				{
+					$newDbTable->tableName = Db::$tables[$table]['table_name'];
+				}
 			}
 			$newDbTable->db = $newDbTable->getAdapterInstance();
 			$newDbTable->db->setGroup($newDbTable->group);
