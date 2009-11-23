@@ -49,11 +49,6 @@ CREATE TABLE IF NOT EXISTS `user` (
 print_r($result);
 
 /*
- * 配置数据表，和“配置数据库连接”一样，用别的方式构造一个数组并赋值给Db::$tables也可以
- */
-Db::$tables = $dbConfigBuilder->getTables();
-
-/*
  * 使用Table Gateway模式操作数据表
  * 使用上面刚刚建立的test库，user表
  */
