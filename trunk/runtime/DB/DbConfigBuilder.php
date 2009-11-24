@@ -15,8 +15,16 @@ class DbConfigBuilder
 		$this->servers[$groupId][$nodeId] = array();
 	}
 
-	public function addHost($hostConfig, $role = "master", $nodeId, $groupId)
+	public function addHost($hostConfig, $role = "master", $nodeId = "node_0", $groupId)
 	{
+		if (null === $role)
+		{
+			$role = "master";
+		}
+		if (null === $nodeId)
+		{
+			$nodeId = "node_0";
+		}
 		$this->servers[$groupId][$nodeId][$role][] = $hostConfig;
 	}
 
@@ -32,6 +40,10 @@ class DbConfigBuilder
 		if (null === $tableName)
 		{
 			$tableName = $tableId;
+		}
+		if (null === $schemaName)
+		{
+			$schemaName = $groupId;
 		}
 		if (1 == count($this->servers))
 		{

@@ -50,7 +50,7 @@ print_r($result);
 
 /*
  * 使用Table Gateway模式操作数据表
- * 使用上面刚刚建立的test库，user表
+ * 使用上面刚刚建立的lotus_db_test库，user表
  */
 $userTDG = Db::newDbTable("user");
 

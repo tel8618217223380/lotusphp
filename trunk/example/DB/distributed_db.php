@@ -15,7 +15,7 @@ $dbConfigBuilder->addHost(array(
 	"host" => "10.0.0.1",
 	"username" => "root",
 	"password" => "123456",
-	"dbname" => "test",
+	"dbname" => "lotus_db_test",
 	"adapter" => "pdoMysql"
 ), "master", "node_0", "group_0");
 
@@ -26,4 +26,5 @@ $dbConfigBuilder->addHost(array(
 	"host" => "10.0.0.12",
 ), "slave", "node_0", "group_0");
 
-print_r($dbConfigBuilder->getServers());
+/*
+ *
