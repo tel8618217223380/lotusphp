@@ -84,7 +84,7 @@ $userTDG->update($userId, array(
 ));
 
 //更新多条
-$userTDG->updateRows($condition, array(
+$userTDG->updateRows($condition["where"], array(
 	"age" => 9
 ));
 
@@ -92,4 +92,4 @@ $userTDG->updateRows($condition, array(
 $userTDG->delete($userId);
 
 //删除多条
-$userTDG->deleteRows($condition);
+$userTDG->deleteRows($condition["where"]);
