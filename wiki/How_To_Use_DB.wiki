@@ -141,6 +141,16 @@ PDO 不支持 "WHERE column IN (:placeholder)"
 占位符的数目必须和后面绑定的参数数目一样
 且占位符的名字不能重复（例如："where :id > 10 and :id < 100" 是不可以的） 
 
+Limit & Offset 
+常见的数据库系统都有专属的SQL语法，例如，如果你想从一个表中取出前10条记录，你可以这样写: 
+
+||DBMS||  ||SQL||
+||DB2||  ||select * from table fetch first 10 rows only||
+||Informix||  ||select first 10 * from table||
+||Microsoft SQL Server and Access||  ||select top 10 * from table||  
+||MySQL and PostgreSQL||  ||select * from table limit 10||  
+||Oracle||  ||select * from (select * from table) where rownum <= 10|| 
+
 = 扩展DB类 =
 
 = 延伸阅读：我们为什么要做DB =
