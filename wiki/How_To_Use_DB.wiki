@@ -31,12 +31,12 @@ include "/DB所在目录/runtime/DB/QueryEngine/DbTable.php";
  */
 $dbConfigBuilder = new DbConfigBuilder();
 $dbConfigBuilder->addSingleHost(array(
-	"host" => "localhost",
-	"username" => "root",
-	"password" => "root",
-	"dbname" => "lotus_db_test",
-	"adapter" => "pdoMysql",
-	"charset" => "UTF-8",
+    "host" => "localhost",
+    "username" => "root",
+    "password" => "root",
+    "dbname" => "lotus_db_test",
+    "adapter" => "pdoMysql",
+    "charset" => "UTF-8",
 ));
 Db::$servers = $dbConfigBuilder->getServers();
 
@@ -49,6 +49,97 @@ print_r($result);
 }}}
 
 == 示例2：在生产环境获取更好的性能 ==
+== DB基础操作 ==
+增删查改操作,以simplest.php例子为主
+Insert 
+insert()方法接收一个数组参数，如插入成功，返回被插入的这条记录的主键值。
+{{{
+/*
+ * 使用Table Gateway模式操作数据表
+ * 使用simplest里建立的lotus_db_test库，user表
+ */
+$userTDG = Db::newDbTable("user");
+
+//插入新记录，并取得自增的ID
+$userId = $userTDG->insert(array(
+    "username" => "chin",
+    "age" => "40",
+));
+//可以看看$userId,就是刚刚插入的值
+
+//再来插入几条
+$userTDG->insert(array(
+    "username" => "kiwiphp",
+    "age" => "3",
+));
+$userTDG->insert(array(
+    "username" => "lotus",
+    "age" => "1",
+));
+
+}}}
+这里有三个特殊字段需要注意: 
+
+created, modified
+如果表有字段名为created (或 modified)的字段, 且传入的参数并未指定它的值，lotusphp 将会将当前系统时间戳作为该字段的默认值，如果传入参数指定了它的值，kiwiphp将使用该值。 
+primary key
+不管他是由数据库系统自动生成的（例如MySQL的AUTO INCREMENT字段或PostgreSQL的Serial字段）还是由参数数组传入的主键，它的值将被返回。 
+some_does_not_exists_column在user表中不是一个有效的字段，那么，它将被忽略。 
+
+Select 
+
+当只读查询 (fetch, fetchRows, count) 被执行时, kiwiphp 将会自动选择任意可用的一台Slave服务器执行查询。在实际生产中，为了避免主从复制延迟带来的影响，也可能需要强制从Master服务器查询，这三个方法都支持强制读Master。 
+
+通过主键取出一条记录
+{{{
+print_r($userTDG->fetch($userId));
+//$userId为刚才insert中的,如1,2,3
+
+返回结果
+Array
+(
+    [user_id] => 1
+    [username] => chin
+    [age] => 40
+    [created] => 1259720130
+    [modified] => 1259720130
+)
+
+}}}
+
+通过条件取出多条记录 
+{{{
+$condition["where"]["expression"] = "age < 10";
+//Where子句 包括两个部分: 表达式 和 值, 其规则，机制和 PDO的预处理语句是一样的。
+$condition["fields"] = "user_id, username";
+//fields参数用于指定获取哪些字段。默认是获取所有字段，等于执行SELECT * ...。 
+print_r($userTDG->fetchRows($condition));
+
+返回结果
+Array
+(
+    [0] => Array
+        (
+            [user_id] => 2
+            [username] => kiwiphp
+        )
+ 
+    [1] => Array
+        (
+            [user_id] => 3
+            [username] => lotus
+        )
+ 
+)
+}}}
+
+
+注意 
+
+PDO 不支持 "WHERE column IN (:placeholder)" 
+"WHERE column LIKE :placeholder" 支持，但 "WHERE column LIKE %:placeholder%" 不支持。 
+占位符的数目必须和后面绑定的参数数目一样
+且占位符的名字不能重复（例如："where :id > 10 and :id < 100" 是不可以的） 
 
 = 扩展DB类 =
 
