@@ -210,6 +210,86 @@ Array
 
 }}}
 
+统计共计获取多少行记录
+
+如果你刚刚为fetchRows()组成了一个条件数组, 你可以直接将这个数组传递给count()方法来统计有多少满足条件的记录, 使用count()方法时，将忽略limit, offset, order by, group by, fields 参数, 只使用 where, join 参数. 
+{{{
+echo $userTDG->count();
+//返回结果为3
+}}}
+
+Update 
+根据主键更新一条记录
+{{{
+$userId = 1;
+$userTDG->update($userId, array(
+    "age" => 41
+));
+
+
+//更新多条
+$condition["where"]["expression"] = "age < 10";
+$condition["fields"] = "user_id, username";
+$userTDG->updateRows($condition["where"], array(
+	"age" => 9
+));
+
+print_r($userTDG->fetchRows());
+
+返回结果
+
+Array
+(
+    [0] => Array
+        (
+            [user_id] => 1
+            [username] => chin
+            [age] => 41
+            [created] => 1259720130
+            [modified] => 1259720130
+        )
+ 
+    [1] => Array
+        (
+            [user_id] => 2
+            [username] => kiwiphp
+            [age] => 9
+            [created] => 1259720130
+            [modified] => 1259722639
+        )
+ 
+    [2] => Array
+        (
+            [user_id] => 3
+            [username] => lotus
+            [age] => 9
+            [created] => 1259720130
+            [modified] => 1259722639
+        )
+ 
+)
+}}}
+
+Delete 
+根据主键删除一条记录 
+{{{
+//根据主键删除
+$userId = 1;
+$userTDG->delete($userId);
+
+//删除多条
+$condition["where"]["expression"] = "age < 10";
+$userTDG->deleteRows($condition["where"]);
+print_r($userTDG->fetchRows());
+
+返回结果
+Array
+(
+)
+刚好删完数据也学完了增删改查操作
+
+}}}
+
 = 扩展DB类 =
 
 = 延伸阅读：我们为什么要做DB =
