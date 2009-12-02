@@ -151,6 +151,65 @@ Limit & Offset
 ||MySQL and PostgreSQL||  ||select * from table limit 10||  
 ||Oracle||  ||select * from (select * from table) where rownum <= 10|| 
 
+{{{
+$condition["limit"] = 1;
+$condition["offset"] = 0;
+print_r($userTDG->fetchRows($condition));
+
+返回结果
+Array
+(
+    [0] => Array
+        (
+            [user_id] => 1
+            [username] => chin
+            [age] => 40
+            [created] => 1259720130
+            [modified] => 1259720130
+        )
+ 
+)
+}}}
+当"offset"等于0时，offset参数可以忽略。 
+
+Order By
+
+{{{
+$condition['orderby'] = "user_id DESC";
+print_r($userTDG->fetchRows($condition));
+Array
+(
+    [0] => Array
+        (
+            [user_id] => 3
+            [username] => lotus
+            [age] => 1
+            [created] => 1259720130
+            [modified] => 1259720130
+        )
+ 
+    [1] => Array
+        (
+            [user_id] => 2
+            [username] => kiwiphp
+            [age] => 3
+            [created] => 1259720130
+            [modified] => 1259720130
+        )
+ 
+    [2] => Array
+        (
+            [user_id] => 1
+            [username] => chin
+            [age] => 40
+            [created] => 1259720130
+            [modified] => 1259720130
+        )
+ 
+)
+
+}}}
+
 = 扩展DB类 =
 
 = 延伸阅读：我们为什么要做DB =
