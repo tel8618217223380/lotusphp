@@ -82,14 +82,14 @@ $userTDG->insert(array(
 这里有三个特殊字段需要注意: 
 
 created, modified
-如果表有字段名为created (或 modified)的字段, 且传入的参数并未指定它的值，lotusphp 将会将当前系统时间戳作为该字段的默认值，如果传入参数指定了它的值，kiwiphp将使用该值。 
+如果表有字段名为created (或 modified)的字段, 且传入的参数并未指定它的值，lotusphp 将会将当前系统时间戳作为该字段的默认值，如果传入参数指定了它的值，lotusphp将使用该值。 
 primary key
 不管他是由数据库系统自动生成的（例如MySQL的AUTO INCREMENT字段或PostgreSQL的Serial字段）还是由参数数组传入的主键，它的值将被返回。 
 some_does_not_exists_column在user表中不是一个有效的字段，那么，它将被忽略。 
 
 ===Select=== 
 
-当只读查询 (fetch, fetchRows, count) 被执行时, kiwiphp 将会自动选择任意可用的一台Slave服务器执行查询。在实际生产中，为了避免主从复制延迟带来的影响，也可能需要强制从Master服务器查询，这三个方法都支持强制读Master。 
+当只读查询 (fetch, fetchRows, count) 被执行时, lotusphp 将会自动选择任意可用的一台Slave服务器执行查询。在实际生产中，为了避免主从复制延迟带来的影响，也可能需要强制从Master服务器查询，这三个方法都支持强制读Master。 
 
 通过主键取出一条记录
 {{{
