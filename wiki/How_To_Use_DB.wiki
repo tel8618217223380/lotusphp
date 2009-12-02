@@ -51,7 +51,8 @@ print_r($result);
 == 示例2：在生产环境获取更好的性能 ==
 == DB基础操作 ==
 增删查改操作,以simplest.php例子为主
-Insert 
+
+===Insert=== 
 insert()方法接收一个数组参数，如插入成功，返回被插入的这条记录的主键值。
 {{{
 /*
@@ -86,7 +87,7 @@ primary key
 不管他是由数据库系统自动生成的（例如MySQL的AUTO INCREMENT字段或PostgreSQL的Serial字段）还是由参数数组传入的主键，它的值将被返回。 
 some_does_not_exists_column在user表中不是一个有效的字段，那么，它将被忽略。 
 
-Select 
+===Select=== 
 
 当只读查询 (fetch, fetchRows, count) 被执行时, kiwiphp 将会自动选择任意可用的一台Slave服务器执行查询。在实际生产中，为了避免主从复制延迟带来的影响，也可能需要强制从Master服务器查询，这三个方法都支持强制读Master。 
 
@@ -134,14 +135,14 @@ Array
 }}}
 
 
-注意 
+===注意=== 
 
 PDO 不支持 "WHERE column IN (:placeholder)" 
 "WHERE column LIKE :placeholder" 支持，但 "WHERE column LIKE %:placeholder%" 不支持。 
 占位符的数目必须和后面绑定的参数数目一样
 且占位符的名字不能重复（例如："where :id > 10 and :id < 100" 是不可以的） 
 
-Limit & Offset 
+===Limit & Offset=== 
 常见的数据库系统都有专属的SQL语法，例如，如果你想从一个表中取出前10条记录，你可以这样写: 
 
 ||DBMS||  ||SQL||
@@ -172,7 +173,7 @@ Array
 }}}
 当"offset"等于0时，offset参数可以忽略。 
 
-Order By
+===Order By===
 
 {{{
 $condition['orderby'] = "user_id DESC";
@@ -210,7 +211,7 @@ Array
 
 }}}
 
-统计共计获取多少行记录
+===统计共计获取多少行记录===
 
 如果你刚刚为fetchRows()组成了一个条件数组, 你可以直接将这个数组传递给count()方法来统计有多少满足条件的记录, 使用count()方法时，将忽略limit, offset, order by, group by, fields 参数, 只使用 where, join 参数. 
 {{{
@@ -218,7 +219,8 @@ echo $userTDG->count();
 //返回结果为3
 }}}
 
-Update 
+===Update===
+ 
 根据主键更新一条记录
 {{{
 $userId = 1;
@@ -270,7 +272,8 @@ Array
 )
 }}}
 
-Delete 
+===Delete=== 
+
 根据主键删除一条记录 
 {{{
 //根据主键删除
