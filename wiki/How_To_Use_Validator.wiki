@@ -72,22 +72,23 @@ class myValidator extends LtValidator
     }
 }
 
-$dtd = array(
-    "label" => "Username",
-    "rules" => array(
+$dtd = new LtValidatorDtd("用户名",
+    array(
         "ban" => "/fuck/",
         "username_can_be_used" => "true",
     ),
-    "message" => array(
+    array(
         "ban" => "用户名不能包含脏话",
         "username_can_be_used" => "用户名重复"
     )
 );
 
+
 $validator = new myValidator;
 $username = "覃健祥";
-$result = $validator->validate($username,$dtd);
-var_dump($result);
+$result = $validator->validate($username, $dtd);
+print_r($result);
+
 }}}
 
 {{{
