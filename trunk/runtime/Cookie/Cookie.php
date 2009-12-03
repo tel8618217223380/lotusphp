@@ -14,7 +14,7 @@ class LtCookie
 	 * @param string $encryptedText
 	 * @return string
 	 */
-	static private function _decrypt($encryptedText)
+	protected function _decrypt($encryptedText)
 	{
 		$key = $this->conf->secretKey;
 		$cryptText = base64_decode($encryptedText);
@@ -30,7 +30,7 @@ class LtCookie
 	 * @param string $plainText
 	 * @return string
 	 */
-	static private function _encrypt($plainText)
+	protected function _encrypt($plainText)
 	{
 		$key = $this->conf->secretKey;
 		$ivSize = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
@@ -45,7 +45,7 @@ class LtCookie
 	 * @param array $args
 	 * @return boolean
 	 */
-	static public function delCookie($args)
+	public function delCookie($args)
 	{
 		$name = $args['name'];
 		$domain = isset($args['domain']) ? $args['domain'] : null;
@@ -58,7 +58,7 @@ class LtCookie
 	 * @param string $name
 	 * @return mixed
 	 */
-	static public function getCookie($name)
+	public function getCookie($name)
 	{
 		return isset($_COOKIE[$name]) ? self::_decrypt($_COOKIE[$name]) : null;
 	}
@@ -69,7 +69,7 @@ class LtCookie
 	 * @param array $args
 	 * @return boolean
 	 */
-	static public function setCookie($args)
+	public function setCookie($args)
 	{
 		$name = $args['name'];
 		$value = self::_encrypt($args['value']);
