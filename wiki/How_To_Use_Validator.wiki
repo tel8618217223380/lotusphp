@@ -54,6 +54,93 @@ $result = $validator->validate($username,apc_fetch('validator_cache_key'));
 
 == 示例3：和lotusphp框架的其它组件一起工作 ==
 = Lotus Validator支持的验证方法 =
+{{{
+/*
+ * 构造验证规则
+ */
+$dtd['username'] = new LtValidatorDtd("用户名",
+    array(
+        "max_length" => 8,
+        "min_length" => 4,
+        "mask" => "/^0.*$/i",
+        "ban" => "/fuck/",
+        "required" => true
+    ),
+    array(
+        "max_length" =>  "%s最多只能有%s个字符",
+        "min_length" =>  "%s最少必须有%s个字符",
+        "mask" => "%s只能由0开头",
+        "ban" => "%s不能包含脏话",
+        'required' => '%s不能为空',
+    )
+);
+
+$dtd['password'] = new LtValidatorDtd("密码",
+    array(
+        "max_length" => 8,
+        "min_length" => 1,
+        "required" => true
+    ),
+    array(
+        "max_length" =>  "%s最多只能有%s个字符",
+        "min_length" =>  "%s最少必须有%s个字符",
+        'required' => '%s不能为空'
+    )
+);
+
+$dtd['password_confirm'] = new LtValidatorDtd("验证密码",
+    array(
+        "required" => true,
+        "equal_to" => $_REQUEST['password']
+    ),
+    array(
+        "equal_to" => "两次输入的密码不一致"
+    )
+);
+
+$dtd['age'] = new LtValidatorDtd("年龄",
+    array(
+        "max_value" => 99,
+        "min_value" => 10,
+        "mask" => "/^[1-9]*$/i",
+        "required" => true
+    ),
+    array(
+        "max_value" =>  "%s不能大于%s岁",
+        "min_value" =>  "%s不能小于%s岁",
+        "mask" => "%s只能由1-9开头",
+        'required' => '%s不能为空'
+    )
+);
+
+$dtd['interest'] = new LtValidatorDtd("兴趣",
+    array(
+        "max_selected" => 2,
+        "min_selected" => 1,
+        "required" => true
+    ),
+    array(
+        "max_selected" =>  "%s最多只能选%s个",
+        "min_selected" =>  "%s最少只能选%s个",
+        'required' => '%s不能为空'
+    )
+);
+
+
+/*
+ * 初始化Validator，执行验证
+ */
+$validator = new LtValidator;
+$username = "fuck";
+$age = 0;
+$password = "";
+$result = array();
+$result['username'] = $validator->validate($username,$dtd['username']);
+$result['age'] = $validator->validate($age,$dtd['age']);
+$result['password'] = $validator->validate($password,$dtd['password']);
+print_r($result);
+
+}}}
 = 扩展Validator类 =
 {{{
 class myValidator extends LtValidator
