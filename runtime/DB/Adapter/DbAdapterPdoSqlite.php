@@ -29,8 +29,7 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 		//sqlite2:d:\www\localhost\ftp\ftp.db
 		$config['sqlite_ver'] = isset($config['sqlite_ver']) ? $config
 		['sqlite_ver'] : 'sqlite';
-		return $config['sqlite_ver'].':' . Kiwi::$appOptions['proj_dir'] .
-		$config['dbpath'] .DIRECTORY_SEPARATOR. $config['dbname'];
+		return $config['sqlite_ver'].':' . $config['host'].$config['dbname'];
 	}
 
 	/**
