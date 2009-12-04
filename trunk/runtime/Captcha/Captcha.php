@@ -25,6 +25,11 @@ class LtCaptcha
 		return $captchaWord;
 	}
 
+	/*
+	 * @todo performance tuning
+	 * @param $word
+	 * @return unknown_type
+	 */
 	public function generateImage($word)
 	{
 		$alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"; # do not change without changing font files!
