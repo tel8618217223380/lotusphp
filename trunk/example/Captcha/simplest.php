@@ -24,4 +24,5 @@ $captcha->conf->fontDir = $fonts;
 
 $seed = uniqid();
 $word = $captcha->getWord($seed);
+header("Word: $word");
 $captcha->generateImage($word);
