@@ -13,16 +13,9 @@ include $lotusHome . "/runtime/Captcha/CaptchaConfig.php";
  * 开始使用Captcha
  */
 //构造设置Captcha的参数
-
-$fonts = dirname(__FILE__) . "/fonts";
-
-
 $captcha = new LtCaptcha();
 $captcha->conf->secretKey = "lotusphp";
-$captcha->conf->length = 5;
-$captcha->conf->fontDir = $fonts;
 
 $seed = uniqid();
 $word = $captcha->getWord($seed);
-header("Word: $word");
 $captcha->generateImage($word);
