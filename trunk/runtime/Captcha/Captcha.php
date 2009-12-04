@@ -27,12 +27,6 @@ class LtCaptcha
 		return $captchaWord;
 	}
 
-	/** Width of the image */
-	public $width  = 200;
-
-	/** Height of the image */
-	public $height = 70;
-
 	public $maxWordLength = 9;
 
 	/** Background color in RGB-array */
@@ -40,9 +34,9 @@ class LtCaptcha
 
 	/** Foreground colors in RGB-array */
 	public $colors = array(
-	array(27,78,181), // blue
-	array(22,163,35), // green
-	array(214,36,7),  // red
+		array(27,78,181), // blue
+		array(22,163,35), // green
+		array(214,36,7),  // red
 	);
 
 	/** Shadow color in RGB-array or null */
@@ -73,28 +67,6 @@ class LtCaptcha
 	public $Xperiod    = 11;
 	public $Xamplitude = 5;
 
-	/** letter rotation clockwise */
-	public $maxRotation = 8;
-
-	/**
-	 * Internal image size factor (for better image quality)
-	 * 1: low, 2: medium, 3: high
-	 */
-	public $scale = 3;
-
-	/**
-	 * Blur effect for better image quality (but slower image processing).
-	 * Better image results with scale=3
-	 */
-	public $blur = false;
-
-	/** Debug? */
-	public $debug = false;
-
-	/** Image format: jpeg or png */
-	public $imageFormat = 'jpeg';
-
-
 	/** GD image */
 	public $im;
 
@@ -109,13 +81,13 @@ class LtCaptcha
 
 		/** Transformations */
 		$this->WaveImage();
-		if ($this->blur && function_exists('imagefilter')) {
+		if ($this->conf->blur && function_exists('imagefilter')) {
 			imagefilter($this->im, IMG_FILTER_GAUSSIAN_BLUR);
 		}
 		$this->ReduceImage();
 
 
-		if ($this->debug) {
+		if ($this->conf->debug) {
 			imagestring($this->im, 1, 1, $this->conf->height-8,
                 "$text {$fontcfg['font']} ".round((microtime(true)-$ini)*1000)."ms",
 			$this->GdFgColor
@@ -136,7 +108,7 @@ class LtCaptcha
 			imagedestroy($this->im);
 		}
 
-		$this->im = imagecreatetruecolor($this->conf->width*$this->scale, $this->conf->height*$this->scale);
+		$this->im = imagecreatetruecolor($this->conf->width*$this->conf->scale, $this->conf->height*$this->conf->scale);
 
 		// Background color
 		$this->GdBgColor = imagecolorallocate($this->im,
@@ -144,7 +116,7 @@ class LtCaptcha
 		$this->backgroundColor[1],
 		$this->backgroundColor[2]
 		);
-		imagefilledrectangle($this->im, 0, 0, $this->conf->width*$this->scale, $this->conf->height*$this->scale, $this->GdBgColor);
+		imagefilledrectangle($this->im, 0, 0, $this->conf->width*$this->conf->scale, $this->conf->height*$this->conf->scale, $this->GdBgColor);
 
 		// Foreground color
 		$color           = $this->colors[mt_rand(0, sizeof($this->colors)-1)];
@@ -178,23 +150,23 @@ class LtCaptcha
 		$fontSizefactor = 1+($lettersMissing*0.09);
 
 		// Text generation (char by char)
-		$x      = 20*$this->scale;
-		$y      = round(($this->conf->height*27/40)*$this->scale);
+		$x      = 20*$this->conf->scale;
+		$y      = round(($this->conf->height*27/40)*$this->conf->scale);
 		$length = strlen($text);
 		for ($i=0; $i<$length; $i++) {
-			$degree   = rand($this->maxRotation*-1, $this->maxRotation);
-			$fontsize = rand($fontcfg['minSize'], $fontcfg['maxSize'])*$this->scale*$fontSizefactor;
+			$degree   = rand($this->conf->maxRotation*-1, $this->conf->maxRotation);
+			$fontsize = rand($fontcfg['minSize'], $fontcfg['maxSize'])*$this->conf->scale*$fontSizefactor;
 			$letter   = substr($text, $i, 1);
 
 			if ($this->shadowColor) {
 				$coords = imagettftext($this->im, $fontsize, $degree,
-				$x+$this->scale, $y+$this->scale,
+				$x+$this->conf->scale, $y+$this->conf->scale,
 				$this->GdShadowColor, $fontfile, $letter);
 			}
 			$coords = imagettftext($this->im, $fontsize, $degree,
 			$x, $y,
 			$this->GdFgColor, $fontfile, $letter);
-			$x += ($coords[2]-$x) + ($fontcfg['spacing']*$this->scale);
+			$x += ($coords[2]-$x) + ($fontcfg['spacing']*$this->conf->scale);
 		}
 	}
 
@@ -204,23 +176,23 @@ class LtCaptcha
 	protected function WaveImage()
 	{
 		// X-axis wave generation
-		$xp = $this->scale*$this->Xperiod*rand(1,3);
+		$xp = $this->conf->scale*$this->Xperiod*rand(1,3);
 		$k = rand(0, 100);
-		for ($i = 0; $i < ($this->conf->width*$this->scale); $i++) 
+		for ($i = 0; $i < ($this->conf->width*$this->conf->scale); $i++) 
 		{
 			imagecopy($this->im, $this->im,
-			$i-1, sin($k+$i/$xp) * ($this->scale*$this->Xamplitude),
-			$i, 0, 1, $this->conf->height*$this->scale);
+			$i-1, sin($k+$i/$xp) * ($this->conf->scale*$this->Xamplitude),
+			$i, 0, 1, $this->conf->height*$this->conf->scale);
 		}
 
 		// Y-axis wave generation
 		$k = rand(0, 100);
-		$yp = $this->scale*$this->Yperiod*rand(1,2);
-		for ($i = 0; $i < ($this->conf->height*$this->scale); $i++) 
+		$yp = $this->conf->scale*$this->Yperiod*rand(1,2);
+		for ($i = 0; $i < ($this->conf->height*$this->conf->scale); $i++) 
 		{
 			imagecopy($this->im, $this->im,
-			sin($k+$i/$yp) * ($this->scale*$this->Yamplitude), $i-1,
-			0, $i, $this->conf->width*$this->scale, 1);
+			sin($k+$i/$yp) * ($this->conf->scale*$this->Yamplitude), $i-1,
+			0, $i, $this->conf->width*$this->conf->scale, 1);
 		}
 	}
 
@@ -233,7 +205,7 @@ class LtCaptcha
 		imagecopyresampled($imResampled, $this->im,
 		0, 0, 0, 0,
 		$this->conf->width, $this->conf->height,
-		$this->conf->width*$this->scale, $this->conf->height*$this->scale
+		$this->conf->width*$this->conf->scale, $this->conf->height*$this->conf->scale
 		);
 		imagedestroy($this->im);
 		$this->im = $imResampled;
@@ -244,7 +216,7 @@ class LtCaptcha
 	 */
 	protected function WriteImage() 
 	{
-		if ($this->imageFormat == 'png' && function_exists('imagepng')) {
+		if ($this->conf->imageFormat == 'png' && function_exists('imagepng')) {
 			header("Content-type: image/png");
 			imagepng($this->im);
 		} else {
