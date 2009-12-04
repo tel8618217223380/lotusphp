@@ -4,7 +4,7 @@
 
 = 用法 =
 == 运行lotus自带的例子 ==
- # 在[http://code.google.com/p/lotusphp/downloads/list?q=Captcha]下载最新版本，解压后放到任意目录（如果想通过Web访问，请放到相应的网站目录）
+ # 在[http://code.google.com/p/lotusphp/downloads/list?q=Captcha]下载最新版本，解压后请放到相应的网站目录
  # 运行example\Captcha\simplest.php，通过Web访问[http://localhost/lotusphp/example/Captcha/simplest.php]
  # 屏幕上显示验证图片说明运行成功
  * 看一下Captcha\simplest.php的源码能帮助你理解这个示例，他们非常简单，还有中文注释
