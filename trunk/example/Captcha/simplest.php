@@ -1,21 +1,21 @@
-ï»¿<?php
+<?php
 /* 
- * åŠ è½½Captchaç±»æ–‡ä»¶
+ * ¼ÓÔØCaptchaÀàÎÄ¼þ
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
 include $lotusHome . "/runtime/Captcha/Captcha.php";
 include $lotusHome . "/runtime/Captcha/CaptchaConfig.php";
 /* 
- * åŠ è½½Captchaç±»æ–‡ä»¶
+ * ¼ÓÔØCaptchaÀàÎÄ¼þ
  */
 
 /*
- * å¼€å§‹ä½¿ç”¨Captcha
+ * ¿ªÊ¼Ê¹ÓÃCaptcha
  */
-//æž„é€ è®¾ç½®Captchaçš„å‚æ•°
+//¹¹ÔìÉèÖÃCaptchaµÄ²ÎÊý
 
-$fonts = dirname(__FILE__) . "/fonts";
-//$fonts = "D:\AppServ\www\lotus\example\Captcha\fonts";
+//$fonts = dirname(__FILE__) . "/fonts";
+$fonts = "D:/AppServ/www/lotus/example/Captcha/fonts";
 
 $captcha = new LtCaptcha();
 $captcha->conf->secretKey = "lotusphp";
