@@ -38,8 +38,8 @@ class LtCaptcha
 		$fontsdir = $this->conf->fontDir;
 
 		# CAPTCHA image size (you do not need to change it, whis parameters is optimal)
-		$width = 120;
-		$height = 60;
+		$width = isset($this->conf->width) ? $this->conf->width : 120;
+		$height = isset($this->conf->height) ? $this->conf->height : 60;
 
 		# symbol's vertical fluctuation amplitude divided by 2
 		$fluctuation_amplitude = 5;
