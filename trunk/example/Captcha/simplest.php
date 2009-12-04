@@ -1,18 +1,18 @@
 <?php
 /* 
- * ¼ÓÔØCaptchaÀàÎÄ¼þ
+ * åŠ è½½Captchaç±»æ–‡ä»¶
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
 include $lotusHome . "/runtime/Captcha/Captcha.php";
 include $lotusHome . "/runtime/Captcha/CaptchaConfig.php";
 /* 
- * ¼ÓÔØCaptchaÀàÎÄ¼þ
+ * åŠ è½½Captchaç±»æ–‡ä»¶
  */
 
 /*
- * ¿ªÊ¼Ê¹ÓÃCaptcha
+ * å¼€å§‹ä½¿ç”¨Captcha
  */
-//¹¹ÔìÉèÖÃCaptchaµÄ²ÎÊý
+//æž„é€ è®¾ç½®Captchaçš„å‚æ•°
 
 //$fonts = dirname(__FILE__) . "/fonts";
 $fonts = "D:/AppServ/www/lotus/example/Captcha/fonts";
