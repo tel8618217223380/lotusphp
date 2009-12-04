@@ -26,10 +26,10 @@ include "/DB所在目录/runtime/DB/Adapter/DbAdapterPdoMysql.php";
 include "/DB所在目录/runtime/DB/QueryEngine/DbTable.php";
 /*
  * 配置数据库连接
- * 关键是给Db::$servers变量赋一个数组，这个数组维度比较复杂 ，所以用DbConfigBuilder构建不容易出错
- * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给Db::$servers，效果是一样的
+ * 关键是给LtDb::$servers变量赋一个数组，这个数组维度比较复杂 ，所以用DbConfigBuilder构建不容易出错
+ * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给LtDb::$servers，效果是一样的
  */
-$dbConfigBuilder = new DbConfigBuilder();
+$dbConfigBuilder = new LtDbConfigBuilder();
 $dbConfigBuilder->addSingleHost(array(
     "host" => "localhost",
     "username" => "root",
@@ -38,12 +38,12 @@ $dbConfigBuilder->addSingleHost(array(
     "adapter" => "pdoMysql",
     "charset" => "UTF-8",
 ));
-Db::$servers = $dbConfigBuilder->getServers();
+LtDb::$servers = $dbConfigBuilder->getServers();
 
 /*
  * 直接执行执行SQL
  */
-$dba = Db::factory("pdoMysql");
+$dba = LtDb::factory("pdoMysql");
 $result = $dba->query("SELECT NOW();");
 print_r($result);
 }}}
@@ -59,7 +59,7 @@ insert()方法接收一个数组参数，如插入成功，返回被插入的这
  * 使用Table Gateway模式操作数据表
  * 使用simplest里建立的lotus_db_test库，user表
  */
-$userTDG = Db::newDbTable("user");
+$userTDG = LtDb::newDbTable("user");
 
 //插入新记录，并取得自增的ID
 $userId = $userTDG->insert(array(
