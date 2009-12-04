@@ -59,7 +59,6 @@ class LtCaptcha
         'Candice'  => array('spacing' =>-1.5,'minSize' => 28, 'maxSize' => 31, 'font' => 'Candice.ttf'),
         'DingDong' => array('spacing' => -2, 'minSize' => 24, 'maxSize' => 30, 'font' => 'Ding-DongDaddyO.ttf'),
         'Duality'  => array('spacing' => -2, 'minSize' => 30, 'maxSize' => 38, 'font' => 'Duality.ttf'),
-        'Heineken' => array('spacing' => -2, 'minSize' => 24, 'maxSize' => 34, 'font' => 'Heineken.ttf'),
         'Jura'     => array('spacing' => -2, 'minSize' => 28, 'maxSize' => 32, 'font' => 'Jura.ttf'),
         'StayPuft' => array('spacing' =>-1.5,'minSize' => 28, 'maxSize' => 32, 'font' => 'StayPuft.ttf'),
         'Times'    => array('spacing' => -2, 'minSize' => 28, 'maxSize' => 34, 'font' => 'TimesNewRomanBold.ttf'),
@@ -162,14 +161,16 @@ class LtCaptcha
 	/**
 	 * Text insertion
 	 */
-	protected function WriteText($text, $fontcfg = array()) {
+	protected function WriteText($text, $fontcfg = array()) 
+	{
+		header("font: {$fontcfg['font']}");
 		if (empty($fontcfg)) {
 			// Select the font configuration
 			$fontcfg  = $this->fonts[array_rand($this->fonts)];
 		}
 
 		// Full path of font file
-		$fontfile = dirname(__FILE__) . '/fonts/'.$fontcfg['font'];
+		$fontfile = dirname(__FILE__) . '/fonts/' . $fontcfg['font'];
 
 		/** Increase font-size for shortest words: 9% for each glyp missing */
 		$lettersMissing = $this->maxWordLength-strlen($text);
