@@ -139,8 +139,21 @@ $result['username'] = $validator->validate($username,$dtd['username']);
 $result['age'] = $validator->validate($age,$dtd['age']);
 $result['password'] = $validator->validate($password,$dtd['password']);
 print_r($result);
-
 }}}
+
+通过这个基本注册验证例子,我们已经把Validator支持的10个验证方法都用上了.(ban,mask,equal_to,max_length,min_length,max_value,min_value,max_selected,min_selected,required)
+下面分别讲讲这几个
+ban:通常用来验证字符串中不包含指定字符的,例如用户名不能包含xxx
+mask:通常用来验证字符串中包含指定字符的,例如用户名只能以字母数字开头
+equal_to:通常用来验证两个值是否恒等,例如输入的两次密码是否相同
+max_length:通常用来验证输入的字符串是否超过了指定长度,例如用户名最多只能8个字母
+min_length:通常用来验证输入的字符串是否少于指定长度,例如用户名最少4个字母
+max_value:通常用来验证输入的数值是否大于指定的值,例如年龄最大为99岁
+min_value:通常用来验证输入的数值是否小于指定的值,例如年龄最小为10岁
+max_selected:通常用来验证选择的最多个数是否大于指定的值,例如最多只能选3个
+min_selected:通常用来验证选择的最少个数是否小于指定的值,例如最少只能选1个
+required:通常用来验证该验证选项是否为必填,例如用户名不能为空
+
 = 扩展Validator类 =
 {{{
 class myValidator extends LtValidator
