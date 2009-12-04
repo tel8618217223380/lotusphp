@@ -2,7 +2,7 @@
 /**
  * Database adapter PDO class
  */
-abstract class DbAdapterPdo extends DbAdapter
+abstract class LtDbAdapterPdo extends LtDbAdapter
 {
 	/**
 	 * The PDO construct options

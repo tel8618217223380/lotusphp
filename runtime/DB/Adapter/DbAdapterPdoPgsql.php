@@ -2,7 +2,7 @@
 /**
  * Database adapter PDO pgsql class
  */
-class DbAdapterPdoPgsql extends DbAdapterPdo
+class LtDbAdapterPdoPgsql extends LtDbAdapterPdo
 {
 	/**
 	 * The default database configuration for pgsql

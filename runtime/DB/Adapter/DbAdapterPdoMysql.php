@@ -2,7 +2,7 @@
 /**
  * Database adapter PDO mysql class
  */
-class DbAdapterPdoMysql extends DbAdapterPdo
+class LtDbAdapterPdoMysql extends LtDbAdapterPdo
 {
 	/**
 	 * The default database configuration for mysql

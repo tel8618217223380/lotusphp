@@ -2,7 +2,7 @@
 /**
  * Database class
  */
-class Db
+class LtDb
 {
 	/**
 	 * The connection pool
@@ -25,7 +25,7 @@ class Db
 	 */
 	static public function factory($driver)
 	{
-		$adapterClassName = 'DbAdapter' . ucfirst($driver);
+		$adapterClassName = 'LtDbAdapter' . ucfirst($driver);
 		if (!empty($driver))
 		{
 			if (class_exists($adapterClassName))
@@ -53,31 +53,31 @@ class Db
 	 */
 	static public function newDbTable($table)
 	{
-		if (isset(Db::$tables[$table]) || 1 == count(Db::$servers))
+		if (isset(LtDb::$tables[$table]) || 1 == count(LtDb::$servers))
 		{
-			$newDbTable = new DbTable();
-			if (1 == count(Db::$servers))
+			$newDbTable = new LtDbTable();
+			if (1 == count(LtDb::$servers))
 			{
-				$groupId = key(Db::$servers);
+				$groupId = key(LtDb::$servers);
 				$newDbTable->group = $groupId;
 				$newDbTable->schema = $groupId;
 				$newDbTable->tableName = $table;
 			}
 			else
 			{
-				$newDbTable->group = Db::$tables[$table]['group'];
-				$newDbTable->schema = Db::$tables[$table]['schema'];
-				if (isset(Db::$tables[$table]['created_column']))
+				$newDbTable->group = LtDb::$tables[$table]['group'];
+				$newDbTable->schema = LtDb::$tables[$table]['schema'];
+				if (isset(LtDb::$tables[$table]['created_column']))
 				{
-					$newDbTable->createdColumn = Db::$tables[$table]['created_column'];
+					$newDbTable->createdColumn = LtDb::$tables[$table]['created_column'];
 				}
-				if (isset(Db::$tables[$table]['modified_column']))
+				if (isset(LtDb::$tables[$table]['modified_column']))
 				{
-					$newDbTable->modifiedColumn = Db::$tables[$table]['modified_column'];
+					$newDbTable->modifiedColumn = LtDb::$tables[$table]['modified_column'];
 				}
-				if (isset(Db::$tables[$table]['table_name']))
+				if (isset(LtDb::$tables[$table]['table_name']))
 				{
-					$newDbTable->tableName = Db::$tables[$table]['table_name'];
+					$newDbTable->tableName = LtDb::$tables[$table]['table_name'];
 				}
 			}
 			$newDbTable->db = $newDbTable->getAdapterInstance();
