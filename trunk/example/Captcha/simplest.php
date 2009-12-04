@@ -14,8 +14,8 @@ include $lotusHome . "/runtime/Captcha/CaptchaConfig.php";
  */
 //构造设置Captcha的参数
 
-//$fonts = dirname(__FILE__) . "/fonts";
-$fonts = "D:/AppServ/www/lotus/example/Captcha/fonts";
+$fonts = dirname(__FILE__) . "/fonts";
+
 
 $captcha = new LtCaptcha();
 $captcha->conf->secretKey = "lotusphp";
