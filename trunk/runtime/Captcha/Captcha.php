@@ -13,13 +13,15 @@ class LtCaptcha
 		$allowedSymbols = "23456789abcdeghkmnpqsuvxyz"; #alphabet without similar symbols (o=0, 1=l, i=j, t=f)
 		$key = $this->conf->secretKey;
 		$captchaWordLength = isset($this->conf->length) ? $this->conf->length : 4;
-		$hashNum = abs(crc32($key . $seed));
+		$hashNum = crc32($key . $seed);
+		$hashNum = $hashNum * pow(37, $captchaWordLength-7);
 		$allowedSymbolsLength = strlen($allowedSymbols);
 		$captchaWord = "";
 		while (0 < $captchaWordLength)
 		{
-			$captchaWord .= $allowedSymbols[$hashNum % $allowedSymbolsLength];
-			$hashNum = (int) $hashNum / $allowedSymbolsLength;
+			$remainder = $hashNum % $allowedSymbolsLength;
+			$captchaWord .= $allowedSymbols[abs($remainder)];
+			$hashNum = ($hashNum-$remainder) / $allowedSymbolsLength;
 			$captchaWordLength --;
 		}
 		return $captchaWord;
@@ -78,7 +80,7 @@ class LtCaptcha
 	 * Internal image size factor (for better image quality)
 	 * 1: low, 2: medium, 3: high
 	 */
-	public $scale = 2;
+	public $scale = 3;
 
 	/**
 	 * Blur effect for better image quality (but slower image processing).
@@ -114,7 +116,7 @@ class LtCaptcha
 
 
 		if ($this->debug) {
-			imagestring($this->im, 1, 1, $this->height-8,
+			imagestring($this->im, 1, 1, $this->conf->height-8,
                 "$text {$fontcfg['font']} ".round((microtime(true)-$ini)*1000)."ms",
 			$this->GdFgColor
 			);
@@ -134,7 +136,7 @@ class LtCaptcha
 			imagedestroy($this->im);
 		}
 
-		$this->im = imagecreatetruecolor($this->width*$this->scale, $this->height*$this->scale);
+		$this->im = imagecreatetruecolor($this->conf->width*$this->scale, $this->conf->height*$this->scale);
 
 		// Background color
 		$this->GdBgColor = imagecolorallocate($this->im,
@@ -142,7 +144,7 @@ class LtCaptcha
 		$this->backgroundColor[1],
 		$this->backgroundColor[2]
 		);
-		imagefilledrectangle($this->im, 0, 0, $this->width*$this->scale, $this->height*$this->scale, $this->GdBgColor);
+		imagefilledrectangle($this->im, 0, 0, $this->conf->width*$this->scale, $this->conf->height*$this->scale, $this->GdBgColor);
 
 		// Foreground color
 		$color           = $this->colors[mt_rand(0, sizeof($this->colors)-1)];
@@ -161,9 +163,8 @@ class LtCaptcha
 	/**
 	 * Text insertion
 	 */
-	protected function WriteText($text, $fontcfg = array()) 
+	protected function WriteText($text, $fontcfg = array())
 	{
-		header("font: {$fontcfg['font']}");
 		if (empty($fontcfg)) {
 			// Select the font configuration
 			$fontcfg  = $this->fonts[array_rand($this->fonts)];
@@ -178,7 +179,7 @@ class LtCaptcha
 
 		// Text generation (char by char)
 		$x      = 20*$this->scale;
-		$y      = round(($this->height*27/40)*$this->scale);
+		$y      = round(($this->conf->height*27/40)*$this->scale);
 		$length = strlen($text);
 		for ($i=0; $i<$length; $i++) {
 			$degree   = rand($this->maxRotation*-1, $this->maxRotation);
@@ -200,36 +201,39 @@ class LtCaptcha
 	/**
 	 * Wave filter
 	 */
-	protected function WaveImage() {
+	protected function WaveImage()
+	{
 		// X-axis wave generation
 		$xp = $this->scale*$this->Xperiod*rand(1,3);
 		$k = rand(0, 100);
-		for ($i = 0; $i < ($this->width*$this->scale); $i++) {
+		for ($i = 0; $i < ($this->conf->width*$this->scale); $i++) 
+		{
 			imagecopy($this->im, $this->im,
 			$i-1, sin($k+$i/$xp) * ($this->scale*$this->Xamplitude),
-			$i, 0, 1, $this->height*$this->scale);
+			$i, 0, 1, $this->conf->height*$this->scale);
 		}
 
 		// Y-axis wave generation
 		$k = rand(0, 100);
 		$yp = $this->scale*$this->Yperiod*rand(1,2);
-		for ($i = 0; $i < ($this->height*$this->scale); $i++) {
+		for ($i = 0; $i < ($this->conf->height*$this->scale); $i++) 
+		{
 			imagecopy($this->im, $this->im,
 			sin($k+$i/$yp) * ($this->scale*$this->Yamplitude), $i-1,
-			0, $i, $this->width*$this->scale, 1);
+			0, $i, $this->conf->width*$this->scale, 1);
 		}
 	}
 
 	/**
 	 * Reduce the image to the final size
 	 */
-	protected function ReduceImage() 
+	protected function ReduceImage()
 	{
-		$imResampled = imagecreatetruecolor($this->width, $this->height);
+		$imResampled = imagecreatetruecolor($this->conf->width, $this->conf->height);
 		imagecopyresampled($imResampled, $this->im,
 		0, 0, 0, 0,
-		$this->width, $this->height,
-		$this->width*$this->scale, $this->height*$this->scale
+		$this->conf->width, $this->conf->height,
+		$this->conf->width*$this->scale, $this->conf->height*$this->scale
 		);
 		imagedestroy($this->im);
 		$this->im = $imResampled;
@@ -238,7 +242,8 @@ class LtCaptcha
 	/**
 	 * File generation
 	 */
-	protected function WriteImage() {
+	protected function WriteImage() 
+	{
 		if ($this->imageFormat == 'png' && function_exists('imagepng')) {
 			header("Content-type: image/png");
 			imagepng($this->im);
