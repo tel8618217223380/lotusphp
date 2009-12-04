@@ -2,7 +2,7 @@
 /**
  * Database adapter PDO sqlite class
  */
-class DbAdapterPdoSqlite extends DbAdapterPdo
+class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 {
 	/**
 	 * The default database configuration for sqlite
