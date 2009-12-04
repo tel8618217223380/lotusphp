@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 class LtCaptcha
 {
 	public $conf;
