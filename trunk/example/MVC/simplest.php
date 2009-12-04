@@ -1,6 +1,6 @@
 <?php
 /*
- * 加载Db类文件
+ * 加载MVC类文件
  * 加载的类很多，且需要注意先后顺序，推荐使用LtAutoloader自动加载
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
