@@ -16,7 +16,7 @@ include $lotusHome . "/runtime/DB/QueryEngine/DbTable.php";
  * 关键是给Db::$servers变量赋一个数组，这个数组维度比较复杂 ，所以用DbConfigBuilder构建不容易出错
  * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给Db::$servers，效果是一样的
  */
-$dbConfigBuilder = new DbConfigBuilder();
+$dbConfigBuilder = new LtDbConfigBuilder();
 $dbConfigBuilder->addGroup("lotus_db_test");
 $dbConfigBuilder->addGroup("mysql");
 $dbConfigBuilder->addHost(array(
@@ -36,17 +36,17 @@ $dbConfigBuilder->addHost(array(
 	"adapter" => "pdoMysql",
 	"charset" => "UTF-8",
 ), null, null,"mysql");
-Db::$servers = $dbConfigBuilder->getServers();
+LtDb::$servers = $dbConfigBuilder->getServers();
 
 /*
  * 配置表
  */
 $dbConfigBuilder->addTable("user", null, null, "lotus_db_test");
 $dbConfigBuilder->addTable("host", null, null, "mysql");
-Db::$tables = $dbConfigBuilder->getTables();
+LtDb::$tables = $dbConfigBuilder->getTables();
 
-$userTDG = Db::newDbTable("user");
-$hostTDG = Db::newDbTable("host");
+$userTDG = LtDb::newDbTable("user");
+$hostTDG = LtDb::newDbTable("host");
 
 print_r($userTDG->fetchRows());
 print_r($hostTDG->fetchRows());

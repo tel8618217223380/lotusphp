@@ -4,7 +4,7 @@
  *
  * @todo pretty join support
  */
-class DbTable
+class LtDbTable
 {
 
 	/**
@@ -211,10 +211,10 @@ class DbTable
 	 */
 	public function getAdapterInstance()
 	{
-		$nodeArray = array_keys(Db::$servers[$this->group]);
-		$masterIndexArray = array_keys(Db::$servers[$this->group][$nodeArray[0]]['master']);
-		$config = array_merge(Db::$servers[$this->group][$nodeArray[0]]['master'][$masterIndexArray[0]]);
-		return Db::factory($config['adapter']);
+		$nodeArray = array_keys(LtDb::$servers[$this->group]);
+		$masterIndexArray = array_keys(LtDb::$servers[$this->group][$nodeArray[0]]['master']);
+		$config = array_merge(LtDb::$servers[$this->group][$nodeArray[0]]['master'][$masterIndexArray[0]]);
+		return LtDb::factory($config['adapter']);
 	}
 
 	/**

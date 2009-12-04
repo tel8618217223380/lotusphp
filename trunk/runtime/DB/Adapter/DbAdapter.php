@@ -4,7 +4,7 @@
  *
  * @todo cache config in opcode cache, avoid getConfig() when query
  */
-abstract class DbAdapter
+abstract class LtDbAdapter
 {
 	/**
 	 * The current connection
@@ -75,32 +75,32 @@ abstract class DbAdapter
 	 */
 	protected function _getBasicConfig($group, $node, $role = 'master', $host = null)
 	{
-		$nodeArray = array_keys(Db::$servers[$group]);
-		$hostArray = array_keys(Db::$servers[$group][$node][$role]);
+		$nodeArray = array_keys(LtDb::$servers[$group]);
+		$hostArray = array_keys(LtDb::$servers[$group][$node][$role]);
 		if (!$host)
 		{
 			$host = $hostArray[0];
-			$config = Db::$servers[$group][$node][$role][$host];
+			$config = LtDb::$servers[$group][$node][$role][$host];
 		}
 		else
 		{
 			$config = array_merge(
-			Db::$servers[$group][$node][$role][$hostArray[0]],
-			Db::$servers[$group][$node][$role][$host]
+			LtDb::$servers[$group][$node][$role][$hostArray[0]],
+			LtDb::$servers[$group][$node][$role][$host]
 			);
 		}
 		if ('slave' == $role)
 		{
-			$masterIndexArray = array_keys(Db::$servers[$group][$node]['master']);
+			$masterIndexArray = array_keys(LtDb::$servers[$group][$node]['master']);
 			$config = array_merge(
-			Db::$servers[$group][$nodeArray[0]]['master'][$masterIndexArray[0]],
+			LtDb::$servers[$group][$nodeArray[0]]['master'][$masterIndexArray[0]],
 			$config
 			);
 		}
-		$firstNodeHostIndexArray = array_keys(Db::$servers[$group][$nodeArray[0]][$role]);
+		$firstNodeHostIndexArray = array_keys(LtDb::$servers[$group][$nodeArray[0]][$role]);
 		$config = array_merge(
 		$this->_config,
-		Db::$servers[$group][$nodeArray[0]][$role][$firstNodeHostIndexArray[0]],
+		LtDb::$servers[$group][$nodeArray[0]][$role][$firstNodeHostIndexArray[0]],
 		$config
 		);
 		return $config;
@@ -125,15 +125,15 @@ abstract class DbAdapter
 	 */
 	protected function _getConnection($role)
 	{
-		$hosts = Db::$servers[$this->getGroup()][$this->getNode()][$role];
+		$hosts = LtDb::$servers[$this->getGroup()][$this->getNode()][$role];
 		$connection = false;
 		foreach($hosts as $host => $hostConfig)
 		{
 			$hostConfig = $this->_getConfig($this->getGroup(), $this->getNode(), $role, $host);
 			$connectionKey = self::_getConnectionKey($hostConfig);
-			if (isset(Db::$connections[$connectionKey]))
+			if (isset(LtDb::$connections[$connectionKey]))
 			{
-				$cachedConnectionInfo = Db::$connections[$connectionKey];
+				$cachedConnectionInfo = LtDb::$connections[$connectionKey];
 				if (time() < $cachedConnectionInfo['expire_time'])
 				{                                        
 					$connection = $cachedConnectionInfo['connection'];
@@ -143,8 +143,8 @@ abstract class DbAdapter
 		}
 		if (!$connection)
 		{
-			$hostTotal = count(Db::$servers[$this->getGroup()][$this->getNode()][$role]);
-			$hostIndexArray = array_keys(Db::$servers[$this->getGroup()][$this->getNode()][$role]);
+			$hostTotal = count(LtDb::$servers[$this->getGroup()][$this->getNode()][$role]);
+			$hostIndexArray = array_keys(LtDb::$servers[$this->getGroup()][$this->getNode()][$role]);
 			while ($hostTotal)
 			{
 				$hashNumber = substr(microtime(),7,1) % $hostTotal;
@@ -152,7 +152,7 @@ abstract class DbAdapter
 				if ($connection = $this->_connect($hostConfig))
 				{
 					$connectionKey = self::_getConnectionKey($hostConfig);
-					Db::$connections[$connectionKey] = array('connection' => $connection, 'expire_time' => time() + 30);
+					LtDb::$connections[$connectionKey] = array('connection' => $connection, 'expire_time' => time() + 30);
 					break;
 				}
 				for ($i = $hashNumber; $i < $hostTotal - 1; $i ++)
@@ -212,7 +212,7 @@ abstract class DbAdapter
 		//~ fix issue 11
 		if (NULL === $this->_node)
 		{
-			$nodeArray = array_keys(Db::$servers[$this->getGroup()]);
+			$nodeArray = array_keys(LtDb::$servers[$this->getGroup()]);
 			if (1 === count($nodeArray))
 			{
 				$this->_node = $nodeArray[0];
@@ -242,9 +242,9 @@ abstract class DbAdapter
 	 */
 	public function getGroup()
 	{
-		if (1 == count(Db::$servers))
+		if (1 == count(LtDb::$servers))
 		{
-			$this->_group = key(Db::$servers);
+			$this->_group = key(LtDb::$servers);
 		}
 		return $this->_group;
 	}
@@ -287,7 +287,7 @@ abstract class DbAdapter
 	public function query($sql, $bind = null, $useSlave = false)
 	{
 		$connection = null;
-		if ($useSlave && isset(Db::$servers[$this->getGroup()][$this->getNode()]['slave']))
+		if ($useSlave && isset(LtDb::$servers[$this->getGroup()][$this->getNode()]['slave']))
 		{
 			$connection = $this->_getConnection('slave');
 		}
@@ -354,7 +354,7 @@ abstract class DbAdapter
 	 */
 	public function setNode($node)
 	{
-		if (isset(Db::$servers[$this->getGroup()][$node]))
+		if (isset(LtDb::$servers[$this->getGroup()][$node]))
 		{
 			$this->_node = $node;
 		}
@@ -373,7 +373,7 @@ abstract class DbAdapter
 	 */
 	public function setGroup($group)
 	{
-		if (isset(Db::$servers[$group]))
+		if (isset(LtDb::$servers[$group]))
 		{
 			$this->_group = $group;
 		}
