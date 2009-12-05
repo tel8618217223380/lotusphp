@@ -76,9 +76,17 @@ class LtAutoloader
 					}
 				}
 			}
-			else if(!in_array($file, array(".", "..", ".svn")))// if $currentFile is a directory, pass through the next loop.
+			else if(is_dir($file))
 			{
-				$this->dirs[] = $dir . DIRECTORY_SEPARATOR . $file;
+				if (in_array($file, array(".", "..", ".svn")))
+				{
+					continue;
+				}
+				$this->dirs[] = $dir . DIRECTORY_SEPARATOR . $file;// if $currentFile is a directory, pass through the next loop.
+			}
+			else
+			{
+				trigger_error("$currentFile is not a file or a directory.");
 			}
 		}
 	}

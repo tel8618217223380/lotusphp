@@ -17,5 +17,4 @@ $captcha = new LtCaptcha();
 $captcha->conf->secretKey = "lotusphp";
 
 $seed = uniqid();
-$word = $captcha->getWord($seed);
-$captcha->generateImage($word);
+$captcha->generateImage($seed);
