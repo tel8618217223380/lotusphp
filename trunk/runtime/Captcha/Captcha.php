@@ -10,7 +10,7 @@ class LtCaptcha
 
 	public function verify($seed, $userInput)
 	{
-		return $userInput === $this->getWord($seed);
+		return $userInput == $this->getWord($seed);
 	}
 
 	public function generateImage($seed)
