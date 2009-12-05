@@ -1,4 +1,8 @@
 <?php
+/**
+ * Lotus Captcha component is inspired by "cool-php-captcha" project
+ * http://code.google.com/p/cool-php-captcha
+ */
 class LtCaptcha
 {
 	public $conf;
