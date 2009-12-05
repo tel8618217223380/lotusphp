@@ -1,28 +1,29 @@
 <?php
-/* 
- * 加载Captcha类文件
- */
-$lotusHome = dirname(dirname(dirname(__FILE__)));
-include $lotusHome . "/runtime/Captcha/Captcha.php";
-include $lotusHome . "/runtime/Captcha/CaptchaConfig.php";
-/* 
- * 加载Captcha类文件
- */
-
-/*
- * 开始使用Captcha
- */
-$captcha = new LtCaptcha();
-$captcha->conf->secretKey = "lotusphp";
-
-//绘制验证码图片
-$seed = uniqid();
-$captcha->generateImage($seed);
-
-/*
- * 校验用户输入的验证码是否正确
-if ($captcha->verify($seed, $_REQUEST["captcha"]))
+if (!isset($_POST["captcha_word"]))
 {
-	echo "验证码输入正确";
+	$seed = uniqid();
+	echo "
+<form action='simplest.php' method='post'>
+<img src='captcha_image.php?seed=$seed' />
+<input type='hidden' name='seed' value='$seed' />
+<br />
+请输入上图中的验证码：<input type='text' name='captcha_word' />
+<input type='submit' />
+</form>
+";
 }
-*/
+else
+{
+	/*
+	 * 校验用户输入的验证码是否正确
+	 */
+	include("./captcha.inc.php");
+	if ($captcha->verify($_POST["seed"], $_POST["captcha_word"]))
+	{
+		echo "验证码输入正确";
+	}
+	else
+	{
+		echo "验证码输入错误，请<a href='simplest.php'>重试</a>";
+	}
+}

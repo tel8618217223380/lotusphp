@@ -2,7 +2,7 @@
 class LtCaptchaConfig
 {
 	public $secretKey;
-	public $length = 6;
+	public $length = 4;
 	public $width = 200;
 	public $height = 80;
 
