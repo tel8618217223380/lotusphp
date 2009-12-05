@@ -3,7 +3,7 @@
  * 加载Db类文件
  * 加载的类很多，且需要注意先后顺序，推荐使用LtAutoloader自动加载
  */
-$lotusHome = dirname(dirname(dirname(dirname(__FILE__))));
+$lotusHome = dirname(dirname(dirname(__FILE__)));
 include $lotusHome . "/runtime/DB/DbConfigBuilder.php";
 include $lotusHome . "/runtime/DB/Db.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapter.php";
