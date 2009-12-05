@@ -70,7 +70,9 @@ class LtCaptcha
 	/** GD image */
 	public $im;
 
-	public function generateImage($text) {
+	public function generateImage($seed)
+	{
+		$text = $this->getWord($seed);
 		$ini = microtime(true);
 
 		/** Initialization */
