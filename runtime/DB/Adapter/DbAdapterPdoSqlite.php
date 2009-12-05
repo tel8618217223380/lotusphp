@@ -93,9 +93,9 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo {
 		$result = $queryResult['rows'];
 		$fields = array();
 		foreach ($result as $key => $value) {
-			// å­—æ®µå
+			// ×Ö¶ÎÃû
 			$fields[$value['name']]['name'] = $value['name']; 
-			// å­—æ®µç±»å‹
+			// ×Ö¶ÎÀàĞÍ
 			$fulltype = $value['type'];
 			$size = null;
 			$precision = null;
