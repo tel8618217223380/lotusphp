@@ -12,9 +12,17 @@ include $lotusHome . "/runtime/Captcha/CaptchaConfig.php";
 /*
  * 开始使用Captcha
  */
-//构造设置Captcha的参数
 $captcha = new LtCaptcha();
 $captcha->conf->secretKey = "lotusphp";
 
+//绘制验证码图片
 $seed = uniqid();
 $captcha->generateImage($seed);
+
+/*
+ * 校验用户输入的验证码是否正确
+if ($captcha->verify($seed, $_REQUEST["captcha"]))
+{
+	echo "验证码输入正确";
+}
+*/
