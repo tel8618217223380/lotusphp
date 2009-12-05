@@ -20,6 +20,7 @@ $dbConfigBuilder = new LtDbConfigBuilder();
 $dbConfigBuilder->addSingleHost(array(
 	// host设置Sqlite文件存放目录   
 	"host" => dirname(__FILE__).DIRECTORY_SEPARATOR,
+	// "dbver" => 'sqlite2', // 2.x 不支持 IF NOT EXISTS 不支持 AUTOINCREMENT
 	// dbname设置Sqlite文件名
 	"dbname" => "lotus_db_test.db",
 	"adapter" => "pdoSqlite",
@@ -33,18 +34,17 @@ LtDb::$servers = $dbConfigBuilder->getServers();
 $dba = LtDb::factory("pdoSqlite");
 $result = $dba->query("
 CREATE TABLE IF NOT EXISTS [user] (
-[user_id] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
-[username] VARCHAR(20)  NOT NULL,
-[age] INTEGER  NOT NULL,
-[created] INTEGER  NOT NULL,
-[modified] INTEGER  NOT NULL
+	[user_id] INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
+	[username] VARCHAR(20)  NOT NULL,
+	[age] INTEGER  NOT NULL,
+	[created] INTEGER  NOT NULL,
+	[modified] INTEGER  NOT NULL
 )
 ");
 $result = $dba->query("
-CREATE UNIQUE INDEX IF NOT EXISTS [username] ON [user](
-[username]  ASC
-)
+	CREATE UNIQUE INDEX IF NOT EXISTS [username] ON [user]([username]  ASC)
 ");
+echo '<pre>';
 print_r($result);
 
 /*
@@ -76,7 +76,7 @@ $userTDG->insert(array(
 $condition["where"]["expression"] = "age < 10";
 $condition["fields"] = "user_id, username";
 print_r($userTDG->fetchRows($condition));
-
+echo '</pre>';
 //根据主键更新
 $userTDG->update($userId, array(
 	"age" => 31
