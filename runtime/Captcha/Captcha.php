@@ -8,7 +8,43 @@ class LtCaptcha
 		$this->conf = new LtCaptchaConfig();
 	}
 
-	public function getWord($seed)
+	public function verify($seed, $userInput)
+	{
+		return $userInput === $this->getWord($seed);
+	}
+
+	public function generateImage($seed)
+	{
+		$text = $this->getWord($seed);
+		$ini = microtime(true);
+
+		/** Initialization */
+		$this->ImageAllocate();
+
+		$fontcfg  = $this->fonts[array_rand($this->fonts)];
+		$this->WriteText($text, $fontcfg);
+
+		/** Transformations */
+		$this->WaveImage();
+		if ($this->conf->blur && function_exists('imagefilter')) {
+			imagefilter($this->im, IMG_FILTER_GAUSSIAN_BLUR);
+		}
+		$this->ReduceImage();
+
+
+		if ($this->conf->debug) {
+			imagestring($this->im, 1, 1, $this->conf->height-8,
+                "$text {$fontcfg['font']} ".round((microtime(true)-$ini)*1000)."ms",
+			$this->GdFgColor
+			);
+		}
+
+		/** Output */
+		$this->WriteImage();
+		$this->Cleanup();
+	}
+
+	protected function getWord($seed)
 	{
 		$allowedSymbols = "23456789abcdeghkmnpqsuvxyz"; #alphabet without similar symbols (o=0, 1=l, i=j, t=f)
 		$key = $this->conf->secretKey;
@@ -69,37 +105,6 @@ class LtCaptcha
 
 	/** GD image */
 	public $im;
-
-	public function generateImage($seed)
-	{
-		$text = $this->getWord($seed);
-		$ini = microtime(true);
-
-		/** Initialization */
-		$this->ImageAllocate();
-
-		$fontcfg  = $this->fonts[array_rand($this->fonts)];
-		$this->WriteText($text, $fontcfg);
-
-		/** Transformations */
-		$this->WaveImage();
-		if ($this->conf->blur && function_exists('imagefilter')) {
-			imagefilter($this->im, IMG_FILTER_GAUSSIAN_BLUR);
-		}
-		$this->ReduceImage();
-
-
-		if ($this->conf->debug) {
-			imagestring($this->im, 1, 1, $this->conf->height-8,
-                "$text {$fontcfg['font']} ".round((microtime(true)-$ini)*1000)."ms",
-			$this->GdFgColor
-			);
-		}
-
-		/** Output */
-		$this->WriteImage();
-		$this->Cleanup();
-	}
 
 	/**
 	 * Creates the image resources
