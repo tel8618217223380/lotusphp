@@ -3,10 +3,16 @@ class LtCache
 {
 	public $adapter;
 
-	public function init($adapter, $options = array())
+	public function __construct()
 	{
-		$adapterClassName = "LtCacheAdapter" . ucfirst($adapter);
+		$this->conf = new LtCacheConfig;
+	}
+
+	public function init()
+	{
+		$adapterClassName = "LtCacheAdapter" . ucfirst($this->conf->adapter);
 		$this->adapter = new $adapterClassName;
+		$this->adapter->options = $this->conf->options;
 	}
 	
 	public function add($key, $value)

@@ -5,14 +5,36 @@
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
 include $lotusHome . "/runtime/Cache/Cache.php";
-include $lotusHome . "/runtime/Cache/CacheAdapter.php";
-include $lotusHome . "/runtime/Cache/CacheAdapterApc.php";
-include $lotusHome . "/runtime/Cache/CacheAdapterXcache.php";
+include $lotusHome . "/runtime/Cache/CacheConfig.php";
+include $lotusHome . "/runtime/Cache/adapter/CacheAdapter.php";
+include $lotusHome . "/runtime/Cache/adapter/CacheAdapterApc.php";
+include $lotusHome . "/runtime/Cache/adapter/CacheAdapterEAccelerator.php";
+include $lotusHome . "/runtime/Cache/adapter/CacheAdapterPhps.php";
+include $lotusHome . "/runtime/Cache/adapter/CacheAdapterXcache.php";
 /* 
- * Load rumtime class end
+ * 加载Cache类文件
  */
 
+/*
+ * 使用apc
+ */
 $cache = new LtCache;
-$cache->init("xcache");
-$cache->add("test_key", "hello cache");
+$cache->conf->adapter= "apc";
+$cache->init();
+if(!$cache->get("test_key"))
+{
+	$cache->add("test_key", "hello apc");
+}
+echo $cache->get("test_key");
+
+/*
+ * 使用phps(serialize)
+ */
+$cache->conf->adapter= "phps";
+$cache->conf->options= array("cache_file_root" => dirname(__FILE__) . '\phps_files');
+$cache->init();
+if(!$cache->get("test_key"))
+{
+	$cache->add("test_key", "hello phps");
+}
 echo $cache->get("test_key");
