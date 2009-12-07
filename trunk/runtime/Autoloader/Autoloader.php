@@ -1,7 +1,7 @@
 <?php
 class LtAutoloader
 {
-	protected $fileMapping;
+	public $fileMapping;
 	protected $dirs;
 
 	public function __construct($dirArray = null)
@@ -9,19 +9,9 @@ class LtAutoloader
 		if ($dirArray)
 		{
 			$this->dirs = $dirArray;
-      $this->scanDirs();
+			$this->scanDirs();
 			$this->init();
 		}
-	}
-
-	public function getFileMapping()
-	{
-		return $this->fileMapping;
-	}
-
-	public function setFileMapping($fileMapping)
-	{
-		$this->fileMapping = $fileMapping;
 	}
 
 	public function init()
