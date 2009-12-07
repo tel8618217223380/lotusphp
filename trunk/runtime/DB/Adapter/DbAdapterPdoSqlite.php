@@ -2,30 +2,30 @@
 /**
 * Database adapter PDO sqlite class
 */
-class LtDbAdapterPdoSqlite extends LtDbAdapterPdo 
+class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 {
 	/**
 	* The default database configuration for sqlite
-	* 
-	* @var array 
+	*
+	* @var array
 	*/
 	protected $_config = array('port' => '', 'username' => '', 'password' => '');
 
 	/**
 	* The PDO construct options
-	* 
-	* @var array 
+	*
+	* @var array
 	*/
 	protected $_options = array(PDO :: ATTR_PERSISTENT => false);
 
 	/**
 	* Create a PDO DSN for the adapter
-	* 
-	* @param array $config 
-	* @return string 
+	*
+	* @param array $config
+	* @return string
 	*/
 	protected function _dsn($config)
-	{ 
+	{
 		// sqlite:/opt/databases/mydb.sq3
 		// sqlite::memory:
 		// sqlite2:/opt/databases/mydb.sq2
@@ -36,12 +36,12 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 
 	/**
 	* Get current db configuration
-	* 
-	* @param string $group 
-	* @param string $node 
-	* @param string $role 
-	* @param string $host 
-	* @return array 
+	*
+	* @param string $group
+	* @param string $node
+	* @param string $role
+	* @param string $host
+	* @return array
 	*/
 	protected function _getConfig($group, $node, $role = 'master', $host = null)
 	{
@@ -50,8 +50,8 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 
 	/**
 	* Change current schema
-	* 
-	* @return void 
+	*
+	* @return void
 	*/
 	protected function _useSchema()
 	{
@@ -59,15 +59,15 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 
 	/**
 	* Add an adapter-specific LIMIT clause to the SELECT statement.
-	* 
-	* @param string $sql 
-	* @param integer $limit 
-	* @param integer $offset 
-	* @return string 
+	*
+	* @param string $sql
+	* @param integer $limit
+	* @param integer $offset
+	* @return string
 	*/
 	public function limit($sql, $limit, $offset)
 	{
-		if ($limit > 0) 
+		if ($limit > 0)
 		{
 			$offset = 0 < $offset ? $offset : 0;
 			$sql .= " LIMIT $limit OFFSET $offset";
@@ -77,22 +77,22 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 
 	/**
 	* Set encoding for a database connection.
-	* 
-	* @param string $encoding 
-	* @param resource $connection 
-	* @return void 
+	*
+	* @param string $encoding
+	* @param resource $connection
+	* @return void
 	*/
 	public function setCharset($charset, $connection)
-	{ 
+	{
 		// $sql = 'PRAGMA encoding = "' . $charset . '"';
 		// $connection -> exec($sql);
 	}
 
 	/**
 	* Return the column descriptions for a table.
-	* 
-	* @param string $table 
-	* @return array 
+	*
+	* @param string $table
+	* @return array
 	*/
 	public function showFields($table)
 	{
@@ -100,28 +100,28 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 		$queryResult = $this -> query($sql);
 		$result = $queryResult['rows'];
 		$fields = array();
-		foreach ($result as $key => $value) 
+		foreach ($result as $key => $value)
 		{
 			// ×Ö¶ÎÃû
-			$fields[$value['name']]['name'] = $value['name']; 
+			$fields[$value['name']]['name'] = $value['name'];
 			// ×Ö¶ÎÀàÐÍ
 			$fulltype = $value['type'];
 			$size = null;
 			$precision = null;
 			$scale = null;
 
-			if (preg_match('/^([^\(]+)\(\s*(\d+)\s*,\s*(\d+)\s*\)$/',$fulltype, $matches)) 
+			if (preg_match('/^([^\(]+)\(\s*(\d+)\s*,\s*(\d+)\s*\)$/',$fulltype, $matches))
 			{
 				$type = $matches[1];
 				$precision = $matches[2];
 				$scale = $matches[3]; // aka precision
 			}
-			elseif (preg_match('/^([^\(]+)\(\s*(\d+)\s*\)$/',$fulltype, $matches)) 
+			elseif (preg_match('/^([^\(]+)\(\s*(\d+)\s*\)$/',$fulltype, $matches))
 			{
 				$type = $matches[1];
 				$size = $matches[2];
 			}
-			else 
+			else
 			{
 				$type = $fulltype;
 			}
