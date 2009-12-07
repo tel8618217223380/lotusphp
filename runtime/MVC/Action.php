@@ -114,32 +114,6 @@ abstract class LtAction
 	public function __construct($context)
 	{
     	$this->context = $context;
-		if (isset($_SERVER['SERVER_PROTOCOL']))
-		{
-			$webRoot = substr(dirname($_SERVER['SCRIPT_FILENAME']), strlen(realpath($_SERVER['DOCUMENT_ROOT'])));
-			$this->context->uri['protocol'] = isset($_SERVER['HTTPS']) && 'on' == $_SERVER['HTTPS'] ? 'https' : 'http';
-			$this->context->uri['port'] = '80' == $_SERVER['SERVER_PORT'] && 'http' == $this->context->uri['protocol'] || '443' == $_SERVER['SERVER_PORT'] && 'https' == $this->context->uri['protocol'] ? '' : ':' . $_SERVER['SERVER_PORT'];
-			$this->context->uri['host'] = $_SERVER['SERVER_NAME'];
-			$this->context->uri['base'] = sprintf('%s://%s%s%s/', $this->context->uri['protocol'], $this->context->uri['host'], $this->context->uri['port'], $webRoot);
-			$this->context->uri['bootstrap_file'] = basename($_SERVER['SCRIPT_FILENAME']);
-			if(class_exists('Url'))
-			{
-				Url::$prefix = $this->context->uri['base'];
-				Url::$bootstrapFile = $this->context->uri['bootstrap_file'];
-				if (isset(Config::$app['url']['pattern']))
-				{
-					Url::$urlPattern = Config::$app['url']['pattern'];
-				}
-			}
-		}
-		if (isset(Config::$app['acl']))
-		{
-			$this->acl = Config::$app['acl'];
-		}
-		if (isset(Config::$app['dtd'][$this->context->uri['module']][$this->context->uri['action']]))
-		{
-			$this->dtds = Config::$app['dtd'][$this->context->uri['module']][$this->context->uri['action']];
-		}
 		$this->constructed = true;
 	}
 
