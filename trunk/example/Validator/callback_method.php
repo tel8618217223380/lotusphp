@@ -1,21 +1,24 @@
 <?php
 /**
- * 加载Validator类文件
- */
+* 加载Validator类文件
+*/
 $lotusHome = dirname(dirname(dirname(__FILE__)));
 include $lotusHome . "/runtime/Validator/Validator.php";
 include $lotusHome . "/runtime/Validator/ValidatorConfig.php";
 include $lotusHome . "/runtime/Validator/ValidatorDtd.php";
 
-class Action {
+class Action
+{
 	public $test;
-} 
+}
 
-class MyAction extends Action {
-	public function demo() {
+class MyAction extends Action
+{
+	public function demo()
+	{
 		/**
-		 * 构造验证规则
-		 */
+		* 构造验证规则
+		*/
 		$dtd = new LtValidatorDtd("用户名",
 			array("max_length" => 4,
 				"mask" => "/^[a-z0-9]+$/i",
@@ -31,23 +34,24 @@ class MyAction extends Action {
 			);
 
 		/**
-		 * 初始化Validator，执行验证
-		 */
+		* 初始化Validator，执行验证
+		*/
 		$validator = new LtValidator;
 		$username = "fuck my life";
 		$result = $validator -> validate($username, $dtd);
 		print_r($result);
-	} 
+	}
 
-	public function check_user($username) {
+	public function check_user($username)
+	{
 		// 可以从数据库查询
-		if ('fuck my life' == $username) {
+		if ('fuck my life' == $username)
+		{
 			return false;
-		} 
+		}
 		return true;
-	} 
-} 
+	}
+}
 
 $a = new MyAction();
 $a -> demo();
-
