@@ -1,9 +1,8 @@
 <?php
 class Lotus
-{	
-	public $appConfig;
+{
 	public $appOption;
-	public $autoloadFiles;
+	public $envMode = "dev";
 	public $lotusCoreClass = array();
 	public $lotusRuntimeDir;
 
@@ -12,39 +11,10 @@ class Lotus
 		$this->lotusRuntimeDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	}
 
-	public function prepareAutoloader()
-	{
-		require $this->lotusCoreClass["Autoloader"];
-		$autoloader = new LtAutoloader;
-		if (!$this->autoloadFiles)
-		{
-			$this->autoloadFiles = $autoloader->scanDir($this->lotusRuntimeDir);
-		}
-		$autoloader->autoloadFiles = $this->autoloadFiles;
-		$autoloader->init();
-	}
-
-	public function initConfig()
-	{
-		echo "init config\n";
-	}
-
-	public function initDb()
-	{
-		echo "init db\n";
-	}
-
 	public function boot()
 	{
-		$lotusClass = array(
-			"Autoloader" => $this->lotusRuntimeDir . "Autoloader/Autoloader.php",
-			"Cache" => $this->lotusRuntimeDir . "Cache/Cache.php",
-		);
-		$this->lotusCoreClass = array_merge($lotusClass, $this->lotusCoreClass);
-		/**
-		 * @todo if ("dev" != $this->envMode) {$this->autoloadFiles = apc_get($cacheKey)}
-		 */
 		$this->prepareAutoloader();
+		$this->prepareConfig();
 		/**
 		 * Initial other components
 		 */
@@ -55,5 +25,32 @@ class Lotus
 				$this->$method();
 			}
 		}
+	}
+
+	protected function prepareAutoloader()
+	{
+		$lotusClass = array(
+			"LtAutoloader"			=> $this->lotusRuntimeDir . "Autoloader/Autoloader.php",
+			"LtCacheAdapter"		=> $this->lotusRuntimeDir . "Cache/CacheAdapter.php",
+			"LtCacheAdapterApc"		=> $this->lotusRuntimeDir . "Cache/CacheAdapterApc.php",
+			"LtCacheEAccelerator"	=> $this->lotusRuntimeDir . "Cache/CacheAdapterEAccelerator.php",
+			"LtCacheAdapterPhps"	=> $this->lotusRuntimeDir . "Cache/CacheAdapterPhps.php",
+			"LtCacheAdapterXcache"	=> $this->lotusRuntimeDir . "Cache/CacheAdapterXcache.php",
+		);
+		$this->lotusCoreClass = array_merge($lotusClass, $this->lotusCoreClass);
+		require $this->lotusCoreClass["Autoloader"];
+		$autoloader = new LtAutoloader();
+		$autoloader->fileMapping = $this->lotusCoreClass;
+		$autoloader->init();
+	}
+
+	protected function initConfig()
+	{
+		echo "init config\n";
+	}
+
+	protected function initDb()
+	{
+		echo "init db\n";
 	}
 }
