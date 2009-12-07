@@ -66,7 +66,7 @@ class LtAutoloader
 					}
 				}
 			}
-			else if(is_dir($file))
+			else if(is_dir($currentFile))
 			{
 				if (in_array($file, array(".", "..", ".svn")))
 				{
