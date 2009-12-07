@@ -4,11 +4,17 @@
  */
 class LtDispatcher
 {
+	public $appDir;
+
+	public function __construct()
+	{
+	}
+
 	protected function _dispatch($module, $action, $context = null, $classType = "Action")
 	{
 		$classType = ucfirst($classType);
 		$actionClassName = $action . $classType;
-		$actionFile = Kiwi::$appOptions["app_dir"] . 'module' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . strtolower($classType) . DIRECTORY_SEPARATOR . $actionClassName . '.php';
+		$actionFile = $this->appDir . 'module' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . strtolower($classType) . DIRECTORY_SEPARATOR . $actionClassName . '.php';
 		if (file_exists($actionFile))
 		{
 			if (!in_array($actionFile, get_included_files()))
@@ -35,7 +41,7 @@ class LtDispatcher
 		{
 			if (!($context instanceof Context))
 			{
-				$newContext = new Context();
+				$newContext = new LtContext();
 			}
 			else
 			{
@@ -53,13 +59,13 @@ class LtDispatcher
 			}
 			if (null === $actionInstance->view)
 			{
-				$actionInstance->view = View::factory($actionInstance->responseType);
+				$actionInstance->view = LtView::factory($actionInstance->responseType);
 			}
 			if ("html" == $actionInstance->responseType)
 			{
-				$actionInstance->view->templateDir = Kiwi::$appOptions["app_dir"] . 'module' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR;
+				$actionInstance->view->templateDir = $this->appDir . 'module' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR;
 				$actionInstance->view->template = $action;
-				$actionInstance->view->layoutDir = Kiwi::$appOptions["app_dir"] . 'layout' . DIRECTORY_SEPARATOR;
+				$actionInstance->view->layoutDir = $this->appDir . 'layout' . DIRECTORY_SEPARATOR;
 			}
 			$actionInstance->view->context = $actionInstance->context;
 			if (!$actionInstance->constructed)
