@@ -32,7 +32,7 @@ class Lotus
 	protected function prepareAutoloader()
 	{
 		/**
-		 * Load cache component
+		 * Load core component
 		 */
 		$lotusClass = array(
 			"LtAutoloader"			=> $this->lotusRuntimeDir . "Autoloader/Autoloader.php",
@@ -43,13 +43,14 @@ class Lotus
 			"LtCacheEAccelerator"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterEAccelerator.php",
 			"LtCacheAdapterPhps"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterPhps.php",
 			"LtCacheAdapterXcache"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterXcache.php",
+			"LtObjectUtil"	=> $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php",
 		);
 		$this->lotusCoreClass = array_merge($lotusClass, $this->lotusCoreClass);
 		require $this->lotusCoreClass["LtAutoloader"];
 		$autoloader = new LtAutoloader();
 		$autoloader->fileMapping["class"] = $this->lotusCoreClass;
 		$autoloader->init();
-		$cache = new LtCache();
+		$cache = LtObjectUtil::singleton("LtCache");
 		$cache->conf->adapter = $this->cacheAdapter;
 		$cache->init();
 		spl_autoload_unregister(array($autoloader, "loadClass"));
@@ -61,37 +62,50 @@ class Lotus
 		$autoloadDirs = array($this->lotusRuntimeDir);
 		if (isset($this->appOption["proj_lib"]))
 		{
-            $autoloadDirs[] = $this->appOption["proj_lib"];
+			$autoloadDirs[] = $this->appOption["proj_lib"];
 		}
 		if (isset($this->appOption["app_lib"]))
 		{
-            $autoloadDirs[] = $this->appOption["app_lib"];
+			$autoloadDirs[] = $this->appOption["app_lib"];
 		}
-		if ("dev" != $this->envMode)
+		$includedFiles = get_included_files();
+		$key = "lotus_autoloader_" . crc32($includedFiles[0]);
+		if ("dev" != $this->envMode && $fileMapping = $cache->get($key))
 		{
-			$includedFiles = get_included_files();
-			$key = crc32($includedFiles[0]);
-			if ($fileMapping = $cache->get($key))
-			{
-                $autoloader = new LtAutoloader();
-                $autoloader->fileMapping = $fileMapping;
-				$autoloader->init();
-			}
-			else
-			{
-                $autoloader = new LtAutoloader($autoloadDirs);
-				$cache->add($key, $autoloader->fileMapping);
-			}
+			$autoloader = new LtAutoloader();
+			$autoloader->fileMapping = $fileMapping;
+			$autoloader->init();
 		}
 		else
 		{
 			$autoloader = new LtAutoloader($autoloadDirs);
+			if ("dev" != $this->envMode)
+			{
+				$cache->add($key, $autoloader->fileMapping);
+			}
 		}
 	}
 
 	protected function prepareConfig()
 	{
-		$config = new LtConfig();
+		$config = LtObjectUtil::singleton("LtConfig");
+		$cache = LtObjectUtil::singleton("LtCache");
+		$includedFiles = get_included_files();
+		$key = "lotus_config_" . crc32($includedFiles[0]);
+		if ("dev" != $this->envMode && $cachedConfig = $cache->get($key))
+		{
+			$config->app = $cachedConfig;
+		}
+		else
+		{
+			$projConfig = isset($appOption["config_file"]) ? include($appOption["config_file"]) : array();
+			$appConfig = isset($appOption["app_config_file"]) ? include($appOption["app_config_file"]) : array();
+			$config->app = array_merge($projConfig, $appConfig);
+			if ("dev" != $this->envMode)
+			{
+				$cache->add($key, $config->app);
+			}
+		}
 	}
 
 	protected function initDb()
