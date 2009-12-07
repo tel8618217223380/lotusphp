@@ -24,4 +24,13 @@ $parameters = array(
 $cookie = new LtCookie();
 $cookie->conf->secretKey = "lotusphp";
 $cookie->setCookie($parameters);
-print_r($cookie->getCookie($parameters['name']));
+
+if ( $_COOKIE )
+{
+	print_r($cookie->getCookie($parameters['name']));
+	$cookie->delCookie($parameters);
+}
+else
+{
+	echo "set cookie ....";
+}
