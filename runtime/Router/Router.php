@@ -2,7 +2,8 @@
 /**
 * The Router class
 */
-class LtRouter {
+class LtRouter
+{
 	public $module;
 	public $action;
 
@@ -72,16 +73,33 @@ class LtRouter {
 				throw new Exception("Action name is illegal: {$action}");
 			}
 		}
-		if(!empty($module) && !empty($action))
+		if(empty($module) && empty($action))
 		{
-			$this->module = $module;
-			$this->action = $action;
+			$module = $this->conf->defaultModule;
+			$action = $this->conf->defaultAction;
 		}
-		else
-		{
-			$this->module = $this->conf->defaultModule;
-			$this->action = $this->conf->defaultAction;
-		}
+		$this->setModule($module);
+		$this->setAction($action);
 		return true;
+	}
+
+	public function getModule()
+	{
+		return $this->module;
+	}
+
+	public function getAction()
+	{
+		return $this->action;
+	}
+
+	public function setModule($module)
+	{
+		$this->module = $module;
+	}
+
+	public function setAction($action)
+	{
+		$this->action = $action;
 	}
 }
