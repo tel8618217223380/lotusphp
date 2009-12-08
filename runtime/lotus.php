@@ -1,12 +1,10 @@
 <?php
 class Lotus
 {
-	public $appOption;
+	public $option;
 	public $envMode = "dev";
 	public $lotusCoreClass = array();
-	public $cacheAdapter;
-	public $cacheOptions;
-	public $lotusRuntimeDir;
+	protected $lotusRuntimeDir;
 
 	public function __construct()
 	{
@@ -46,27 +44,39 @@ class Lotus
 			"LtObjectUtil"	=> $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php",
 		);
 		$this->lotusCoreClass = array_merge($lotusClass, $this->lotusCoreClass);
+
+		/**
+		 * Init autoloader to load Cache, ObjectUtil components
+		 */
 		require $this->lotusCoreClass["LtAutoloader"];
 		$autoloader = new LtAutoloader();
 		$autoloader->fileMapping["class"] = $this->lotusCoreClass;
 		$autoloader->init();
+
+		/**
+		 * Init Cache component to sotre LtAutoloader->fileMapping, Config->app
+		 */
 		$cache = LtObjectUtil::singleton("LtCache");
-		$cache->conf->adapter = $this->cacheAdapter;
+		$cache->conf->adapter = $this->option["cache_adapter"];
+		if (isset($this->option["cache_options"]))
+		{
+			$cache->conf->options = $this->option["cache_options"];
+		}
 		$cache->init();
 		spl_autoload_unregister(array($autoloader, "loadClass"));
 		unset($autoloader);
 
 		/**
-		 * Prepare autoloader, and cache the file mapping
+		 * Prepare autoloader to load all lotus components and user-defined libraries;
 		 */
 		$autoloadDirs = array($this->lotusRuntimeDir);
-		if (isset($this->appOption["proj_lib"]))
+		if (isset($this->option["proj_lib"]))
 		{
-			$autoloadDirs[] = $this->appOption["proj_lib"];
+			$autoloadDirs[] = $this->option["proj_lib"];
 		}
-		if (isset($this->appOption["app_lib"]))
+		if (isset($this->option["app_lib"]))
 		{
-			$autoloadDirs[] = $this->appOption["app_lib"];
+			$autoloadDirs[] = $this->option["app_lib"];
 		}
 		$includedFiles = get_included_files();
 		$key = "lotus_autoloader_" . crc32($includedFiles[0]);
@@ -110,6 +120,10 @@ class Lotus
 
 	protected function initDb()
 	{
-		echo "init db\n";
+		if(isset(LtObjectUtil::singleton("LtConfig")->app["db"]))
+		{
+			Db::$server = LtObjectUtil::singleton("LtConfig")->app["db"]["servers"];
+			Db::$tables = LtObjectUtil::singleton("LtConfig")->app["db"]["tables"];
+		}
 	}
 }

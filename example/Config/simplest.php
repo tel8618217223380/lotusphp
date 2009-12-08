@@ -15,5 +15,5 @@ include $lotusHome . "/runtime/Config/ConfigExpression.php";
  * 使用方便，容易管理
  */
 $config = new LtConfig();
-$config->proj["cookie"]["secret_key"] = "hello";
+$config->app["cookie"]["secret_key"] = "hello";
 print_r($config);
