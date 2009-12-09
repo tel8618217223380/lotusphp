@@ -7,16 +7,25 @@ class LtRBAC
 	public $userRole;
 	public $role;
 	public $acl; // accessControl
+	public $permission;
 
-	private $module;
-	private $action;
-
-	public function __construct($userRole)
+	public function __construct()
 	{
-		$this->userRole = $userRole;
-		$rbac = new LtRBACConfig();
-		$this->setRole($rbac->role);
-		$this->setAcl($rbac->acl);
+
+	}
+
+	public function setUserRole($userRole)
+	{
+		$this->userRole = str_replace(' ', '', $userRole);
+	}
+
+	public function getUserRole()
+	{
+		foreach($this->userRole as $userRole)
+		{
+			return explode(',', trim($userRole, ','));
+		}
+
 	}
 
 	public function setRole($role)
@@ -29,62 +38,95 @@ class LtRBAC
 		$this->acl = $acl;
 	}
 
-	public function checkRole()
+	public function setPermissions($permissions)
 	{
-		if(isset($this->role[$this->userRole]))
+		$this->permission = $permissions;
+	}
+
+	public function checkRole($role)
+	{
+		if (isset($this->acl['allow'][$role]) || isset($this->acl['deny'][$role]))
 		{
 			return true;
 		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public function checkAcl()
-	{
-		if (isset($this->acl[$this->userRole]))
-		{
-			if (in_array('*', $this->acl[$this->userRole]))
-			{
-				return true;
-			}
-			if (in_array('*/*', $this->acl[$this->userRole]))
-			{
-				return true;
-			}
-			if (in_array($this->module . '/' . $this->action, $this->acl[$this->userRole]))
-			{
-				return true;
-			}
-			if (in_array($this->module . '/*', $this->acl[$this->userRole]))
-			{
-				return true;
-			}
-			if (in_array('*/' . $this->action, $this->acl[$this->userRole]))
-			{
-				return true;
-			}
-		}
 		return false;
 	}
+/**
+设置完
+	用户角色表
+	角色表
+	角色权限表
+	权限资源表
+判断一个权限资源的权限
 
-	public function checkPrivilege($module,$action)
+@param string $resource 权限资源名字 / 用来分层 
+@return bool
+*/
+	public function checkAcl($resource)
 	{
-		$this->module = $module;
-		$this->action = $action;
-		
-		if(!$this->checkRole($this->userRole))
+		$allow = false;
+		$userRoles = $this->getUserRole();
+		foreach($userRoles as $role)
 		{
-			echo 'NO role';
-			return false;
+			if (isset($this->acl['allow'][$role]))
+			{
+				// 任意角色
+				if (in_array($resource,$this->acl['allow']['*']))
+				{
+					$allow = true;
+				}
+				// 用户角色
+				if (in_array($resource,$this->acl['allow'][$role]))
+				{
+					$allow = true;
+				}
+				else
+				{
+					$res = explode('/', trim($resource, '/'));		
+					for ($i = count($res)-1; $i >= 0; $i--)
+					{
+						$res[$i] = '*';	
+						$tmp = implode('/', $res);
+						if (in_array($tmp,$this->acl['allow'][$role]))
+						{
+							$allow = true;
+						}					
+					}
+				}
+			}
 		}
-		if(!$this->checkAcl($this->userRole))
+		// deny 优先
+		foreach($userRoles as $role)
 		{
-			echo "deny module=$module action=$action";
-			return false;
+			if (isset($this->acl['deny'][$role]))
+			{
+				// 任意角色
+				if (in_array($resource,$this->acl['deny']['*']))
+				{
+					$allow = false;
+				}
+				// 用户角色
+				if(in_array($resource,$this->acl['deny'][$role]))
+				{
+					$allow = false;
+				}
+				else
+				{
+					$res = explode('/', trim($resource, '/'));
+					for($i = count($res)-1; $i >= 0; $i--)
+					{
+						$res[$i] = '*';	
+						$tmp = implode('/', $res);
+						if(in_array($tmp,$this->acl['deny'][$role]))
+						{
+							$allow = false;
+						}					
+					}
+				}
+			}
 		}
-		echo "allow module=$module action=$action";
-		return true;
+		return $allow;
 	}
+
+
 }
