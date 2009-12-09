@@ -3,49 +3,32 @@
 * The RBAC class
 */
 class LtRBAC {
-	public $userRole;
-	public $role;
-	public $acl; // accessControl
-	public $permission;
+	protected $userRole;
+	protected $role;
+	protected $acl; // accessControl
+	protected $permission;
 
 	public function __construct()
 	{
 	}
 
-	public function setUserRole($userRole)
+	private function __set($p,$v)
 	{
-		$this -> userRole = str_replace(' ', '', $userRole);
+		$this->$p = $v;
 	}
 
-	public function getUserRole()
+	private function __get($p)
 	{
-		foreach($this -> userRole as $userRole) {
-			return explode(',', trim($userRole, ','));
+		if(isset($this->$p))
+		{
+			return($this->$p);
+		}
+		else
+		{
+			return(NULL);
 		}
 	}
 
-	public function setRole($role)
-	{
-		$this -> role = $role;
-	}
-
-	public function setAcl($acl)
-	{
-		$this -> acl = $acl;
-	}
-
-	public function setPermissions($permissions)
-	{
-		$this -> permission = $permissions;
-	}
-
-	public function checkRole($role)
-	{
-		if (isset($this -> acl['allow'][$role]) || isset($this -> acl['deny'][$role])) {
-			return true;
-		}
-		return false;
-	}
 	/**
 	* 设置完
 	* 用户角色表
@@ -60,7 +43,7 @@ class LtRBAC {
 	public function checkAcl($resource)
 	{
 		$allow = false;
-		$userRoles = $this -> getUserRole();
+		$userRoles = explode(',', trim(array_shift($this->userRole), ','));
 		// deny 优先
 		foreach (array("allow", "deny") as $operation) 
 		{
