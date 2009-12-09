@@ -55,12 +55,12 @@ class demo
 
 		
 		$this->acl = new LtRBAC();
-		$this->acl->setUserRole($userRole);
-		$this->acl->setRole($role);
-		$this->acl->setAcl($acl);
-		$this->acl->setPermissions($permissions);
+		$this->acl->userRole = $userRole;
+		$this->acl->role = $role;
+		$this->acl->acl = $acl;
+		$this->acl->permission = $permissions;
 
-		var_dump($this->acl -> checkAcl('User/View'));		
+		var_dump($this->acl -> checkAcl('admin/View'));		
 	}
 
 }
