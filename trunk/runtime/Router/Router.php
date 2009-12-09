@@ -4,8 +4,8 @@
 */
 class LtRouter
 {
-	public $module;
-	public $action;
+	protected $module;
+	protected $action;
 
 	public function __construct()
 	{
@@ -78,28 +78,26 @@ class LtRouter
 			$module = $this->conf->defaultModule;
 			$action = $this->conf->defaultAction;
 		}
-		$this->setModule($module);
-		$this->setAction($action);
-		return true;
-	}
-
-	public function getModule()
-	{
-		return $this->module;
-	}
-
-	public function getAction()
-	{
-		return $this->action;
-	}
-
-	public function setModule($module)
-	{
 		$this->module = $module;
-	}
-
-	public function setAction($action)
-	{
 		$this->action = $action;
 	}
+
+	private function __set($p,$v)
+	{
+		$this->$p = $v;
+	}
+
+	private function __get($p)
+	{
+		if(isset($this->$p))
+		{
+			return($this->$p);
+		}
+		else
+		{
+			return(NULL);
+		}
+	}
+
+
 }
