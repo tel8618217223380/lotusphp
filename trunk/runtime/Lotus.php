@@ -15,6 +15,7 @@ class Lotus
 	{
 		$this->prepareAutoloader();
 		$this->prepareConfig();
+
 		/**
 		 * Initial other components
 		 */
