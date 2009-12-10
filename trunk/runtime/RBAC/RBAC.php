@@ -17,14 +17,34 @@ class LtRbac
 		$this -> adapter -> init();
 	}
 
-	public function addRole($userRole)
+	public function addRole($role,$comment)
 	{
-		return $this -> adapter -> addRole($userRole);
+		return $this -> adapter -> addRole($role,$comment);
 	}
 
-	public function addResource($resource)
+	public function delRole($role)
 	{
-		return $this -> adapter -> addResource($resource);
+		return $this->adapter->delRole($role);
+	}
+
+	public function getRole()
+	{
+		return $this->adapter->getRole();
+	}
+
+	public function addResource($resource,$comment)
+	{
+		return $this -> adapter -> addResource($resource,$comment);
+	}
+
+	public function getResource()
+	{
+		return $this->adapter->getResource();
+	}
+
+	public function delResource($resource)
+	{
+		return $this->adapter->delResource($resource);
 	}
 
 	public function allow($role, $resource)
@@ -36,10 +56,30 @@ class LtRbac
 	{
 		return $this -> adapter -> deny($role, $resource);
 	}
+	
+	public function delRoleAcl($role)
+	{
+		return $this->adapter->delRoleAcl($role);
+	}
+	
+	public function getAcl()
+	{
+		return $this->adapter->getAcl();
+	}
 
 	public function addUser($user, $roles)
 	{
-		return $this -> adapter -> addUser($username, $roles);
+		return $this -> adapter -> addUser($user, $roles);
+	}
+
+	public function delUser($user)
+	{
+		return $this -> adapter -> delUser($user);
+	}
+
+	public function getUserRole($user='')
+	{
+		return $this->adapter->getUserRole($user);
 	}
 
 	public function checkAcl($user, $resource)

@@ -1,38 +1,66 @@
 <?php
-// username = role
-$userRole['zhaoyi'] = 'Administrators,Users';
-
-// role = comment
-$role['*'] = 'ä»»æ„è§’è‰²';
-$role['Administrators'] = 'ç®¡ç†å‘˜';
-$role['Users'] = 'ä¾‹å­ç”¨æˆ·';
-$role['Guests'] = 'ä¾‹å­æ¥å®¾';
-$role['OWNER'] = 'æ‰€æœ‰è€…';
-$role['USER'] = 'ç”¨æˆ·';
-$role['ANONYMOUS'] = 'åŒ¿å';
-
-// [allow or deny][role] = array( resource )
-$acl['allow']['*'][] = 'Index/Index';
-$acl['deny']['*'][] = '';
-
-$acl['allow']['Administrators'][] = 'admin/*';
-$acl['allow']['Administrators'][] = 'admin/test';
-$acl['allow']['Administrators'][] = 'User/AddUser';
-$acl['deny']['Administrators'][] = 'admin/kill';
-
-$acl['allow']['Users'][] = 'User/View';
-$acl['allow']['Users'][] = 'User/Signin';
-$acl['allow']['Users'][] = 'User/DoSignin';
-$acl['deny']['Users'][] = 'User/AddUser';
-
-$acl['allow']['Guests'][] = '*/Index';
-$acl['deny']['Guests'][] = '*';
-
-// permissions resource
-$resource['Index/Index'] = 'è®¿é—®é¦–é¡µ';
-$resource['*/Index'] = 'ä»»æ„moduleä¸‹çš„indexåŠ¨ä½œ';
-$resource['User/View'] = 'ç”¨æˆ·æµè§ˆ';
-$resource['User/Signin'] = 'ç™»é™†é¡µé¢';
-$resource['User/DoSignin'] = 'æäº¤ç™»é™†è¡¨å•';
-$resource['admin/*'] = 'admin moduleä¸‹çš„ä»»æ„action';
-$resource['delete file'] = 'åˆ é™¤æ–‡ä»¶';
+$userRole = array (
+  'zhaoyi' => 'Administrators,Users',
+);
+$role = array (
+  '*' => 'ÈÎÒâ½ÇÉ«',
+  'Administrators' => '¹ÜÀíÔ±',
+  'Users' => 'Àý×ÓÓÃ»§',
+  'Guests' => 'Àý×ÓÀ´±ö',
+  'OWNER' => 'ËùÓÐÕß',
+  'USER' => 'ÓÃ»§',
+  'ANONYMOUS' => 'ÄäÃû',
+);
+$acl = array (
+  'allow' => 
+  array (
+    '*' => 
+    array (
+      0 => 'Index/Index',
+    ),
+    'Administrators' => 
+    array (
+      0 => 'admin/*',
+      1 => 'admin/test',
+      2 => 'User/AddUser',
+    ),
+    'Users' => 
+    array (
+      0 => 'User/View',
+      1 => 'User/Signin',
+      2 => 'User/DoSignin',
+    ),
+    'Guests' => 
+    array (
+      0 => '*/Index',
+    ),
+  ),
+  'deny' => 
+  array (
+    '*' => 
+    array (
+      0 => '',
+    ),
+    'Administrators' => 
+    array (
+      0 => 'admin/kill',
+    ),
+    'Users' => 
+    array (
+      0 => 'User/AddUser',
+    ),
+    'Guests' => 
+    array (
+      0 => '*',
+    ),
+  ),
+);
+$resource = array (
+  'Index/Index' => '·ÃÎÊÊ×Ò³',
+  '*/Index' => 'ÈÎÒâmoduleÏÂµÄindex¶¯×÷',
+  'User/View' => 'ÓÃ»§ä¯ÀÀ',
+  'User/Signin' => 'µÇÂ½Ò³Ãæ',
+  'User/DoSignin' => 'Ìá½»µÇÂ½±íµ¥',
+  'admin/*' => 'admin moduleÏÂµÄÈÎÒâaction',
+  'delete file' => 'É¾³ýÎÄ¼þ',
+);
