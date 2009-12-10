@@ -54,4 +54,4 @@ print_r($rbac->getAcl());
 print_r($rbac->getUserRole());
 
 // 检查用户对资源的访问权限
-// var_dump($rbac -> checkAcl('zhaoyi', 'admin/killa'));
+// var_dump($rbac -> checkAcl('zhaoyi', 'admin/kill'));
