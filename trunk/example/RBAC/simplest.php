@@ -1,31 +1,25 @@
 <?php
-/**
-* 加载RBAC类文件
-*/
+
 $lotusHome = dirname(dirname(dirname(__FILE__)));
-include $lotusHome . "/runtime/RBAC/Rbac.php";
-include $lotusHome . "/runtime/RBAC/RbacConfig.php";
-include $lotusHome . "/runtime/RBAC/adapter/RbacAdapter.php";
-include $lotusHome . "/runtime/RBAC/adapter/RbacAdapterFile.php";
+include $lotusHome . "/runtime/RBAC/RBAC.php";
 
-class options
-{
-	public $aclFile;
-	public function __construct()
-	{
-		$this -> aclFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'acl.php';
-	}
-}
+// 角色
+$roles = array('Administrators','Users');
 
-/**
-* 初始化RBAC
-*/
-$rbac = new LtRbac;
-$rbac -> conf -> adapter = "file";
-$rbac -> conf -> options = new options;
-$rbac -> init();
+// 访问控制列表
+$acl['allow']['*'][] = 'Index/Index';
+$acl['deny']['*'][] = '';
 
-/**
-* 检查用户对资源的访问权限
-*/
-var_dump($rbac -> checkAcl('zhaoyi', 'admin/killa'));
+$acl['allow']['Administrators'][] = 'admin/*';
+$acl['allow']['Administrators'][] = 'User/*';
+
+$acl['allow']['Users'][] = 'User/View';
+$acl['allow']['Users'][] = 'User/Signin';
+$acl['allow']['Users'][] = 'User/DoSignin';
+
+$acl['deny']['Users'][] = 'User/AddUser';
+
+// RBAC
+$rbac = new LtRbac();
+$rbac->acl = $acl;
+var_dump($rbac -> checkAcl($roles, 'admin/test'));
