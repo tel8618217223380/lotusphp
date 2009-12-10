@@ -10,10 +10,10 @@ include $lotusHome . "/runtime/RBAC/adapter/RbacAdapterFile.php";
 
 class options
 {
-	public $aclfile;
+	public $aclFile;
 	public function __construct()
 	{
-		$this -> aclfile = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'acl.php';
+		$this -> aclFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'acl.php';
 	}
 }
 
@@ -26,6 +26,6 @@ $rbac -> conf -> options = new options;
 $rbac -> init();
 
 /**
-* 检查用户对资源的
+* 检查用户对资源的访问权限
 */
 var_dump($rbac -> checkAcl('zhaoyi', 'admin/killa'));

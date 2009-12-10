@@ -8,36 +8,103 @@ class LtRbacAdapterFile extends LtRbacAdapter
 
 	public function init()
 	{
-		include_once($this -> options -> aclfile);
+		include_once($this -> options -> aclFile);
 		$this -> userRole = $userRole;
 		$this -> role = $role;
 		$this -> acl = $acl;
 		$this -> resource = $resource;
 	}
 
-	public function addRole($userRole)
+	private function _saveAcl()
 	{
+		$fileName = $this->options->aclFile;
+		$data = "<?php\n";
+		$data .= '$userRole = ' . var_export($this->userRole, true) . ";\n";
+		$data .= '$role = ' . var_export($this->role, true) . ";\n";
+		$data .= '$acl = ' . var_export($this->acl, true) . ";\n";
+		$data .= '$resource = ' . var_export($this->resource, true) . ";\n";
+		file_put_contents($fileName,$data);
 	}
 
-	public function addResource($resource)
+	public function addRole($role, $comment)
 	{
+		$this->role[$role] = $comment;
+		$this->_saveAcl();
+	}
+
+	public function delRole($role)
+	{
+		unset($this->role[$role]);
+		$this->_saveAcl();
+	}
+
+	public function getRole()
+	{
+		return $this->role;
+	}
+
+	public function addResource($resource,$comment)
+	{
+		$this->resource[$resource] = $comment;
+		$this->_saveAcl();
+	}
+
+	public function delResource($resource)
+	{
+		unset($this->resource[$resource]);
+		$this->_saveAcl();
+	}
+
+	public function getResource()
+	{
+		return $this->resource;
 	}
 
 	public function allow($role, $resource)
 	{
+		$this->acl['allow'][$role] = $resource;
+		$this->_saveAcl();
 	}
 
 	public function deny($role, $resource)
 	{
+		$this->acl['deny'][$role] = $resource;
+		$this->_saveAcl();
+	}
+
+	public function delRoleAcl($role)
+	{
+		unset($this->acl['allow'][$role],$this->acl['deny'][$role]);
+		$this->_saveAcl();
+	}
+
+	public function getAcl()
+	{
+		return $this->acl;
 	}
 
 	public function addUser($user, $roles)
 	{
+		$this->userRole[$user] = $roles;
+		$this->_saveAcl();
+	}
+
+	public function delUser($user)
+	{
+		unset($this->userRole[$user]);
+		$this->_saveAcl();
 	}
 
 	public function getUserRole($user)
 	{
-		return $this -> userRole[$user];
+		if(empty($user))
+		{
+			return $this->userRole;
+		}
+		else
+		{
+			return $this -> userRole[$user];
+		}
 	}
 
 	public function checkAcl($user, $resource)
