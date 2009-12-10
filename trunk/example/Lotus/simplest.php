@@ -11,8 +11,14 @@ include $lotusHome . "/runtime/lotus.php";
  */
 $lotus = new Lotus();
 $lotus->option = array(
-	"cache_adapter" => "xcache",
+	"cache_adapter" => "apc",
 );
+
+/**
+ * envMode的默认值是dev，即开发模式
+ * envMode不等于dev的时候（如prod-生产环境，testing-测试环境），性能会有提高
+ * $lotus->envMode = "prod";
+ */
 $lotus->boot();
 
 /**
