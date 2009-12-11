@@ -12,11 +12,25 @@
 == 示例1：最简单的用法 ==
 {{{
 <?php
-//加载Captcha类文件
+/*
+ * 加载Captcha类文件
+ */
 include "/Captcha所在目录/runtime/Captcha/Captcha.php";
 include "/Captcha所在目录/runtime/Captcha/CaptchaConfig.php";
+/*
+ * 加载Captcha类文件
+ */
 
+/*
+ * 开始使用Captcha
+ */
+$captcha = new LtCaptcha();
+$captcha->conf->secretKey = "lotusphp";
+$seed = uniqid();
+$captcha->generateImage($seed);
 }}}
+
+怎么样,是不是看到验证码图片了.
 
 == 示例2：在生产环境获取更好的性能 ==
 
