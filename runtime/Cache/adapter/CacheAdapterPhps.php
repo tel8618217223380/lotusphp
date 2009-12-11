@@ -13,7 +13,7 @@ class LtCacheAdapterPhps extends LtCacheAdapter
 		return $this->cacheFileRoot . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . $token;
 	}
 
-	public function add($key, $value)
+	public function add($key, $value, $ttl=0)
 	{
 		$cacheFile = $this->getCacheFile($key);
 		if (is_file($cacheFile))

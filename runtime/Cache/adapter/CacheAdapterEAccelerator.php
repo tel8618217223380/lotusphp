@@ -1,9 +1,9 @@
 <?php
 class LtCacheAdapterEAccelerator extends LtCacheAdapter
 {
-	public function add($key, $value)
+	public function add($key, $value, $ttl=0)
 	{
-		return eaccelerator_put($key, $value);
+		return eaccelerator_put($key, $value, $ttl);
 	}
 
 	public function del($key)

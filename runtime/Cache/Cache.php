@@ -14,17 +14,17 @@ class LtCache
 		$this->adapter = new $adapterClassName;
 		$this->adapter->options = $this->conf->options;
 	}
-	
-	public function add($key, $value)
+
+	public function add($key, $value, $ttl=0)
 	{
-		return $this->adapter->add($key, $value);
+		return $this->adapter->add($key, $value, $ttl);
 	}
-	
+
 	public function del($key)
 	{
 		return $this->adapter->del($key);
 	}
-	
+
 	public function get($key)
 	{
 		return $this->adapter->get($key);
