@@ -10,7 +10,7 @@ class LtCacheAdapterPhps extends LtCacheAdapter
 			$this->cacheFileRoot = $this->options["cache_file_root"] . DIRECTORY_SEPARATOR;
 		}
 		$token = md5($key);
-		return $this->cacheFileRoot . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . $token;
+		return $this->cacheFileRoot . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . 'Lotusphp-cache-' . $token . '.php';
 	}
 
 	public function add($key, $value, $ttl=0)
@@ -25,7 +25,7 @@ class LtCacheAdapterPhps extends LtCacheAdapter
 		{
 			mkdir($cacheDir, 0777, true);
 		}
-		return file_put_contents($cacheFile, serialize($value));
+		return file_put_contents($cacheFile, '<?php exit;?>' . (time()+$ttl) . serialize($value));
 	}
 	
 	public function del($key)
@@ -42,8 +42,18 @@ class LtCacheAdapterPhps extends LtCacheAdapter
 			return false;
 		}
 		else
-		{
-			return unserialize(file_get_contents($cacheFile));
+		{	//5.0.0 添加了对 context 的支持。  
+			//5.1.0 添加了 offset 和 maxlen 参数。 
+			$ttl = file_get_contents($cacheFile,false,null,13,10);
+			if(time() > $ttl)
+			{
+				unlink($cacheFile);
+				return false;
+			}
+			else
+			{
+				return unserialize(file_get_contents($cacheFile,false,null,23));
+			}
 		}
 	}
 }
