@@ -4,7 +4,7 @@
  * 适合用来开发服务器上定时运行的脚本，如数据迁移的脚本
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
-include $lotusHome . "/runtime/lotus.php";
+include $lotusHome . "/runtime/Lotus.php";
 
 /**
  * 初始化Lotus类
