@@ -1,9 +1,9 @@
 <?php
 class LtCacheAdapterXcache extends LtCacheAdapter
 {
-	public function add($key, $value)
+	public function add($key, $value, $ttl=0)
 	{
-		return xcache_set($key, $value);
+		return xcache_set($key, $value, $ttl);
 	}
 	
 	public function del($key)
