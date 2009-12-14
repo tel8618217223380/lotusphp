@@ -5,10 +5,14 @@ class Lotus
 	public $envMode = "dev";
 	public $lotusCoreClass = array();
 	protected $lotusRuntimeDir;
+	protected $entranceFile;
+	protected $sysCacheKey = array();
 
 	public function __construct()
 	{
 		$this->lotusRuntimeDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+		$includedFiles = get_included_files();
+		$this->entranceFile = $includedFiles[0];
 	}
 
 	public function boot()
@@ -82,9 +86,8 @@ class Lotus
 		{
 			$autoloadDirs[] = $this->option["app_lib"];
 		}
-		$includedFiles = get_included_files();
-		$key = "lotus_autoloader_" . crc32($includedFiles[0]);
-		if ("dev" != $this->envMode && $fileMapping = $cache->get($key))
+		$this->sysCacheKey["autoloader_key"] = "lotus_autoloader_" . crc32($this->entranceFile);
+		if ("dev" != $this->envMode && $fileMapping = $cache->get($this->sysCacheKey["autoloader_key"]))
 		{
 			$autoloader = new LtAutoloader();
 			$autoloader->fileMapping = $fileMapping;
@@ -95,25 +98,24 @@ class Lotus
 			$autoloader = new LtAutoloader($autoloadDirs);
 			if ("dev" != $this->envMode)
 			{
-				$cache->add($key, $autoloader->fileMapping);
+				$cache->add($this->sysCacheKey["autoloader_key"], $autoloader->fileMapping);
 			}
 		}
 	}
 
+	/**
+	 * @警告
+	 * 这里会包含两个用户定义的配置文件，为了不和配置文件里的变量名发生重名
+	 * prepareConfig()方法不定义和使用变量名，改用$this->xxx属性
+	 */
 	protected function prepareConfig()
 	{
-		$cache = LtObjectUtil::singleton("LtCache");
-		$includedFiles = get_included_files();
-		$key = "lotus_config_" . crc32($includedFiles[0]);
-		if ("dev" != $this->envMode && $cachedConfig = $cache->get($key))
+		$this->sysCacheKey["config_key"] = "lotus_config_" . crc32($this->entranceFile);
+		if ("dev" != $this->envMode && LtObjectUtil::singleton("LtConfig")->app = LtObjectUtil::singleton("LtCache")->get($this->sysCacheKey["config_key"]))
 		{
-			LtObjectUtil::singleton("LtConfig")->app = $cachedConfig;
 		}
 		else
 		{
-			/**
-			 * @todo avoid variable conflict of incude(), don't declare any variable after include() calling
-			 */
 			LtObjectUtil::singleton("LtConfig")->app = isset($this->option["config_file"]) ? include($this->option["config_file"]) : array();
 			if (isset($this->option["app_config_file"]))
 			{
@@ -121,7 +123,7 @@ class Lotus
 			}
 			if ("dev" != $this->envMode)
 			{
-				$cache->add($key, LtObjectUtil::singleton("LtConfig")->app);
+				LtObjectUtil::singleton("LtCache")->add($this->sysCacheKey["config_key"], LtObjectUtil::singleton("LtConfig")->app);
 			}
 		}
 	}
