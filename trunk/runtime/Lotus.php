@@ -42,7 +42,7 @@ class Lotus
 			"LtCacheEAccelerator"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterEAccelerator.php",
 			"LtCacheAdapterPhps"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterPhps.php",
 			"LtCacheAdapterXcache"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterXcache.php",
-			"LtObjectUtil"	=> $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php",
+			"LtObjectUtil"			=> $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php",
 		);
 		$this->lotusCoreClass = array_merge($lotusClass, $this->lotusCoreClass);
 
@@ -58,7 +58,10 @@ class Lotus
 		 * Init Cache component to sotre LtAutoloader->fileMapping, Config->app
 		 */
 		$cache = LtObjectUtil::singleton("LtCache");
-		$cache->conf->adapter = $this->option["cache_adapter"];
+		if(isset($this->option["cache_adapter"]))
+		{
+			$cache->conf->adapter = $this->option["cache_adapter"];
+		}
 		if (isset($this->option["cache_options"]))
 		{
 			$cache->conf->options = $this->option["cache_options"];
