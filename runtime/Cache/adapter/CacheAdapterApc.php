@@ -1,7 +1,7 @@
 <?php
 class LtCacheAdapterApc extends LtCacheAdapter
 {
-	public function add($key, $value, $ttl=10)
+	public function add($key, $value, $ttl=0)
 	{
 		return apc_add($key, $value, $ttl);
 	}
