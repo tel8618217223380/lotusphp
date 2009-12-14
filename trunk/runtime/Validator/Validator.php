@@ -86,7 +86,7 @@ class LtValidator
 				if ('callback_' == substr($key, 0, 9))
 				{
 					$method = substr($key, 9);
-					// �����˹�̺���
+					// 定义了过程函数
 					if (function_exists($method))
 					{
 						if (!$method($value, $dtd -> rules[$key]))
@@ -95,7 +95,7 @@ class LtValidator
 						}
 						continue;
 					}
-					// �������෽��
+					// 定义了类方法
 					$rc = new ReflectionClass($val);
 					if ($rc -> hasMethod($method))
 					{
@@ -106,7 +106,7 @@ class LtValidator
 						}
 						else
 						{
-							// �Ǿ�̬������Ҫһ��ʵ�� �д��ǵ���
+							// 非静态方法需要一个实例 有待考虑单例
 							$rcInstance = $rc -> newInstance();
 							$ret = $rcMethod -> invoke($rcInstance, $value, $dtd -> rules[$key]);
 						}
