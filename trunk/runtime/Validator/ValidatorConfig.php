@@ -1,7 +1,7 @@
 <?php
 class LtValidatorConfig
 {
-	public $errorMessage = array(
+	public $errorMessages = array(
 		'ban' => '%s contain banned words',
 		'mask' => '%s does not match the given format',
 		'max_length' => '%s is longer than %s',

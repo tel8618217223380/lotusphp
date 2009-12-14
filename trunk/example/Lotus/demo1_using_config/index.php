@@ -1,15 +1,20 @@
 <?php
 /**
- * 这是一个最简单的示例，没有配置文件，没有MVC，不需要Web服务器
- * 适合用来开发服务器上定时运行的脚本，如数据迁移的脚本
+ * 这个示例演示了如何使用配置文件，没有MVC，不需要Web服务器
+ * 与Lotus/simplest.php最大的不同只在于把DB的链接信息放到配置文件中去了
  */
-$lotusHome = dirname(dirname(dirname(__FILE__)));
+$lotusHome = dirname(dirname(dirname(dirname(__FILE__))));
 include $lotusHome . "/runtime/Lotus.php";
 
 /**
  * 初始化Lotus类
  */
 $lotus = new Lotus();
+
+/**
+ * 配置Lotus选项，使之可以使用配置文件
+ */
+$lotus->option["config_file"] = "conf.php";
 
 /**
  * envMode的默认值是dev，即开发模式
@@ -19,24 +24,15 @@ $lotus = new Lotus();
 $lotus->boot();
 
 /**
+ * 直接使用配置数组中的值
+ * C()函数是一个快捷方式，定义在runtime/shortcut.php里，大写的C代表Component的意思
+ * C("LtConfig") 等价于  LtObjectUtil::singleton("LtConfig")
+ */
+print_r(C("LtConfig")->app["Validator"]);
+
+/**
  * ========== 以下内容取自example/DB/simplest.php 演示了如何操作数据库 ==========
  */
-/**
- * 配置数据库连接
- * 关键是给Db::$servers变量赋一个数组，这个数组维度比较复杂 ，所以用DbConfigBuilder构建不容易出错
- * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给Db::$servers，效果是一样的
- */
-$dbConfigBuilder = new LtDbConfigBuilder();
-$dbConfigBuilder->addSingleHost(array(
-	"host" => "localhost",
-	"username" => "root",
-	"password" => "123456",
-	"dbname" => "lotus_db_test",
-	"adapter" => "pdoMysql",
-	"charset" => "UTF-8",
-));
-LtDb::$servers = $dbConfigBuilder->getServers();
-
 /**
  * 直接执行执行SQL
  * 由于PDO::execute()的潜规则，这里三个查询只能分三次执行，不要合并成这样：$dba->query("$sql1; $sql2; $sql3");

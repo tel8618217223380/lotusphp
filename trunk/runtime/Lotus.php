@@ -102,32 +102,39 @@ class Lotus
 
 	protected function prepareConfig()
 	{
-		$config = LtObjectUtil::singleton("LtConfig");
 		$cache = LtObjectUtil::singleton("LtCache");
 		$includedFiles = get_included_files();
 		$key = "lotus_config_" . crc32($includedFiles[0]);
 		if ("dev" != $this->envMode && $cachedConfig = $cache->get($key))
 		{
-			$config->app = $cachedConfig;
+			LtObjectUtil::singleton("LtConfig")->app = $cachedConfig;
 		}
 		else
 		{
-			$projConfig = isset($appOption["config_file"]) ? include($appOption["config_file"]) : array();
-			$appConfig = isset($appOption["app_config_file"]) ? include($appOption["app_config_file"]) : array();
-			$config->app = array_merge($projConfig, $appConfig);
+			/**
+			 * @todo avoid variable conflict of incude(), don't declare any variable after include() calling
+			 */
+			LtObjectUtil::singleton("LtConfig")->app = isset($this->option["config_file"]) ? include($this->option["config_file"]) : array();
+			if (isset($this->option["app_config_file"]))
+			{
+				LtObjectUtil::singleton("LtConfig")->app = array_merge(LtObjectUtil::singleton("LtConfig")->app, include($this->option["app_config_file"]));
+			}
 			if ("dev" != $this->envMode)
 			{
-				$cache->add($key, $config->app);
+				$cache->add($key, LtObjectUtil::singleton("LtConfig")->app);
 			}
 		}
 	}
 
 	protected function initDb()
 	{
-		if(isset(LtObjectUtil::singleton("LtConfig")->app["db"]))
+		if(isset(LtObjectUtil::singleton("LtConfig")->app["DB"]))
 		{
-			Db::$server = LtObjectUtil::singleton("LtConfig")->app["db"]["servers"];
-			Db::$tables = LtObjectUtil::singleton("LtConfig")->app["db"]["tables"];
+			LtDb::$servers = LtObjectUtil::singleton("LtConfig")->app["DB"]["servers"];
+			if(isset(LtObjectUtil::singleton("LtConfig")->app["DB"]["tables"]))
+			{
+				LtDb::$tables = LtObjectUtil::singleton("LtConfig")->app["DB"]["tables"];
+			}
 		}
 	}
 }
