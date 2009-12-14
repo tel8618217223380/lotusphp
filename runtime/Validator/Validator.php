@@ -86,16 +86,16 @@ class LtValidator
 				if ('callback_' == substr($key, 0, 9))
 				{
 					$method = substr($key, 9);
-					// ¶¨ÒåÁË¹ý³Ìº¯Êý
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ë¹ï¿½Ìºï¿½ï¿½ï¿½
 					if (function_exists($method))
 					{
 						if (!$method($value, $dtd -> rules[$key]))
 						{
-							$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this -> conf -> errorMessage[$key]), $label, $dtd -> rules[$key]);
+							$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this -> conf -> errorMessages[$key]), $label, $dtd -> rules[$key]);
 						}
 						continue;
 					}
-					// ¶¨ÒåÁËÀà·½·¨
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à·½ï¿½ï¿½
 					$rc = new ReflectionClass($val);
 					if ($rc -> hasMethod($method))
 					{
@@ -106,13 +106,13 @@ class LtValidator
 						}
 						else
 						{
-							// ·Ç¾²Ì¬·½·¨ÐèÒªÒ»¸öÊµÀý ÓÐ´ý¿¼ÂÇµ¥Àý
+							// ï¿½Ç¾ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÒ»ï¿½ï¿½Êµï¿½ï¿½ ï¿½Ð´ï¿½ï¿½Çµï¿½ï¿½ï¿½
 							$rcInstance = $rc -> newInstance();
 							$ret = $rcMethod -> invoke($rcInstance, $value, $dtd -> rules[$key]);
 						}
 						if (!$ret)
 						{
-							$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this -> conf -> errorMessage[$key]), $label, $dtd -> rules[$key]);
+							$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this -> conf -> errorMessages[$key]), $label, $dtd -> rules[$key]);
 						}
 						continue;
 					}
@@ -122,7 +122,7 @@ class LtValidator
 				$validateFunction = '_' . $key;
 				if ((is_bool($dtd -> rules[$key]) || 0 < strlen($dtd -> rules[$key])) && !$this -> $validateFunction($value, $dtd -> rules[$key]))
 				{
-					$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this -> conf -> errorMessage[$key]), $label, $dtd -> rules[$key]);
+					$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this -> conf -> errorMessages[$key]), $label, $dtd -> rules[$key]);
 				}
 			}
 		}
