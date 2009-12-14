@@ -1,6 +1,6 @@
 <?php
 /**
- * 这是一个最简单的示例，没有配置文件，没有MVC
+ * 这是一个最简单的示例，没有配置文件，没有MVC，不需要Web服务器
  * 适合用来开发服务器上定时运行的脚本，如数据迁移的脚本
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
@@ -10,9 +10,6 @@ include $lotusHome . "/runtime/Lotus.php";
  * 初始化Lotus类
  */
 $lotus = new Lotus();
-$lotus->option = array(
-	"cache_adapter" => "apc",
-);
 
 /**
  * envMode的默认值是dev，即开发模式
@@ -42,10 +39,11 @@ LtDb::$servers = $dbConfigBuilder->getServers();
  * 由于PDO::execute()的潜规则，这里三个查询只能分三次执行，不要合并成这样：$dba->query("$sql1; $sql2; $sql3");
  */
 $dba = LtDb::factory("pdoMysql");
+$dba->query("DROP DATABASE IF EXISTS lotus_db_test;");
 $dba->query("CREATE DATABASE IF NOT EXISTS lotus_db_test;");
 $dba->query("USE lotus_db_test;");
 $dba->query("
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
 	`username` VARCHAR( 20 ) NOT NULL COMMENT '用户名',
 	`age` INT NOT NULL COMMENT '年龄',

@@ -32,10 +32,11 @@ LtDb::$servers = $dbConfigBuilder->getServers();
  * 由于PDO::execute()的潜规则，这里三个查询只能分三次执行，不要合并成这样：$dba->query("$sql1; $sql2; $sql3");
  */
 $dba = LtDb::factory("pdoMysql");
+$dba->query("DROP DATABASE IF EXISTS lotus_db_test;");
 $dba->query("CREATE DATABASE IF NOT EXISTS lotus_db_test;");
 $dba->query("USE lotus_db_test;");
 $dba->query("
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
 	`username` VARCHAR( 20 ) NOT NULL COMMENT '用户名',
 	`age` INT NOT NULL COMMENT '年龄',
