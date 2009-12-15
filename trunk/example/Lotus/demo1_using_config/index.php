@@ -35,12 +35,10 @@ print_r(C("LtConfig")->app["Validator"]);
  */
 /**
  * 直接执行执行SQL
- * 由于PDO::execute()的潜规则，这里三个查询只能分三次执行，不要合并成这样：$dba->query("$sql1; $sql2; $sql3");
+ * 由于PDO::execute()的潜规则，这里三个查询只能分两次执行，不要合并成这样：$dba->query("$sql1; $sql2;");
  */
 $dba = LtDb::factory("pdoMysql");
-$dba->query("DROP DATABASE IF EXISTS lotus_db_test;");
-$dba->query("CREATE DATABASE IF NOT EXISTS lotus_db_test;");
-$dba->query("USE lotus_db_test;");
+$dba->query("DROP TABLE IF EXISTS user;");
 $dba->query("
 CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT COMMENT '用户ID',

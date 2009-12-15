@@ -72,7 +72,7 @@ class LtDbTable
 	{
 		if (!$this->_fields)
 		{
-			$this->_fields = $this->db->showFields($this->tableName);
+			$this->_fields = $this->db->getFields($this->tableName);
 		}
 		if (!$this->_primaryKey) 
 		{
@@ -211,9 +211,9 @@ class LtDbTable
 	 */
 	public function getAdapterInstance()
 	{
-		$nodeArray = array_keys(LtDb::$servers[$this->group]);
-		$masterIndexArray = array_keys(LtDb::$servers[$this->group][$nodeArray[0]]['master']);
-		$config = array_merge(LtDb::$servers[$this->group][$nodeArray[0]]['master'][$masterIndexArray[0]]);
+		$nodeArray = array_keys(LtDbStaticData::$servers[$this->group]);
+		$masterIndexArray = array_keys(LtDbStaticData::$servers[$this->group][$nodeArray[0]]['master']);
+		$config = array_merge(LtDbStaticData::$servers[$this->group][$nodeArray[0]]['master'][$masterIndexArray[0]]);
 		return LtDb::factory($config['adapter']);
 	}
 

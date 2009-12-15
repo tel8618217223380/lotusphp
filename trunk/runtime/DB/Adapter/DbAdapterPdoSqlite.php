@@ -94,7 +94,7 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 	* @param string $table
 	* @return array
 	*/
-	public function showFields($table)
+	public function getFields($table)
 	{
 		$sql = "PRAGMA table_info('" . $table . "')";
 		$queryResult = $this -> query($sql);
@@ -102,9 +102,9 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 		$fields = array();
 		foreach ($result as $key => $value)
 		{
-			// ×Ö¶ÎÃû
+			// ï¿½Ö¶ï¿½ï¿½ï¿½
 			$fields[$value['name']]['name'] = $value['name'];
-			// ×Ö¶ÎÀàÐÍ
+			// ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½
 			$fulltype = $value['type'];
 			$size = null;
 			$precision = null;

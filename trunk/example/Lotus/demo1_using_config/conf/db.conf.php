@@ -8,7 +8,7 @@ $dbConfigBuilder->addSingleHost(array(
 	"host" => "localhost",
 	"username" => "root",
 	"password" => "123456",
-	"dbname" => "lotus_db_test",
+	"dbname" => "test",
 	"adapter" => "pdoMysql",
 	"charset" => "UTF-8",
 ));

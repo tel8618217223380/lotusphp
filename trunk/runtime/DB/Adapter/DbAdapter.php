@@ -75,32 +75,32 @@ abstract class LtDbAdapter
 	 */
 	protected function _getBasicConfig($group, $node, $role = 'master', $host = null)
 	{
-		$nodeArray = array_keys(LtDb::$servers[$group]);
-		$hostArray = array_keys(LtDb::$servers[$group][$node][$role]);
+		$nodeArray = array_keys(LtDbStaticData::$servers[$group]);
+		$hostArray = array_keys(LtDbStaticData::$servers[$group][$node][$role]);
 		if (!$host)
 		{
 			$host = $hostArray[0];
-			$config = LtDb::$servers[$group][$node][$role][$host];
+			$config = LtDbStaticData::$servers[$group][$node][$role][$host];
 		}
 		else
 		{
 			$config = array_merge(
-			LtDb::$servers[$group][$node][$role][$hostArray[0]],
-			LtDb::$servers[$group][$node][$role][$host]
+			LtDbStaticData::$servers[$group][$node][$role][$hostArray[0]],
+			LtDbStaticData::$servers[$group][$node][$role][$host]
 			);
 		}
 		if ('slave' == $role)
 		{
-			$masterIndexArray = array_keys(LtDb::$servers[$group][$node]['master']);
+			$masterIndexArray = array_keys(LtDbStaticData::$servers[$group][$node]['master']);
 			$config = array_merge(
-			LtDb::$servers[$group][$nodeArray[0]]['master'][$masterIndexArray[0]],
+			LtDbStaticData::$servers[$group][$nodeArray[0]]['master'][$masterIndexArray[0]],
 			$config
 			);
 		}
-		$firstNodeHostIndexArray = array_keys(LtDb::$servers[$group][$nodeArray[0]][$role]);
+		$firstNodeHostIndexArray = array_keys(LtDbStaticData::$servers[$group][$nodeArray[0]][$role]);
 		$config = array_merge(
 		$this->_config,
-		LtDb::$servers[$group][$nodeArray[0]][$role][$firstNodeHostIndexArray[0]],
+		LtDbStaticData::$servers[$group][$nodeArray[0]][$role][$firstNodeHostIndexArray[0]],
 		$config
 		);
 		return $config;
@@ -125,15 +125,15 @@ abstract class LtDbAdapter
 	 */
 	protected function _getConnection($role)
 	{
-		$hosts = LtDb::$servers[$this->getGroup()][$this->getNode()][$role];
+		$hosts = LtDbStaticData::$servers[$this->getGroup()][$this->getNode()][$role];
 		$connection = false;
 		foreach($hosts as $host => $hostConfig)
 		{
 			$hostConfig = $this->_getConfig($this->getGroup(), $this->getNode(), $role, $host);
 			$connectionKey = self::_getConnectionKey($hostConfig);
-			if (isset(LtDb::$connections[$connectionKey]))
+			if (isset(LtDbStaticData::$connections[$connectionKey]))
 			{
-				$cachedConnectionInfo = LtDb::$connections[$connectionKey];
+				$cachedConnectionInfo = LtDbStaticData::$connections[$connectionKey];
 				if (time() < $cachedConnectionInfo['expire_time'])
 				{                                        
 					$connection = $cachedConnectionInfo['connection'];
@@ -143,8 +143,8 @@ abstract class LtDbAdapter
 		}
 		if (!$connection)
 		{
-			$hostTotal = count(LtDb::$servers[$this->getGroup()][$this->getNode()][$role]);
-			$hostIndexArray = array_keys(LtDb::$servers[$this->getGroup()][$this->getNode()][$role]);
+			$hostTotal = count(LtDbStaticData::$servers[$this->getGroup()][$this->getNode()][$role]);
+			$hostIndexArray = array_keys(LtDbStaticData::$servers[$this->getGroup()][$this->getNode()][$role]);
 			while ($hostTotal)
 			{
 				$hashNumber = substr(microtime(),7,1) % $hostTotal;
@@ -152,7 +152,7 @@ abstract class LtDbAdapter
 				if ($connection = $this->_connect($hostConfig))
 				{
 					$connectionKey = self::_getConnectionKey($hostConfig);
-					LtDb::$connections[$connectionKey] = array('connection' => $connection, 'expire_time' => time() + 30);
+					LtDbStaticData::$connections[$connectionKey] = array('connection' => $connection, 'expire_time' => time() + 30);
 					break;
 				}
 				for ($i = $hashNumber; $i < $hostTotal - 1; $i ++)
@@ -212,7 +212,7 @@ abstract class LtDbAdapter
 		//~ fix issue 11
 		if (NULL === $this->_node)
 		{
-			$nodeArray = array_keys(LtDb::$servers[$this->getGroup()]);
+			$nodeArray = array_keys(LtDbStaticData::$servers[$this->getGroup()]);
 			if (1 === count($nodeArray))
 			{
 				$this->_node = $nodeArray[0];
@@ -242,9 +242,9 @@ abstract class LtDbAdapter
 	 */
 	public function getGroup()
 	{
-		if (1 == count(LtDb::$servers))
+		if (1 == count(LtDbStaticData::$servers))
 		{
-			$this->_group = key(LtDb::$servers);
+			$this->_group = key(LtDbStaticData::$servers);
 		}
 		return $this->_group;
 	}
@@ -287,7 +287,7 @@ abstract class LtDbAdapter
 	public function query($sql, $bind = null, $useSlave = false)
 	{
 		$connection = null;
-		if ($useSlave && isset(LtDb::$servers[$this->getGroup()][$this->getNode()]['slave']))
+		if ($useSlave && isset(LtDbStaticData::$servers[$this->getGroup()][$this->getNode()]['slave']))
 		{
 			$connection = $this->_getConnection('slave');
 		}
@@ -354,7 +354,7 @@ abstract class LtDbAdapter
 	 */
 	public function setNode($node)
 	{
-		if (isset(LtDb::$servers[$this->getGroup()][$node]))
+		if (isset(LtDbStaticData::$servers[$this->getGroup()][$node]))
 		{
 			$this->_node = $node;
 		}
@@ -373,7 +373,7 @@ abstract class LtDbAdapter
 	 */
 	public function setGroup($group)
 	{
-		if (isset(LtDb::$servers[$group]))
+		if (isset(LtDbStaticData::$servers[$group]))
 		{
 			$this->_group = $group;
 		}
@@ -403,5 +403,12 @@ abstract class LtDbAdapter
 	 * @param string $table
 	 * @return array
 	 */
-	abstract public function showFields($table);
+	abstract public function getFields($table);
+
+	/**
+	 * Return the column descriptions for a database (or schema).
+	 * 
+	 * @return array
+	 */
+	abstract public function getTables();
 }

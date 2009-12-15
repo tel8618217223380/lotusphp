@@ -6,6 +6,7 @@
 $lotusHome = dirname(dirname(dirname(__FILE__)));
 include $lotusHome . "/runtime/DB/DbConfigBuilder.php";
 include $lotusHome . "/runtime/DB/Db.php";
+include $lotusHome . "/runtime/DB/DbStaticData.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapter.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapterPdo.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapterPdoSqlite.php";
@@ -26,7 +27,7 @@ $dbConfigBuilder->addSingleHost(array(
 	"adapter" => "pdoSqlite",
 	"charset" => "UTF-8",
 ));
-LtDb::$servers = $dbConfigBuilder->getServers();
+LtDbStaticData::$servers = $dbConfigBuilder->getServers();
 
 /*
  * 直接执行执行SQL

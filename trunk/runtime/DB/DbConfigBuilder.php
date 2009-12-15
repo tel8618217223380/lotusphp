@@ -65,5 +65,10 @@ class LtDbConfigBuilder
 	public function getTables()
 	{
 		return $this->tables;
-	}	
+	}
+
+	public function buildTablesConfig()
+	{
+		
+	}
 }
