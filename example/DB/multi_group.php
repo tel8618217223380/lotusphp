@@ -6,6 +6,7 @@
 $lotusHome = dirname(dirname(dirname(__FILE__)));
 include $lotusHome . "/runtime/DB/DbConfigBuilder.php";
 include $lotusHome . "/runtime/DB/Db.php";
+include $lotusHome . "/runtime/DB/DbStaticData.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapter.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapterPdo.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapterPdoMysql.php";
@@ -36,14 +37,14 @@ $dbConfigBuilder->addHost(array(
 	"adapter" => "pdoMysql",
 	"charset" => "UTF-8",
 ), null, null,"mysql");
-LtDb::$servers = $dbConfigBuilder->getServers();
+LtDbStaticData::$servers = $dbConfigBuilder->getServers();
 
 /*
  * 配置表
  */
 $dbConfigBuilder->addTable("user", null, null, "lotus_db_test");
 $dbConfigBuilder->addTable("host", null, null, "mysql");
-LtDb::$tables = $dbConfigBuilder->getTables();
+LtDbStaticData::$tables = $dbConfigBuilder->getTables();
 
 $userTDG = LtDb::newDbTable("user");
 $hostTDG = LtDb::newDbTable("host");

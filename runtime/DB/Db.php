@@ -5,17 +5,6 @@
 class LtDb
 {
 	/**
-	 * The connection pool
-	 *
-	 * @var array
-	 */
-	static public $connections = array();
-
-	static public $servers;
-
-	static public $tables;
-
-	/**
 	 * Factory for Adapter
 	 * 
 	 * @assert ('pdoMssql') throws Exception
@@ -53,31 +42,31 @@ class LtDb
 	 */
 	static public function newDbTable($table)
 	{
-		if (isset(LtDb::$tables[$table]) || 1 == count(LtDb::$servers))
+		if (isset(LtDbStaticData::$tables[$table]) || 1 == count(LtDbStaticData::$servers))
 		{
 			$newDbTable = new LtDbTable();
-			if (1 == count(LtDb::$servers))
+			if (1 == count(LtDbStaticData::$servers))
 			{
-				$groupId = key(LtDb::$servers);
+				$groupId = key(LtDbStaticData::$servers);
 				$newDbTable->group = $groupId;
 				$newDbTable->schema = $groupId;
 				$newDbTable->tableName = $table;
 			}
 			else
 			{
-				$newDbTable->group = LtDb::$tables[$table]['group'];
-				$newDbTable->schema = LtDb::$tables[$table]['schema'];
-				if (isset(LtDb::$tables[$table]['created_column']))
+				$newDbTable->group = LtDbStaticData::$tables[$table]['group'];
+				$newDbTable->schema = LtDbStaticData::$tables[$table]['schema'];
+				if (isset(LtDbStaticData::$tables[$table]['created_column']))
 				{
-					$newDbTable->createdColumn = LtDb::$tables[$table]['created_column'];
+					$newDbTable->createdColumn = LtDbStaticData::$tables[$table]['created_column'];
 				}
-				if (isset(LtDb::$tables[$table]['modified_column']))
+				if (isset(LtDbStaticData::$tables[$table]['modified_column']))
 				{
-					$newDbTable->modifiedColumn = LtDb::$tables[$table]['modified_column'];
+					$newDbTable->modifiedColumn = LtDbStaticData::$tables[$table]['modified_column'];
 				}
-				if (isset(LtDb::$tables[$table]['table_name']))
+				if (isset(LtDbStaticData::$tables[$table]['table_name']))
 				{
-					$newDbTable->tableName = LtDb::$tables[$table]['table_name'];
+					$newDbTable->tableName = LtDbStaticData::$tables[$table]['table_name'];
 				}
 			}
 			$newDbTable->db = $newDbTable->getAdapterInstance();

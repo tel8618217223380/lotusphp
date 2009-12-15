@@ -100,7 +100,7 @@ class LtDbAdapterPdoPgsql extends LtDbAdapterPdo
 	 * @param string $table
 	 * @return array 
 	 */
-	public function showFields($table)
+	public function getFields($table)
 	{
 		$sql = "SELECT a.attnum, a.attname AS field, t.typname AS type, format_type(a.atttypid, a.atttypmod) AS complete_type, "
 		 . "a.attnotnull AS isnotnull, "

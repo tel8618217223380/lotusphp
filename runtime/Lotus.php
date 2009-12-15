@@ -132,10 +132,10 @@ class Lotus
 	{
 		if(isset(LtObjectUtil::singleton("LtConfig")->app["DB"]))
 		{
-			LtDb::$servers = LtObjectUtil::singleton("LtConfig")->app["DB"]["servers"];
+			LtDbStaticData::$servers = LtObjectUtil::singleton("LtConfig")->app["DB"]["servers"];
 			if(isset(LtObjectUtil::singleton("LtConfig")->app["DB"]["tables"]))
 			{
-				LtDb::$tables = LtObjectUtil::singleton("LtConfig")->app["DB"]["tables"];
+				LtDbStaticData::$tables = LtObjectUtil::singleton("LtConfig")->app["DB"]["tables"];
 			}
 		}
 	}

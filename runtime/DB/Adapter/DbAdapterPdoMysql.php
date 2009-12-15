@@ -98,13 +98,12 @@ class LtDbAdapterPdoMysql extends LtDbAdapterPdo
 	 * @param string $table
 	 * @return array
 	 */
-	public function showFields($table)
+	public function getFields($table)
 	{
 		$sql = "DESCRIBE $table";
 		$queryResult = $this->query($sql);
-		$result = $queryResult['rows'];
 		$fields = array();
-		foreach ($result as $key => $value)
+		foreach ($queryResult['rows'] as $key => $value)
 		{
 			$fields[$value['Field']]['name'] = $value['Field'];
 			$fields[$value['Field']]['type'] = $value['Type'];
@@ -116,5 +115,24 @@ class LtDbAdapterPdoMysql extends LtDbAdapterPdo
 			$fields[$value['Field']]['primary'] = (strtolower($value['Key']) == 'pri');
 		}
 		return $fields;
+	}
+
+	/**
+	 * Return the column descriptions for a database (or schema).
+	 *
+	 * @return array
+	 */
+	public function getTables()
+	{
+		$sql = "SHOW TABLES";
+		$queryResult = $this->query($sql);
+		$tables = array();
+		{
+			foreach ($queryResult['rows'] as $row)
+			{
+				$tables[] = $row[key($row)];
+			}
+		}
+		return $tables;
 	}
 }

@@ -6,6 +6,7 @@
 $lotusHome = dirname(dirname(dirname(__FILE__)));
 include $lotusHome . "/runtime/DB/DbConfigBuilder.php";
 include $lotusHome . "/runtime/DB/Db.php";
+include $lotusHome . "/runtime/DB/DbStaticData.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapter.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapterPdo.php";
 include $lotusHome . "/runtime/DB/Adapter/DbAdapterPdoMysql.php";
@@ -21,20 +22,18 @@ $dbConfigBuilder->addSingleHost(array(
 	"host" => "localhost",
 	"username" => "root",
 	"password" => "123456",
-	"dbname" => "lotus_db_test",
+	"dbname" => "test",
 	"adapter" => "pdoMysql",
 	"charset" => "UTF-8",
 ));
-LtDb::$servers = $dbConfigBuilder->getServers();
+LtDbStaticData::$servers = $dbConfigBuilder->getServers();
 
 /**
  * 直接执行执行SQL
- * 由于PDO::execute()的潜规则，这里三个查询只能分三次执行，不要合并成这样：$dba->query("$sql1; $sql2; $sql3");
+ * 由于PDO::execute()的潜规则，这里三个查询只能分两次执行，不要合并成这样：$dba->query("$sql1; $sql2;");
  */
 $dba = LtDb::factory("pdoMysql");
-$dba->query("DROP DATABASE IF EXISTS lotus_db_test;");
-$dba->query("CREATE DATABASE IF NOT EXISTS lotus_db_test;");
-$dba->query("USE lotus_db_test;");
+$dba->query("DROP TABLE IF EXISTS user;");
 $dba->query("
 CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
