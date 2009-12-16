@@ -6,27 +6,57 @@ class LtDbHandler
 	protected $database;
 	protected $schema;
 
+	protected $connResource;
+	protected $connectionAdapter;
+	protected $sqlAdapter;
+
+	public function __construct()
+	{
+		
+	}
+
 	/**
 	 * Trancaction methods
 	 */
 	public function beginTransaction()
 	{
-		
+		return $this->connResource->beginTransaction();
 	}
-	public function commit();
-	public function rollBack();
+
+	public function commit()
+	{
+		return $this->connResource->commit();
+	}
+	public function rollBack()
+	{
+		return $this->connResource->rollBack();
+	}
 
 	/**
 	 * Connect to db and execute sql query
 	 */
-	public function connect($connConf);
-	public function exec($sql);
-	public function query($sql, $bind = null, $forceUseMaster = false);
+	public function connect($connConf)
+	{
+		return $this->connect($connConf);
+	}
+
+	public function exec($sql)
+	{
+		return $this->connResource->exec($sql);
+	}
+
+	public function query($sql, $bind = null, $forceUseMaster = false)
+	{
+		
+		return $this->connResource->query($sql, $bind);
+	}
+
 	public function lastInsertId();
+
 	/**
 	 * Connection management
 	 */
-	protected function getConnection($connConf)
+	protected function getConnectionKey($connConf)
 	{
 		return $connConf['adapter'] . $connConf['host'] . $connConf['port'] . $connConf['username'] . $connConf['dbname'];
 	}
@@ -38,7 +68,7 @@ class LtDbHandler
 		foreach($hosts as $host => $hostConfig)
 		{
 			$hostConfig = $this->_getConfig($this->getGroup(), $this->getNode(), $role, $host);
-			$connectionKey = self::_getConnectionKey($hostConfig);
+			$connectionKey = $this->getConnectionKey($hostConfig);
 			if (isset(LtDbStaticData::$connections[$connectionKey]))
 			{
 				$cachedConnectionInfo = LtDbStaticData::$connections[$connectionKey];
@@ -59,7 +89,7 @@ class LtDbHandler
 				$hostConfig = $this->_getConfig($this->getGroup(), $this->getNode(), $role, $hostIndexArray[$hashNumber]);
 				if ($connection = $this->_connect($hostConfig))
 				{
-					$connectionKey = self::_getConnectionKey($hostConfig);
+					$connectionKey = $this->getConnectionKey($hostConfig);
 					LtDbStaticData::$connections[$connectionKey] = array('connection' => $connection, 'expire_time' => time() + 30);
 					break;
 				}
