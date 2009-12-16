@@ -34,18 +34,19 @@ $dbConfigBuilder->addSingleHost(array(
 	"password" => "123456",
 	"dbname" => "test",
 	"adapter" => "mysql",
+	//"adapter" => "pdo_mysql",//使用pdo_mysql扩展,目前只支持mysql和pdo_mysql,都能运行成功
 	"charset" => "UTF-8",
 ));
 LtDbStaticData::$servers = $dbConfigBuilder->getServers();
 
 /**
  * 直接执行执行SQL
+ * 由于mysql_query()的潜规则,每次只能执行一条SQL
  */
 $dba = new LtDbHandler();
 $username = "lotus" . time();
-$dba->exec("
-DROP TABLE IF EXISTS user;
-CREATE TABLE `user` (
+$dba->exec("DROP TABLE IF EXISTS user;");
+$dba->exec("CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
 	`username` VARCHAR( 20 ) NOT NULL COMMENT '用户名',
 	`age` INT NOT NULL COMMENT '年龄',
@@ -55,6 +56,5 @@ CREATE TABLE `user` (
 	UNIQUE (
 	`username`
 	)
-);
-INSERT INTO user (username, age) VALUES ('$username', '0.1');
-");
+);");
+$dba->exec("INSERT INTO user (username, age) VALUES ('$username', '0.1');");
