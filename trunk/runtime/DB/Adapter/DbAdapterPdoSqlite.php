@@ -102,9 +102,9 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 		$fields = array();
 		foreach ($result as $key => $value)
 		{
-			// �ֶ���
+			// 字段名
 			$fields[$value['name']]['name'] = $value['name'];
-			// �ֶ�����
+			// 字段类型
 			$fulltype = $value['type'];
 			$size = null;
 			$precision = null;
