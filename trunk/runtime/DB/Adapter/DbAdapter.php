@@ -135,7 +135,7 @@ abstract class LtDbAdapter
 			{
 				$cachedConnectionInfo = LtDbStaticData::$connections[$connectionKey];
 				if (time() < $cachedConnectionInfo['expire_time'])
-				{                                        
+				{
 					$connection = $cachedConnectionInfo['connection'];
 					break;
 				}
