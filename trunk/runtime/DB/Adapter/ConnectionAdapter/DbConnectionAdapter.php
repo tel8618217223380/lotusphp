@@ -1,7 +1,7 @@
 <?php
 abstract class LtDbConnectionAdapter
 {
-	protected $connResource;
+	public $connResource;
 
 	/**
 	 * Trancaction methods
