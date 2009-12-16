@@ -136,4 +136,24 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 		}
 		return $fields;
 	}
+	/**
+	 * Return the column descriptions for a database (or schema).
+	 *
+	 * @return array
+	 */
+	public function getTables()
+	{
+		//临时表及其索引不在 SQLITE_MASTER 表中而在 SQLITE_TEMP_MASTER 中出现
+		$sql = "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name";
+		$queryResult = $this->query($sql);
+		$tables = array();
+		{
+			foreach ($queryResult['rows'] as $row)
+			{
+				$tables[] = $row[key($row)];
+			}
+		}
+		return $tables;
+	}
+
 }
