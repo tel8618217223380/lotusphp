@@ -18,7 +18,7 @@ class LtDbConnectionAdapterMysql extends LtDbConnectionAdapter
 
 	public function connect($connConf)
 	{
-		return mysql_connect($connConf["host"], $connConf["username"], $connConf["password"]);
+		return mysql_connect($connConf["host"] . ":" . $connConf["port"], $connConf["username"], $connConf["password"]);
 	}
 
 	public function exec($sql)

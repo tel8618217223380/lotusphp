@@ -3,8 +3,6 @@ class LtDbHandler
 {
 	protected $group;
 	protected $node;
-	protected $database;
-	protected $schema;
 
 	protected $connectionAdapter;
 	protected $sqlAdapter;
@@ -89,11 +87,6 @@ class LtDbHandler
 		return $this->node;
 	}
 
-	public function getSchema()
-	{
-		return $this->schema;
-	}
-
 	public function getGroup()
 	{
 		if (1 == count(LtDbStaticData::$servers))
@@ -135,6 +128,10 @@ class LtDbHandler
 		LtDbStaticData::$servers[$group][$nodeArray[0]][$role][$firstNodeHostIndexArray[0]],
 		$config
 		);
+		if (!isset($config["schema"]) || empty($config["schema"]))
+		{
+			$config["schema"] = $config["dbname"];
+		}
 		return $config;
 	}
 
@@ -150,7 +147,7 @@ class LtDbHandler
 			$hostConfig = $this->getConfig($this->getGroup(), $this->getNode(), $role, $host);
 			if($connection = $this->getCachedConnection($this->getConnectionKey($hostConfig)))
 			{
-				$this->initAdapter($hostConfig["adapter"]);
+				$this->initAdapter($hostConfig);
 				break;
 			}
 		}
@@ -162,7 +159,7 @@ class LtDbHandler
 			{
 				$hashNumber = substr(microtime(),7,1) % $hostTotal;
 				$hostConfig = $this->getConfig($this->getGroup(), $this->getNode(), $role, $hostIndexArray[$hashNumber]);
-				$this->initAdapter($hostConfig["adapter"]);
+				$this->initAdapter($hostConfig);
 				if ($connection = $this->connectionAdapter->connect($hostConfig))
 				{
 					$this->cacheConnection($this->getConnectionKey($hostConfig), $connection);
@@ -177,14 +174,15 @@ class LtDbHandler
 			}
 		}
 		$this->connectionAdapter->connResource = $connection;
+		$this->exec($this->sqlAdapter->setSchema($hostConfig["schema"]));
 	}
 
 	/**
 	 * Init adapter instances
 	 */
-	protected function initAdapter($phpDbExt)
+	protected function initAdapter($hostConfig)
 	{
-		switch ($phpDbExt)
+		switch ($hostConfig["adapter"])
 		{
 			case "mysql":
 				$this->sqlAdapter = new LtDbSqlAdapterMysql();
@@ -198,6 +196,6 @@ class LtDbHandler
 				$this->sqlAdapter = new LtDbSqlAdapterMysql();
 				$this->connectionAdapter = new LtDbConnectionAdapterPdo();
 				break;
-		}
+		}		
 	}
 }
