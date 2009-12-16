@@ -33,7 +33,7 @@ $dbConfigBuilder->addSingleHost(array(
 	"username" => "root",
 	"password" => "123456",
 	"dbname" => "test",
-	"adapter" => "pdo_mysql",
+	"adapter" => "mysql",
 	"charset" => "UTF-8",
 ));
 LtDbStaticData::$servers = $dbConfigBuilder->getServers();
