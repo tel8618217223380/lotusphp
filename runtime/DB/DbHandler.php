@@ -6,13 +6,12 @@ class LtDbHandler
 	protected $database;
 	protected $schema;
 
-	protected $connResource;
 	protected $connectionAdapter;
 	protected $sqlAdapter;
 
 	public function __construct()
 	{
-		
+		$this->init();
 	}
 
 	/**
@@ -20,38 +19,35 @@ class LtDbHandler
 	 */
 	public function beginTransaction()
 	{
-		return $this->connResource->beginTransaction();
+		return $$this->connectionAdapter->beginTransaction();
 	}
 
 	public function commit()
 	{
-		return $this->connResource->commit();
+		return $this->connectionAdapter->commit();
 	}
 	public function rollBack()
 	{
-		return $this->connResource->rollBack();
+		return $this->connectionAdapter->rollBack();
 	}
 
 	/**
 	 * Connect to db and execute sql query
 	 */
-	public function connect($connConf)
-	{
-		return $this->connect($connConf);
-	}
-
 	public function exec($sql)
 	{
-		return $this->connResource->exec($sql);
+		return $this->connectionAdapter->exec($sql);
 	}
 
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
-		
-		return $this->connResource->query($sql, $bind);
+		return $this->connectionAdapter->query($sql, $bind);
 	}
 
-	public function lastInsertId();
+	public function lastInsertId()
+	{
+		return $this->connectionAdapter->lastInsertId($sql);
+	}
 
 	/**
 	 * Connection management
@@ -61,22 +57,101 @@ class LtDbHandler
 		return $connConf['adapter'] . $connConf['host'] . $connConf['port'] . $connConf['username'] . $connConf['dbname'];
 	}
 
-	protected function getConnection($role)
+	protected function getCachedConnection($key)
+	{
+		return isset(LtDbStaticData::$connections[$key]) && time() < LtDbStaticData::$connections[$key]['expire_time']
+		? LtDbStaticData::$connections[$key]['connection'] : false;
+	}
+
+	protected function cacheConnection($key, $connection)
+	{
+		LtDbStaticData::$connections[$key] = array('connection' => $connection, 'expire_time' => time() + 30);
+	}
+
+
+	/**
+	 * Get node, group, schema
+	 */
+	public function getNode()
+	{
+		if (NULL === $this->node)
+		{
+			$nodeArray = array_keys(LtDbStaticData::$servers[$this->getGroup()]);
+			if (1 === count($nodeArray))
+			{
+				$this->node = $nodeArray[0];
+			}
+			else
+			{
+				DebugHelper::debug('DB_NODE_NOT_SPECIFIED', array('group' => $this->getGroup()));
+			}
+		}
+		return $this->node;
+	}
+
+	public function getSchema()
+	{
+		return $this->schema;
+	}
+
+	public function getGroup()
+	{
+		if (1 == count(LtDbStaticData::$servers))
+		{
+			$this->group = key(LtDbStaticData::$servers);
+		}
+		return $this->group;
+	}
+
+	/**
+	 * Get db config
+	 */
+	protected function getConfig($group, $node, $role = 'master', $host = null)
+	{
+		$nodeArray = array_keys(LtDbStaticData::$servers[$group]);
+		$hostArray = array_keys(LtDbStaticData::$servers[$group][$node][$role]);
+		if (!$host)
+		{
+			$host = $hostArray[0];
+			$config = LtDbStaticData::$servers[$group][$node][$role][$host];
+		}
+		else
+		{
+			$config = array_merge(
+			LtDbStaticData::$servers[$group][$node][$role][$hostArray[0]],
+			LtDbStaticData::$servers[$group][$node][$role][$host]
+			);
+		}
+		if ('slave' == $role)
+		{
+			$masterIndexArray = array_keys(LtDbStaticData::$servers[$group][$node]['master']);
+			$config = array_merge(
+			LtDbStaticData::$servers[$group][$nodeArray[0]]['master'][$masterIndexArray[0]],
+			$config
+			);
+		}
+		$firstNodeHostIndexArray = array_keys(LtDbStaticData::$servers[$group][$nodeArray[0]][$role]);
+		$config = array_merge(
+		LtDbStaticData::$servers[$group][$nodeArray[0]][$role][$firstNodeHostIndexArray[0]],
+		$config
+		);
+		return $config;
+	}
+
+	/**
+	 * Init connection
+	 */
+	protected function init($role = "master")
 	{
 		$hosts = LtDbStaticData::$servers[$this->getGroup()][$this->getNode()][$role];
 		$connection = false;
 		foreach($hosts as $host => $hostConfig)
 		{
-			$hostConfig = $this->_getConfig($this->getGroup(), $this->getNode(), $role, $host);
-			$connectionKey = $this->getConnectionKey($hostConfig);
-			if (isset(LtDbStaticData::$connections[$connectionKey]))
+			$hostConfig = $this->getConfig($this->getGroup(), $this->getNode(), $role, $host);
+			if($connection = $this->getCachedConnection($this->getConnectionKey($hostConfig)))
 			{
-				$cachedConnectionInfo = LtDbStaticData::$connections[$connectionKey];
-				if (time() < $cachedConnectionInfo['expire_time'])
-				{                                        
-					$connection = $cachedConnectionInfo['connection'];
-					break;
-				}
+				$this->initAdapter($hostConfig["adapter"]);
+				break;
 			}
 		}
 		if (!$connection)
@@ -86,11 +161,11 @@ class LtDbHandler
 			while ($hostTotal)
 			{
 				$hashNumber = substr(microtime(),7,1) % $hostTotal;
-				$hostConfig = $this->_getConfig($this->getGroup(), $this->getNode(), $role, $hostIndexArray[$hashNumber]);
-				if ($connection = $this->_connect($hostConfig))
+				$hostConfig = $this->getConfig($this->getGroup(), $this->getNode(), $role, $hostIndexArray[$hashNumber]);
+				$this->initAdapter($hostConfig["adapter"]);
+				if ($connection = $this->connectionAdapter->connect($hostConfig))
 				{
-					$connectionKey = $this->getConnectionKey($hostConfig);
-					LtDbStaticData::$connections[$connectionKey] = array('connection' => $connection, 'expire_time' => time() + 30);
+					$this->cacheConnection($this->getConnectionKey($hostConfig), $connection);
 					break;
 				}
 				for ($i = $hashNumber; $i < $hostTotal - 1; $i ++)
@@ -101,6 +176,28 @@ class LtDbHandler
 				$hostTotal --;
 			}
 		}
-		return $connection;		
+		$this->connectionAdapter->connResource = $connection;
+	}
+
+	/**
+	 * Init adapter instances
+	 */
+	protected function initAdapter($phpDbExt)
+	{
+		switch ($phpDbExt)
+		{
+			case "mysql":
+				$this->sqlAdapter = new LtDbSqlAdapterMysql();
+				$this->connectionAdapter = new LtDbConnectionAdapterMysql();
+				break;
+			case "mysqli":
+				$this->sqlAdapter = new LtDbSqlAdapterMysql();
+				$this->connectionAdapter = new LtDbConnectionAdapterMysqli();
+				break;
+			case "pdo_mysql":
+				$this->sqlAdapter = new LtDbSqlAdapterMysql();
+				$this->connectionAdapter = new LtDbConnectionAdapterPdo();
+				break;
+		}
 	}
 }
