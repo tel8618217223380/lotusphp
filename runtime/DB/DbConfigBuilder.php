@@ -47,7 +47,6 @@ class LtDbConfigBuilder
 		}
 		if (1 == count($this->servers))
 		{
-			reset($this->servers);
 			$groupId = key($this->servers);
 		}
 		$this->tables[$tableId] = array(
