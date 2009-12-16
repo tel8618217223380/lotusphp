@@ -34,7 +34,7 @@ class LtRouter
 			}
 		}
 		else
-		{	// CLIÄ£Ê½
+		{	// CLIæ¨¡å¼
 			$i = 0;
 			while ((empty($module) || empty($action)) && isset($_SERVER['argv'][$i]))
 			{
@@ -49,7 +49,7 @@ class LtRouter
 				$i ++;
 			}
 		}
-		// moduleÃû×ÖÖ»ÄÜ´óĞ¡Ğ´×ÖÄ¸ Êı×Ö . - _
+		// moduleåå­—åªèƒ½å¤§å°å†™å­—æ¯ æ•°å­— . - _
 		if (!empty($module) && !preg_match('/^[a-zA-Z0-9\.\-_]+$/', $module))
 		{
 			if (function_exists('onModuleNameIllegal'))
@@ -61,7 +61,7 @@ class LtRouter
 				throw new Exception("Module name is illegal: {$module}");
 			}
 		}
-		// action Ãû×ÖÖ»ÄÜ´óĞ¡Ğ´×ÖÄ¸ Êı×Ö . - _
+		// action åå­—åªèƒ½å¤§å°å†™å­—æ¯ æ•°å­— . - _
 		if (!empty($action) && !preg_match('/^[a-zA-Z0-9\.\-_]+$/', $action))
 		{
 			if (function_exists('onaActionNameIllegal'))
