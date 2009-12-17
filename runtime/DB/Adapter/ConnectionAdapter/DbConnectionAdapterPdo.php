@@ -46,24 +46,15 @@ class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 
 	public function query($sql, $bind = null)
 	{
-		$stmt = $this->connResource->prepare($sql);
-		$stmt->execute((array) $bind);
-		if ('00000' != $stmt->errorCode())
+		$rows = array();
+		$result = $this->connResource->query($sql);
+		if (is_object($result))
 		{
-			if(function_exists('onDbQueryFailed'))
-			{
-				call_user_func('onDbQueryFailed', $stmt, $sql, $bind);
-			}
-			else
-			{
-				$errorInfo = $stmt->errorInfo();
-				throw new Exception('SQL query exception (code: [' . $stmt->errorCode() . ']; sql: [' . $sql . ']; message:' . $errorInfo[2]);
-			}
+			return $result->fetchAll(PDO::FETCH_ASSOC);
 		}
-		$stmt->setFetchMode(PDO::FETCH_ASSOC);
-		$data['row_total'] = $stmt->rowCount();
-		$data['rows'] = $stmt->fetchAll();
-		$stmt->closeCursor();
-		return $data;
+		else
+		{
+			return $result;
+		}
 	}
 }
