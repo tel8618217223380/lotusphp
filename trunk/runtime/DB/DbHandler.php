@@ -30,19 +30,19 @@ class LtDbHandler
 	}
 
 	/**
-	 * Connect to db and execute sql query
-	 */
-	/**
-	 * @todo 如果是读操作，自动去读slave服务器
+	 * Execute an sql query
+	 * @param $sql
+	 * @param $bind
+	 * @param $forceUseMaster
+	 * @return
+	 * SELECT, SHOW, DESECRIBE return rowset
+	 * INSERT return the inserted record's Primary Key
+	 * UPDATE, DELETE return affected count
+	 * @todo 如果是读操作，自动去读slave服务器，除非设置了强制读master服务器
 	 */
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
 		return $this->connectionAdapter->query($sql, $bind);
-	}
-
-	public function lastInsertId()
-	{
-		return $this->connectionAdapter->lastInsertId($sql);
 	}
 
 	/**
@@ -66,9 +66,18 @@ class LtDbHandler
 
 
 	/**
-	 * Get node, group, schema
+	 * Get group, node
 	 */
-	public function getNode()
+	protected function getGroup()
+	{
+		if (1 == count(LtDbStaticData::$servers))
+		{
+			$this->group = key(LtDbStaticData::$servers);
+		}
+		return $this->group;
+	}
+
+	protected function getNode()
 	{
 		if (NULL === $this->node)
 		{
@@ -83,15 +92,6 @@ class LtDbHandler
 			}
 		}
 		return $this->node;
-	}
-
-	public function getGroup()
-	{
-		if (1 == count(LtDbStaticData::$servers))
-		{
-			$this->group = key(LtDbStaticData::$servers);
-		}
-		return $this->group;
 	}
 
 	/**
