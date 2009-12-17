@@ -36,7 +36,7 @@ class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 		return new PDO($dsn, $connConf['username'], $connConf['password'], $option);
 	}
 
-	public function query($sql, $bind = null)
+	public function query($sql)
 	{
 		$rows = array();
 		$result = $this->connResource->query($sql);
