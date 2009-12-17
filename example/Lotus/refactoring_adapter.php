@@ -45,8 +45,9 @@ LtDbStaticData::$servers = $dbConfigBuilder->getServers();
  */
 $dba = new LtDbHandler();
 $username = "lotus" . time();
-$dba->exec("DROP TABLE IF EXISTS user;");
-$dba->exec("CREATE TABLE `user` (
+$dba->query("SELECT * FROM user");
+$dba->query("DROP TABLE IF EXISTS user;");
+$dba->query("CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
 	`username` VARCHAR( 20 ) NOT NULL COMMENT '用户名',
 	`age` INT NOT NULL COMMENT '年龄',
@@ -57,4 +58,5 @@ $dba->exec("CREATE TABLE `user` (
 	`username`
 	)
 );");
-$dba->exec("INSERT INTO user (username, age) VALUES ('$username', '0.1');");
+$dba->query("INSERT INTO user (username, age) VALUES ('$username', '4');");
+print_r($dba->query("SELECT * FROM user"));

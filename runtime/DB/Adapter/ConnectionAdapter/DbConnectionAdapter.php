@@ -14,7 +14,6 @@ abstract class LtDbConnectionAdapter
 	 * Connect to db and execute sql query
 	 */
 	abstract public function connect($connConf);
-	abstract public function exec($sql);
 	abstract public function query($sql, $bind = null);
 	abstract public function lastInsertId();
 }
