@@ -15,5 +15,4 @@ abstract class LtDbConnectionAdapter
 	 */
 	abstract public function connect($connConf);
 	abstract public function query($sql, $bind = null);
-	abstract public function lastInsertId();
 }

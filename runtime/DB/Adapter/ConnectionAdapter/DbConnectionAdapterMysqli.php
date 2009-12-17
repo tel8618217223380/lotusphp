@@ -38,9 +38,4 @@ class LtDbConnectionAdapterMysqli extends LtDbConnectionAdapter
 			return $result;
 		}
 	}
-
-	public function lastInsertId()
-	{
-		return $this->connResource->insert_id();
-	}
 }

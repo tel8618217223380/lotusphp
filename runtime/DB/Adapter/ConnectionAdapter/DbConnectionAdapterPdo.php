@@ -66,9 +66,4 @@ class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 		$stmt->closeCursor();
 		return $data;
 	}
-
-	public function lastInsertId()
-	{
-		return $this->connResource->lastInsertId();
-	}
 }
