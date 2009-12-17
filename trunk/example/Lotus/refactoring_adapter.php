@@ -27,7 +27,7 @@ $lotus->boot();
  * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给Db::$servers，效果是一样的
  */
 $dbConfigBuilder = new LtDbConfigBuilder();
-$adapter = "pdo_mysql";
+$adapter = "mysql";
 $dbConfigBuilder->addSingleHost(array(
 	"host" => "localhost",
 	"port" => "3306",
@@ -46,9 +46,11 @@ LtDbStaticData::$servers = $dbConfigBuilder->getServers();
  */
 $dba = new LtDbHandler();
 $username = $adapter . time();
-$dba->query("USE lotus");
-$dba->query("DROP TABLE IF EXISTS user;");
-$dba->query("CREATE TABLE `user` (
+
+echo "\nUSE, DROP, CREATE应该返回true（执行成功）或者false（执行失败）：\n";
+var_dump($dba->query("USE shycat"));//故意使用另一个database（和配置里写的不一样），测试各驱动use db好不好用
+var_dump($dba->query("DROP TABLE IF EXISTS user;"));
+var_dump($dba->query("CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
 	`username` VARCHAR( 20 ) NOT NULL COMMENT '用户名',
 	`age` INT NOT NULL COMMENT '年龄',
@@ -58,6 +60,17 @@ $dba->query("CREATE TABLE `user` (
 	UNIQUE (
 	`username`
 	)
-);");
-$dba->query("INSERT INTO user (username, age) VALUES ('$username', '4');");
-print_r($dba->query("SELECT * FROM user"));
+);"));
+
+echo "\nINSERT应该返回自增ID：\n";
+var_dump($dba->query("INSERT INTO user (username, age) VALUES ('$username', '4');"));
+
+echo "\nSELECT应该返回查到的结果集：\n";
+var_dump($dba->query("SELECT * FROM user"));
+
+echo "\nUPDATE,DELETE应该返回受影响的行数：\n";
+var_dump($dba->query("UPDATE user SET age = 10"));
+var_dump($dba->query("DELETE FROM user"));
+
+echo "\nSELECT查不到结果应该返回null：\n";
+var_dump($dba->query("SELECT * FROM user"));

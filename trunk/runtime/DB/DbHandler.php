@@ -34,12 +34,13 @@ class LtDbHandler
 	 * @param $sql
 	 * @param $bind
 	 * @param $forceUseMaster
-	 * @return
-	 * SELECT, SHOW, DESECRIBE return rowset
-	 * INSERT return the inserted record's Primary Key
+	 * @return false on failed
+	 * SELECT, SHOW, DESECRIBE, EXPLAIN return rowset or NULL when no record found
+	 * INSERT return the ID generated for an AUTO_INCREMENT column
 	 * UPDATE, DELETE return affected count
+	 * USE, DROP, ALTER, CREATE, SET etc, return true
 	 * @todo 如果是读操作，自动去读slave服务器，除非设置了强制读master服务器
-	 * @todo 如果 ConnectionAdapter不支持bindParameter,则模拟之
+	 * @todo 模拟bindParameter，支持占位符
 	 */
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{

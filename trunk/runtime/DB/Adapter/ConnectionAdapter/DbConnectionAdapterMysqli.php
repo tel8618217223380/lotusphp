@@ -21,7 +21,7 @@ class LtDbConnectionAdapterMysqli extends LtDbConnectionAdapter
 		return new mysqli($connConf["host"], $connConf["username"], $connConf["password"], $connConf["dbname"], $connConf["port"]);
 	}
 
-	public function query($sql, $bind = null)
+	public function query($sql)
 	{
 		$rows = array();
 		$result = $this->connResource->query($sql);
