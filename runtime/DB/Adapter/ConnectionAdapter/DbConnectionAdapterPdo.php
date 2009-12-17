@@ -46,7 +46,7 @@ class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 
 	public function query($sql, $bind = null)
 	{
-		$stmt = $this->prepare($sql);
+		$stmt = $this->connResource->prepare($sql);
 		$stmt->execute((array) $bind);
 		if ('00000' != $stmt->errorCode())
 		{

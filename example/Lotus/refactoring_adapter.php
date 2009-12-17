@@ -27,13 +27,14 @@ $lotus->boot();
  * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给Db::$servers，效果是一样的
  */
 $dbConfigBuilder = new LtDbConfigBuilder();
+$adapter = "pdo_mysql";
 $dbConfigBuilder->addSingleHost(array(
 	"host" => "localhost",
 	"port" => "3306",
 	"username" => "root",
 	"password" => "123456",
 	"dbname" => "test",
-	"adapter" => "mysqli",
+	"adapter" => $adapter,
 	//"adapter" => "pdo_mysql",//使用pdo_mysql扩展,目前只支持mysql和pdo_mysql,都能运行成功
 	"charset" => "UTF-8",
 ));
@@ -44,8 +45,8 @@ LtDbStaticData::$servers = $dbConfigBuilder->getServers();
  * 由于mysql_query()的潜规则,每次只能执行一条SQL
  */
 $dba = new LtDbHandler();
-$username = "mysqli" . time();
-$dba->query("SELECT * FROM user");
+$username = $adapter . time();
+$dba->query("USE lotus");
 $dba->query("DROP TABLE IF EXISTS user;");
 $dba->query("CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
