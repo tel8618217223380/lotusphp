@@ -44,7 +44,34 @@ class LtDbHandler
 	 */
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
-		return $this->connectionAdapter->query($sql, $bind);
+		$result = $this->connectionAdapter->query($sql);
+		if (false === $result)//Query failed
+		{
+			return false;
+		}
+		if ($this->connectionAdapter->isResultSet($result))//SELECT, SHOW, DESCRIBE
+		{
+			if (0 === $this->connectionAdapter->foundRows($result))
+			{
+				return null;
+			}
+			else
+			{
+				return $this->connectionAdapter->fetchAll($result);
+			}
+		}
+		else if ("insert" == strtolower(trim(substr($sql, 0, 6))))//INSERT
+		{
+			return $this->connectionAdapter->lastInsertId();
+		}
+		else if (in_array(strtolower(trim(substr($sql, 0, 6))), array("update", "delete", "replac")))//UPDATE, DELETE, REPLAC(E
+		{
+			return $this->connectionAdapter->affectedRows();
+		}
+		else//USE, SET, CREATE, DROP, ALTER
+		{
+			return $result;
+		}
 	}
 
 	/**
