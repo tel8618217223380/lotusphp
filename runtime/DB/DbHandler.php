@@ -39,6 +39,7 @@ class LtDbHandler
 	 * INSERT return the inserted record's Primary Key
 	 * UPDATE, DELETE return affected count
 	 * @todo 如果是读操作，自动去读slave服务器，除非设置了强制读master服务器
+	 * @todo 如果 ConnectionAdapter不支持bindParameter,则模拟之
 	 */
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
@@ -135,6 +136,7 @@ class LtDbHandler
 
 	/**
 	 * Init connection
+	 * @todo 连接失败处理
 	 */
 	protected function init($role = "master")
 	{

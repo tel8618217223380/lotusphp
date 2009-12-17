@@ -33,15 +33,7 @@ class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 				$dsn =  "odbc:" . $connConf["host"];
 				break;
 		}
-		try
-		{
-			$connection = new PDO($dsn, $connConf['username'], $connConf['password'], $option);
-			return $connection;
-		}
-		catch (PDOException $exception)
-		{
-			return false;
-		}
+		return new PDO($dsn, $connConf['username'], $connConf['password'], $option);
 	}
 
 	public function query($sql, $bind = null)
