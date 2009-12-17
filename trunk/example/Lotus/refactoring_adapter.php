@@ -33,7 +33,7 @@ $dbConfigBuilder->addSingleHost(array(
 	"username" => "root",
 	"password" => "123456",
 	"dbname" => "test",
-	"adapter" => "mysql",
+	"adapter" => "mysqli",
 	//"adapter" => "pdo_mysql",//使用pdo_mysql扩展,目前只支持mysql和pdo_mysql,都能运行成功
 	"charset" => "UTF-8",
 ));
@@ -44,7 +44,7 @@ LtDbStaticData::$servers = $dbConfigBuilder->getServers();
  * 由于mysql_query()的潜规则,每次只能执行一条SQL
  */
 $dba = new LtDbHandler();
-$username = "lotus" . time();
+$username = "mysqli" . time();
 $dba->query("SELECT * FROM user");
 $dba->query("DROP TABLE IF EXISTS user;");
 $dba->query("CREATE TABLE `user` (

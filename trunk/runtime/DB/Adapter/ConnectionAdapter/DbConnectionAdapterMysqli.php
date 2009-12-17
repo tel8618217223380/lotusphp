@@ -21,24 +21,26 @@ class LtDbConnectionAdapterMysqli extends LtDbConnectionAdapter
 		return new mysqli($connConf["host"], $connConf["username"], $connConf["password"], $connConf["dbname"], $connConf["port"]);
 	}
 
-	public function exec($sql)
-	{
-		
-	}
-
 	public function query($sql, $bind = null)
 	{
 		$rows = array();
-		$result = mysql_query($sql, $this->connResource);
-		while($row = mysql_fetch_assoc($result))
+		$result = $this->connResource->query($sql);
+		if (is_object($result))
 		{
-			$rows[] = $row;
+			while($row = $result->fetch_assoc())
+			{
+				$rows[] = $row;
+			}
+			return $rows;
 		}
-		return $rows;
+		else
+		{
+			return $result;
+		}
 	}
 
 	public function lastInsertId()
 	{
-		return mysql_insert_id($this->connResource);
+		return $this->connResource->insert_id();
 	}
 }
