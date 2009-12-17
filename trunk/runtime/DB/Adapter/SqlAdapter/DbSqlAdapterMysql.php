@@ -7,7 +7,7 @@ class LtDbSqlAdapterMysql extends LtDbSqlAdapter
 	}
 	public function setCharset($charset)
 	{
-		
+		return "SET NAMES " . str_replace('-', '', $charset);
 	}
 	public function setSchema($schema)
 	{

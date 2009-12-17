@@ -32,6 +32,9 @@ class LtDbHandler
 	/**
 	 * Connect to db and execute sql query
 	 */
+	/**
+	 * @todo 如果是读操作，自动去读slave服务器
+	 */
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
 		return $this->connectionAdapter->query($sql, $bind);
@@ -170,6 +173,7 @@ class LtDbHandler
 		}
 		$this->connectionAdapter->connResource = $connection;
 		$this->query($this->sqlAdapter->setSchema($hostConfig["schema"]));
+		$this->query($this->sqlAdapter->setCharset($hostConfig["charset"]));
 	}
 
 	/**
