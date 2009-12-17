@@ -44,11 +44,6 @@ class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 		}
 	}
 
-	public function exec($sql)
-	{
-		return $this->connResource->exec($sql);
-	}
-
 	public function query($sql, $bind = null)
 	{
 		$stmt = $this->prepare($sql);

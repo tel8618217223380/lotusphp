@@ -21,20 +21,22 @@ class LtDbConnectionAdapterMysql extends LtDbConnectionAdapter
 		return mysql_connect($connConf["host"] . ":" . $connConf["port"], $connConf["username"], $connConf["password"]);
 	}
 
-	public function exec($sql)
-	{
-		return mysql_query($sql, $this->connResource);
-	}
-
 	public function query($sql, $bind = null)
 	{
 		$rows = array();
 		$result = mysql_query($sql, $this->connResource);
-		while($row = mysql_fetch_assoc($result))
+		if (is_resource($result))
 		{
-			$rows[] = $row;
+			while($row = mysql_fetch_assoc($result))
+			{
+				$rows[] = $row;
+			}
+			return $rows;
 		}
-		return $rows;
+		else
+		{
+			return $result;
+		}
 	}
 
 	public function lastInsertId()

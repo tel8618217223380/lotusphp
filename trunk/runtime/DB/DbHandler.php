@@ -32,11 +32,6 @@ class LtDbHandler
 	/**
 	 * Connect to db and execute sql query
 	 */
-	public function exec($sql)
-	{
-		return $this->connectionAdapter->exec($sql);
-	}
-
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
 		return $this->connectionAdapter->query($sql, $bind);
@@ -174,7 +169,7 @@ class LtDbHandler
 			}
 		}
 		$this->connectionAdapter->connResource = $connection;
-		$this->exec($this->sqlAdapter->setSchema($hostConfig["schema"]));
+		$this->query($this->sqlAdapter->setSchema($hostConfig["schema"]));
 	}
 
 	/**
@@ -196,6 +191,6 @@ class LtDbHandler
 				$this->sqlAdapter = new LtDbSqlAdapterMysql();
 				$this->connectionAdapter = new LtDbConnectionAdapterPdo();
 				break;
-		}		
+		}
 	}
 }
