@@ -225,6 +225,13 @@ class LtDbHandler
 				$this->sqlAdapter = new LtDbSqlAdapterMysql();
 				$this->connectionAdapter = new LtDbConnectionAdapterPdo();
 				break;
+			default:
+				$LtDbSqlAdapter = 'LtDbSqlAdapter'.ucfirst($hostConfig["adapter"]);
+				$this->sqlAdapter = new $LtDbSqlAdapter();
+
+				$LtDbConnectionAdapter = 'LtDbConnectionAdapter'.ucfirst($hostConfig["adapter"]);
+				$this->connectionAdapter = new $LtDbConnectionAdapter();
+				break;
 		}
 	}
 }
