@@ -3,17 +3,17 @@ class LtDbConnectionAdapterMysql extends LtDbConnectionAdapter
 {
 	public function beginTransaction()
 	{
-		
+
 	}
 
 	public function commit()
 	{
-		
+
 	}
 
 	public function rollBack()
 	{
-		
+
 	}
 
 	public function connect($connConf)
@@ -23,34 +23,35 @@ class LtDbConnectionAdapterMysql extends LtDbConnectionAdapter
 
 	public function query($sql)
 	{
-		$result = mysql_query($sql, $this->connResource);
-		if (false === $result)//Query failed
+		return mysql_query($sql, $this->connResource);
+	}
+
+	public function affectedRows()
+	{
+		return mysql_affected_rows($this->connResource);
+	}
+
+	public function fetchAll($resultRet)
+	{
+		while($row = mysql_fetch_assoc($resultRet))
 		{
-			return $result;
+			$rows[] = $row;
 		}
-		if (is_resource($result))//SELECT, SHOW, DESCRIBE
-		{
-			if (0 === mysql_num_rows($result))
-			{
-				return null;
-			}
-			while($row = mysql_fetch_assoc($result))
-			{
-				$rows[] = $row;
-			}
-			return $rows;
-		}
-		else if ("insert" == strtolower(trim(substr($sql, 0, 6))))//INSERT
-		{
-			return mysql_insert_id($this->connResource);
-		}
-		else if (in_array(strtolower(trim(substr($sql, 0, 6))), array("update", "delete", "replac")))//UPDATE, DELETE, REPLACE
-		{
-			return mysql_affected_rows($this->connResource);
-		}
-		else
-		{
-			return $result;
-		}
+		return $rows;
+	}
+
+	public function foundRows($resultRet)
+	{
+		return mysql_num_rows($resultRet);
+	}
+
+	public function isResultSet($resultRet)
+	{
+		return is_resource($resultRet);
+	}
+
+	public function lastInsertId()
+	{
+		return mysql_insert_id($this->connResource);
 	}
 }
