@@ -68,7 +68,7 @@ $username = "lotus" . $time;
 var_dump($dba->query("INSERT INTO user (username, age, created, modified) VALUES ('$username', '4', '$time','$time')"));
 }
 $dba->query("COMMIT");
-// 事务测试
+echo "\nROLLBACK事务测试\n";
 $dba->query("BEGIN");
 for($i=11; $i< 21; $i++)
 {
