@@ -64,7 +64,7 @@ class LtDbHandler
 		{
 			return $this->connectionAdapter->lastInsertId();
 		}
-		else if (in_array(strtolower(trim(substr($sql, 0, 6))), array("update", "delete", "replac")))//UPDATE, DELETE, REPLAC(E
+		else if (preg_match("/^\s*update|^\s*delete|^\s*replac/i", $sql))//UPDATE, DELETE, REPLACE
 		{
 			return $this->connectionAdapter->affectedRows();
 		}
