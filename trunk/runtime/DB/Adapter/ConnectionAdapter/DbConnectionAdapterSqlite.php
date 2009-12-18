@@ -63,10 +63,11 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 
 	public function query($sql, $bind = null, $type = '')
 	{
-//		if (empty(trim($sql)))
-//		{
-//			return null;
-//		} 
+		$sql = trim($sql);
+		if (empty($sql))
+		{
+			return null;
+		} 
 		$error = '';
 		$func = $type == 'UNBUFFERED' ? 'sqlite_unbuffered_query' : 'sqlite_query';
 		if (preg_match("/^\s*SELECT/i", $sql))
@@ -116,7 +117,6 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 	{
 		return is_resource($resultRet);
 	}
-
 
 	public function lastInsertId()
 	{
