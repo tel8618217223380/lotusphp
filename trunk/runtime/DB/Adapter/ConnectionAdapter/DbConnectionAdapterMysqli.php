@@ -3,17 +3,17 @@ class LtDbConnectionAdapterMysqli extends LtDbConnectionAdapter
 {
 	public function beginTransaction()
 	{
-		
+
 	}
 
 	public function commit()
 	{
-		
+
 	}
 
 	public function rollBack()
 	{
-		
+
 	}
 
 	public function connect($connConf)
@@ -21,21 +21,25 @@ class LtDbConnectionAdapterMysqli extends LtDbConnectionAdapter
 		return new mysqli($connConf["host"], $connConf["username"], $connConf["password"], $connConf["dbname"], $connConf["port"]);
 	}
 
+	public function exec($sql)
+	{
+		$this->connResource->query($sql);
+		return $this->connResource->affected_rows;
+	}
+
 	public function query($sql)
 	{
 		$rows = array();
 		$result = $this->connResource->query($sql);
-		if (is_object($result))
+		while($row = $result->fetch_assoc())
 		{
-			while($row = $result->fetch_assoc())
-			{
-				$rows[] = $row;
-			}
-			return $rows;
+			$rows[] = $row;
 		}
-		else
-		{
-			return $result;
-		}
+		return $rows;
+	}
+
+	public function lastInsertid()
+	{
+		return $this->connResource->insert_id;
 	}
 }
