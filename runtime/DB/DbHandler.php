@@ -212,27 +212,24 @@ class LtDbHandler
 	 */
 	protected function initAdapter($hostConfig)
 	{
-		switch ($hostConfig["adapter"])
+		if (preg_match("/^pdo_/i", $hostConfig["adapter"]))
 		{
-			case "mysql":
-				$this->sqlAdapter = new LtDbSqlAdapterMysql();
-				$this->connectionAdapter = new LtDbConnectionAdapterMysql();
-				break;
-			case "mysqli":
-				$this->sqlAdapter = new LtDbSqlAdapterMysql();
-				$this->connectionAdapter = new LtDbConnectionAdapterMysqli();
-				break;
-			case "pdo_mysql":
-				$this->sqlAdapter = new LtDbSqlAdapterMysql();
-				$this->connectionAdapter = new LtDbConnectionAdapterPdo();
-				break;
-			default:
-				$LtDbSqlAdapter = 'LtDbSqlAdapter'.ucfirst($hostConfig["adapter"]);
-				$this->sqlAdapter = new $LtDbSqlAdapter();
-
-				$LtDbConnectionAdapter = 'LtDbConnectionAdapter'.ucfirst($hostConfig["adapter"]);
-				$this->connectionAdapter = new $LtDbConnectionAdapter();
-				break;
+			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst(substr($hostConfig["adapter"], 4));
+			$LtDbConnectionAdapter = "LtDbConnectionAdapterPdo";
 		}
+		else
+		{
+			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst($hostConfig["adapter"]);
+			$LtDbConnectionAdapter = "LtDbConnectionAdapter" . ucfirst($hostConfig["adapter"]);
+		}
+		/**
+		 * Mysqli use mysql syntax
+		 */
+		if ("mysqli" == $hostConfig["adapter"])
+		{
+			$LtDbSqlAdapter = "LtDbSqlAdapterMysql";
+		}
+		$this->sqlAdapter = new $LtDbSqlAdapter();
+		$this->connectionAdapter = new $LtDbConnectionAdapter();
 	}
 }
