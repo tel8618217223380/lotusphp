@@ -13,7 +13,7 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 		$error = '';
 		if (!sqlite_exec($this -> connResource, 'BEGIN TRANSACTION', $error))
 		{ 
-			// 错误处理
+			trigger_error($error, E_USER_ERROR);
 		} 
 	} 
 
@@ -22,7 +22,7 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 		$error = '';
 		if (!sqlite_exec($this -> connResource, 'COMMIT TRANSACTION', $error))
 		{ 
-			// 错误处理
+			trigger_error($error, E_USER_ERROR);
 		} 
 	} 
 
@@ -31,7 +31,7 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 		$error = '';
 		if (!sqlite_exec($this -> connResource, 'ROLLBACK TRANSACTION', $error))
 		{ 
-			// 错误处理
+			trigger_error($error, E_USER_ERROR);
 		} 
 	} 
 
@@ -52,7 +52,7 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 		$connResource = $func($connConf["host"] . $connConf["dbname"], 0666, $error);
 		if (!$connResource)
 		{ 
-			// 错误处理
+			// trigger_error($error, E_USER_ERROR);
 			return false;
 		} 
 		else
@@ -76,12 +76,12 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 		} 
 		else
 		{
-			$result = sqlite_exec($this -> connResource, $sql, $error);
+			$result = @sqlite_exec($this -> connResource, $sql, $error);
 		} 
-		if ($error)
-		{ 
-			// 错误处理
-		} 
+		//if (!$result)
+		//{ 
+			//trigger_error($error, E_USER_ERROR);
+		//} 
 		if (is_resource($result))
 		{
 			return sqlite_fetch_all($result, SQLITE_ASSOC); 

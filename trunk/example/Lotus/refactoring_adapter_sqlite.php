@@ -68,6 +68,16 @@ $username = "lotus" . $time;
 var_dump($dba->query("INSERT INTO user (username, age, created, modified) VALUES ('$username', '4', '$time','$time')"));
 }
 $dba->query("COMMIT");
+// 事务测试
+$dba->query("BEGIN");
+for($i=11; $i< 21; $i++)
+{
+$time = time()+$i;
+$username = "lotus" . $time;
+var_dump($dba->query("INSERT INTO user (username, age, created, modified) VALUES ('$username', '44', '$time','$time')"));
+}
+$dba->query("ROLLBACK");
+
 
 echo "\nSELECT应该返回查到的结果集：\n";
 var_dump($dba->query("SELECT * FROM user"));
