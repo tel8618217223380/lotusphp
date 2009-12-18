@@ -60,7 +60,7 @@ class LtDbHandler
 				return $this->connectionAdapter->fetchAll($result);
 			}
 		}
-		else if ("insert" == strtolower(trim(substr($sql, 0, 6))))//INSERT
+		else if (preg_match("/^\s*insert/i", $sql))//INSERT
 		{
 			return $this->connectionAdapter->lastInsertId();
 		}
