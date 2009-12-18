@@ -10,102 +10,69 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 {
 	public function beginTransaction()
 	{
-		$error = '';
-		if (!sqlite_exec($this -> connResource, 'BEGIN TRANSACTION', $error))
-		{ 
-			trigger_error($error, E_USER_ERROR);
-		} 
-	} 
+		return sqlite_exec($this -> connResource, 'BEGIN TRANSACTION');
+	}
 
 	public function commit()
 	{
-		$error = '';
-		if (!sqlite_exec($this -> connResource, 'COMMIT TRANSACTION', $error))
-		{ 
-			trigger_error($error, E_USER_ERROR);
-		} 
-	} 
+		return sqlite_exec($this -> connResource, 'COMMIT TRANSACTION');
+	}
 
 	public function rollBack()
 	{
-		$error = '';
-		if (!sqlite_exec($this -> connResource, 'ROLLBACK TRANSACTION', $error))
-		{ 
-			trigger_error($error, E_USER_ERROR);
-		} 
-	} 
+		return sqlite_exec($this -> connResource, 'ROLLBACK TRANSACTION');
+	}
 
 	public function connect($connConf)
 	{
 		if (isset($connConf['pconnect']) && true == $connConf['pconnect'])
 		{
 			$func = 'sqlite_popen';
-		} 
+		}
 		else
 		{
 			$func = 'sqlite_open';
-		} 
-		$error = '';
-
+		}
 		$connConf["host"] = '\\' == substr($connConf["host"], -1) || '/' == substr($connConf["host"], -1) ? $connConf["host"] : $connConf["host"] . DIRECTORY_SEPARATOR;
-
+		$error = '';
 		$connResource = $func($connConf["host"] . $connConf["dbname"], 0666, $error);
 		if (!$connResource)
-		{ 
-			// trigger_error($error, E_USER_ERROR);
-			return false;
-		} 
+		{
+			trigger_error($error, E_USER_ERROR);
+		}
 		else
 		{
 			return $connResource;
-		} 
-	} 
+		}
+	}
 
 	public function query($sql, $bind = null, $type = '')
 	{
-		$sql = trim($sql);
-		if (empty($sql))
-		{
-			return null;
-		} 
-		$error = '';
 		$func = $type == 'UNBUFFERED' ? 'sqlite_unbuffered_query' : 'sqlite_query';
 		if (preg_match("/^\s*SELECT/i", $sql))
 		{
-			$result = $func($this -> connResource, $sql, SQLITE_ASSOC, $error);
-		} 
+			$result = @$func($this -> connResource, $sql, SQLITE_ASSOC);
+		}
 		else
 		{
-			$result = @sqlite_exec($this -> connResource, $sql, $error);
-		} 
-		//if (!$result)
-		//{ 
-			//trigger_error($error, E_USER_ERROR);
-		//} 
-		if (is_resource($result))
-		{
-			return sqlite_fetch_all($result, SQLITE_ASSOC); 
-			// $rows = array();
-			// while($row = sqlite_fetch_array($result, SQLITE_ASSOC))
-			// {
-			// $rows[] = $row;
-			// }
-			// return $rows;
-		} 
-		else
-		{
-			return $result;
-		} 
-	} 
+			$result = @sqlite_exec($this -> connResource, $sql);
+		}
+		return $result;
+	}
 
 	public function affectedRows()
 	{
-		return sqlite_changes($this->connResource);
+		// echo '<pre>';
+		// print_r(debug_backtrace());
+		// debug_print_backtrace();
+		// echo '</pre>';
+		// delete from table 结果为0，原因未知。
+		return sqlite_changes($this -> connResource);
 	}
 
 	public function fetchAll($resultRet)
 	{
-		return sqlite_fetch_all($resultRet, SQLITE_ASSOC); 
+		return sqlite_fetch_all($resultRet, SQLITE_ASSOC);
 	}
 
 	public function foundRows($resultRet)
@@ -121,5 +88,5 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 	public function lastInsertId()
 	{
 		return sqlite_last_insert_rowid($this -> connResource);
-	} 
-} 
+	}
+}
