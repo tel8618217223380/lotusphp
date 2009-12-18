@@ -45,10 +45,16 @@ class LtDbHandler
 	 */
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
+		if(empty($sql))
+		{
+			// trigger_error('Empty the SQL statement', E_USER_WARNING);
+			return null;
+		}
 		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))//read query: SELECT, SHOW, DESCRIBE
 		{
 			$result = $this->connectionAdapter->query($sql);
-			if (0 === count($result))
+			//if (0 === count($result))
+			if (empty($result))
 			{
 				return null;
 			}
@@ -193,6 +199,10 @@ class LtDbHandler
 				{
 					$this->cacheConnection($this->getConnectionKey($hostConfig), $connection);
 					break;
+				}
+				else
+				{
+					trigger_error('connection fail', E_USER_WARNING);
 				}
 				for ($i = $hashNumber; $i < $hostTotal - 1; $i ++)
 				{

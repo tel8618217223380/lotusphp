@@ -46,38 +46,21 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 		}
 	}
 
-	public function query($sql, $bind = null, $type = '')
+	public function exec($sql)
 	{
-		$func = $type == 'UNBUFFERED' ? 'sqlite_unbuffered_query' : 'sqlite_query';
-		if (preg_match("/^\s*SELECT/i", $sql))
-		{
-			$result = @$func($this -> connResource, $sql, SQLITE_ASSOC);
-		}
-		else
-		{
-			$result = @sqlite_exec($this -> connResource, $sql);
-		}
-		return $result;
-	}
-
-	public function affectedRows()
-	{
+		sqlite_exec($this->connResource, $sql);
 		// echo '<pre>';
 		// print_r(debug_backtrace());
 		// debug_print_backtrace();
 		// echo '</pre>';
 		// delete from table 结果为0，原因未知。
-		return sqlite_changes($this -> connResource);
+		return sqlite_changes($this->connResource);
 	}
 
-	public function fetchAll($resultRet)
+	public function query($sql)
 	{
-		return sqlite_fetch_all($resultRet, SQLITE_ASSOC);
-	}
-
-	public function isResultSet($resultRet)
-	{
-		return is_resource($resultRet);
+		$result = sqlite_query($this -> connResource, $sql, SQLITE_ASSOC);
+		return sqlite_fetch_all($result, SQLITE_ASSOC);
 	}
 
 	public function lastInsertId()
