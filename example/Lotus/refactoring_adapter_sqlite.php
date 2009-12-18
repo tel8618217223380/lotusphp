@@ -32,7 +32,7 @@ $dbConfigBuilder->addSingleHost(array(
 	"port" => "3306",
 	"username" => "root",
 	"password" => "123456",
-	"dbname" => "test",
+	"dbname" => "test.db",
 	"adapter" => "sqlite",
 	"charset" => "UTF-8",
 ));
@@ -40,16 +40,41 @@ LtDbStaticData::$servers = $dbConfigBuilder->getServers();
 
 /**
  * 直接执行执行SQL
+ * 2.x 不支持 IF NOT EXISTS 不支持 AUTOINCREMENT
  */
 $dba = new LtDbHandler();
-$username = "lotus" . time();
-// $dba->query("DROP TABLE IF EXISTS user");
-$dba->query("CREATE TABLE [user] (
-	[user_id] INTEGER NOT NULL PRIMARY KEY COMMENT '用户ID',
-	[username] VARCHAR( 20 ) NOT NULL COMMENT '用户名',
-	[age] INTEGER NOT NULL COMMENT '年龄',
-	[created] INTEGER NOT NULL COMMENT '账号创建时间',
-	[modified] INTEGER NOT NULL COMMENT '最后修改时间',
-)");
-$dba->query("INSERT INTO user (username, age) VALUES ('$username', '4')");
-print_r($dba->query("SELECT * FROM user"));
+
+
+echo "\nDROP, CREATE应该返回true（执行成功）或者false（执行失败）：\n";
+
+var_dump($dba->query("DROP TABLE user"));
+
+var_dump($dba->query("
+CREATE TABLE [user] (
+	[user_id] INTEGER  NOT NULL PRIMARY KEY,
+	[username] VARCHAR(20)  UNIQUE NOT NULL,
+	[age] INTEGER  NOT NULL,
+	[created] INTEGER  NOT NULL,
+	[modified] INTEGER  NOT NULL
+)
+"));
+
+echo "\nINSERT应该返回自增ID：\n";
+$dba->query("BEGIN");
+for($i=0; $i< 10; $i++)
+{
+$time = time()+$i;
+$username = "lotus" . $time;
+var_dump($dba->query("INSERT INTO user (username, age, created, modified) VALUES ('$username', '4', '$time','$time')"));
+}
+$dba->query("COMMIT");
+
+echo "\nSELECT应该返回查到的结果集：\n";
+var_dump($dba->query("SELECT * FROM user"));
+
+echo "\nUPDATE,DELETE应该返回受影响的行数：\n";
+var_dump($dba->query("UPDATE user SET age = 10"));
+var_dump($dba->query("DELETE FROM user"));
+
+echo "\nSELECT查不到结果应该返回null：\n";
+var_dump($dba->query("SELECT * FROM user"));
