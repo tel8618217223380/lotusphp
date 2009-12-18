@@ -84,7 +84,8 @@ var_dump($dba->query("SELECT * FROM user"));
 
 echo "\nUPDATE,DELETE应该返回受影响的行数：\n";
 var_dump($dba->query("UPDATE user SET age = 10"));
+var_dump($dba->query("DELETE FROM user WHERE user_id in (1,3,5)"));
+echo "\nDELETE FROM user返回0，原因未知。\n";
 var_dump($dba->query("DELETE FROM user"));
-
 echo "\nSELECT查不到结果应该返回null：\n";
 var_dump($dba->query("SELECT * FROM user"));
