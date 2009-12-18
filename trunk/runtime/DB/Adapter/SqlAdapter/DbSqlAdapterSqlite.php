@@ -24,7 +24,7 @@ class LtDbSqlAdapterSqlite extends LtDbSqlAdapter
 	}
 	public function showTables($schema)
 	{
-		// ÁÙÊ±±í¼°ÆäË÷Òı²»ÔÚ SQLITE_MASTER ±íÖĞ¶øÔÚ SQLITE_TEMP_MASTER ÖĞ³öÏÖ
+		// ä¸´æ—¶è¡¨åŠå…¶ç´¢å¼•ä¸åœ¨ SQLITE_MASTER è¡¨ä¸­è€Œåœ¨ SQLITE_TEMP_MASTER ä¸­å‡ºç°
 		return "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name";
 	}
 	public function getTables($queryResult)
