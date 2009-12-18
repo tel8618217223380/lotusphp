@@ -78,7 +78,6 @@ var_dump($dba->query("INSERT INTO user (username, age, created, modified) VALUES
 }
 $dba->query("ROLLBACK");
 
-
 echo "\nSELECT应该返回查到的结果集：\n";
 var_dump($dba->query("SELECT * FROM user"));
 
