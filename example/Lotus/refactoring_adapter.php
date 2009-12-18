@@ -27,7 +27,7 @@ $lotus->boot();
  * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给Db::$servers，效果是一样的
  */
 $dbConfigBuilder = new LtDbConfigBuilder();
-$adapter = "mysql";
+$adapter = "mysqli";
 $dbConfigBuilder->addSingleHost(array(
 	"host" => "localhost",
 	"port" => "3306",
@@ -45,9 +45,8 @@ LtDbStaticData::$servers = $dbConfigBuilder->getServers();
  * 由于mysql_query()的潜规则,每次只能执行一条SQL
  */
 $dba = new LtDbHandler();
-$username = $adapter . time();
 
-echo "\nUSE, DROP, CREATE应该返回true（执行成功）或者false（执行失败）：\n";
+echo "\nUSE, DROP, CREATE应该返回受影响的行数（执行成功）或者false（执行失败）：\n";
 var_dump($dba->query("USE shycat"));//故意使用另一个database（和配置里写的不一样），测试各驱动use db好不好用
 var_dump($dba->query("DROP TABLE IF EXISTS user;"));
 var_dump($dba->query("CREATE TABLE `user` (
@@ -63,10 +62,13 @@ var_dump($dba->query("CREATE TABLE `user` (
 );"));
 
 echo "\nINSERT应该返回自增ID：\n";
-var_dump($dba->query("INSERT INTO user (username, age) VALUES ('$username', '4');"));
+var_dump($dba->query("INSERT INTO user (username, age) VALUES ('" . $adapter . uniqid() . "', '4');"));
+var_dump($dba->query("INSERT INTO user (username, age) VALUES ('" . $adapter . uniqid() . "', '5');"));
 
 echo "\nSELECT应该返回查到的结果集：\n";
+var_dump($dba->query("SHOW TABLES"));
 var_dump($dba->query("SELECT * FROM user"));
+var_dump($dba->query("EXPLAIN SELECT * FROM user"));
 
 echo "\nUPDATE,DELETE应该返回受影响的行数：\n";
 var_dump($dba->query("UPDATE user SET age = 10"));

@@ -24,6 +24,7 @@ class LtDbHandler
 	{
 		return $this->connectionAdapter->commit();
 	}
+
 	public function rollBack()
 	{
 		return $this->connectionAdapter->rollBack();
@@ -38,39 +39,39 @@ class LtDbHandler
 	 * SELECT, SHOW, DESECRIBE, EXPLAIN return rowset or NULL when no record found
 	 * INSERT return the ID generated for an AUTO_INCREMENT column
 	 * UPDATE, DELETE return affected count
-	 * USE, DROP, ALTER, CREATE, SET etc, return true
+	 * USE, DROP, ALTER, CREATE, SET etc, return affected count
 	 * @todo 如果是读操作，自动去读slave服务器，除非设置了强制读master服务器
 	 * @todo 模拟bindParameter，支持占位符
 	 */
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
-		$result = $this->connectionAdapter->query($sql);
-		if (false === $result)//Query failed
+		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))//read query: SELECT, SHOW, DESCRIBE
 		{
-			return false;
-		}
-		if ($this->connectionAdapter->isResultSet($result))//SELECT, SHOW, DESCRIBE
-		{
-			if (0 === $this->connectionAdapter->foundRows($result))
+			$result = $this->connectionAdapter->query($sql);
+			if (0 === count($result))
 			{
 				return null;
 			}
 			else
 			{
-				return $this->connectionAdapter->fetchAll($result);
+				return $result;
+			}			
+		}
+		else
+		{
+			$result = $this->connectionAdapter->exec($sql);
+			if (preg_match("/^\s*INSERT/i", $sql))//INSERT
+			{
+				return $this->connectionAdapter->lastInsertId();
 			}
-		}
-		else if (preg_match("/^\s*INSERT/i", $sql))//INSERT
-		{
-			return $this->connectionAdapter->lastInsertId();
-		}
-		else if (preg_match("/^\s*UPDATE|^\s*DELETE|^\s*REPLACE/i", $sql))//UPDATE, DELETE, REPLACE
-		{
-			return $this->connectionAdapter->affectedRows();
-		}
-		else//USE, SET, CREATE, DROP, ALTER
-		{
-			return $result;
+			else if (preg_match("/^\s*UPDATE|^\s*DELETE|^\s*REPLACE/i", $sql))//UPDATE, DELETE, REPLACE
+			{
+				return $result;
+			}
+			else//USE, SET, CREATE, DROP, ALTER
+			{
+				return $result;
+			}
 		}
 	}
 

@@ -75,11 +75,6 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 		return sqlite_fetch_all($resultRet, SQLITE_ASSOC);
 	}
 
-	public function foundRows($resultRet)
-	{
-		return sqlite_num_rows($resultRet);
-	}
-
 	public function isResultSet($resultRet)
 	{
 		return is_resource($resultRet);
