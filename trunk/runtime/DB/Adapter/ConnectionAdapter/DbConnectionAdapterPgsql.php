@@ -23,7 +23,7 @@ class LtDbConnectionAdapterPgsql extends LtDbConnectionAdapter
 		{
 			$func = 'pg_connect';
 		}
-		return $func("host=$connConf[host] port=$connConf[port] dbname=$connConf[dbname] user=$connConf[username] password=$connConf[password]");
+		return $func("host={$connConf['host']} port={$connConf['port']} user={$connConf['username']} password={$connConf['password']}");
 	}
 
 	public function exec($sql)
