@@ -50,6 +50,10 @@ class LtDbHandler
 			// trigger_error('Empty the SQL statement', E_USER_WARNING);
 			return null;
 		}
+		if (is_array($bind))
+		{
+			$sql = $this->sqlAdapter->bindParameter($sql, $bind);
+		}
 		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))//read query: SELECT, SHOW, DESCRIBE
 		{
 			$result = $this->connectionAdapter->query($sql);
