@@ -4,7 +4,7 @@ class LtDbHandler
 	protected $group;
 	protected $node;
 
-	protected $connectionAdapter;
+	public $connectionAdapter;
 	protected $sqlAdapter;
 
 	public function __construct()
@@ -17,17 +17,17 @@ class LtDbHandler
 	 */
 	public function beginTransaction()
 	{
-		return $$this->connectionAdapter->beginTransaction();
+		return $this->connectionAdapter->exec($this->sqlAdapter->beginTransaction());
 	}
 
 	public function commit()
 	{
-		return $this->connectionAdapter->commit();
+		return $this->connectionAdapter->exec($this->sqlAdapter->commit());
 	}
 
 	public function rollBack()
 	{
-		return $this->connectionAdapter->rollBack();
+		return $this->connectionAdapter->exec($this->sqlAdapter->rollBack());
 	}
 
 	/**

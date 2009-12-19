@@ -8,21 +8,6 @@
  */
 class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 {
-	public function beginTransaction()
-	{
-		return sqlite_exec($this -> connResource, 'BEGIN TRANSACTION');
-	}
-
-	public function commit()
-	{
-		return sqlite_exec($this -> connResource, 'COMMIT TRANSACTION');
-	}
-
-	public function rollBack()
-	{
-		return sqlite_exec($this -> connResource, 'ROLLBACK TRANSACTION');
-	}
-
 	public function connect($connConf)
 	{
 		if (isset($connConf['pconnect']) && true == $connConf['pconnect'])

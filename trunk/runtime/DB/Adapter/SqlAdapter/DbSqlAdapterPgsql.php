@@ -1,10 +1,6 @@
 <?php
 class LtDbSqlAdapterPgsql extends LtDbSqlAdapter
 {
-	public function limit($limit, $offset)
-	{
-		return " LIMIT $limit OFFSET $offset";
-	}
 	public function setCharset($charset)
 	{
 		return "SET client_encoding TO '$charset'";
@@ -14,13 +10,22 @@ class LtDbSqlAdapterPgsql extends LtDbSqlAdapter
 		return "SET search_path TO $schema";
 	}
 
+	public function beginTransaction()
+	{
+		return "";
+	}
+	public function commit()
+	{
+		return "";
+	}
+	public function rollBack()
+	{
+		return "";
+	}
+
 	public function showSchemas($database)
 	{
 
-	}
-	public function getSchemas($queryResult)
-	{
-		
 	}
 	public function showTables($schema)
 	{
@@ -31,10 +36,6 @@ class LtDbSqlAdapterPgsql extends LtDbSqlAdapter
 					AND n.nspname NOT LIKE 'pg_temp%'
 					AND n.nspname NOT LIKE 'pg_toast%'
 				ORDER BY relname";
-	}
-	public function getTables($queryResult)
-	{
-		
 	}
 	public function showFields($table)
 	{
@@ -54,6 +55,20 @@ class LtDbSqlAdapterPgsql extends LtDbSqlAdapter
 				AND a.attrelid = c.oid 
 				AND a.atttypid = t.oid 
 				ORDER BY a.attnum";
+	}
+
+	public function limit($limit, $offset)
+	{
+		return " LIMIT $limit OFFSET $offset";
+	}
+
+	public function getSchemas($queryResult)
+	{
+		
+	}
+	public function getTables($queryResult)
+	{
+		
 	}
 	public function getFields($queryResult)
 	{
