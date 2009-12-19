@@ -1,21 +1,6 @@
 <?php
 class LtDbConnectionAdapterMysql extends LtDbConnectionAdapter
 {
-	public function beginTransaction()
-	{
-
-	}
-
-	public function commit()
-	{
-
-	}
-
-	public function rollBack()
-	{
-
-	}
-
 	public function connect($connConf)
 	{
 		return mysql_connect($connConf["host"] . ":" . $connConf["port"], $connConf["username"], $connConf["password"]);
@@ -23,8 +8,7 @@ class LtDbConnectionAdapterMysql extends LtDbConnectionAdapter
 
 	public function exec($sql)
 	{
-		mysql_query($sql, $this->connResource);
-		return mysql_affected_rows($this->connResource);
+		return mysql_query($sql, $this->connResource) ? mysql_affected_rows($this->connResource) : false;
 	}
 
 	public function query($sql)

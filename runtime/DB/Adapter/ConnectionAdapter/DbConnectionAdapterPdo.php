@@ -1,21 +1,6 @@
 <?php
 class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 {
-	public function beginTransaction()
-	{
-		return $this->connResource->beginTransaction();
-	}
-
-	public function commit()
-	{
-		return $this->connResource->commit();
-	}
-
-	public function rollBack()
-	{
-		return $this->connResource->rollBack();
-	}
-
 	public function connect($connConf)
 	{
 		$option = array(PDO::ATTR_PERSISTENT => true);

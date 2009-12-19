@@ -27,7 +27,7 @@ $lotus->boot();
  * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给Db::$servers，效果是一样的
  */
 $dbConfigBuilder = new LtDbConfigBuilder();
-$adapter = "mysqli";
+$adapter = "mysqli";//使用pdo_mysql扩展,目前支持mysql,mysqli,pdo_mysql,sqlite,pdo_sqlite,pgsql,pdo_pgsql
 $dbConfigBuilder->addSingleHost(array(
 	"host" => "localhost",
 	"port" => "3306",
@@ -35,7 +35,6 @@ $dbConfigBuilder->addSingleHost(array(
 	"password" => "123456",
 	"dbname" => "test",
 	"adapter" => $adapter,
-	//"adapter" => "pdo_mysql",//使用pdo_mysql扩展,目前只支持mysql和pdo_mysql,都能运行成功
 	"charset" => "UTF-8",
 ));
 LtDbStaticData::$servers = $dbConfigBuilder->getServers();
@@ -59,16 +58,19 @@ var_dump($dba->query("CREATE TABLE `user` (
 	UNIQUE (
 	`username`
 	)
-);"));
+)ENGINE=InnoDB;"));
 
 echo "\nINSERT应该返回自增ID：\n";
 var_dump($dba->query("INSERT INTO user (username, age) VALUES ('" . $adapter . uniqid() . "', '4');"));
-var_dump($dba->query("INSERT INTO user (username, age) VALUES ('" . $adapter . uniqid() . "', '5');"));
+$dba->beginTransaction();
+var_dump($dba->query("INSERT INTO user (username, age) VALUES ('" . $adapter . "', '5');"));
+var_dump($dba->query("INSERT INTO user (username, age) VALUES ('" . $adapter . "', '6');"));
+$dba->rollBack();
 
 echo "\nSELECT应该返回查到的结果集：\n";
-var_dump($dba->query("SHOW TABLES"));
+//var_dump($dba->query("SHOW TABLES"));
 var_dump($dba->query("SELECT * FROM user"));
-var_dump($dba->query("EXPLAIN SELECT * FROM user"));
+//var_dump($dba->query("EXPLAIN SELECT * FROM user"));
 
 echo "\nUPDATE,DELETE应该返回受影响的行数：\n";
 var_dump($dba->query("UPDATE user SET age = 10"));

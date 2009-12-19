@@ -1,18 +1,6 @@
 <?php
 class LtDbConnectionAdapterPgsql extends LtDbConnectionAdapter
 {
-	public function beginTransaction()
-	{
-	}
-
-	public function commit()
-	{
-	}
-
-	public function rollBack()
-	{
-	}
-
 	public function connect($connConf)
 	{
 		if (isset($connConf['pconnect']) && true == $connConf['pconnect'])
