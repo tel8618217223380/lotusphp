@@ -94,7 +94,7 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 	 */
 	public function bindParameter($sql, $parameter)
 	{
-		$p = escape($parameter);
+		$p = $this -> escape($parameter);
 		if (is_array($p))
 		{
 			foreach($p as $key => $value)
