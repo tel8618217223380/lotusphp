@@ -48,6 +48,9 @@ class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 		return $this->connResource->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 	}
 
+	/**
+	 * @todo pgsql support
+	 */
 	public function lastInsertId()
 	{
 		return $this->connResource->lastInsertId();
