@@ -41,7 +41,7 @@ class LtDbHandler
 	 * UPDATE, DELETE return affected count
 	 * USE, DROP, ALTER, CREATE, SET etc, return affected count
 	 * @todo 如果是读操作，自动去读slave服务器，除非设置了强制读master服务器
-	 * @todo 模拟bindParameter，支持占位符
+	 * @notice 每次只能执行一条SQL
 	 */
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
@@ -87,6 +87,7 @@ class LtDbHandler
 
 	/**
 	 * Connection management
+	 * @todo 连接缓存将database, schema, resource id, expire_time都保存，当setSchema(), USE DB, SET search_path to schame的时候，更新连接缓存
 	 */
 	protected function getConnectionKey($connConf)
 	{
@@ -99,9 +100,9 @@ class LtDbHandler
 		? LtDbStaticData::$connections[$key]['connection'] : false;
 	}
 
-	protected function cacheConnection($key, $connection)
+	protected function cacheConnection($key, $connection, $ttl)
 	{
-		LtDbStaticData::$connections[$key] = array('connection' => $connection, 'expire_time' => time() + 30);
+		LtDbStaticData::$connections[$key] = array('connection' => $connection, 'expire_time' => time() + $ttl);
 	}
 
 
@@ -136,6 +137,7 @@ class LtDbHandler
 
 	/**
 	 * Get db config
+	 * @todo mysql, mssql, firebird, maxdb数据库的database应该视为schema，多个schema对应一个连接；oracle, pgsql的DB是真正的DB，一个DB对应一个连接 
 	 */
 	protected function getConfig($group, $node, $role = 'master', $host = null)
 	{
@@ -201,6 +203,7 @@ class LtDbHandler
 				$this->initAdapter($hostConfig);
 				if ($connection = $this->connectionAdapter->connect($hostConfig))
 				{
+					$ttl = isset($hostConfig["connection_ttl"]) ? $hostConfig["connection_ttl"] : 30;
 					$this->cacheConnection($this->getConnectionKey($hostConfig), $connection);
 					break;
 				}

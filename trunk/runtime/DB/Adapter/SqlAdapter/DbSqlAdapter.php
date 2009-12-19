@@ -22,15 +22,19 @@ abstract class LtDbSqlAdapter
 	 * @param $sql
 	 * @param $parameter
 	 * @return string
-	 * @todo this is the simplest version, can NOT use in production env.
+	 * @todo 兼容pgsql等其它数据库，pgsql的某些数据类型不接受单引号引起来的值
 	 */
 	public function bindParameter($sql, $parameter)
 	{
+		$delimiter = "\x01\x02\x03";
 		foreach($parameter as $key => $value)
 		{
-			$sql = str_replace(":$key", "'" . addslashes($value) . "'", $sql);
+			$newPlaceHolder = "$delimiter$key$delimiter";
+			$find[] = $newPlaceHolder;
+			$replacement[] = "'" . addslashes($value) . "'";
+			$sql = str_replace(":$key", $newPlaceHolder, $sql);
 		}
-		return $sql;
+		return str_replace($find, $replacement, $sql);
 	}
 
 	/**

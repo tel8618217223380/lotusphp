@@ -36,6 +36,7 @@ $dbConfigBuilder->addSingleHost(array(
 	"dbname" => "test",
 	"adapter" => $adapter,
 	"charset" => "UTF-8",
+	"connection_ttl" => 10,
 ));
 LtDbStaticData::$servers = $dbConfigBuilder->getServers();
 
@@ -61,7 +62,7 @@ var_dump($dba->query("CREATE TABLE `user` (
 )ENGINE=InnoDB;"));
 
 echo "\nINSERT应该返回自增ID：\n";
-var_dump($dba->query("INSERT INTO user (username, age) VALUES (:username, :age)", array("username" => $adapter . uniqid(), "age" => "4")));
+var_dump($dba->query("INSERT INTO user (username, age) VALUES (:username, :age)", array("username" => $adapter . ":username", "age" => "4")));
 $dba->beginTransaction();
 var_dump($dba->query("INSERT INTO user (username, age) VALUES ('" . $adapter . "', '5');"));
 var_dump($dba->query("INSERT INTO user (username, age) VALUES ('" . $adapter . "', '6');"));
