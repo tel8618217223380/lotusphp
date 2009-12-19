@@ -53,27 +53,7 @@ class LtDispatcher
 			/**
 			 * Logic of $actionInstance->afterConstruct();
 			 */
-			if (null === $actionInstance->responseType)
-			{
-				$actionInstance->responseType = "html";
-			}
-			if (null === $actionInstance->view)
-			{
-				$actionInstance->view = LtView::factory($actionInstance->responseType);
-			}
-			if ("html" == $actionInstance->responseType)
-			{
-				$actionInstance->view->templateDir = $this->appDir . 'module' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR;
-				$actionInstance->view->template = $action;
-				$actionInstance->view->layoutDir = $this->appDir . 'layout' . DIRECTORY_SEPARATOR;
-			}
-			$actionInstance->view->context = $actionInstance->context;
-			if (!$actionInstance->constructed)
-			{
-				DebugHelper::debug('SUBCLASS_NOT_CALL_PARENT_CONSTRUCTOR', array('class' => $actionClassName));
-			}
-			$actionInstance->beforeExecute();
-			call_user_func(array($actionInstance, 'execute'));
+			$actionInstance->executeChain();
 		}
 	}
 
