@@ -139,5 +139,6 @@ class ConvertZf {
 /**
  * script  process
  */
+set_time_limit(200);
 $convertor = new LotusConvertor();
 $convertor->main();
