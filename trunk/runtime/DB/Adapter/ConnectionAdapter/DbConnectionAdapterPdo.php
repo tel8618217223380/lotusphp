@@ -43,7 +43,7 @@ class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 
 	public function escape($sql)
 	{
-		// quote返回值带最前面和最后面的单引号, 这里去掉, DbHandler中加
+		// quote杩斿洖鍊煎甫鏈�鍓嶉潰鍜屾渶鍚庨潰鐨勫崟寮曞彿, 杩欓噷鍘绘帀, DbHandler涓姞
 		return trim($this->connResource->quote($sql),"'");
 	}
 }
