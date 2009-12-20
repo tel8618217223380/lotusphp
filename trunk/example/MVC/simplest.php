@@ -8,6 +8,7 @@ include $lotusHome . "/runtime/MVC/Dispatcher.php";
 include $lotusHome . "/runtime/MVC/Action.php";
 include $lotusHome . "/runtime/MVC/Component.php";
 include $lotusHome . "/runtime/MVC/Context.php";
+include $lotusHome . "/runtime/MVC/View.php";
 /**
  * 加载Action类文件
  */
@@ -18,5 +19,5 @@ include $appDir . "action/UserSigninAction.php";
  * 实例化
  */
 $dispatcher = new LtDispatcher();
-$dispatcher->appDir = "./simplest_app/";
+$dispatcher->viewDir = "./simplest_app/view/";
 $dispatcher->dispatchAction("User", "Signin");
