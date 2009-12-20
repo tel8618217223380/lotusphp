@@ -22,7 +22,7 @@ abstract class LtAction
 	 *
 	 * @var array
 	 */
-	protected $roles;
+	protected $roles = array();
 
 	/**
 	 * A flag to indicate if subclass call LtAction::__construct()
@@ -31,7 +31,7 @@ abstract class LtAction
 	protected $constructed = false;
 
 	/**
-	 * The view response type
+	 * The response type
 	 *
 	 * @var string
 	 */
