@@ -22,6 +22,7 @@ abstract class LtDbSqlAdapter
 	 * @param $sql
 	 * @param $parameter
 	 * @return string
+	 * @todo 移动到DbHandler下面去，兼容各驱动的escape()方法
 	 * @todo 兼容pgsql等其它数据库，pgsql的某些数据类型不接受单引号引起来的值
 	 */
 	public function bindParameter($sql, $parameter)
