@@ -38,4 +38,9 @@ class LtDbConnectionAdapterPgsql extends LtDbConnectionAdapter
 		$row = pg_fetch_array($result, 0, PGSQL_NUM);
 		return $row[0];
 	}
+
+	public function escape($sql)
+	{
+		return pg_escape_string($sql);
+	}
 }
