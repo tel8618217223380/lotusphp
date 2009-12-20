@@ -21,4 +21,5 @@ abstract class LtDbConnectionAdapter
 	abstract public function exec($sql);
 	abstract public function query($sql);
 	abstract public function lastInsertId();
+	abstract public function escape($sql);
 }

@@ -40,4 +40,10 @@ class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 	{
 		return $this->connResource->lastInsertId();
 	}
+
+	public function escape($sql)
+	{
+		// quote返回值带最前面和最后面的单引号, 这里去掉, DbHandler中加
+		return trim($this->connResource->quote($sql),"'");
+	}
 }

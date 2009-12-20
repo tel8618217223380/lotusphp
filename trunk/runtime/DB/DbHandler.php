@@ -52,7 +52,7 @@ class LtDbHandler
 		}
 		if (is_array($bind))
 		{
-			$sql = $this->sqlAdapter->bindParameter($sql, $bind);
+			$sql = $this->bindParameter($sql, $bind);
 		}
 		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))//read query: SELECT, SHOW, DESCRIBE
 		{
@@ -248,5 +248,26 @@ class LtDbHandler
 		}
 		$this->sqlAdapter = new $LtDbSqlAdapter();
 		$this->connectionAdapter = new $LtDbConnectionAdapter();
+	}
+
+	/**
+	 * Generate complete sql from sql template (with placeholder) and parameter
+	 * @param $sql
+	 * @param $parameter
+	 * @return string
+	 * @todo 移动到DbHandler下面去，兼容各驱动的escape()方法
+	 * @todo 兼容pgsql等其它数据库，pgsql的某些数据类型不接受单引号引起来的值
+	 */
+	public function bindParameter($sql, $parameter)
+	{
+		$delimiter = "\x01\x02\x03";
+		foreach($parameter as $key => $value)
+		{
+			$newPlaceHolder = "$delimiter$key$delimiter";
+			$find[] = $newPlaceHolder;
+			$replacement[] = "'" . $this->connectionAdapter->escape($value) . "'";
+			$sql = str_replace(":$key", $newPlaceHolder, $sql);
+		}
+		return str_replace($find, $replacement, $sql);
 	}
 }

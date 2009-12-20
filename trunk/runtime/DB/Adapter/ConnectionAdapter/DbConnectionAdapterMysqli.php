@@ -27,4 +27,9 @@ class LtDbConnectionAdapterMysqli extends LtDbConnectionAdapter
 	{
 		return $this->connResource->insert_id;
 	}
+
+	public function escape($sql)
+	{
+		return mysqli_real_escape_string($sql);
+	}
 }

@@ -53,59 +53,8 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 		return sqlite_last_insert_rowid($this -> connResource);
 	} 
 
-	/**
-	 * 转义一个字符串，支持多维数组。 
-	 * 插入数据库的数据需要转义。 
-	 * 不仅仅是为了预处理SQL
-	 * 
-	 * @param array $ or string $string
-	 * @return array or string 根据输入返回字符串或者数组
-	 */
 	public function escape($string)
 	{
-		if (!is_array($string))
-		{
-			return sqlite_escape_string($string);
-		} 
-		foreach($string as $key => $value)
-		{
-			$string[$key] = $this -> escape($value);
-		} 
-		return $string;
-	} 
-
-	/**
-	 * Generate complete sql from sql template (with placeholder) and parameter
-	 * 
-	 * @todo 有待考虑加入类型转换 idsb = integer,double,string,blob
-	 * @example 
-	 * $stmt = $mysqli->prepare("INSERT INTO CountryLanguage VALUES (?, ?, ?, ?)");
-	 * $stmt->bind_param('sssd', $code, $language, $official, $percent);
-	 * $code = 'DEU';
-	 * $language = 'Bavarian';
-	 * $official = "F";
-	 * $percent = 11.2;
-	 * // execute prepared statement
-	 * $stmt->execute();
-	 **************************************************************************
-	 * @param  $sql 
-	 * @param  $parameter 
-	 * @return string 
-	 */
-	public function bindParameter($sql, $parameter)
-	{
-		$p = $this -> escape($parameter);
-		if (is_array($p))
-		{
-			foreach($p as $key => $value)
-			{
-				$sql = str_replace(":$key", $value, $sql);
-			} 
-		} 
-		else
-		{
-			$sql = str_replace(":$parameter", $p, $sql);
-		} 
-		return $sql;
+		return sqlite_escape_string($string);
 	} 
 } 
