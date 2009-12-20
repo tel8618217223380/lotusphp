@@ -1,16 +1,11 @@
 <?php
 class LtCacheAdapterPhps extends LtCacheAdapter
 {
-	protected $cacheFileRoot;
-
 	protected function getCacheFile($key)
 	{
-		if (null == $this->cacheFileRoot)
-		{
-			$this->cacheFileRoot = $this->options["cache_file_root"] . DIRECTORY_SEPARATOR;
-		}
+		$this->options["cache_file_root"] = realpath($this->options["cache_file_root"]) . DIRECTORY_SEPARATOR;
 		$token = md5($key);
-		return $this->cacheFileRoot . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . 'Lotusphp-cache-' . $token . '.php';
+		return $this->options["cache_file_root"] . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . 'Lotusphp-cache-' . $token . '.php';
 	}
 
 	public function add($key, $value, $ttl=0)
@@ -39,8 +34,8 @@ class LtCacheAdapterPhps extends LtCacheAdapter
 			return false;
 		}
 		else
-		{	//5.0.0 Ìí¼ÓÁË¶Ô context µÄÖ§³Ö¡£  
-			//5.1.0 Ìí¼ÓÁË offset ºÍ maxlen ²ÎÊı¡£ 
+		{	//5.0.0 ï¿½ï¿½ï¿½ï¿½Ë¶ï¿½ context ï¿½ï¿½Ö§ï¿½Ö¡ï¿½  
+			//5.1.0 ï¿½ï¿½ï¿½ï¿½ï¿½ offset ï¿½ï¿½ maxlen ï¿½ï¿½ï¿½ï¿½ 
 			$ttl = file_get_contents($cacheFile,false,null,13,10);
 			if(0 != $ttl && time() > $ttl)
 			{
