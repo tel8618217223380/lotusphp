@@ -13,26 +13,7 @@ class LtDispatcher
 	protected function _dispatch($module, $action, $context = null, $classType = "Action")
 	{
 		$classType = ucfirst($classType);
-		$actionClassName = $action . $classType;
-		$actionFile = $this->appDir . 'module' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . strtolower($classType) . DIRECTORY_SEPARATOR . $actionClassName . '.php';
-		if (file_exists($actionFile))
-		{
-			if (!in_array($actionFile, get_included_files()))
-			{
-				include($actionFile);
-			}
-		}
-		else
-		{
-			if (function_exists("on{$classType}FileNotFound"))
-			{
-				call_user_func("on{$classType}FileNotFound", $module, $action);
-			}
-			else
-			{
-				throw new Exception("$classType file not found: $module/$action");
-			}
-		}
+		$actionClassName = $module . $action . $classType;
 		if (!class_exists($actionClassName))
 		{
 			DebugHelper::debug("{$classType}_CLASS_NOT_FOUND", array(strtolower($classType) => $action));
@@ -50,9 +31,7 @@ class LtDispatcher
 			$newContext->uri['module'] = $module;
 			$newContext->uri[strtolower($classType)] = $action;
 			$actionInstance = new $actionClassName($newContext);
-			/**
-			 * Logic of $actionInstance->afterConstruct();
-			 */
+			$actionInstance->context = $newContext;
 			$actionInstance->executeChain();
 		}
 	}
