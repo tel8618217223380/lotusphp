@@ -45,31 +45,36 @@ abstract class LtAction
 	public $context;
 
 	/**
+	 * The context object
+	 *
+	 * @var object
+	 */
+	public $viewDir;
+
+	/**
+	 * Result properties
+	 */
+	protected $code;
+
+	protected $message;
+
+	protected $data;
+
+	protected $view;
+
+	/**
 	 * Validate the data from client
 	 * @return array
+	 * @todo Validator calling
 	 */
 	protected function validateInput()
 	{
+		$validateResult = array("error_total" => 0, "error_messages" => array());
 		if (0 < count($this->dtds))
 		{
-			foreach ($this->dtds as $variable => $dtd)
-			{
-				if (!isset($dtd['from']))
-				{
-					$dtd['from'] = 'request';
-				}
-				foreach ($dtd["rules"] as $ruleKey => $ruleValue)
-				{
-					if ($ruleValue instanceof ConfigExpression)
-					{
-						eval('$_ruleValue = ' . $ruleValue->__toString());
-						$dtd["rules"][$ruleKey] = $_ruleValue;
-					}
-				}
-				$validateCondition[$variable] = array('value' => $this->context->$dtd['from']($variable), 'dtd' => $dtd);
-			}
-			return $validateResult = Validator::Validate($validateCondition);
+			
 		}
+		return $validateResult;
 	}
 
 	/**
@@ -78,26 +83,13 @@ abstract class LtAction
 	 */
 	protected function checkPrivilege()
 	{
-		$allow = false;
+		$allow = true;
 		$module = $this->context->uri["module"];
 		$action = $this->context->uri["action"];
-		foreach (array_merge(array("*"), $this->roles) as $role)
-		{
-			foreach (array("allow", "deny") as $operation)
-			{
-				if (("allow" == $operation && false == $allow || "deny" == $operation && true == $allow) && isset($this->acl[$operation][$role]))
-				{
-					foreach (array("$module/$action", "$module/*", "*/*") as $method)
-					{
-						if (in_array($method, $this->acl[$operation][$role]))
-						{
-							$allow = "allow" == $operation ? true : false;
-							break;
-						}
-					}
-				}
-			}
-		}
+		$roles = array_merge(array("*"), $this->roles);
+		/**
+		 * @todo RBAC calling
+		 */
 		return $allow;
 	}
 
@@ -108,13 +100,45 @@ abstract class LtAction
 
 	protected function writeResponse()
 	{
-
+		switch ($this->responseType)
+		{
+			case "html":
+			case "wml":
+			default:
+				if (null === $this->view)
+				{
+					$this->view = new LtView();
+				}
+				$this->view->context = $this->context;
+				$this->view->code = $this->code;
+				$this->view->message = $this->message;
+				$this->view->data = $this->data;
+				$this->view->layoutDir = $this->viewDir . "layout/";
+				$this->view->templateDir = $this->viewDir;
+				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["action"];
+				$this->view->render();
+				break;
+			case "json":
+				echo json_encode(array(
+					"code" => $this->code,
+					"message" => $this->message,
+					"data" => $this->data
+				));
+				break;
+		}
 	}
 
 	/**
 	 * Do something before subClass::execute().
 	 */
 	protected function beforeExecute()
+	{
+	}
+
+	/**
+	 * Do something after subClass::__construct().
+	 */
+	protected function afterConstruct()
 	{
 	}
 
@@ -132,10 +156,27 @@ abstract class LtAction
 		{
 			DebugHelper::debug('SUBCLASS_NOT_CALL_PARENT_CONSTRUCTOR', array('class' => $actionClassName));
 		}
-		$this->validateInput();
-		$this->checkPrivilege();
-		$this->beforeExecute();
-		$this->execute();
+		$this->afterConstruct();
+		$validateResult = $this->validateInput();
+		if (0 == $validateResult["error_total"])
+		{
+			if($this->checkPrivilege())
+			{
+				$this->beforeExecute();
+				$this->execute();
+			}
+			else
+			{
+				$this->code = 403;
+				$this->message = "Access denied";
+			}
+		}
+		else
+		{
+			$this->code = 407;
+			$this->message = "Invalid input";
+			$this->data = $validateResult["error_messages"];
+		}
 		$this->writeResponse();
 	}
 }

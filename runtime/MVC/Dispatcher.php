@@ -4,7 +4,7 @@
  */
 class LtDispatcher
 {
-	public $appDir;
+	public $viewDir;
 
 	public function __construct()
 	{
@@ -32,6 +32,7 @@ class LtDispatcher
 			$newContext->uri[strtolower($classType)] = $action;
 			$actionInstance = new $actionClassName($newContext);
 			$actionInstance->context = $newContext;
+			$actionInstance->viewDir = $this->viewDir;
 			$actionInstance->executeChain();
 		}
 	}

@@ -6,6 +6,8 @@ class UserSigninAction extends LtAction
 	 */
 	public function execute()
 	{
-		echo "Hello World!";
+		$this->code = 200;
+		$this->message = "Welcome, please signin";
+		$this->data["username"] = "lotusphp";
 	}
 }
