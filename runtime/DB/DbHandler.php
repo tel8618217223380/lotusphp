@@ -204,7 +204,7 @@ class LtDbHandler
 				if ($connection = $this->connectionAdapter->connect($hostConfig))
 				{
 					$ttl = isset($hostConfig["connection_ttl"]) ? $hostConfig["connection_ttl"] : 30;
-					$this->cacheConnection($this->getConnectionKey($hostConfig), $connection);
+					$this->cacheConnection($this->getConnectionKey($hostConfig), $connection, $ttl);
 					break;
 				}
 				else
