@@ -1,7 +1,8 @@
 <?php
 class LtCaptchaConfig
 {
-	public $secretKey;
+	public $allowChars = "23456789abcdeghkmnpqsuvxyz";#alphabet without similar symbols (o=0, 1=l, i=j, t=f)
+	public $seedFileRoot = "/tmp/LtCaptcha/seed_file";
 	public $length = 4;
 	public $width = 200;
 	public $height = 80;
