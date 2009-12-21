@@ -2,7 +2,7 @@
 class AutoloaderTest extends PHPUnit_Framework_TestCase
 {
 	/**
-	 * 以一个数组形式传入路径
+	 * 以一个数组形式传入路径，数组每个元素都是字串
 	 * 期望效果：在class_exists("HelloWorld")的时候自动把HelloWorld.php加载进来
 	 */
 	public function testPassArrayParameter()
@@ -15,7 +15,25 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * 以一个字串参数形式传入路径
+	 * 以一个数组形式传入路径，有至少一个元素是数组（不解决）
+	 * 期望效果：
+	 */
+	public function testPassMixArrayParameter()
+	{
+		
+	}
+
+	/**
+	 * 以多个数组形式传入路径（不解决）
+	 * 期望效果：
+	 */
+	public function testPassSeveralArrayParameter()
+	{
+		
+	}
+
+	/**
+	 * 以一个字符参数形式传入路径
 	 * 期望效果：当以new Autoloader($path)时，等同于new Autoloader(array($path))
 	 */
 	public function testPassOneStringParameter()
@@ -27,7 +45,7 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * 以多个字串参数形式传入路径
+	 * 以多个字符参数形式传入路径
 	 * 期望效果：当以new Autoloader($path1, $path2)时，等同于new Autoloader(array($path1, $path2))
 	 */
 	public function testPassSeveralStringParameter()
@@ -45,7 +63,7 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 
 	/**
 	 * 参数为空
-	 * 期望效果：参数为空不报错，但不生成fileMapping（参见性能提高）
+	 * 期望效果：参数为空不报错，但不生成fileMapping
 	 */
 	public function testPassNoParameter()
 	{
