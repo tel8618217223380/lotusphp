@@ -1,4 +1,12 @@
 <?php
+/**
+ * 类库转换器
+ * 把其它框架的类库转换为Lotusphp可用的类库
+ * 主要为去掉类文件里的require/require_once语句.
+ * 因为这与lotusphp的autoloader有矛盾..
+ * @author bluelevinatgmail
+ *
+ */
 class LotusConvertor {
 	public $sourcePath;
 	public $destinationPath;
@@ -6,8 +14,8 @@ class LotusConvertor {
 	public $fileCount = 0;
 	/**
 	 * 指定原始文件目录
-	 * @param unknown_type $path
-	 * @return unknown_type
+	 * @param string $path 为绝对路径
+	 * @return bool
 	 */
 	public function setSourcePath($path){
 		if(is_dir($path)){
@@ -20,8 +28,8 @@ class LotusConvertor {
 	}
 	/**
 	 * 处理后文件保存目录
-	 * @param unknown_type $path
-	 * @return unknown_type
+	 * @param string $path 为绝对路径
+	 * @return void
 	 */
 	public function setDestinationPath($path){
 		if(!is_dir($path)){
@@ -32,9 +40,9 @@ class LotusConvertor {
 	/**
 	 * 对文件进行处理,
 	 * 已把代替规则抽离到别一个类实现
-	 * @param unknown_type $filename 文件名
-	 * @param unknown_type $type
-	 * @return unknown_type
+	 * @param string $filename 文件名
+	 * @param string $type
+	 * @return string
 	 */
 	public function convert($filename,$type='Zf'){
 		$content = file_get_contents($filename);
@@ -53,9 +61,9 @@ class LotusConvertor {
 		return $msg;
 	}
 	/**
-	 * 获得指定目录下的文件列表,包含子目录
-	 * @param unknown_type $path 指定目录
-	 * @param unknown_type $suffix 后缀名过滤
+	 * 获得指定目录下的文件列表,递归子目录
+	 * @param string $path 指定目录
+	 * @param array $suffix 后缀名过滤
 	 * @return array 文件列表数组
 	 */
 	public function getFileList($path = '',$suffix= array('php','inc')){
@@ -82,7 +90,7 @@ class LotusConvertor {
 	}
 	/**
 	 * 入口
-	 * @return unknown_type
+	 * @return void
 	 */
 	public function main(){
 		if(!empty($_POST)){
@@ -119,15 +127,15 @@ class LotusConvertor {
 }
 /**
  * 装封过滤Zf的算法
- * 必须实现静态方法  convert()
- * @author Administrator
+ * 必须实现静态方法convert()
+ * @author bluelevinatgmail
  *
  */
 class ConvertZf {
 	/**
 	 *
-	 * @param unknown_type $content 待过滤内容
-	 * @return unknown_type 返回过滤后的内容
+	 * @param string $content 待过滤内容
+	 * @return string 返回过滤后的内容
 	 */
 	static function convert($content){
 		$newContent = str_replace('require_once','//require_once',$content);
