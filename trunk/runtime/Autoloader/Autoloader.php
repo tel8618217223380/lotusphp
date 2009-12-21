@@ -4,11 +4,19 @@ class LtAutoloader
 	public $fileMapping;
 	protected $dirs;
 
-	public function __construct($dirArray = null)
+	public function __construct()
 	{
-		if ($dirArray)
+		$args = func_get_args();
+		if (1 == count($args))
 		{
-			$this->dirs = $dirArray;
+			$this->dirs = is_array($args[0]) ? $args[0] : $args;
+		}
+		else if (1 < count($args) || (isset($args[0]) && is_string($args[0])))
+		{
+			$this->dirs = $args;
+		}
+		if (!empty($this->dirs))
+		{
 			$this->scanDirs();
 			$this->init();
 		}
