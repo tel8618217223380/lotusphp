@@ -68,7 +68,7 @@ class LotusConvertor {
 				if (!in_array($file,array('.','..','.svn'))) {
 					$filename = $path."/".$file;
 					if (is_dir($filename)) {
-						$this->getFileList($filename);
+						$this->getFileList($filename,$suffix);
 					} else{
 						$ext = pathinfo($file, PATHINFO_EXTENSION);
 						if(in_array($ext,$suffix)){
