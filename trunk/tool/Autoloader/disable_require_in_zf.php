@@ -12,6 +12,7 @@ class LotusConvertor {
 	public $destinationPath;
 	public $msg = array();
 	public $fileCount = 0;
+	public $supportTypes = array("Zf","Pear","Yii","Sf");
 	/**
 	 * 指定原始文件目录
 	 * @param string $path 为绝对路径
