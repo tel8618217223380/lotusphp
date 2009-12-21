@@ -8,6 +8,13 @@
 <form action="" method="post">
 Sourec path:<input type="text" size="64" name="source_path" /><br/>
 Destination path:<input type="text" size="64" name="destination_path" value="" /><br/>
+<?php if(isset($this->supportTypes)){ ?>
+<select name="type" >
+	<?php foreach($this->supportTypes as $type) { ?>
+<option value="<?php echo $type; ?>"><?php echo $type; ?></option>
+<?php }}?>
+</select>
+<br/>
 <input type="submit" value="submit" /><br/>
 </form>
 信息:共有<?php echo $this->fileCount ?>个文件被转换<br />
