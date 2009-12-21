@@ -6,7 +6,7 @@ class LtRouter
 {
 	public $module;
 	public $action;
-	protected $conf;
+	public $conf;
 
 	public function __construct()
 	{
