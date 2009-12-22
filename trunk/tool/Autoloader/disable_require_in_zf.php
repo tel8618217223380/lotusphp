@@ -23,7 +23,7 @@ class LotusConvertor {
 			$this->sourcePath = $path;
 			return true;
 		}else{
-			$this->msg[] = "$path is not a directory";
+			$this->msg[] = "你指定的原始文件目录($path)不是绝对路径或不存在";
 			return false;
 		}
 	}
@@ -58,7 +58,8 @@ class LotusConvertor {
 		}
 		@file_put_contents($filename,$newContent);
 		$this->fileCount ++;
-		$msg = "$filename has been converted...";
+		$file = str_replace($this->destinationPath,'',$filename);
+		$msg = "$file 转换成功";
 		return $msg;
 	}
 	/**
@@ -96,7 +97,7 @@ class LotusConvertor {
 	public function main(){
 		if(!empty($_POST)){
 			if(!isset($_POST['source_path'])){
-				$this->msg[] = "Source path can not be empty";
+				$this->msg[] = "原始文件目录不能为空";
 				include 'tpl.html';
 				exit;
 			}else{
@@ -105,13 +106,13 @@ class LotusConvertor {
 					include 'tpl.html';
 					exit;
 				}
-				$this->msg[] = "Source path : ".$_POST['source_path'];
+				$this->msg[] = "原始文件目录为 : ".$_POST['source_path'];
 			}
 			if(!isset($_POST['destination_path'])){
-				$this->msg[] = 'Destination path is the same as Source path';
+				$this->msg[] = '你没有设置转换后的文件保存们置,默认覆盖原始文件';
 			}else{
 				$this->setDestinationPath($_POST['destination_path']);
-				$this->msg[] = "Destination path : ".$_POST['destination_path'];
+				$this->msg[] = "转后后文件保存位置为:".$_POST['destination_path'];
 			}
 			if(!isset($_POST['type'])){
 				$type = 'Zf';
