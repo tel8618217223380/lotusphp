@@ -60,8 +60,8 @@ class LotusConvertor {
 		}
 		@file_put_contents($filename,$newContent);
 		$this->fileCount ++;
-		$file = str_replace($this->destinationPath,'',$filename);
-		$msg = "$file 转换成功";
+		//$file = str_replace($this->destinationPath,'',$filename);
+		$msg = "$filename 转换成功";
 		return $msg;
 	}
 	/**
