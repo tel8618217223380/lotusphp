@@ -3,7 +3,7 @@
  * 本测试文档演示了LtAutoloader的正确使用方法
  * 按本文档操作一定会得到正确的结果
  */
-class AutoloaderTest extends PHPUnit_Framework_TestCase
+class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * 最常用的使用方式（推荐）
@@ -29,39 +29,51 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testMostUsedWay()
 	{
-		new LtAutoloader(
+		$autoloader = new LtAutoloader(
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR,
-			"class_dir_2"//为了测试这个相对目录，请到unittest/Autoloader目录下运行php ..\TestHelper.php RightWayToUse.php
+			"class_dir_2",//为了测试这个相对目录，请到unittest/Autoloader目录下运行php ..\TestHelper.php RightWayToUse.php
+			"function_dir_1"
 		);
 		$this->assertTrue(new Goodbye() instanceof GoodBye);
 		$this->assertTrue(class_exists("HelloWorld"));
 		$this->assertEquals(HelloLotus::sayHello(), "hello");
+		$this->assertEquals(say_hello(), "hello");
 	}
 
 	/**
 	 * 以一个数组形式传入类文件所在的目录，数组每个元素都是目录名
-	 * 什么时候用这种方式：
+	 * 
+	 * 适用场合：
 	 * 多个目录名不是写死在代码中，当需要动态组合时，用数组方便
+	 * @depends testMostUsedWay
 	 */
-	public function testPassSeveralStringParameter()
+	public function testPassAnArrayParameter()
 	{
 		$dirs = array(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1");
 		if (is_dir(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2"))
 		{
 			$dirs[] = dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2";
 		}
-		new LtAutoloader($dirs);
-		$this->assertTrue(new Goodbye() instanceof GoodBye);
-		$this->assertTrue(class_exists("HelloWorld"));
-		$this->assertEquals(HelloLotus::sayHello(), "hello");
+		$autoloaderToBeTest = new LtAutoloader($dirs);
+		$autoloaderStandard = new LtAutoloader(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR, "class_dir_2");
+		$this->assertEquals($autoloaderToBeTest, $autoloaderStandard);
 	}
 
 	/**
 	 * 参数为空
-	 * 期望效果：参数为空不报错，但不生成fileMapping
+	 * 
+	 * 适用场合：
+	 * 为也提高性能，把autoloader生成的fileMapping缓存起来，下次初始化的时候就直接new LtAutoloader()，然后给fileMapping赋值
 	 */
 	public function testPassNoParameter()
 	{
-		$autoloaderToTest = new LtAutoloader();
+		$autoloader = new LtAutoloader();
+		$autoloader->fileMapping = array(
+			"function" => array(dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_2" . DIRECTORY_SEPARATOR . "hello_world_2.php"),
+			"class" => array("classneverloaded" => dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_3" . DIRECTORY_SEPARATOR . "IDontCareFilename.php")
+		);
+		$autoloader->init();
+		$this->assertTrue(new Classneverloaded() instanceof classneverloaded);
+		$this->assertEquals(say_hello_2(), "hello_2");
 	}
 }
