@@ -63,9 +63,22 @@ class RouterTest extends PHPUnit_Framework_TestCase
 	} 
 
 	/**
+	 * index.php
+	 */
+	public function testCustom()
+	{
+		$router = new LtRouter();
+		$router->conf->module = 'hello';
+		$router->conf->action = 'world';
+		$router -> init();
+		$this -> assertEquals('hello', $router -> module);
+		$this -> assertEquals('world', $router -> action);
+	} 
+
+	/**
 	 * @expectedException Exception
 	 */
-	public function testRoute5()
+	public function testModuleErr()
 	{
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
 		$_REQUEST = array(
@@ -79,7 +92,7 @@ class RouterTest extends PHPUnit_Framework_TestCase
 	/**
 	 * @expectedException Exception
 	 */
-	public function testRoute6()
+	public function testActionErr()
 	{
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
 		$_REQUEST = array(
