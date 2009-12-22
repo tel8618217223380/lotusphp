@@ -19,6 +19,7 @@ class LotusConvertor {
 	 * @return bool
 	 */
 	public function setSourcePath($path){
+		$path = trim($path," /\\");
 		if(is_dir($path)){
 			$this->sourcePath = $path;
 			return true;
@@ -33,8 +34,9 @@ class LotusConvertor {
 	 * @return void
 	 */
 	public function setDestinationPath($path){
+		$path = trim($path," /\\");
 		if(!is_dir($path)){
-			mkdir($path,0777);
+			@mkdir($path,0777);
 		}
 		$this->destinationPath = $path;
 	}
@@ -106,13 +108,15 @@ class LotusConvertor {
 					include 'tpl.html';
 					exit;
 				}
-				$this->msg[] = "原始文件目录为 : ".$_POST['source_path'];
+				//$this->msg[] = "原始文件目录为 : ".$_POST['source_path'];
 			}
 			if(!isset($_POST['destination_path'])){
-				$this->msg[] = '你没有设置转换后的文件保存们置,默认覆盖原始文件';
+				$this->msg[] = "必须为转换后的文件设置保存目录(绝对路径)";
+				include 'tpl.html';
+				exit;
 			}else{
 				$this->setDestinationPath($_POST['destination_path']);
-				$this->msg[] = "转后后文件保存位置为:".$_POST['destination_path'];
+				//$this->msg[] = "转换后文件保存位置为:".$_POST['destination_path'];
 			}
 			if(!isset($_POST['type'])){
 				$type = 'Zf';
