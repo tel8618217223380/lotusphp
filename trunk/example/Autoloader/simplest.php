@@ -10,7 +10,7 @@ include $lotusHome . "/runtime/Autoloader/Autoloader.php";
  * 将当前目录下的Classes和function目录加到“自动加载目录列表中”
  */
 $directories = array("Classes\\", "function/", '', array('dir1','dir2',array('dir3')));
-$autoloader = new LtAutoloader($directories,'dir4','dir5');
+$autoloader = new LtAutoloader($directories,'dir4','dir5','dir 6');
 
 /*
  * 看看有哪些文件被包含进来了

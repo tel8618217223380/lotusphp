@@ -7,21 +7,25 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * 传入的数组是二维数组：以一个数组形式传入目录名，但至少有一个元素是数组
-	 * @expectedException Exception
+	 * expectedException Exception
 	 */
-	public function testPassMixArrayParameter()
-	{
-		new LtAutoloader(array(
-			"class_dir_1",
-			array("class_dir_2"),
-			"class_dir_3",
-		));
-	}
+	////////////////////////////////////////////////////
+	// 查看例子,已经支持任意参数
+	//public function testPassMixArrayParameter()
+	//{
+		//new LtAutoloader(array(
+			//"class_dir_1",
+			//array("class_dir_2"),
+			//"class_dir_3",
+		//));
+	//}
 
 	/**
 	 * 以多个参数形式传入，但至少有一个参数是数组
-	 * @expectedException Exception
+	 * expectedException Exception
 	 */
+	////////////////////////////////////////////////////
+	// 查看例子,已经支持任意参数
 	public function testParameterHasOneArrayAndOther()
 	{
 		new LtAutoloader("class_dir_1", array("class_dir_2"), "class_dir_3");
