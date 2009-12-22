@@ -61,4 +61,32 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		$this -> assertEquals('Module', $router -> module);
 		$this -> assertEquals('Action', $router -> action);
 	} 
+
+	/**
+	 * @expectedException Exception
+	 */
+	public function testRoute5()
+	{
+		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
+		$_REQUEST = array(
+			'module' => 'hel?lo',
+			'action' => 'world',
+		);
+		$router = new LtRouter();
+		$router -> init();
+	}
+
+	/**
+	 * @expectedException Exception
+	 */
+	public function testRoute6()
+	{
+		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
+		$_REQUEST = array(
+			'module' => 'hello',
+			'action' => 'wor/ld',
+		);
+		$router = new LtRouter();
+		$router -> init();
+	}
 } 
