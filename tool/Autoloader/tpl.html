@@ -6,8 +6,9 @@
 </head>
 <body>
 <form action="" method="post">
-Sourec path:<input type="text" size="64" name="source_path" /><br/>
-Destination path:<input type="text" size="64" name="destination_path" value="" /><br/>
+原始类库位置的绝对路径:<input type="text" size="64" name="source_path" /><br/><br/>
+转换后文件保存位置的绝对路径:<input type="text" size="64" name="destination_path" value="" /><br/><br/>
+类库的类型:
 <?php if(isset($this->supportTypes)){
 	echo "<select name=\"type\" >";
  	foreach($this->supportTypes as $type) { 
@@ -17,10 +18,9 @@ Destination path:<input type="text" size="64" name="destination_path" value="" /
 }
 ?>
 
-<br/>
-<input type="submit" value="submit" /><br/>
+<input type="submit" value="确认提交" /><br/>
 </form>
-信息:共有<?php echo $this->fileCount ?>个文件被转换<br />
+信息:共找到<?php echo isset($fileList)?count($fileList):0; ?>个文件,其中<?php echo $this->fileCount; ?>个被成功转换,保存在<?php echo $this->destinationPath ?>目录中<br />
 <?php if(!empty($this->msg)){
 	foreach($this->msg as $msg){
 		echo "$msg"."<br/>";
