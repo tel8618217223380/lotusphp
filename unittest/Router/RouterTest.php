@@ -8,7 +8,7 @@ class RouterTest extends PHPUnit_Framework_TestCase
 	{
 	} 
 	/**
-	 * ÃüÁîĞĞÄ£Ê½
+	 * å‘½ä»¤è¡Œæ¨¡å¼
 	 */
 	public function testCLI()
 	{
