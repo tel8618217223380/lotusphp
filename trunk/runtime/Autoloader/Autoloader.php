@@ -6,20 +6,32 @@ class LtAutoloader
 
 	public function __construct()
 	{
-		$args = func_get_args();
-		if (1 == count($args))
+		if (func_num_args() > 0)
 		{
-			$this->dirs = is_array($args[0]) ? $args[0] : $args;
+			$args = func_get_args();
+			$this->prepareDirs($args);
+			$this->dirs = array_filter($this->dirs);
+			if (!empty($this->dirs))
+			{
+				$this->scanDirs();
+				$this->init();
+			}
 		}
-		else if (1 < count($args) || (isset($args[0]) && is_string($args[0])))
+	}
+
+	public function prepareDirs($dirs)
+	{
+		if (!is_array($dirs))
 		{
-			$this->dirs = $args;
-		}
-		if (!empty($this->dirs))
+			// $dirs = preg_replace("/[\\\\|\/]*$/",'',$dirs);
+			$dirs = rtrim($dirs,'\\\\\/');
+			$this -> dirs[] = $dirs;
+			return ;
+		} 
+		foreach($dirs as $dir)
 		{
-			$this->scanDirs();
-			$this->init();
-		}
+			$this -> prepareDirs($dir);
+		} 
 	}
 
 	public function init()

@@ -9,7 +9,7 @@ include $lotusHome . "/runtime/Autoloader/Autoloader.php";
  * 初始化Autoloader类
  * 将当前目录下的Classes和function目录加到“自动加载目录列表中”
  */
-$directories = array("Classes", "function");
+$directories = array("Classes\\", "function/", '', array('dir1','dir2',array('dir3')));
 $autoloader = new LtAutoloader($directories);
 
 /*
@@ -32,3 +32,4 @@ $hello->sayHello();
  * class文件(定义了class/interface的文件)是按需加载（用到的时候才包含进来）的
  */
 print_r(get_included_files());
+//print_r($autoloader);
