@@ -26,8 +26,8 @@ include "/DB所在目录/runtime/DB/Adapter/DbAdapterPdoMysql.php";
 include "/DB所在目录/runtime/DB/QueryEngine/DbTable.php";
 /*
  * 配置数据库连接
- * 关键是给LtDb::$servers变量赋一个数组，这个数组维度比较复杂 ，所以用DbConfigBuilder构建不容易出错
- * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给LtDb::$servers，效果是一样的
+ * 关键是给LtDbStaticData::$servers变量赋一个数组，这个数组维度比较复杂 ，所以用DbConfigBuilder构建不容易出错
+ * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给LtDbStaticData::$servers，效果是一样的
  */
 $dbConfigBuilder = new LtDbConfigBuilder();
 $dbConfigBuilder->addSingleHost(array(
@@ -38,7 +38,7 @@ $dbConfigBuilder->addSingleHost(array(
     "adapter" => "pdoMysql",
     "charset" => "UTF-8",
 ));
-LtDb::$servers = $dbConfigBuilder->getServers();
+LtDbStaticData::$servers = $dbConfigBuilder->getServers();
 
 /*
  * 直接执行执行SQL
