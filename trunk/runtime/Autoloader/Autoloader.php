@@ -52,10 +52,9 @@ class LtAutoloader
 	protected function scanOneDir($dir)
 	{
   	$files = scandir($dir);
-		$currentDir = realpath($dir);
 		foreach ($files as $file)
 		{
-			$currentFile = $currentDir . DIRECTORY_SEPARATOR . $file;
+			$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
 			if (is_file($currentFile))
 			{
 				$extension = pathinfo($file, PATHINFO_EXTENSION);
@@ -95,6 +94,7 @@ class LtAutoloader
 		$i = 0;
 		while (isset($this->dirs[$i]))
 		{
+			$this->dirs[$i] = realpath($this->dirs[$i]);
 			$this->scanOneDir($this->dirs[$i]);
 			$i ++;
 		}

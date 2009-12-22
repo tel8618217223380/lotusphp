@@ -3,7 +3,7 @@
  * 本测试文档演示了LtAutoloader的错误使用方法
  * 不要按本文档描述的方式使用LtAutoloader
  */
-class AutoloaderTest extends PHPUnit_Framework_TestCase
+class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * 传入的数组是二维数组：以一个数组形式传入目录名，但至少有一个元素是数组
@@ -11,7 +11,11 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testPassMixArrayParameter()
 	{
-		
+		new LtAutoloader(array(
+			"class_dir_1",
+			array("class_dir_2"),
+			"class_dir_3",
+		));
 	}
 
 	/**
@@ -20,7 +24,7 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testParameterHasOneArrayAndOther()
 	{
-		
+		new LtAutoloader("class_dir_1", array("class_dir_2"), "class_dir_3");
 	}
 
 	/**
@@ -29,7 +33,7 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testParameterIsNotDirectory()
 	{
-		
+		new LtAutoloader("class_dir_1", "class_dir_2/HelloWorld.php");
 	}
 
 	/**
@@ -38,7 +42,7 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testDirNameWithBlank()
 	{
-		
+		new LtAutoloader("zend framework");
 	}
 
 	/**
@@ -47,7 +51,7 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testDumplicateNameOfClasses()
 	{
-		
+		new LtAutoloader("class_with_same_name");
 	}
 
 	/**
@@ -56,6 +60,15 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testDumplicateNameOfInterfaces()
 	{
-		
+		new LtAutoloader("interface_with_same_name");
+	}
+
+	/**
+	 * 类和接口重名 （不解决）
+	 * @expectedException Exception
+	 */
+	public function testDumplicateNameOfClassAndInterface()
+	{
+		new LtAutoloader("class_interface_with_same_name");
 	}
 }
