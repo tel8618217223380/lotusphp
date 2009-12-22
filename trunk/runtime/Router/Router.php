@@ -11,9 +11,6 @@ class LtRouter
 	public function __construct()
 	{
 		$this->conf = new LtRouterConfig();
-		$this->module = $this->conf->module;
-		$this->action = $this->conf->action;
-		unset($this->conf);
 	}
 
 	public function init()
@@ -76,7 +73,8 @@ class LtRouter
 				throw new Exception("Action name is illegal: {$action}");
 			}
 		}
-		$module && $this->module = $module;
-		$action && $this->action = $action;
+		$this->module = $module ? $module : $this->conf->module;
+		$this->action = $action ? $action : $this->conf->action;
+		unset($this->conf);
 	}
 }
