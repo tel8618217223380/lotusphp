@@ -20,23 +20,25 @@ class LtAutoloader
 
 	public function boot()
 	{
-		if ($this->storeHandle->get($this->storeHandle->keyPrefix . ".class_total"))
-		if (!empty($this -> dirs))
+		if (0 == $this->storeHandle->get($this->storeHandle->keyPrefix . ".class_total"))//尚未扫描目录
 		{
-			$this -> scanDirs();
-			if ($functionFiles = $this->cacheHandle->get($this->cacheHandle->keyPrefix . ".funcations"))
+			if (!empty($this -> dirs))
 			{
-				foreach ($functionFiles as $functionFile)
-				{
-					include($functionFile);
-				}
+				$this -> scanDirs();
 			}
-			spl_autoload_register(array($this, "loadClass"));
+			else
+			{
+				trigger_error("No dir passed");
+			}
 		}
-		else
+		if ($functionFiles = $this->cacheHandle->get($this->cacheHandle->keyPrefix . ".funcations"))
 		{
-			trigger_error("No dir passed");
+			foreach ($functionFiles as $functionFile)
+			{
+				include($functionFile);
+			}
 		}
+		spl_autoload_register(array($this, "loadClass"));
 	}
 
 	public function loadClass($className)
@@ -86,7 +88,7 @@ class LtAutoloader
 	/**
 	 * 分析源文件,如果定义了类或者接口就使用autoload机制,
 	 * 否则根据配置决定是否加载过程文件.
-	 * 
+	 *
 	 * 源文件要求不能同时包含类(接口)和过程函数
 	 */
 	protected function getLibNamesFromFile($file)
