@@ -7,6 +7,7 @@ class LtCaptcha
 	{
 		$this->imageEngine = new LtCaptchaImageEngine();
 		$this->imageEngine->conf = $this->conf = new LtCaptchaConfig();
+		$this->conf->seedFileRoot = rtrim($this->conf->seedFileRoot, '\/') . DIRECTORY_SEPARATOR;
 	}
 
 	public function generateImage($seed)
@@ -39,9 +40,8 @@ class LtCaptcha
 
 	protected function getSeedFile($seed)
 	{
-		$this->conf->seedFileRoot = rtrim($this->conf->seedFileRoot, '\/') . DIRECTORY_SEPARATOR;
 		$token = md5($seed);
-		return $this->conf->seedFileRoot . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . 'LtCaptcha-seed-' . $token . '.php';
+		return $this->conf->seedFileRoot . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . "seed-$token.php";
 	}
 
 	protected function getCaptchaWord($seed)
