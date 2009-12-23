@@ -23,8 +23,13 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	 *  # 传入的参数不是目录名（如/proj/lib/class.php）
 	 *  # 传入的参数不是真实存在的目录（如http://some_dir这样的）
 	 *  # 目录名或者文件名带空格（如Zend Framework）
+	 * 
+	 * LtAutoloader不需求，但建议最好这样：
+	 *  # 使用class而不是function来封装你的逻辑
+	 *  # 每个class都放在单独的一个文件中，且不要在已经定义了类的文件里再定义函数
+	 *  # class/function里不要使用__FILE__魔术变量
 	 *
-	 * 期望效果：
+	 * 本测试用例期望效果：
 	 * 在new CLASS_NAME, class_exists("CLASS_NAME"), extends CLASS_NAME的时候自动把包含该类的文件加载进来
 	 */
 	public function testMostUsedWay()
@@ -57,23 +62,5 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 		$autoloaderToBeTest = new LtAutoloader($dirs);
 		$autoloaderStandard = new LtAutoloader(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR, "class_dir_2");
 		$this->assertEquals($autoloaderToBeTest, $autoloaderStandard);
-	}
-
-	/**
-	 * 参数为空
-	 * 
-	 * 适用场合：
-	 * 为也提高性能，把autoloader生成的fileMapping缓存起来，下次初始化的时候就直接new LtAutoloader()，然后给fileMapping赋值
-	 */
-	public function testPassNoParameter()
-	{
-		$autoloader = new LtAutoloader();
-		$autoloader->fileMapping = array(
-			"function" => array(dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_2" . DIRECTORY_SEPARATOR . "hello_world_2.php"),
-			"class" => array("classneverloaded" => dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_3" . DIRECTORY_SEPARATOR . "IDontCareFilename.php")
-		);
-		$autoloader->init();
-		$this->assertTrue(new Classneverloaded() instanceof classneverloaded);
-		$this->assertEquals(say_hello_2(), "hello_2");
 	}
 }

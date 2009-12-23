@@ -40,22 +40,4 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	{
 		new LtAutoloader("interface_with_same_name");
 	}
-
-	/**
-	 * 类和接口重名 （不解决）
-	 * @expectedException Exception
-	 */
-	public function testDumplicateNameOfClassAndInterface()
-	{
-		new LtAutoloader("class_interface_with_same_name");
-	}
-
-	/**
-	 * 实例化LtAutoloader时没带参数，没有给LtAutoloader->fileMapping赋值就调用LtAutoloader->startToAutoload()了
-	 * @expectedException Exception
-	 */
-	public function testDumplicateNameOfClassAndInterface()
-	{
-		new LtAutoloader("class_interface_with_same_name");
-	}
 }

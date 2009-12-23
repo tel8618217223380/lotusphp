@@ -4,6 +4,7 @@
  */
 $lotusHome = dirname(dirname(__FILE__));
 include $lotusHome . "/runtime/Autoloader/Autoloader.php";
+include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
 $autoloader = new LtAutoloader(array($lotusHome . "/runtime"));
 
 /**

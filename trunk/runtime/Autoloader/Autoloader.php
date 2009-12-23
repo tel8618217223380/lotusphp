@@ -1,50 +1,49 @@
 <?php
 class LtAutoloader
 {
-	public $fileMapping;
-	public $dirs;
+	protected $dirs;
 
 	public function __construct()
 	{
 		$this->conf = new LtAutoloaderConfig();
+		$this->conf->cacheFileRoot = rtrim($this->conf->cacheFileRoot, '\/') . DIRECTORY_SEPARATOR;
 		if (func_num_args() > 0)
 		{
 			$args = func_get_args();
 			$this -> prepareDirs($args);
 			$this -> dirs = array_filter($this -> dirs);
-			if (!empty($this -> dirs))
+		}
+	}
+
+	public function boot()
+	{
+		if (!empty($this -> dirs))
+		{
+			$this -> scanDirs();
+			if ($this->conf->loadFunction)
 			{
-				$this -> scanDirs();
-				$this -> startToAutoload();
+				foreach (glob($this->conf->cacheFileRoot . "function/*.php") as $functionFile)
+				{
+					include($functionFile);
+				}
 			}
+			spl_autoload_register(array($this, "loadClass"));
+		}
+		else
+		{
+			trigger_error("No dir passed");
 		}
 	}
 
 	public function loadClass($className)
 	{
-		if (isset($this -> fileMapping["class"][$className]))
-		{
-			include $this -> fileMapping["class"][$className];
-		}
-		else
-		{
-			$key = strtolower($className);
-			if (isset($this -> fileMapping["class"][$key]))
-			{
-				include $this -> fileMapping["class"][$key];
-			}
-		}
+		include($this->getClassPath($className));
 	}
 
-	public function startToAutoload()
+	protected function getCachedClassPath($className)
 	{
-		$i = 0;
-		while (isset($this -> fileMapping["function"][$i]))
-		{
-			include $this -> fileMapping["function"][$i];
-			$i ++;
-		}
-		spl_autoload_register(array($this, "loadClass"));
+		$token = md5($seed);
+		return $this->conf->classCacheRoot . "class" . DIRECTORY_SEPARATOR . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . "class-$token.php";
 	}
 
 	/**
@@ -57,14 +56,7 @@ class LtAutoloader
 	{
 		if (!is_array($dirs))
 		{
-			//if (preg_match("/\s/i", $dir) || !is_dir($dir))
-			//{
-			//throw new Exception("Directory is invalid: {$dir}");
-			//}
-			// 删除最后的目录分隔符号
-			// $dirs = preg_replace("/[\\\\|\/]*$/",'',$dirs);
-			$dir = rtrim($dirs, '\\\\\/') . DIRECTORY_SEPARATOR;
-
+			$dir = rtrim($dirs, '\/') . DIRECTORY_SEPARATOR;
 			if (preg_match("/\s/i", $dir) || !is_dir($dir))
 			{
 				throw new Exception("Directory is invalid: {$dir}");
@@ -88,7 +80,7 @@ class LtAutoloader
 		return in_array($dir, $this->conf->skipDirNames);
 	}
 
-	protected function getLibNamesFromContent($file)
+	protected function getLibNamesFromFile($file)
 	{
 		$libNames = array("class" => array(), "function" => array());
 		if (preg_match_all('~^\s*(?:abstract\s+|final\s+)?(?:class|interface)\s+(\w+).*~mi', trim(file_get_contents($currentFile)), $classes) > 0)
@@ -98,89 +90,83 @@ class LtAutoloader
 				$libNames["class"] = $class;
 			}
 		}
-		else if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', trim(file_get_contents($currentFile)), $functions) > 0)
+		if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', trim(file_get_contents($currentFile)), $functions) > 0)
 		{
 			foreach($functions[1] as $key => $function)
 			{
 				$libNames["function"] = $function;
 			}
 		}
-		else
-		{
-			//既没有定义类，也没有定义函数
-		}
-		return ;
+		return $libNames;
 	}
 
-	protected function addClass($name, $file)
+	protected function addClass($className, $file)
 	{
-		$name = strtolower($name);
-		if (isset($this->fileMapping["class"][$name]))
+		$cachedClassPath = $this->getCachedClassPath($className);
+		if (is_file($cachedClassPath))
 		{
 			trigger_error("dumplicate class name");
 		}
 		else
 		{
-			$this->fileMapping["class"][$name] = $file;
+			copy($file, $cachedClassPath);
 		}
 	}
 
-	protected function addFunction($name, $file)
+	protected function addFunction($functionName, $file)
 	{
 		static $foundFunctions = array();
-		$name = strtolower($name);
-		if (in_array($name, $foundFunctions))
+		$functionName = strtolower($functionName);
+		if (in_array($functionName, $foundFunctions))
 		{
-			trigger_error("dumplicate class name");
+			trigger_error("dumplicate function name: $functionName");
 		}
 		else
 		{
-			$foundFunctions[] = $name;
-			$this->fileMapping["function_file"] = $file;
-		}
-	}
-
-	protected function scanOneDir($dir)
-	{
-		$files = scandir($dir);
-		foreach ($files as $file)
-		{
-			$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
-			if (is_file($currentFile) && $this->isAllowedFile($currentFile))
+			$foundFunctions[] = $functionName;
+			$cachedFunctionFile = md5($file);
+			if (!is_file($cachedFunctionFile))
 			{
-				$libNames = $libgetLibNamesFromContent($file);
-				foreach ($libNames["class"] as $className)
-				{
-					$this->addClass($className, $currentFile);
-				}
-				foreach ($libNames["function"] as $funcName)
-				{
-					$this->addFunction($funcName, $currentFile);
-				}
-			}
-			else if (is_dir($currentFile))
-			{
-				if ($this->isSkippedDir($currentFile))
-				{
-					continue;
-				}
-				// if $currentFile is a directory, pass through the next loop.
-				$this -> dirs[] = $dir . DIRECTORY_SEPARATOR . $file;
-			}
-			else
-			{
-				trigger_error("$currentFile is not a file or a directory.");
+				copy($file, $cachedFunctionFile);
 			}
 		}
 	}
 
 	protected function scanDirs()
 	{
-		$this -> fileMapping = array("class" => array(), "function" => array());
 		$i = 0;
 		while (isset($this -> dirs[$i]))
 		{
-			$this -> scanOneDir($this -> dirs[$i]);
+			$files = scandir($dir);
+			foreach ($files as $file)
+			{
+				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
+				if (is_file($currentFile) && $this->isAllowedFile($currentFile))
+				{
+					$libNames = $libgetLibNamesFromFile($file);
+					foreach ($libNames["class"] as $name)
+					{
+						$this->addClass($name, $currentFile);
+					}
+					foreach ($libNames["function"] as $funcName)
+					{
+						$this->addFunction($name, $currentFile);
+					}
+				}
+				else if (is_dir($currentFile))
+				{
+					if ($this->isSkippedDir($currentFile))
+					{
+						continue;
+					}
+					// if $currentFile is a directory, pass through the next loop.
+					$this -> dirs[] = $dir . DIRECTORY_SEPARATOR . $file;
+				}
+				else
+				{
+					trigger_error("$currentFile is not a file or a directory.");
+				}
+			}
 			$i ++;
 		}
 	}
