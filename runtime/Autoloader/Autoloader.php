@@ -1,11 +1,14 @@
 <?php
 class LtAutoloader
 {
+	public $cacheHandle;
 	protected $dirs;
+	protected $fileMapping;
 
 	public function __construct()
 	{
 		$this->conf = new LtAutoloaderConfig();
+		$this->cacheHandle = new LtAutoloaderFakeCache();
 		$this->conf->cacheFileRoot = rtrim($this->conf->cacheFileRoot, '\/') . DIRECTORY_SEPARATOR;
 		if (func_num_args() > 0)
 		{
@@ -20,9 +23,9 @@ class LtAutoloader
 		if (!empty($this -> dirs))
 		{
 			$this -> scanDirs();
-			if ($this->conf->loadFunction)
+			if ($functionFiles = $this->cacheHandle->get($this->cacheHandle->keyPrefix . ".funcations"))
 			{
-				foreach (glob($this->conf->cacheFileRoot . "function/*.php") as $functionFile)
+				foreach ($functionFiles as $functionFile)
 				{
 					include($functionFile);
 				}
@@ -42,8 +45,7 @@ class LtAutoloader
 
 	protected function getCachedClassPath($className)
 	{
-		$token = md5($seed);
-		return $this->conf->classCacheRoot . "class" . DIRECTORY_SEPARATOR . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . "class-$token.php";
+		return $this->cacheHandle->get($this->cacheHandle->keyPrefix . $className);
 	}
 
 	/**
@@ -102,33 +104,30 @@ class LtAutoloader
 
 	protected function addClass($className, $file)
 	{
-		$cachedClassPath = $this->getCachedClassPath($className);
-		if (is_file($cachedClassPath))
+		$key = $this->cacheHandle->get($this->cacheHandle->keyPrefix . strtolower($className));
+		if ($this->cacheHandle->get($key))
 		{
 			trigger_error("dumplicate class name");
 		}
 		else
 		{
-			copy($file, $cachedClassPath);
+			$this->cacheHandle->add($key, $file);
 		}
 	}
 
 	protected function addFunction($functionName, $file)
 	{
-		static $foundFunctions = array();
 		$functionName = strtolower($functionName);
+		$foundFunctions = $this->cacheHandle->get($this->cacheHandle->keyPrefix . ".funcations");
 		if (in_array($functionName, $foundFunctions))
 		{
 			trigger_error("dumplicate function name: $functionName");
 		}
 		else
 		{
-			$foundFunctions[] = $functionName;
-			$cachedFunctionFile = md5($file);
-			if (!is_file($cachedFunctionFile))
-			{
-				copy($file, $cachedFunctionFile);
-			}
+			$foundFunctions[] = $file;
+			$this->cacheHandle->del($this->cacheHandle->keyPrefix . ".funcations");
+			$this->cacheHandle->add($this->cacheHandle->keyPrefix . ".funcations");
 		}
 	}
 
@@ -169,5 +168,26 @@ class LtAutoloader
 			}
 			$i ++;
 		}
+	}
+}
+
+class LtAutoloaderFakeCache
+{
+	public $keyPrefix = '';
+	protected $fileMapping;
+
+	public function add($key, $value)
+	{
+		$this->fileMapping[$key] = $value;
+	}
+
+	public function del($key)
+	{
+		unset($this->fileMapping[$key]);
+	}
+
+	public function get($key)
+	{
+		return isset($this->fileMapping[$key]) ? $this->fileMapping[$key] : false;
 	}
 }
