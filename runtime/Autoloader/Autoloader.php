@@ -42,7 +42,7 @@ class LtAutoloader
 
 	public function loadClass($className)
 	{
-		if ($classFile = $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . $className))
+		if ($classFile = $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . strtolower($className)))
 		{
 			include($classFile);
 		}
@@ -90,14 +90,14 @@ class LtAutoloader
 		{
 			foreach($classes[1] as $key => $class)
 			{
-				$libNames["class"][strtolower($class)] = $file;
+				$libNames["class"][strtolower($class)] = realpath($file);
 			}
 		}
 		else //if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', $src, $functions) > 0)
 		{
 			//foreach($functions[1] as $key => $function)
 			//{
-				$libNames["function"][] = $file;
+				$libNames["function"][] = realpath($file);
 			//}
 		}
 		//else
@@ -109,9 +109,7 @@ class LtAutoloader
 
 	protected function addClass($className, $file)
 	{
-		var_dump($this -> storeHandle -> fileMapping);
 		$key = $this -> storeHandle -> keyPrefix . strtolower($className);
-		echo 'key====='.$key.'=======';
 		if ($this -> storeHandle -> get($key))
 		{
 			trigger_error("dumplicate class name : $className");
@@ -128,7 +126,6 @@ class LtAutoloader
 
 	protected function addFunction($functionName, $file)
 	{
-		var_dump($this -> storeHandle -> fileMapping);
 		$functionName = strtolower($functionName);
 		$foundFunctions = $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".funcations");
 		if (in_array($functionName, $foundFunctions))
@@ -160,14 +157,16 @@ class LtAutoloader
 				if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
 				{
 					$libNames = $this -> getLibNamesFromFile($currentFile);
-					foreach ($libNames["class"] as $name)
+var_dump($libNames);
+					foreach ($libNames["class"] as $key=>$value)
 					{
-						$this -> addClass($name, $currentFile);
+						$this -> addClass($key, $value);
 					}
-					foreach ($libNames["function"] as $name)
+					foreach ($libNames["function"] as $key=>$value)
 					{
-						$this -> addFunction($name, $currentFile);
+						$this -> addFunction($key, $value);
 					}
+var_dump($this -> storeHandle -> fileMapping);
 				}
 				else if (is_dir($currentFile))
 				{ 
