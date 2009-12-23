@@ -3,7 +3,6 @@ class LtAutoloader
 {
 	public $storeHandle;
 	protected $dirs;
-	protected $fileMapping;
 
 	public function __construct()
 	{
@@ -20,7 +19,8 @@ class LtAutoloader
 	public function boot()
 	{
 		// 尚未扫描目录
-		if (0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".class_total"))
+		if (0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".class_total") ||
+		0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".function_total"))
 		{
 			if (!empty($this -> dirs))
 			{
@@ -89,19 +89,21 @@ class LtAutoloader
 		$src = trim(file_get_contents($file));
 		if (preg_match_all('~^\s*(?:abstract\s+|final\s+)?(?:class|interface)\s+(\w+).*~mi', $src, $classes) > 0)
 		{
-			foreach($classes[1] as $key => $class)
+			foreach($classes[1] as $class)
 			{
-				$libNames["class"][strtolower($class)] = realpath($file);
+				$libNames["class"][] = $class;
 			}
 		}
 		else if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', $src, $functions) > 0)
 		{
-			$libNames["function"][] = realpath($file);
+			foreach($functions[1] as $function)
+			{
+				$libNames["function"][] = $function;
+			}
 		}
 		else
 		{
-			// 没有类也没有函数
-			$libNames["function"][] = realpath($file);
+			// 没有类也没有函数的文件忽略
 		}
 		return $libNames;
 	}
@@ -115,11 +117,11 @@ class LtAutoloader
 		}
 		else
 		{
+			$this -> storeHandle -> add($key, $file);
 			$classTotalKey = $this -> storeHandle -> keyPrefix . ".class_total";
 			$classTotal = $this -> storeHandle -> get($classTotalKey);
 			$this -> storeHandle -> del($classTotalKey);
 			$this -> storeHandle -> add($classTotalKey, $classTotal + 1);
-			$this -> storeHandle -> add($key, $file);
 		}
 	}
 
@@ -136,6 +138,10 @@ class LtAutoloader
 			$foundFunctions[] = $file;
 			$this -> storeHandle -> del($this -> storeHandle -> keyPrefix . ".funcations");
 			$this -> storeHandle -> add($this -> storeHandle -> keyPrefix . ".funcations", $foundFunctions);
+			$functionTotalKey = $this -> storeHandle -> keyPrefix . ".function_total";
+			$functionTotal = $this -> storeHandle -> get($functionTotalKey);
+			$this -> storeHandle -> del($functionTotalKey);
+			$this -> storeHandle -> add($functionTotalKey, $functionTotal + 1);
 		}
 	}
 
@@ -154,13 +160,13 @@ class LtAutoloader
 				if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
 				{
 					$libNames = $this -> getLibNamesFromFile($currentFile);
-					foreach ($libNames["class"] as $key => $value)
+					foreach ($libNames["class"] as $class)
 					{
-						$this -> addClass($key, $value);
+						$this -> addClass($class, $currentFile);
 					}
-					foreach ($libNames["function"] as $key => $value)
+					foreach ($libNames["function"] as $function)
 					{
-						$this -> addFunction($key, $value);
+						$this -> addFunction($function, $currentFile);
 					}
 				}
 				else if (is_dir($currentFile))
@@ -180,7 +186,7 @@ class LtAutoloader
 class LtAutoloaderFakeCache
 {
 	public $keyPrefix = '';
-	public $fileMapping = array(".class_total" => 0, ".funcations" => array());
+	public $fileMapping = array(".class_total" => 0, ".function_total" => 0, ".funcations" => array());
 
 	public function add($key, $value)
 	{
