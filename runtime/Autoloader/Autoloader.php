@@ -80,7 +80,7 @@ class LtAutoloader
 
 	protected function isSkippedDir($dir)
 	{
-		return in_array($dir, $this -> conf -> skipDirNames);
+		return in_array($dir, array(".", "..")) || in_array($dir, $this -> conf -> skipDirNames);
 	}
 
 	protected function getLibNamesFromFile($file)
