@@ -38,8 +38,8 @@ class LtCacheAdapterPhps extends LtCacheAdapter
 			return false;
 		}
 		else
-		{	//5.0.0 ����˶� context ��֧�֡�  
-			//5.1.0 ����� offset �� maxlen ���� 
+		{	
+			// php > 5.1.0
 			$ttl = file_get_contents($cacheFile,false,null,13,10);
 			if(0 != $ttl && time() > $ttl)
 			{
