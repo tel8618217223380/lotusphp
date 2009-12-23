@@ -42,12 +42,10 @@ class LtAutoloader
 
 	public function loadClass($className)
 	{
-		include($this->getClassPath($className));
-	}
-
-	protected function getCachedClassPath($className)
-	{
-		return $this->storeHandle->get($this->storeHandle->keyPrefix . $className);
+		if ($classFile = $this->storeHandle->get($this->storeHandle->keyPrefix . $className))
+		{
+			include($classFile);
+		}
 	}
 
 	/**
@@ -92,31 +90,38 @@ class LtAutoloader
 		{
 			foreach($classes[1] as $key => $class)
 			{
-				$libNames["class"][strtolower($class)] = $file;
+				$libNames["class"][] = $class;
 			}
 		}
-		else
+		else if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', $src, $functions) > 0)
+			{
+				foreach($functions[1] as $key => $function)
+				{
+					$libNames["function"][] = $function;
+				}
+			}
+			else
 		{
-			$libNames["function"][] = $file;
+			//没有类也没有函数
 		}
 		return $libNames;
 	}
 
 	protected function addClass($className, $file)
+	{var_dump($this->storeHandle->fileMapping);
+	$key = $this->storeHandle->keyPrefix . strtolower($className);
+	if ($this->storeHandle->get($key))
 	{
-		$key = $this->storeHandle->get($this->storeHandle->keyPrefix . strtolower($className));
-		if ($this->storeHandle->get($key))
-		{
-			trigger_error("dumplicate class name");
-		}
-		else
-		{
-			$classTotalKey = $this->storeHandle->keyPrefix . ".class_total";
-			$classTotal = $this->storeHandle->get($classTotalKey);
-			$this->storeHandle->del($classTotalKey);
-			$this->storeHandle->add($classTotalKey, $classTotal+1);
-			$this->storeHandle->add($key, $file);
-		}
+		trigger_error("dumplicate class name : $className");
+	}
+	else
+	{
+		$classTotalKey = $this->storeHandle->keyPrefix . ".class_total";
+		$classTotal = $this->storeHandle->get($classTotalKey);
+		$this->storeHandle->del($classTotalKey);
+		$this->storeHandle->add($classTotalKey, $classTotal+1);
+		$this->storeHandle->add($key, $file);
+	}
 	}
 
 	protected function addFunction($functionName, $file)
@@ -131,7 +136,7 @@ class LtAutoloader
 		{
 			$foundFunctions[] = $file;
 			$this->storeHandle->del($this->storeHandle->keyPrefix . ".funcations");
-			$this->storeHandle->add($this->storeHandle->keyPrefix . ".funcations");
+			$this->storeHandle->add($this->storeHandle->keyPrefix . ".funcations", $foundFunctions);
 		}
 	}
 
@@ -144,10 +149,14 @@ class LtAutoloader
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
+				if ($this->isSkippedDir($file))
+				{
+					continue;
+				}
 				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
 				if (is_file($currentFile) && $this->isAllowedFile($currentFile))
 				{
-					$libNames = $this->getLibNamesFromFile($currentFile);var_dump($libNames);exit;
+					$libNames = $this->getLibNamesFromFile($currentFile);
 					foreach ($libNames["class"] as $name)
 					{
 						$this->addClass($name, $currentFile);
@@ -159,12 +168,8 @@ class LtAutoloader
 				}
 				else if (is_dir($currentFile))
 				{
-					if ($this->isSkippedDir($currentFile))
-					{
-						continue;
-					}
 					// if $currentFile is a directory, pass through the next loop.
-					$this -> dirs[] = $dir . DIRECTORY_SEPARATOR . $file;
+					$this -> dirs[] = $currentFile;
 				}
 				else
 				{
@@ -179,7 +184,7 @@ class LtAutoloader
 class LtAutoloaderFakeCache
 {
 	public $keyPrefix = '';
-	public $fileMapping = array(".class_total" => 0);
+	public $fileMapping = array(".class_total" => 0, ".funcations" => array());
 
 	public function add($key, $value)
 	{
