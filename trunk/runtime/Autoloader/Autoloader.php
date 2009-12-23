@@ -63,8 +63,13 @@ class LtAutoloader
 			//}
 			// 删除最后的目录分隔符号
 			// $dirs = preg_replace("/[\\\\|\/]*$/",'',$dirs);
-			$dirs = rtrim($dirs, '\\\\\/') . DIRECTORY_SEPARATOR;
-			$this -> dirs[] = $dirs;
+			$dir = rtrim($dirs, '\\\\\/') . DIRECTORY_SEPARATOR;
+
+			if (preg_match("/\s/i", $dir) || !is_dir($dir))
+			{
+				throw new Exception("Directory is invalid: {$dir}");
+			}
+			$this -> dirs[] = $dir;
 			return ;
 		}
 		foreach($dirs as $dir)
@@ -73,9 +78,9 @@ class LtAutoloader
 		}
 	}
 
-	protected function checkExt($fileExt)
+	protected function isAllowedFile($file)
 	{
-		return in_array($fileExt, $this->conf->allowFileExtension);
+		return in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension);
 	}
 
 	protected function isSkippedDir($dir)
@@ -137,27 +142,20 @@ class LtAutoloader
 
 	protected function scanOneDir($dir)
 	{
-		if (preg_match("/\s/i", $dir) || !is_dir($dir))
-		{
-			throw new Exception("Directory is invalid: {$dir}");
-		}
 		$files = scandir($dir);
 		foreach ($files as $file)
 		{
 			$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
-			if (is_file($currentFile))
+			if (is_file($currentFile) && $this->isAllowedFile($currentFile))
 			{
-				if ($this->checkExt(pathinfo($file, PATHINFO_EXTENSION)))
+				$libNames = $libgetLibNamesFromContent($file);
+				foreach ($libNames["class"] as $className)
 				{
-					$libNames = $libgetLibNamesFromContent($file);
-					foreach ($libNames["class"] as $className)
-					{
-						$this->addClass($className, $currentFile);
-					}
-					foreach ($libNames["function"] as $funcName)
-					{
-						$this->addFunction($funcName, $currentFile);
-					}
+					$this->addClass($className, $currentFile);
+				}
+				foreach ($libNames["function"] as $funcName)
+				{
+					$this->addFunction($funcName, $currentFile);
 				}
 			}
 			else if (is_dir($currentFile))
