@@ -1,14 +1,13 @@
 <?php
 class LtAutoloader
 {
-	public $cacheHandle;
+	public $storeHandle;
 	protected $dirs;
-	protected $fileMapping;
 
 	public function __construct()
 	{
 		$this->conf = new LtAutoloaderConfig();
-		$this->cacheHandle = new LtAutoloaderFakeCache();
+		$this->storeHandle = new LtAutoloaderStore();
 		$this->conf->cacheFileRoot = rtrim($this->conf->cacheFileRoot, '\/') . DIRECTORY_SEPARATOR;
 		if (func_num_args() > 0)
 		{
@@ -23,7 +22,7 @@ class LtAutoloader
 		if (!empty($this -> dirs))
 		{
 			$this -> scanDirs();
-			if ($functionFiles = $this->cacheHandle->get($this->cacheHandle->keyPrefix . ".funcations"))
+			if ($functionFiles = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations"))
 			{
 				foreach ($functionFiles as $functionFile)
 				{
@@ -40,12 +39,10 @@ class LtAutoloader
 
 	public function loadClass($className)
 	{
-		include($this->getClassPath($className));
-	}
-
-	protected function getCachedClassPath($className)
-	{
-		return $this->cacheHandle->get($this->cacheHandle->keyPrefix . $className);
+		if ($file = $this->storeHandle->get($this->storeHandle->keyPrefix . $className))
+		{
+			include($file);
+		}
 	}
 
 	/**
@@ -104,21 +101,21 @@ class LtAutoloader
 
 	protected function addClass($className, $file)
 	{
-		$key = $this->cacheHandle->get($this->cacheHandle->keyPrefix . strtolower($className));
-		if ($this->cacheHandle->get($key))
+		$key = $this->storeHandle->get($this->storeHandle->keyPrefix . strtolower($className));
+		if ($this->storeHandle->get($key))
 		{
 			trigger_error("dumplicate class name");
 		}
 		else
 		{
-			$this->cacheHandle->add($key, $file);
+			$this->storeHandle->add($key, $file);
 		}
 	}
 
 	protected function addFunction($functionName, $file)
 	{
 		$functionName = strtolower($functionName);
-		$foundFunctions = $this->cacheHandle->get($this->cacheHandle->keyPrefix . ".funcations");
+		$foundFunctions = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations");
 		if (in_array($functionName, $foundFunctions))
 		{
 			trigger_error("dumplicate function name: $functionName");
@@ -126,8 +123,8 @@ class LtAutoloader
 		else
 		{
 			$foundFunctions[] = $file;
-			$this->cacheHandle->del($this->cacheHandle->keyPrefix . ".funcations");
-			$this->cacheHandle->add($this->cacheHandle->keyPrefix . ".funcations");
+			$this->storeHandle->del($this->storeHandle->keyPrefix . ".funcations");
+			$this->storeHandle->add($this->storeHandle->keyPrefix . ".funcations");
 		}
 	}
 
@@ -171,10 +168,10 @@ class LtAutoloader
 	}
 }
 
-class LtAutoloaderFakeCache
+class LtAutoloaderStore
 {
 	public $keyPrefix = '';
-	protected $fileMapping;
+	public $fileMapping;
 
 	public function add($key, $value)
 	{
