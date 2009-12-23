@@ -7,8 +7,8 @@ class LtAutoloader
 
 	public function __construct()
 	{
-		$this->conf = new LtAutoloaderConfig();
-		$this->storeHandle = new LtAutoloaderFakeCache();
+		$this -> conf = new LtAutoloaderConfig();
+		$this -> storeHandle = new LtAutoloaderFakeCache();
 		if (func_num_args() > 0)
 		{
 			$args = func_get_args();
@@ -17,9 +17,9 @@ class LtAutoloader
 		}
 	}
 
-	public function boot()
+	public function boot() // 尚未扫描目录
 	{
-		if (0 == $this->storeHandle->get($this->storeHandle->keyPrefix . ".class_total"))//尚未扫描目录
+		if (0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".class_total"))
 		{
 			if (!empty($this -> dirs))
 			{
@@ -30,7 +30,7 @@ class LtAutoloader
 				trigger_error("No dir passed");
 			}
 		}
-		if ($functionFiles = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations"))
+		if ($functionFiles = $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".funcations"))
 		{
 			foreach ($functionFiles as $functionFile)
 			{
@@ -42,7 +42,7 @@ class LtAutoloader
 
 	public function loadClass($className)
 	{
-		if ($classFile = $this->storeHandle->get($this->storeHandle->keyPrefix . $className))
+		if ($classFile = $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . $className))
 		{
 			include($classFile);
 		}
@@ -50,15 +50,15 @@ class LtAutoloader
 
 	/**
 	 * 将多维数组整理成一维数组保存在 $this->dirs
-	 *
-	 * @param array $dirs
+	 * 
+	 * @param array $dirs 
 	 * @return 设置$this->dirs
 	 */
 	protected function prepareDirs($dirs)
 	{
 		if (!is_array($dirs))
 		{
-			$dir = rtrim($dirs, '\/') . DIRECTORY_SEPARATOR;
+			$dir = rtrim($dirs, '\/'); // . DIRECTORY_SEPARATOR;
 			if (preg_match("/\s/i", $dir) || !is_dir($dir))
 			{
 				throw new Exception("Directory is invalid: {$dir}");
@@ -74,12 +74,12 @@ class LtAutoloader
 
 	protected function isAllowedFile($file)
 	{
-		return in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension);
+		return in_array(pathinfo($file, PATHINFO_EXTENSION), $this -> conf -> allowFileExtension);
 	}
 
 	protected function isSkippedDir($dir)
 	{
-		return in_array($dir, $this->conf->skipDirNames);
+		return in_array($dir, $this -> conf -> skipDirNames);
 	}
 
 	protected function getLibNamesFromFile($file)
@@ -90,44 +90,47 @@ class LtAutoloader
 		{
 			foreach($classes[1] as $key => $class)
 			{
-				$libNames["class"][] = $class;
+				$libNames["class"][strtolower($class)] = $file;
 			}
 		}
-		else if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', $src, $functions) > 0)
-			{
-				foreach($functions[1] as $key => $function)
-				{
-					$libNames["function"][] = $function;
-				}
-			}
-			else
+		else //if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', $src, $functions) > 0)
 		{
-			//没有类也没有函数
+			//foreach($functions[1] as $key => $function)
+			//{
+				$libNames["function"][] = $file;
+			//}
 		}
+		//else
+		//{ 
+			// 没有类也没有函数
+		//}
 		return $libNames;
 	}
 
 	protected function addClass($className, $file)
-	{var_dump($this->storeHandle->fileMapping);
-	$key = $this->storeHandle->keyPrefix . strtolower($className);
-	if ($this->storeHandle->get($key))
 	{
-		trigger_error("dumplicate class name : $className");
-	}
-	else
-	{
-		$classTotalKey = $this->storeHandle->keyPrefix . ".class_total";
-		$classTotal = $this->storeHandle->get($classTotalKey);
-		$this->storeHandle->del($classTotalKey);
-		$this->storeHandle->add($classTotalKey, $classTotal+1);
-		$this->storeHandle->add($key, $file);
-	}
+		var_dump($this -> storeHandle -> fileMapping);
+		$key = $this -> storeHandle -> keyPrefix . strtolower($className);
+		echo 'key====='.$key.'=======';
+		if ($this -> storeHandle -> get($key))
+		{
+			trigger_error("dumplicate class name : $className");
+		}
+		else
+		{
+			$classTotalKey = $this -> storeHandle -> keyPrefix . ".class_total";
+			$classTotal = $this -> storeHandle -> get($classTotalKey);
+			$this -> storeHandle -> del($classTotalKey);
+			$this -> storeHandle -> add($classTotalKey, $classTotal + 1);
+			$this -> storeHandle -> add($key, $file);
+		}
 	}
 
 	protected function addFunction($functionName, $file)
 	{
+		var_dump($this -> storeHandle -> fileMapping);
 		$functionName = strtolower($functionName);
-		$foundFunctions = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations");
+		$foundFunctions = $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".funcations");
 		if (in_array($functionName, $foundFunctions))
 		{
 			trigger_error("dumplicate function name: $functionName");
@@ -135,8 +138,8 @@ class LtAutoloader
 		else
 		{
 			$foundFunctions[] = $file;
-			$this->storeHandle->del($this->storeHandle->keyPrefix . ".funcations");
-			$this->storeHandle->add($this->storeHandle->keyPrefix . ".funcations", $foundFunctions);
+			$this -> storeHandle -> del($this -> storeHandle -> keyPrefix . ".funcations");
+			$this -> storeHandle -> add($this -> storeHandle -> keyPrefix . ".funcations", $foundFunctions);
 		}
 	}
 
@@ -149,25 +152,25 @@ class LtAutoloader
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
-				if ($this->isSkippedDir($file))
+				if ($this -> isSkippedDir($file))
 				{
 					continue;
 				}
 				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
-				if (is_file($currentFile) && $this->isAllowedFile($currentFile))
+				if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
 				{
-					$libNames = $this->getLibNamesFromFile($currentFile);
+					$libNames = $this -> getLibNamesFromFile($currentFile);
 					foreach ($libNames["class"] as $name)
 					{
-						$this->addClass($name, $currentFile);
+						$this -> addClass($name, $currentFile);
 					}
-					foreach ($libNames["function"] as $funcName)
+					foreach ($libNames["function"] as $name)
 					{
-						$this->addFunction($name, $currentFile);
+						$this -> addFunction($name, $currentFile);
 					}
 				}
 				else if (is_dir($currentFile))
-				{
+				{ 
 					// if $currentFile is a directory, pass through the next loop.
 					$this -> dirs[] = $currentFile;
 				}
@@ -188,16 +191,16 @@ class LtAutoloaderFakeCache
 
 	public function add($key, $value)
 	{
-		$this->fileMapping[$key] = $value;
+		$this -> fileMapping[$key] = $value;
 	}
 
 	public function del($key)
 	{
-		unset($this->fileMapping[$key]);
+		unset($this -> fileMapping[$key]);
 	}
 
 	public function get($key)
 	{
-		return isset($this->fileMapping[$key]) ? $this->fileMapping[$key] : false;
+		return isset($this -> fileMapping[$key]) ? $this -> fileMapping[$key] : false;
 	}
 }
