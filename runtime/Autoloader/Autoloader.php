@@ -20,6 +20,7 @@ class LtAutoloader
 
 	public function boot()
 	{
+		if ($this->storeHandle->get($this->storeHandle->keyPrefix . ".class_total"))
 		if (!empty($this -> dirs))
 		{
 			$this -> scanDirs();
@@ -121,7 +122,11 @@ class LtAutoloader
 		}
 		else
 		{
-			$this->cacheHandle->add($key, $file);
+			$classTotalKey = $this->storeHandle->keyPrefix . ".class_total";
+			$classTotal = $this->storeHandle->get($classTotalKey);
+			$this->storeHandle->del($classTotalKey);
+			$this->storeHandle->add($classTotalKey, $classTotal+1);
+			$this->storeHandle->add($key, $file);
 		}
 	}
 
@@ -184,7 +189,7 @@ class LtAutoloader
 class LtAutoloaderFakeCache
 {
 	public $keyPrefix = '';
-	protected $fileMapping;
+	public $fileMapping = array(".class_total" => 0);
 
 	public function add($key, $value)
 	{
