@@ -1,13 +1,16 @@
 <?php
-class LtCacheAdapterPhps extends LtCacheAdapter
+class LtCacheAdapterFile extends LtCacheAdapter
 {
 	public function __construct()
 	{
-		$this->options["cache_file_root"] = rtrim($this->options["cache_file_root"],'\/') . DIRECTORY_SEPARATOR;
+		//$this->options["cache_file_root"] = rtrim($this->options["cache_file_root"],'\/') . DIRECTORY_SEPARATOR;
+		//echo '__construct@'.$this->options['cache_file_root'].'#';
 	}
 
 	protected function getCacheFile($key)
 	{
+		$this->options["cache_file_root"] = rtrim($this->options["cache_file_root"],'\/') . DIRECTORY_SEPARATOR;
+		//echo '_getCacheFile@'.$this->options['cache_file_root'].'#';
 		$token = md5($key);
 		return $this->options["cache_file_root"] . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . "key-$token.php";
 	}
