@@ -19,7 +19,7 @@ class LtAutoloader
 	public function boot()
 	{
 		// 尚未扫描目录
-		if (0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".class_total") ||
+		if (0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".class_total") &&
 		0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".function_total"))
 		{
 			if (!empty($this -> dirs))
