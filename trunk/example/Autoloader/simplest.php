@@ -1,5 +1,4 @@
 <?php
-echo "this is __FILE__";
 /*
  * 加载Autoloader类文件
  */
