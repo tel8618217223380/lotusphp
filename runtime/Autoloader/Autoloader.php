@@ -15,7 +15,7 @@ class LtAutoloader
 			if (!empty($this -> dirs))
 			{
 				$this -> scanDirs();
-				$this -> startAutoload();
+				$this -> startToAutoload();
 			}
 		}
 	}
@@ -36,7 +36,7 @@ class LtAutoloader
 		}
 	}
 
-	public function startAutoload()
+	public function startToAutoload()
 	{
 		$i = 0;
 		while (isset($this -> fileMapping["function"][$i]))
