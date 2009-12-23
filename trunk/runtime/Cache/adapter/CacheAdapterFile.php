@@ -12,7 +12,7 @@ class LtCacheAdapterFile extends LtCacheAdapter
 		$this->options["cache_file_root"] = rtrim($this->options["cache_file_root"],'\/') . DIRECTORY_SEPARATOR;
 		//echo '_getCacheFile@'.$this->options['cache_file_root'].'#';
 		$token = md5($key);
-		return $this->options["cache_file_root"] . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . "key-$token.php";
+		return $this->options["cache_file_root"] . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . "file-key-$token.php";
 	}
 
 	public function add($key, $value, $ttl=0)
