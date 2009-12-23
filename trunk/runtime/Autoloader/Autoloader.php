@@ -148,41 +148,39 @@ class LtAutoloader
 	protected function scanDirs()
 	{
 		$i = 0;
-		while (isset($this -> dirs[$i]))
+		while (isset($this -> dirs[$i]))//不要把这个while换成foreach()，这是不递归实现扫描子目录的关键，$this->dirs数组是动态增加的
 		{
-			foreach($this -> dirs as $dir)
+			$dir = $this -> dirs[$i];
+			$files = scandir($dir);
+			foreach ($files as $file)
 			{
-				$files = scandir($dir);
-				foreach ($files as $file)
+				if ($this -> isSkippedDir($file))
 				{
-					if ($this -> isSkippedDir($file))
+					continue;
+				}
+				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
+				if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
+				{
+					$libNames = $this -> getLibNamesFromFile($currentFile);
+					foreach ($libNames["class"] as $class)
 					{
-						continue;
+						$this -> addClass($class, $currentFile);
 					}
-					$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
-					if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
+					foreach ($libNames["function"] as $function)
 					{
-						$libNames = $this -> getLibNamesFromFile($currentFile);
-						foreach ($libNames["class"] as $class)
-						{
-							$this -> addClass($class, $currentFile);
-						}
-						foreach ($libNames["function"] as $function)
-						{
-							$this -> addFunction($function, $currentFile);
-						}
-					}
-					else if (is_dir($currentFile))
-					{
-						// if $currentFile is a directory, pass through the next loop.
-						$this -> dirs[] = $currentFile;
-					}
-					else
-					{
-						trigger_error("$currentFile is not a file or a directory.");
+						$this -> addFunction($function, $currentFile);
 					}
 				}
-			}//end foreach($this -> dirs as $dir)
+				else if (is_dir($currentFile))
+				{
+					// if $currentFile is a directory, pass through the next loop.
+					$this -> dirs[] = $currentFile;
+				}
+				else
+				{
+					trigger_error("$currentFile is not a file or a directory.");
+				}
+			}//end foreach
 			$i ++;
 		}//end while
 	}
