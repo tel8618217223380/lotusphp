@@ -152,13 +152,14 @@ class LtAutoloader
 		$i = 0;
 		while (isset($this -> dirs[$i]))
 		{
+			$dir = $this -> dirs[$i];
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
 				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
 				if (is_file($currentFile) && $this->isAllowedFile($currentFile))
 				{
-					$libNames = $libgetLibNamesFromFile($file);
+					$libNames = $this->getLibNamesFromFile($currentFile);var_dump($libNames);exit;
 					foreach ($libNames["class"] as $name)
 					{
 						$this->addClass($name, $currentFile);
