@@ -19,7 +19,7 @@ $autoloader->boot();
  * function目录下的文件全都自动饱含进来了，他们并没有被用到
  * 非class(没有定义class/interface的文件)会被LtAutoloader全部自动包含进来，不是按需加载
  */
-//print_r(get_included_files());
+print_r(get_included_files());
 
 /*
  * 初始化完成，开始享受Autoloader的便利
@@ -33,5 +33,5 @@ $hello->sayHello();
  * 多了个Classes/HelloWorld.php，这是被"$hello = new HelloWorld();"触发的
  * class文件(定义了class/interface的文件)是按需加载（用到的时候才包含进来）的
  */
-//print_r(get_included_files());
+print_r(get_included_files());
 print_r($autoloader);
