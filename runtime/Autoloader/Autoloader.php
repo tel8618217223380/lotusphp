@@ -18,6 +18,10 @@ class LtAutoloader
 
 	public function boot()
 	{
+		if (!isset($this -> storeHandle -> keyPrefix))
+		{
+			$this -> storeHandle -> keyPrefix = '';
+		}
 		// 尚未扫描目录
 		if (0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".class_total") &&
 		0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".function_total"))
@@ -171,9 +175,8 @@ class LtAutoloader
 						$this -> addFunction($function, $currentFile);
 					}
 				}
-				else if (is_dir($currentFile))
+				else if (is_dir($currentFile))// if $currentFile is a directory, pass through the next loop.
 				{
-					// if $currentFile is a directory, pass through the next loop.
 					$this -> dirs[] = $currentFile;
 				}
 				else

@@ -4,6 +4,7 @@
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
 include $lotusHome . "/runtime/Autoloader/Autoloader.php";
+include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
 
 /*
  * 定义MyAutoloader类

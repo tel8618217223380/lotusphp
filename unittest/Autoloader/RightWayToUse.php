@@ -61,8 +61,10 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 			$dirs[] = dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2";
 		}
 		$autoloaderToBeTest = new Autoloader4Test($dirs);
-		$autoloaderStandard = new Autoloader4Test(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR, "class_dir_2");
-		$this->assertEquals($autoloaderToBeTest->dirs, $autoloaderStandard->dirs);
+		$this->assertEquals($autoloaderToBeTest->dirs, array(
+			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
+			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2"
+		));
 	}
 }
 
@@ -73,14 +75,14 @@ class Autoloader4Test extends LtAutoloader
 {
 	public function __get($prop)
 	{
-		if (isset(parent::$prop))
+		if (isset($this->$prop))
 		{
-			return parent::$prop;
+			return $this->$prop;
 		}
 	}
 
 	public function __call($method, $arg)
 	{
-		
+		$this->$method($arg);
 	}
 }
