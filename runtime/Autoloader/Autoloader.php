@@ -17,8 +17,9 @@ class LtAutoloader
 		}
 	}
 
-	public function boot() // 尚未扫描目录
+	public function boot()
 	{
+		// 尚未扫描目录
 		if (0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".class_total"))
 		{
 			if (!empty($this -> dirs))
@@ -50,15 +51,15 @@ class LtAutoloader
 
 	/**
 	 * 将多维数组整理成一维数组保存在 $this->dirs
-	 * 
-	 * @param array $dirs 
+	 *
+	 * @param array $dirs
 	 * @return 设置$this->dirs
 	 */
 	protected function prepareDirs($dirs)
 	{
 		if (!is_array($dirs))
 		{
-			$dir = rtrim($dirs, '\/'); // . DIRECTORY_SEPARATOR;
+			$dir = rtrim($dirs, '\/');
 			if (preg_match("/\s/i", $dir) || !is_dir($dir))
 			{
 				throw new Exception("Directory is invalid: {$dir}");
@@ -93,17 +94,15 @@ class LtAutoloader
 				$libNames["class"][strtolower($class)] = realpath($file);
 			}
 		}
-		else //if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', $src, $functions) > 0)
+		else if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', $src, $functions) > 0)
 		{
-			//foreach($functions[1] as $key => $function)
-			//{
-				$libNames["function"][] = realpath($file);
-			//}
+			$libNames["function"][] = realpath($file);
 		}
-		//else
-		//{ 
+		else
+		{
 			// 没有类也没有函数
-		//}
+			$libNames["function"][] = realpath($file);
+		}
 		return $libNames;
 	}
 
@@ -142,10 +141,8 @@ class LtAutoloader
 
 	protected function scanDirs()
 	{
-		$i = 0;
-		while (isset($this -> dirs[$i]))
+		foreach($this -> dirs as $dir)
 		{
-			$dir = $this -> dirs[$i];
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
@@ -157,19 +154,17 @@ class LtAutoloader
 				if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
 				{
 					$libNames = $this -> getLibNamesFromFile($currentFile);
-//var_dump($libNames);
-					foreach ($libNames["class"] as $key=>$value)
+					foreach ($libNames["class"] as $key => $value)
 					{
 						$this -> addClass($key, $value);
 					}
-					foreach ($libNames["function"] as $key=>$value)
+					foreach ($libNames["function"] as $key => $value)
 					{
 						$this -> addFunction($key, $value);
 					}
-//var_dump($this -> storeHandle -> fileMapping);
 				}
 				else if (is_dir($currentFile))
-				{ 
+				{
 					// if $currentFile is a directory, pass through the next loop.
 					$this -> dirs[] = $currentFile;
 				}
@@ -178,7 +173,6 @@ class LtAutoloader
 					trigger_error("$currentFile is not a file or a directory.");
 				}
 			}
-			$i ++;
 		}
 	}
 }
