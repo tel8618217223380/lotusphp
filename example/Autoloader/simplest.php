@@ -1,16 +1,18 @@
 <?php
+echo "this is __FILE__";
 /*
  * 加载Autoloader类文件
  */
 $lotusHome = dirname(dirname(dirname(__FILE__)));
 include $lotusHome . "/runtime/Autoloader/Autoloader.php";
+include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
 
 /*
  * 初始化Autoloader类
  * 将当前目录下的Classes和function目录加到“自动加载目录列表中”
  */
-$directories = array("Classes\\", "function/", '', array('dir1','dir2',array('dir3')));
-$autoloader = new LtAutoloader($directories,'dir4','dir5','dir 6');
+$directories = array("Classes\\", "function/");
+$autoloader = new LtAutoloader($directories);
 
 /*
  * 看看有哪些文件被包含进来了
