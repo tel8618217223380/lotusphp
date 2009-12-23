@@ -1,11 +1,15 @@
 <?php
 class LtCacheAdapterPhps extends LtCacheAdapter
 {
-	protected function getCacheFile($key)
+	public function __construct()
 	{
 		$this->options["cache_file_root"] = rtrim($this->options["cache_file_root"],'\/') . DIRECTORY_SEPARATOR;
+	}
+
+	protected function getCacheFile($key)
+	{
 		$token = md5($key);
-		return $this->options["cache_file_root"] . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . 'Lotusphp-cache-' . $token . '.php';
+		return $this->options["cache_file_root"] . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . "key-$token.php";
 	}
 
 	public function add($key, $value, $ttl=0)
