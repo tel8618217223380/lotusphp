@@ -147,39 +147,44 @@ class LtAutoloader
 
 	protected function scanDirs()
 	{
-		foreach($this -> dirs as $dir)
+		$i = 0;
+		while (isset($this -> dirs[$i]))
 		{
-			$files = scandir($dir);
-			foreach ($files as $file)
+			foreach($this -> dirs as $dir)
 			{
-				if ($this -> isSkippedDir($file))
+				$files = scandir($dir);
+				foreach ($files as $file)
 				{
-					continue;
-				}
-				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
-				if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
-				{
-					$libNames = $this -> getLibNamesFromFile($currentFile);
-					foreach ($libNames["class"] as $class)
+					if ($this -> isSkippedDir($file))
 					{
-						$this -> addClass($class, $currentFile);
+						continue;
 					}
-					foreach ($libNames["function"] as $function)
+					$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
+					if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
 					{
-						$this -> addFunction($function, $currentFile);
+						$libNames = $this -> getLibNamesFromFile($currentFile);
+						foreach ($libNames["class"] as $class)
+						{
+							$this -> addClass($class, $currentFile);
+						}
+						foreach ($libNames["function"] as $function)
+						{
+							$this -> addFunction($function, $currentFile);
+						}
+					}
+					else if (is_dir($currentFile))
+					{
+						// if $currentFile is a directory, pass through the next loop.
+						$this -> dirs[] = $currentFile;
+					}
+					else
+					{
+						trigger_error("$currentFile is not a file or a directory.");
 					}
 				}
-				else if (is_dir($currentFile))
-				{
-					// if $currentFile is a directory, pass through the next loop.
-					$this -> dirs[] = $currentFile;
-				}
-				else
-				{
-					trigger_error("$currentFile is not a file or a directory.");
-				}
-			}
-		}
+			}//end foreach($this -> dirs as $dir)
+			$i ++;
+		}//end while
 	}
 }
 
