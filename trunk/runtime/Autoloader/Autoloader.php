@@ -157,7 +157,7 @@ class LtAutoloader
 				if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
 				{
 					$libNames = $this -> getLibNamesFromFile($currentFile);
-var_dump($libNames);
+//var_dump($libNames);
 					foreach ($libNames["class"] as $key=>$value)
 					{
 						$this -> addClass($key, $value);
@@ -166,7 +166,7 @@ var_dump($libNames);
 					{
 						$this -> addFunction($key, $value);
 					}
-var_dump($this -> storeHandle -> fileMapping);
+//var_dump($this -> storeHandle -> fileMapping);
 				}
 				else if (is_dir($currentFile))
 				{ 
