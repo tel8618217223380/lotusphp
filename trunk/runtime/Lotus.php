@@ -38,25 +38,26 @@ class Lotus
 		 * Load core component
 		 */
 		$lotusClass = array(
-			"LtAutoloader"			=> $this->lotusRuntimeDir . "Autoloader/Autoloader.php",
-			"LtCache"				=> $this->lotusRuntimeDir . "Cache/Cache.php",
-			"LtCacheConfig"			=> $this->lotusRuntimeDir . "Cache/CacheConfig.php",
-			"LtCacheAdapter"		=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapter.php",
-			"LtCacheAdapterApc"		=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterApc.php",
-			"LtCacheEAccelerator"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterEAccelerator.php",
-			"LtCacheAdapterPhps"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterPhps.php",
-			"LtCacheAdapterXcache"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterXcache.php",
-			"LtObjectUtil"			=> $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php",
+			"ltautoloader"			=> $this->lotusRuntimeDir . "Autoloader/Autoloader.php",
+			"ltautoloaderconfig"			=> $this->lotusRuntimeDir . "Autoloader/AutoloaderConfig.php",
+			"ltcache"				=> $this->lotusRuntimeDir . "Cache/Cache.php",
+			"ltcacheConfig"			=> $this->lotusRuntimeDir . "Cache/CacheConfig.php",
+			"ltcacheAdapter"		=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapter.php",
+			"ltcacheAdapterApc"		=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterApc.php",
+			"ltcacheEAccelerator"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterEAccelerator.php",
+			"ltcacheAdapterPhps"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterPhps.php",
+			"ltcacheAdapterXcache"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterXcache.php",
+			"ltobjectUtil"			=> $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php",
 		);
 		$this->lotusCoreClass = array_merge($lotusClass, $this->lotusCoreClass);
 
 		/**
 		 * Init autoloader to load Cache, ObjectUtil components
 		 */
-		require $this->lotusCoreClass["LtAutoloader"];
+		require $this->lotusCoreClass["ltautoloader"];
 		$autoloader = new LtAutoloader();
-		$autoloader->fileMapping["class"] = $this->lotusCoreClass;
-		$autoloader->init();
+		$autoloader->storeHandle->fileMapping = $this->lotusCoreClass;
+		$autoloader->boot();
 
 		/**
 		 * Init Cache component to sotre LtAutoloader->fileMapping, Config->app
@@ -91,7 +92,7 @@ class Lotus
 		{
 			$autoloader = new LtAutoloader();
 			$autoloader->fileMapping = $fileMapping;
-			$autoloader->init();
+			$autoloader->boot();
 		}
 		else
 		{
