@@ -1,15 +1,14 @@
 <?php
 class LtAutoloader
 {
-	public $cacheHandle;
+	public $storeHandle;
 	protected $dirs;
 	protected $fileMapping;
 
 	public function __construct()
 	{
 		$this->conf = new LtAutoloaderConfig();
-		$this->cacheHandle = new LtAutoloaderFakeCache();
-		$this->conf->cacheFileRoot = rtrim($this->conf->cacheFileRoot, '\/') . DIRECTORY_SEPARATOR;
+		$this->storeHandle = new LtAutoloaderFakeCache();
 		if (func_num_args() > 0)
 		{
 			$args = func_get_args();
@@ -31,7 +30,7 @@ class LtAutoloader
 				trigger_error("No dir passed");
 			}
 		}
-		if ($functionFiles = $this->cacheHandle->get($this->cacheHandle->keyPrefix . ".funcations"))
+		if ($functionFiles = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations"))
 		{
 			foreach ($functionFiles as $functionFile)
 			{
@@ -48,7 +47,7 @@ class LtAutoloader
 
 	protected function getCachedClassPath($className)
 	{
-		return $this->cacheHandle->get($this->cacheHandle->keyPrefix . $className);
+		return $this->storeHandle->get($this->storeHandle->keyPrefix . $className);
 	}
 
 	/**
@@ -117,8 +116,8 @@ class LtAutoloader
 
 	protected function addClass($className, $file)
 	{
-		$key = $this->cacheHandle->get($this->cacheHandle->keyPrefix . strtolower($className));
-		if ($this->cacheHandle->get($key))
+		$key = $this->storeHandle->get($this->storeHandle->keyPrefix . strtolower($className));
+		if ($this->storeHandle->get($key))
 		{
 			trigger_error("dumplicate class name");
 		}
@@ -135,7 +134,7 @@ class LtAutoloader
 	protected function addFunction($functionName, $file)
 	{
 		$functionName = strtolower($functionName);
-		$foundFunctions = $this->cacheHandle->get($this->cacheHandle->keyPrefix . ".funcations");
+		$foundFunctions = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations");
 		if (in_array($functionName, $foundFunctions))
 		{
 			trigger_error("dumplicate function name: $functionName");
@@ -143,8 +142,8 @@ class LtAutoloader
 		else
 		{
 			$foundFunctions[] = $file;
-			$this->cacheHandle->del($this->cacheHandle->keyPrefix . ".funcations");
-			$this->cacheHandle->add($this->cacheHandle->keyPrefix . ".funcations");
+			$this->storeHandle->del($this->storeHandle->keyPrefix . ".funcations");
+			$this->storeHandle->add($this->storeHandle->keyPrefix . ".funcations");
 		}
 	}
 
