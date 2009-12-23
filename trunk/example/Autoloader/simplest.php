@@ -13,6 +13,7 @@ include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
  */
 $directories = array("Classes\\", "function/");
 $autoloader = new LtAutoloader($directories);
+$autoloader->boot();
 
 /*
  * 看看有哪些文件被包含进来了
