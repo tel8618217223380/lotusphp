@@ -39,7 +39,7 @@ class LtCaptcha
 
 	protected function getSeedFile($seed)
 	{
-		$this->conf->seedFileRoot = preg_match("/[\\\\|\/]$/", $this->conf->seedFileRoot) ? $this->conf->seedFileRoot : $this->conf->seedFileRoot . DIRECTORY_SEPARATOR;
+		$this->conf->seedFileRoot = rtrim($this->conf->seedFileRoot, '\/') . DIRECTORY_SEPARATOR;
 		$token = md5($seed);
 		return $this->conf->seedFileRoot . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . 'LtCaptcha-seed-' . $token . '.php';
 	}
