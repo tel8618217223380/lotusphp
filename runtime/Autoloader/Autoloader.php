@@ -84,12 +84,6 @@ class LtAutoloader
 		return in_array($dir, $this->conf->skipDirNames);
 	}
 
-	/**
-	 * 分析源文件,如果定义了类或者接口就使用autoload机制,
-	 * 否则根据配置决定是否加载过程文件.
-	 *
-	 * 源文件要求不能同时包含类(接口)和过程函数
-	 */
 	protected function getLibNamesFromFile($file)
 	{
 		$libNames = array("class" => array(), "function" => array());
@@ -98,18 +92,12 @@ class LtAutoloader
 		{
 			foreach($classes[1] as $key => $class)
 			{
-				$libNames["class"] = $class;
+				$libNames["class"][strtolower($class)] = $file;
 			}
 		}
 		else
 		{
-			if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', $src, $functions) > 0)
-			{
-				foreach($functions[1] as $key => $function)
-				{
-					$libNames["function"] = $function;
-				}
-			}
+			$libNames["function"][] = $file;
 		}
 		return $libNames;
 	}
