@@ -1,13 +1,14 @@
 <?php
 class LtAutoloader
 {
-	public $storeHandle;
+	public $cacheHandle;
 	protected $dirs;
+	protected $fileMapping;
 
 	public function __construct()
 	{
 		$this->conf = new LtAutoloaderConfig();
-		$this->storeHandle = new LtAutoloaderStore();
+		$this->cacheHandle = new LtAutoloaderFakeCache();
 		$this->conf->cacheFileRoot = rtrim($this->conf->cacheFileRoot, '\/') . DIRECTORY_SEPARATOR;
 		if (func_num_args() > 0)
 		{
@@ -22,7 +23,7 @@ class LtAutoloader
 		if (!empty($this -> dirs))
 		{
 			$this -> scanDirs();
-			if ($functionFiles = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations"))
+			if ($functionFiles = $this->cacheHandle->get($this->cacheHandle->keyPrefix . ".funcations"))
 			{
 				foreach ($functionFiles as $functionFile)
 				{
@@ -39,10 +40,12 @@ class LtAutoloader
 
 	public function loadClass($className)
 	{
-		if ($file = $this->storeHandle->get($this->storeHandle->keyPrefix . $className))
-		{
-			include($file);
-		}
+		include($this->getClassPath($className));
+	}
+
+	protected function getCachedClassPath($className)
+	{
+		return $this->cacheHandle->get($this->cacheHandle->keyPrefix . $className);
 	}
 
 	/**
@@ -79,21 +82,31 @@ class LtAutoloader
 		return in_array($dir, $this->conf->skipDirNames);
 	}
 
+	/**
+	 * 分析源文件,如果定义了类或者接口就使用autoload机制,
+	 * 否则根据配置决定是否加载过程文件.
+	 * 
+	 * 源文件要求不能同时包含类(接口)和过程函数
+	 */
 	protected function getLibNamesFromFile($file)
 	{
 		$libNames = array("class" => array(), "function" => array());
-		if (preg_match_all('~^\s*(?:abstract\s+|final\s+)?(?:class|interface)\s+(\w+).*~mi', trim(file_get_contents($currentFile)), $classes) > 0)
+		$src = trim(file_get_contents($file));
+		if (preg_match_all('~^\s*(?:abstract\s+|final\s+)?(?:class|interface)\s+(\w+).*~mi', $src, $classes) > 0)
 		{
 			foreach($classes[1] as $key => $class)
 			{
 				$libNames["class"] = $class;
 			}
 		}
-		if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', trim(file_get_contents($currentFile)), $functions) > 0)
+		else
 		{
-			foreach($functions[1] as $key => $function)
+			if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', $src, $functions) > 0)
 			{
-				$libNames["function"] = $function;
+				foreach($functions[1] as $key => $function)
+				{
+					$libNames["function"] = $function;
+				}
 			}
 		}
 		return $libNames;
@@ -101,21 +114,21 @@ class LtAutoloader
 
 	protected function addClass($className, $file)
 	{
-		$key = $this->storeHandle->get($this->storeHandle->keyPrefix . strtolower($className));
-		if ($this->storeHandle->get($key))
+		$key = $this->cacheHandle->get($this->cacheHandle->keyPrefix . strtolower($className));
+		if ($this->cacheHandle->get($key))
 		{
 			trigger_error("dumplicate class name");
 		}
 		else
 		{
-			$this->storeHandle->add($key, $file);
+			$this->cacheHandle->add($key, $file);
 		}
 	}
 
 	protected function addFunction($functionName, $file)
 	{
 		$functionName = strtolower($functionName);
-		$foundFunctions = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations");
+		$foundFunctions = $this->cacheHandle->get($this->cacheHandle->keyPrefix . ".funcations");
 		if (in_array($functionName, $foundFunctions))
 		{
 			trigger_error("dumplicate function name: $functionName");
@@ -123,8 +136,8 @@ class LtAutoloader
 		else
 		{
 			$foundFunctions[] = $file;
-			$this->storeHandle->del($this->storeHandle->keyPrefix . ".funcations");
-			$this->storeHandle->add($this->storeHandle->keyPrefix . ".funcations");
+			$this->cacheHandle->del($this->cacheHandle->keyPrefix . ".funcations");
+			$this->cacheHandle->add($this->cacheHandle->keyPrefix . ".funcations");
 		}
 	}
 
@@ -168,10 +181,10 @@ class LtAutoloader
 	}
 }
 
-class LtAutoloaderStore
+class LtAutoloaderFakeCache
 {
 	public $keyPrefix = '';
-	public $fileMapping;
+	protected $fileMapping;
 
 	public function add($key, $value)
 	{
