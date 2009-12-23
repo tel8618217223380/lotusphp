@@ -39,6 +39,7 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 			"class_dir_2",//为了测试这个相对目录，请到unittest/Autoloader目录下运行php ..\TestHelper.php RightWayToUse.php
 			"function_dir_1"
 		);
+		$autoloader->boot();
 		$this->assertTrue(new Goodbye() instanceof GoodBye);
 		$this->assertTrue(class_exists("HelloWorld"));
 		$this->assertEquals(HelloLotus::sayHello(), "hello");
@@ -59,8 +60,27 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 		{
 			$dirs[] = dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2";
 		}
-		$autoloaderToBeTest = new LtAutoloader($dirs);
-		$autoloaderStandard = new LtAutoloader(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR, "class_dir_2");
-		$this->assertEquals($autoloaderToBeTest, $autoloaderStandard);
+		$autoloaderToBeTest = new Autoloader4Test($dirs);
+		$autoloaderStandard = new Autoloader4Test(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR, "class_dir_2");
+		$this->assertEquals($autoloaderToBeTest->dirs, $autoloaderStandard->dirs);
+	}
+}
+
+/**
+ * 用这个类把LtAutoloader的protected属性和方法暴露出来测试
+ */
+class Autoloader4Test extends LtAutoloader
+{
+	public function __get($prop)
+	{
+		if (isset(parent::$prop))
+		{
+			return parent::$prop;
+		}
+	}
+
+	public function __call($method, $arg)
+	{
+		
 	}
 }
