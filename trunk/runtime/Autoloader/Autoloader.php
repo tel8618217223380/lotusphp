@@ -68,26 +68,27 @@ class LtAutoloader
 	 */
 	protected function prepareDirs($dirs)
 	{
+		$this->dirs = array();
 		$i = 0;
 		while (isset($dirs[$i])) // iteration, Don't use foreach
 		{
 			if (!is_array($dirs[$i]))
 			{
-				$dir = rtrim($dirs[$i], '\/');
+				$dir = realpath($dirs[$i]);
 				if (preg_match("/\s/i", $dir) || !is_dir($dir))
 				{
 					throw new Exception("Directory is invalid: {$dir}");
 				}
-				$this->dirs[] = realpath($dir); // save absolute paths
+				$this->dirs[] = $dir; // 绝对路径,结尾不含\/
 			}
 			else
 			{
 				foreach($dirs[$i] as $dir)
 				{
-					$dirs[] = $dir; // next while
+					$dirs[] = $dir;
 				}
 			}
-			unset($dirs[$i], $dir); // free
+			unset($dirs[$i], $dir);
 			$i ++;
 		}
 	}
