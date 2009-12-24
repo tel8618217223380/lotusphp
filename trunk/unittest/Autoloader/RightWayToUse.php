@@ -10,22 +10,25 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐）
 	 * 
 	 * LtAutoloader要求：
-	 *  # new LtAutoloader()的时候，以多个（或者一个）参数的形式传入，每个参数都是目录名
-	 *  # 需要被自动加载的文件都以.php或者.inc结尾（如果既有php文件，又有html文件，html文件将被忽略，php文件正常加载）
+	 *  # 以这样的流程使用LtAutoloader：依次执行new LtAutoloader(), addDirs($dirs), init()
+	 *  # 需要被自动加载的文件都以.php或者.inc结尾
+	 *    如果既有php文件，又有html文件，html文件将被忽略，php文件正常加载
+	 *    可配置，详情参见LtAutoloaderCofig
 	 *
 	 * LtAutoloader不在意：
-	 *  # 目录名是绝对路径还是相对路径（相对目录容易出错，尤其是写命令行程序的时候，推荐使用绝对路径）
 	 *  # 目录名有没有拖尾斜线
 	 *  # 目录下面有无子目录
 	 *  # 文件名和文件路径跟类名有无关联
 	 *  # 定义和使用类时，类名是大写还是小写
 	 *
-	 * LtAutoloader不支持：
+	 * LtAutoloader不支持（出错演示和不支持的原因参见WrongWayToUse.php）：
 	 *  # 传入的参数不是目录名（如/proj/lib/class.php）
 	 *  # 传入的参数不是真实存在的目录（如http://some_dir这样的）
 	 *  # 目录名或者文件名带空格（如Zend Framework）
+	 *  # 类或接口重名，函数和函数重名
 	 * 
-	 * LtAutoloader不需求，但建议最好这样：
+	 * LtAutoloader不强求，但建议最好这样（就是说你不按下面写的做，也可以运行）：
+	 *  # addDirs()的时候，使用绝对路径，而不是相对路径（相对目录容易出错，尤其是写命令行程序的时候）
 	 *  # 使用class而不是function来封装你的逻辑
 	 *  # 每个class都放在单独的一个文件中，且不要在已经定义了类的文件里再定义函数
 	 *  # class/function里不要使用__FILE__魔术变量
@@ -37,15 +40,17 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	{
 		$autoloader = new LtAutoloader;
 		$autoloader->addDirs(
-			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR,
-			"class_dir_2",//为了测试这个相对目录，请到unittest/Autoloader目录下运行php ..\TestHelper.php RightWayToUse.php
-			"function_dir_1"
+			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
+			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2",
+			dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_1",
+			dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_2"
 		);
 		$autoloader->init();
 		$this->assertTrue(new Goodbye() instanceof GoodBye);
 		$this->assertTrue(class_exists("HelloWorld"));
 		$this->assertEquals(HelloLotus::sayHello(), "hello");
 		$this->assertEquals(say_hello(), "hello");
+		$this->assertEquals(say_hello_2(), "hello_2");
 	}
 
 	/**
