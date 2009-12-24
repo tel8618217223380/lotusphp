@@ -74,7 +74,7 @@ class LtAutoloader
 				{
 					throw new Exception("Directory is invalid: {$dir}");
 				}
-				$this->dirs[] = $dir; // save
+				$this->dirs[] = realpath($dir); // save absolute paths
 			}
 			else
 			{
@@ -181,13 +181,11 @@ class LtAutoloader
 					$libNames = $this->parseLibNames($src);
 					foreach ($libNames["class"] as $class)
 					{
-						// Use absolute paths
-						$this->addClass($class, realpath($currentFile));
+						$this->addClass($class, $currentFile);
 					}
 					foreach ($libNames["function"] as $function)
 					{
-						// Use absolute paths
-						$this->addFunction($function, realpath($currentFile));
+						$this->addFunction($function, $currentFile);
 					}
 				}
 				else if (is_dir($currentFile))
