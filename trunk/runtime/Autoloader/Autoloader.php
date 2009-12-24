@@ -149,13 +149,13 @@ class LtAutoloader
 	{
 		$functionName = strtolower($functionName);
 		$foundFunctions = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations");
-		if (in_array($functionName, $foundFunctions))
+		if (array_key_exists($functionName, $foundFunctions))
 		{
 			trigger_error("dumplicate function name: $functionName");
 		}
 		else
 		{
-			$foundFunctions[] = $file;
+			$foundFunctions[$functionName] = $file;
 			$this->storeHandle->del($this->storeHandle->keyPrefix . ".funcations");
 			$this->storeHandle->add($this->storeHandle->keyPrefix . ".funcations", $foundFunctions);
 			$functionTotalKey = $this->storeHandle->keyPrefix . ".function_total";
