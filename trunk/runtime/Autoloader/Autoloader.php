@@ -74,7 +74,7 @@ class LtAutoloader
 		{
 			if (!is_array($dirs[$i]))
 			{
-				$dir = realpath($dirs[$i]);
+				$dir = realpath(rtrim($dirs[$i],'\/'));
 				if (preg_match("/\s/i", $dir) || !is_dir($dir))
 				{
 					throw new Exception("Directory is invalid: {$dir}");
