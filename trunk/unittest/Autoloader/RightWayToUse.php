@@ -3,6 +3,7 @@
  * 本测试文档演示了LtAutoloader的正确使用方法
  * 按本文档操作一定会得到正确的结果
  * @todo 增加performance_tuning.php的测试用例
+ * @todo 增加loadClass()和scanDirs()的测试
  */
 include dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
 class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
