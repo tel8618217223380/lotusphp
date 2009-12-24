@@ -181,17 +181,20 @@ class LtAutoloader
 					continue;
 				}
 				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
-				if (is_file($currentFile) && $this->isAllowedFile($currentFile))
+				if (is_file($currentFile))
 				{
-					$src = trim(file_get_contents($currentFile));
-					$libNames = $this->parseLibNames($src);
-					foreach ($libNames["class"] as $class)
+					if ($this->isAllowedFile($currentFile))
 					{
-						$this->addClass($class, $currentFile);
-					}
-					foreach ($libNames["function"] as $function)
-					{
-						$this->addFunction($function, $currentFile);
+						$src = trim(file_get_contents($currentFile));
+						$libNames = $this->parseLibNames($src);
+						foreach ($libNames["class"] as $class)
+						{
+							$this->addClass($class, $currentFile);
+						}
+						foreach ($libNames["function"] as $function)
+						{
+							$this->addFunction($function, $currentFile);
+						}
 					}
 				}
 				else if (is_dir($currentFile))
