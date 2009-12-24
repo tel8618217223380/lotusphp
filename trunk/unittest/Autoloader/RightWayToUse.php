@@ -10,7 +10,7 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐）
 	 * 
 	 * LtAutoloader要求：
-	 *  # 以这样的流程使用LtAutoloader：依次执行new LtAutoloader(), addDirs($dirs), init()
+	 *  # 以这样的流程使用LtAutoloader：依次执行new LtAutoloader(), addDirs($dirsArray), init()
 	 *  # 需要被自动加载的文件都以.php或者.inc结尾
 	 *    如果既有php文件，又有html文件，html文件将被忽略，php文件正常加载
 	 *    可配置，详情参见LtAutoloaderCofig
@@ -39,12 +39,12 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	public function testMostUsedWay()
 	{
 		$autoloader = new LtAutoloader;
-		$autoloader->addDirs(
+		$autoloader->addDirs(array(
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2",
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_1",
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_2"
-		);
+		));
 		$autoloader->init();
 		$this->assertTrue(new Goodbye() instanceof GoodBye);
 		$this->assertTrue(class_exists("HelloWorld"));
@@ -54,47 +54,55 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * 以一个数组形式传入类文件所在的目录，数组每个元素都是目录名
-	 * 
-	 * 适用场合：
-	 * 多个目录名不是写死在代码中，当需要动态组合时，用数组方便
+	 * 本用例展示了怎样给LtAutoloader传递需要自动加载的目录
 	 */
-	public function testAddDirs()
+	public function addDirsDataProvider()
 	{
-		$dirs = array(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1");
-		if (is_dir(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2"))
-		{
-			$dirs[] = dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2";
-		}
-		$ap = new LtAutoloaderProxy();
-		$ap->addDirs($dirs);
-		$this->assertEquals($ap->dirs, array(
-			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
-			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2"
-		));
+		$cd = dirname(__FILE__);//current dir, 当前目录
+		return array(
+			//用一个数组传递多个目录，绝对路径，不带拖尾斜线
+			array(
+				array("$cd/class_dir_1", "$cd/class_dir_2"),//$userParameter，addDirs()的参数
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),//$expected，正确结果
+			),
+
+			//只有一个目录，可以不用数组传
+			array(
+				"$cd/class_dir_1",//$userParameter，addDirs()的参数
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),//$expected，正确结果
+			),
+			
+			//用二维数组传递多个目录（不推荐）
+			array(
+				array("class_dir_1", array("class_dir_2")),//$userParameter
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),//$expected
+			),
+
+			//相对路径（不推荐）
+			array(
+				array("class_dir_1", "./class_dir_2"),//$userParameter，addDirs()的参数
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),//$expected，正确结果
+			),
+
+			//带拖尾斜线
+			array(
+				array("class_dir_1/", "class_dir_2\\"),//$userParameter，addDirs()的参数
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),//$expected，正确结果
+			),
+				
+			/**
+			添加新的测试条件，只需要复制下面这段代码，去掉注释，换掉相应的参数，即可
+			array(
+				array("$cd/class_dir_1", "$cd/class_dir_2"),//$userParameter，addDirs()的参数
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),//$expected，正确结果
+			),
+			*/
+		);
 	}
 
 	/**
-	测试接口: PrepareDirs() 
-	输入: 一个多维数组形式, 数组内的值必需是实际存在的目录(相对或绝对路径).
-	输出: 一个一维数组形式, 数组内的值是绝对路径, 保存在dirs属性.
-	*/
-	public function testPrepareDirs()
-	{
-		$dirs = array('Dirs/dir1\\','Dirs/dir2/',array('Dirs/dir3',array('Dirs/dir3/dir4/dir5/dir6')),'','Dirs/dir8');
-		$obj = array(
-		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir1',
-		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir2',
-		dirname(__FILE__),
-		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir8',	
-		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir3',	
-		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir3'.DIRECTORY_SEPARATOR.'dir4'.DIRECTORY_SEPARATOR.'dir5'.DIRECTORY_SEPARATOR.'dir6',	
-		);
-		$autoloaderToBeTest = new LtAutoloaderProxy();
-		$autoloaderToBeTest->prepareDirs($dirs);
-		$this->assertEquals($autoloaderToBeTest->dirs, $obj);
-	}
-
+	 * 本用例展示了LtAutoloader能识别哪些类和函数定义
+	 */
 	public function parseLibNamesDataProvider()
 	{
 		return array(
@@ -114,6 +122,16 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 			array("function 
 			function1(){}", array("class" => array(), "function" => array("function1"))),
 		);
+	}
+
+	/**
+	 * @dataProvider addDirsDataProvider
+	 */
+	public function testAddDirs($userParameter, $expected)
+	{
+		$ap = new LtAutoloaderProxy();
+		$ap->addDirs($userParameter);
+		$this->assertEquals($ap->dirs, $expected);
 	}
 
 	/**
