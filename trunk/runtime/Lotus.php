@@ -15,7 +15,7 @@ class Lotus
 		$this->entranceFile = $includedFiles[0];
 	}
 
-	public function boot()
+	public function init()
 	{
 		$this->prepareAutoloader();
 		$this->prepareConfig();
@@ -25,7 +25,7 @@ class Lotus
 		 */
 		foreach (get_class_methods($this) as $method)
 		{
-			if ("init" == substr($method, 0, 4))
+			if (4 < strlen($method) && "init" == substr($method, 0, 4))
 			{
 				$this->$method();
 			}
@@ -57,7 +57,7 @@ class Lotus
 		require $this->lotusCoreClass["ltautoloader"];
 		$autoloader = new LtAutoloader();
 		$autoloader->storeHandle->fileMapping = $this->lotusCoreClass;
-		$autoloader->boot();
+		$autoloader->init();
 
 		/**
 		 * Init Cache component to sotre LtAutoloader->fileMapping, Config->app
@@ -92,7 +92,7 @@ class Lotus
 		{
 			$autoloader = new LtAutoloader();
 			$autoloader->fileMapping = $fileMapping;
-			$autoloader->boot();
+			$autoloader->init();
 		}
 		else
 		{

@@ -18,7 +18,7 @@ class LtAutoloader
 		}
 	}
 
-	public function boot()
+	public function init()
 	{
 		if (!isset($this -> storeHandle -> keyPrefix))
 		{
@@ -97,7 +97,7 @@ class LtAutoloader
 		return in_array($dir, array(".", "..")) || in_array($dir, $this -> conf -> skipDirNames);
 	}
 
-	protected function getLibNamesFromFile($src)
+	protected function parseLibNames($src)
 	{
 		$libNames = array("class" => array(), "function" => array());
 		if (preg_match_all('~^\s*(?:abstract\s+|final\s+)?(?:class|interface)\s+(\w+).*~mi', $src, $classes) > 0)
@@ -177,7 +177,7 @@ class LtAutoloader
 				if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
 				{
 					$src = trim(file_get_contents($currentFile));
-					$libNames = $this -> getLibNamesFromFile($src);
+					$libNames = $this -> parseLibNames($src);
 					foreach ($libNames["class"] as $class)
 					{
 						// Use absolute paths

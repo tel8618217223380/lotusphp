@@ -30,7 +30,7 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testDumplicateNameOfClasses()
 	{
 		$autoloader = new LtAutoloader("class_with_same_name");
-		$autoloader->boot();
+		$autoloader->init();
 	}
 
 	/**
@@ -40,6 +40,6 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testDumplicateNameOfInterfaces()
 	{
 		$autoloader = new LtAutoloader("interface_with_same_name");
-		$autoloader->boot();
+		$autoloader->init();
 	}
 }
