@@ -7,7 +7,7 @@ class LtAutoloader
 	public function __construct()
 	{
 		$this->conf = new LtAutoloaderConfig();
-		$this->storeHandle = new LtAutoloaderFakeCache();
+		$this->storeHandle = new LtAutoloaderStore();
 		if (func_num_args() > 0)
 		{
 			$args = func_get_args();
@@ -203,7 +203,7 @@ class LtAutoloader
 	}
 }
 
-class LtAutoloaderFakeCache
+class LtAutoloaderStore
 {
 	public $keyPrefix = '';
 	public $fileMapping = array(".class_total" => 0, ".function_total" => 0, ".funcations" => array());

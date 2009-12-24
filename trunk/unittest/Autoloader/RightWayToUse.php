@@ -52,7 +52,6 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	 * 
 	 * 适用场合：
 	 * 多个目录名不是写死在代码中，当需要动态组合时，用数组方便
-	 * @depends testMostUsedWay
 	 */
 	public function testPassAnArrayParameter()
 	{
@@ -61,7 +60,7 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 		{
 			$dirs[] = dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2";
 		}
-		$autoloaderToBeTest = new AutoloaderProxy($dirs);
+		$autoloaderToBeTest = new LtAutoloaderProxy($dirs);
 		$this->assertEquals($autoloaderToBeTest->dirs, array(
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2"

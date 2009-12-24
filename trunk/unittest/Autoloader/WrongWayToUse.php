@@ -29,8 +29,9 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 */
 	public function testDumplicateNameOfClasses()
 	{
-		$autoloader = new LtAutoloader("class_with_same_name");
-		$autoloader->init();
+		$autoloader = new LtAutoloaderProxy("class_with_same_name");
+		$autoloader->addClass("ClassA", __FILE__);
+		$autoloader->addClass("classa", __FILE__);
 	}
 
 	/**
