@@ -181,9 +181,14 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 			array(
 				array(".setting", "bak"),
 				".setting",
-				false,
+				true,
 			),
 
+			array(
+				array(".setting", "bak"),
+				"source",
+				false,
+			),
 			/**
 			添加新的测试条件，只需要复制下面这段代码，去掉注释，换掉相应的参数，即可
 			array(
@@ -230,7 +235,7 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	public function testIsSkippedDir($dirBlackListArray, $dir, $expected)
 	{
 		$ap = new LtAutoloaderProxy();
-		$ap->conf->allowFileExtension = $dirBlackListArray;
+		$ap->conf->skipDirNames = $dirBlackListArray;
 		$this->assertEquals($ap->isSkippedDir($dir), $expected);
 	}
 }
