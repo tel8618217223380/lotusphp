@@ -11,6 +11,9 @@ class LtAutoloader
 		$this->storeHandle = new LtAutoloaderStore();
 	}
 
+	/**
+	 * @todo 为提高生产环境性能，prepareDirs()调用放到init()里面,scanDirs()之前
+	 */
 	public function setAutoloadPath()
 	{
 		if (func_num_args() > 0)
