@@ -11,7 +11,7 @@ class LtAutoloader
 		if (func_num_args() > 0)
 		{
 			$args = func_get_args();
-			$this -> prepareDirs($args); 
+			$this -> prepareDirs($args);
 			// prepareDirs()已经处理存入$this->dirs的值不存在空值
 			// 因此下面这条语句是没有必要的
 			// $this -> dirs = array_filter($this -> dirs);
@@ -23,7 +23,7 @@ class LtAutoloader
 		if (!isset($this -> storeHandle -> keyPrefix))
 		{
 			$this -> storeHandle -> keyPrefix = '';
-		} 
+		}
 		// 尚未扫描目录
 		if (0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".class_total") && 0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".function_total"))
 		{
@@ -57,8 +57,8 @@ class LtAutoloader
 	/**
 	 * 使用迭代算法
 	 * 将多维数组整理成一维数组保存在 $this->dirs
-	 * 
-	 * @param array $dirs 
+	 *
+	 * @param array $dirs
 	 * @return 设置$this->dirs
 	 */
 	protected function prepareDirs($dirs)
@@ -116,7 +116,7 @@ class LtAutoloader
 			}
 		}
 		else
-		{ 
+		{
 			// 没有类也没有函数的文件忽略
 		}
 		return $libNames;
@@ -180,16 +180,19 @@ class LtAutoloader
 					$libNames = $this -> getLibNamesFromFile($currentFile);
 					foreach ($libNames["class"] as $class)
 					{
-						$this -> addClass($class, realpath($currentFile)); // Use absolute paths
+						// Use absolute paths
+						$this -> addClass($class, realpath($currentFile));
 					}
 					foreach ($libNames["function"] as $function)
 					{
-						$this -> addFunction($function, realpath($currentFile)); // Use absolute paths
+						// Use absolute paths
+						$this -> addFunction($function, realpath($currentFile));
 					}
 				}
-				else if (is_dir($currentFile)) // if $currentFile is a directory, pass through the next loop.
-					{
-						$this -> dirs[] = $currentFile;
+				else if (is_dir($currentFile))
+				{
+					// if $currentFile is a directory, pass through the next loop.
+					$this -> dirs[] = $currentFile;
 				}
 				else
 				{
