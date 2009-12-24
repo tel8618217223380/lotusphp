@@ -11,8 +11,10 @@ class LtAutoloader
 		if (func_num_args() > 0)
 		{
 			$args = func_get_args();
-			$this -> prepareDirs($args);
-			$this -> dirs = array_filter($this -> dirs);
+			$this -> prepareDirs($args); 
+			// prepareDirs()已经处理存入$this->dirs的值不存在空值
+			// 因此下面这条语句是没有必要的
+			// $this -> dirs = array_filter($this -> dirs);
 		}
 	}
 
@@ -21,10 +23,9 @@ class LtAutoloader
 		if (!isset($this -> storeHandle -> keyPrefix))
 		{
 			$this -> storeHandle -> keyPrefix = '';
-		}
+		} 
 		// 尚未扫描目录
-		if (0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".class_total") &&
-		0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".function_total"))
+		if (0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".class_total") && 0 == $this -> storeHandle -> get($this -> storeHandle -> keyPrefix . ".function_total"))
 		{
 			if (!empty($this -> dirs))
 			{
@@ -54,26 +55,35 @@ class LtAutoloader
 	}
 
 	/**
+	 * 使用迭代算法
 	 * 将多维数组整理成一维数组保存在 $this->dirs
-	 *
-	 * @param array $dirs
+	 * 
+	 * @param array $dirs 
 	 * @return 设置$this->dirs
 	 */
 	protected function prepareDirs($dirs)
 	{
-		if (!is_array($dirs))
+		$i = 0;
+		while (isset($dirs[$i])) // iteration, Don't use foreach
 		{
-			$dir = rtrim($dirs, '\/');
-			if (preg_match("/\s/i", $dir) || !is_dir($dir))
+			if (!is_array($dirs[$i]))
 			{
-				throw new Exception("Directory is invalid: {$dir}");
+				$dir = rtrim($dirs[$i], '\/');
+				if (preg_match("/\s/i", $dir) || !is_dir($dir))
+				{
+					throw new Exception("Directory is invalid: {$dir}");
+				}
+				$this -> dirs[] = $dir; // save
 			}
-			$this -> dirs[] = $dir;
-			return ;
-		}
-		foreach($dirs as $dir)
-		{
-			$this -> prepareDirs($dir);
+			else
+			{
+				foreach($dirs[$i] as $dir)
+				{
+					$dirs[] = $dir; // next while
+				}
+			}
+			unset($dirs[$i], $dir); // free
+			$i ++;
 		}
 	}
 
@@ -106,7 +116,7 @@ class LtAutoloader
 			}
 		}
 		else
-		{
+		{ 
 			// 没有类也没有函数的文件忽略
 		}
 		return $libNames;
@@ -148,11 +158,13 @@ class LtAutoloader
 			$this -> storeHandle -> add($functionTotalKey, $functionTotal + 1);
 		}
 	}
-
+	/**
+	 * 使用迭代算法扫描子目录
+	 */
 	protected function scanDirs()
 	{
 		$i = 0;
-		while (isset($this -> dirs[$i]))//不要把这个while换成foreach()，这是不递归实现扫描子目录的关键，$this->dirs数组是动态增加的
+		while (isset($this -> dirs[$i])) // iteration, Don't use foreach
 		{
 			$dir = $this -> dirs[$i];
 			$files = scandir($dir);
@@ -168,24 +180,24 @@ class LtAutoloader
 					$libNames = $this -> getLibNamesFromFile($currentFile);
 					foreach ($libNames["class"] as $class)
 					{
-						$this -> addClass($class, $currentFile);
+						$this -> addClass($class, realpath($currentFile)); // Use absolute paths
 					}
 					foreach ($libNames["function"] as $function)
 					{
-						$this -> addFunction($function, $currentFile);
+						$this -> addFunction($function, realpath($currentFile)); // Use absolute paths
 					}
 				}
-				else if (is_dir($currentFile))// if $currentFile is a directory, pass through the next loop.
-				{
-					$this -> dirs[] = $currentFile;
+				else if (is_dir($currentFile)) // if $currentFile is a directory, pass through the next loop.
+					{
+						$this -> dirs[] = $currentFile;
 				}
 				else
 				{
 					trigger_error("$currentFile is not a file or a directory.");
 				}
-			}//end foreach
+			} //end foreach
 			$i ++;
-		}//end while
+		} //end while
 	}
 }
 
