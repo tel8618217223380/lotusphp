@@ -8,40 +8,43 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * 路径名不是目录 （不解决）
-	 * @expectedException Exception
+	 * @expectedException PHPUnit_Framework_Notice
 	 */
-	public function testParameterIsNotDirectory()
+	public function testAddDirs1()
 	{
-		new LtAutoloader("class_dir_1", "class_dir_2/HelloWorld.php");
+		$autoloader = new LtAutoloader();
+		$autoloader->addDirs(__FILE__);
 	}
 
 	/**
 	 * 目录名带空格 （不解决）
-	 * @expectedException Exception
+	 * @expectedException PHPUnit_Framework_Notice
 	 */
-	public function testDirNameWithBlank()
+	public function testDirNameWithSpace()
 	{
-		new LtAutoloader("zend framework");
+		$autoloader = new LtAutoloader();
+		$autoloader->addDirs("./dirname with space");
 	}
 
 	/**
 	 * 类和类重名 （不解决）
-	 * @expectedException Exception
+	 * @expectedException PHPUnit_Framework_Notice
 	 */
 	public function testDumplicateNameOfClasses()
 	{
-		$autoloader = new LtAutoloaderProxy("class_with_same_name");
+		$autoloader = new LtAutoloaderProxy();
 		$autoloader->addClass("ClassA", __FILE__);
 		$autoloader->addClass("classa", __FILE__);
 	}
 
 	/**
-	 * 接口和接口重名 （不解决）
-	 * @expectedException Exception
+	 * 函数和函数重名 （不解决）
+	 * @expectedException PHPUnit_Framework_Notice
 	 */
-	public function testDumplicateNameOfInterfaces()
+	public function testDumplicateNameOfFunctions()
 	{
-		$autoloader = new LtAutoloader("interface_with_same_name");
-		$autoloader->init();
+		$autoloader = new LtAutoloaderProxy();
+		$autoloader->addFunction("Function1", __FILE__);
+		$autoloader->addFunction("function1", __FILE__);
 	}
 }
