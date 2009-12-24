@@ -95,20 +95,33 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 		$this->assertEquals($autoloaderToBeTest->dirs, $obj);
 	}
 
-	public function testParseLibNams()
+	public function parseLibNamesDataProvider()
+	{
+		return array(
+			//最常用的Class写法
+			array("<?php
+			class Src", array("class" => array("Src"), "function" => array())),
+			
+			//class关键字大写，class和类名间有多个空格或者tab
+			array("
+			  Class   	Source{}", array("class" => array("Source"), "function" => array())),
+
+			//接口，interface和接口名间有换行
+			array("Interface 
+			Trade{}", array("class" => array("Trade"), "function" => array())),
+
+			//函数
+			array("function 
+			function1(){}", array("class" => array(), "function" => array("function1"))),
+		);
+	}
+
+	/**
+	 * @dataProvider parseLibNamesDataProvider
+	 */
+	public function testParseLibNams($src, $expected)
 	{
 		$ap = new LtAutoloaderProxy();
-		$src = "
-		class Src
-		{}
-		Class   Source{}
-		Interface 
-		Trade{}
-		function function1(){}
-		";
-		$this->assertEquals($ap->parseLibNames($src), array(
-			"class" => array("Src", "Source", "Trade"),
-			"function" => array("function1")
-		));
+		$this->assertEquals($ap->parseLibNames($src), $expected);
 	}
 }
