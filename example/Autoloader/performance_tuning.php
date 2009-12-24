@@ -37,7 +37,7 @@ $autoloader->storeHandle = new LtCacheAdapterApc;
  * 如果就一个程序使用，则可以不加前缀（默认前缀是空字串）
  */
 $autoloader->storeHandle->keyPrefix = "abc";
-$autoloader->boot();
+$autoloader->init();
 
 /*
  * 初始化完毕，正常使用

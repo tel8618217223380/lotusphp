@@ -21,7 +21,7 @@ $lotus->option["config_file"] = "conf.php";
  * envMode不等于dev的时候（如prod-生产环境，testing-测试环境），性能会有提高
  * $lotus->envMode = "prod";
  */
-$lotus->boot();
+$lotus->init();
 
 /**
  * 直接使用配置数组中的值

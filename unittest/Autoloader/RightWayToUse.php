@@ -39,7 +39,7 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 			"class_dir_2",//为了测试这个相对目录，请到unittest/Autoloader目录下运行php ..\TestHelper.php RightWayToUse.php
 			"function_dir_1"
 		);
-		$autoloader->boot();
+		$autoloader->init();
 		$this->assertTrue(new Goodbye() instanceof GoodBye);
 		$this->assertTrue(class_exists("HelloWorld"));
 		$this->assertEquals(HelloLotus::sayHello(), "hello");
