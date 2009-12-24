@@ -26,4 +26,9 @@ class LtAutoloaderProxy extends LtAutoloader
 	{
 		return parent::parseLibNames($src);
 	}
+
+	public function prepareDirs($dirs)
+	{
+		return parent::prepareDirs($dirs);
+	}
 }
