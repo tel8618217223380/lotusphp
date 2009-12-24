@@ -23,7 +23,7 @@ class LtCacheAdapterFile extends LtCacheAdapter
 		{
 			mkdir($cacheDir, 0777, true);
 		}
-		$data['ttl'] = (0 > $ttl) ? 0 : (time()+intval($ttl));
+		$data['ttl'] = (0 >= $ttl) ? 0 : (time()+intval($ttl));
 		$data['value'] = $value;
 		return file_put_contents($cacheFile, "<?php\nreturn ".var_export($data, true).";\n");
 	}
