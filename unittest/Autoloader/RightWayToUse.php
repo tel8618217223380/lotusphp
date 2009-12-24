@@ -84,14 +84,14 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 		$dirs = array('Dirs/dir1\\','Dirs/dir2/',array('Dirs/dir3',array('Dirs/dir3/dir4/dir5/dir6')),'','Dirs/dir8');
 		$obj = array(
 		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir1',
-		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir2',	
+		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir2',
+		dirname(__FILE__),
 		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir8',	
 		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir3',	
 		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir3'.DIRECTORY_SEPARATOR.'dir4'.DIRECTORY_SEPARATOR.'dir5'.DIRECTORY_SEPARATOR.'dir6',	
 		);
 		$autoloaderToBeTest = new LtAutoloaderProxy();
 		$autoloaderToBeTest->prepareDirs($dirs);
-		print_r($autoloaderToBeTest->dirs);
 		$this->assertEquals($autoloaderToBeTest->dirs, $obj);
 	}
 
