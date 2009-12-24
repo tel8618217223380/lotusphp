@@ -10,7 +10,7 @@ class LtAutoloader
 		$this->storeHandle = new LtAutoloaderStore();
 	}
 
-	public function addDirs()
+	public function setAutoloadPath()
 	{
 		if (func_num_args() > 0)
 		{

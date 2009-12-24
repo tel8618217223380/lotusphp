@@ -12,7 +12,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐）
 	 * 
 	 * LtAutoloader要求：
-	 *  # 以这样的流程使用LtAutoloader：依次执行new LtAutoloader(), addDirs($dirsArray), init()
+	 *  # 以这样的流程使用LtAutoloader：依次执行new LtAutoloader(), setAutoloadPath($dirsArray), init()
 	 *  # 需要被自动加载的文件都以.php或者.inc结尾
 	 *    如果既有php文件，又有html文件，html文件将被忽略，php文件正常加载
 	 *    可配置，详情参见LtAutoloaderCofig
@@ -30,7 +30,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 *  # 类或接口重名，函数和函数重名
 	 * 
 	 * LtAutoloader不强求，但建议最好这样（就是说你不按下面写的做，也可以运行）：
-	 *  # addDirs()的时候，使用绝对路径，而不是相对路径（相对目录容易出错，尤其是写命令行程序的时候）
+	 *  # setAutoloadPath()的时候，使用绝对路径，而不是相对路径（相对目录容易出错，尤其是写命令行程序的时候）
 	 *  # 使用class而不是function来封装你的逻辑
 	 *  # 每个class都放在单独的一个文件中，且不要在已经定义了类的文件里再定义函数
 	 *  # class/function里不要使用__FILE__魔术变量
@@ -41,7 +41,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testMostUsedWay()
 	{
 		$autoloader = new LtAutoloader;
-		$autoloader->addDirs(array(
+		$autoloader->setAutoloadPath(array(
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2",
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_1",
@@ -58,7 +58,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	/**
 	 * 本用例展示了怎样给LtAutoloader传递需要自动加载的目录
 	 */
-	public function addDirsDataProvider()
+	public function setAutoloadPathDataProvider()
 	{
 		$cd = dirname(__FILE__);//current dir, 当前目录
 		return array(
@@ -101,7 +101,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			/**
 			添加新的测试条件，只需要复制下面这段代码，去掉注释，换掉相应的参数，即可
 			array(
-				array("$cd/class_dir_1", "$cd/class_dir_2"), //$userParameter，addDirs()的参数
+				array("$cd/class_dir_1", "$cd/class_dir_2"), //$userParameter，setAutoloadPath()的参数
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"), //$expected，正确结果
 			),
 			*/
@@ -203,12 +203,12 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @dataProvider addDirsDataProvider
+	 * @dataProvider setAutoloadPathDataProvider
 	 */
-	public function testAddDirs($userParameter, $expected)
+	public function testSetAutoloadPath($userParameter, $expected)
 	{
 		$ap = new LtAutoloaderProxy();
-		$ap->addDirs($userParameter);
+		$ap->setAutoloadPath($userParameter);
 		$this->assertEquals($ap->dirs, $expected);
 	}
 

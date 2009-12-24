@@ -12,7 +12,7 @@ include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
  */
 $directories = array("Classes\\", "function/");
 $autoloader = new LtAutoloader();
-$autoloader->addDirs($directories);
+$autoloader->setAutoloadPath($directories);
 $autoloader->init();
 
 /*
