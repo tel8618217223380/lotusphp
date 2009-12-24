@@ -77,7 +77,6 @@ class LtAutoloader
 				$dir = rtrim($dirs[$i],'\/');
 				if (preg_match("/\s/i", $dir) || !is_dir($dir))
 				{
-					//throw new Exception("Directory is invalid: {$dir}");
 					trigger_error("Directory is invalid: {$dir}");
 				}
 				$this->dirs[] = realpath($dir); // 绝对路径,结尾不含\/
