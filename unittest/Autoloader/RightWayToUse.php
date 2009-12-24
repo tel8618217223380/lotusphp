@@ -69,6 +69,26 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 		));
 	}
 
+	/**
+	测试接口: PrepareDirs() 
+	输入: 一个多维数组形式, 数组内的值必需是实际存在的目录(相对或绝对路径).
+	输出: 一个一维数组形式, 数组内的值是绝对路径, 保存在dirs属性.
+	*/
+	public function testPrepareDirs()
+	{
+		$dirs = array('Dirs/dir1','Dirs/dir2',array('Dirs/dir3',array('Dirs/dir3/dir4/dir5/dir6')),'Dirs/dir8');
+		$obj = array(
+		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir1',
+		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir2',	
+		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir8',	
+		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir3',	
+		dirname(__FILE__).DIRECTORY_SEPARATOR.'Dirs'.DIRECTORY_SEPARATOR.'dir3'.DIRECTORY_SEPARATOR.'dir4'.DIRECTORY_SEPARATOR.'dir5'.DIRECTORY_SEPARATOR.'dir6',	
+		);
+		$autoloaderToBeTest = new LtAutoloaderProxy('class_dir_1');
+		$autoloaderToBeTest->prepareDirs($dirs);
+		$this->assertEquals($autoloaderToBeTest->dirs, $obj);
+	}
+
 	public function testParseLibNams()
 	{
 		$ap = new LtAutoloaderProxy();
