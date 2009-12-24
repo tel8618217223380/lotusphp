@@ -97,10 +97,9 @@ class LtAutoloader
 		return in_array($dir, array(".", "..")) || in_array($dir, $this -> conf -> skipDirNames);
 	}
 
-	protected function getLibNamesFromFile($file)
+	protected function getLibNamesFromFile($src)
 	{
 		$libNames = array("class" => array(), "function" => array());
-		$src = trim(file_get_contents($file));
 		if (preg_match_all('~^\s*(?:abstract\s+|final\s+)?(?:class|interface)\s+(\w+).*~mi', $src, $classes) > 0)
 		{
 			foreach($classes[1] as $class)
@@ -177,7 +176,8 @@ class LtAutoloader
 				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
 				if (is_file($currentFile) && $this -> isAllowedFile($currentFile))
 				{
-					$libNames = $this -> getLibNamesFromFile($currentFile);
+					$src = trim(file_get_contents($currentFile));
+					$libNames = $this -> getLibNamesFromFile($src);
 					foreach ($libNames["class"] as $class)
 					{
 						// Use absolute paths
