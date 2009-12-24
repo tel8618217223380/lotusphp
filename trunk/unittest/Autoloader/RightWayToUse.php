@@ -90,6 +90,12 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
 			),
 
+			// 目录分隔符\/任意
+			array(
+				array("$cd\class_dir_1", "$cd/class_dir_1"),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
+			),
+
 			/**
 			添加新的测试条件，只需要复制下面这段代码，去掉注释，换掉相应的参数，即可
 			array(
