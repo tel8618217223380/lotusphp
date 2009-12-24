@@ -12,9 +12,10 @@ class LtAutoloader
 		{
 			$args = func_get_args();
 			$this->prepareDirs($args);
-			// prepareDirs()已经处理存入$this->dirs的值不存在空值
-			// 因此下面这条语句是没有必要的
-			// $this->dirs = array_filter($this->dirs);
+		}
+		else
+		{
+			trigger_error("No parameter given");
 		}
 	}
 
