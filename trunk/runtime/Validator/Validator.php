@@ -5,7 +5,7 @@ class LtValidator
 
 	public function __construct()
 	{
-		$this -> conf = new LtValidatorConfig();
+		$this->conf = new LtValidatorConfig();
 	}
 
 	protected function _ban($value, $ruleValue)
@@ -75,12 +75,12 @@ class LtValidator
 	public function validate($value, $dtd)
 	{
 		$errorMessages = array();
-		$label = $dtd -> label;
+		$label = $dtd->label;
 
-		if (is_array($dtd -> rules) && count($dtd -> rules))
+		if (is_array($dtd->rules) && count($dtd->rules))
 		{
-			$messages = isset($dtd -> messages) ? $dtd -> messages : array();
-			foreach ($dtd -> rules as $key => $val)
+			$messages = isset($dtd->messages) ? $dtd->messages : array();
+			foreach ($dtd->rules as $key => $val)
 			{
 				// callback_user_function
 				if ('callback_' == substr($key, 0, 9))
@@ -89,30 +89,30 @@ class LtValidator
 					// 定义了过程函数
 					if (function_exists($method))
 					{
-						if (!$method($value, $dtd -> rules[$key]))
+						if (!$method($value, $dtd->rules[$key]))
 						{
-							$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this -> conf -> errorMessages[$key]), $label, $dtd -> rules[$key]);
+							$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this->conf->errorMessages[$key]), $label, $dtd->rules[$key]);
 						}
 						continue;
 					}
 					// 定义了类方法
 					$rc = new ReflectionClass($val);
-					if ($rc -> hasMethod($method))
+					if ($rc->hasMethod($method))
 					{
-						$rcMethod = $rc -> getMethod($method);
-						if ($rcMethod -> isStatic())
+						$rcMethod = $rc->getMethod($method);
+						if ($rcMethod->isStatic())
 						{
-							$ret = $rcMethod -> invoke(null, $value, $dtd -> rules[$key]);
+							$ret = $rcMethod->invoke(null, $value, $dtd->rules[$key]);
 						}
 						else
 						{
 							// 非静态方法需要一个实例 有待考虑单例
-							$rcInstance = $rc -> newInstance();
-							$ret = $rcMethod -> invoke($rcInstance, $value, $dtd -> rules[$key]);
+							$rcInstance = $rc->newInstance();
+							$ret = $rcMethod->invoke($rcInstance, $value, $dtd->rules[$key]);
 						}
 						if (!$ret)
 						{
-							$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this -> conf -> errorMessages[$key]), $label, $dtd -> rules[$key]);
+							$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this->conf->errorMessages[$key]), $label, $dtd->rules[$key]);
 						}
 						continue;
 					}
@@ -120,9 +120,9 @@ class LtValidator
 				}
 				// end callback_user_function
 				$validateFunction = '_' . $key;
-				if ((is_bool($dtd -> rules[$key]) || 0 < strlen($dtd -> rules[$key])) && !$this -> $validateFunction($value, $dtd -> rules[$key]))
+				if ((is_bool($dtd->rules[$key]) || 0 < strlen($dtd->rules[$key])) && !$this->$validateFunction($value, $dtd->rules[$key]))
 				{
-					$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this -> conf -> errorMessages[$key]), $label, $dtd -> rules[$key]);
+					$errorMessages[$key] = sprintf((isset($messages[$key]) && strlen($messages[$key]) ? $messages[$key] : $this->conf->errorMessages[$key]), $label, $dtd->rules[$key]);
 				}
 			}
 		}

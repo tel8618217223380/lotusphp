@@ -139,4 +139,4 @@ Zend_Debug::dump($rows);
 = 鸣谢 =
  # Autoload的理念来自Symfony，我是用Symfony做应用的时候享受Autoload的好处才在kiwiphp中加入Autoloader的。
  # QeePHP的作者dualface等人让我知道了PHP5的autoload()机制，我才放弃了原本那个笨拙的办法：把所有类库打包成一个大文件，然后包含进来，我还为这个打包机制设计了黑白名单。详细讨论过程参见：http://www.phpchina.com/bbs/viewthread.php?tid=142775
- # PHPChina的nightsailer提供的"class -> file" mapping方案跟我最终采用的方案完全一样，刚开始我没看懂他的回复，等我自以为想到一个最合适的方案时，才发现之前nightsailer已经说过了：）
+ # PHPChina的nightsailer提供的"class->file" mapping方案跟我最终采用的方案完全一样，刚开始我没看懂他的回复，等我自以为想到一个最合适的方案时，才发现之前nightsailer已经说过了：）

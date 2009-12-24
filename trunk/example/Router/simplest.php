@@ -11,7 +11,7 @@ include $lotusHome . "/runtime/Router/RouterConfig.php";
  * simplest.php/abc/123
  */
 $router = new LtRouter();
-$router -> init();
+$router->init();
 
-echo 'module=' . $router -> module;
-echo ' action=' . $router -> action;
+echo 'module=' . $router->module;
+echo ' action=' . $router->action;

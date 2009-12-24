@@ -42,5 +42,5 @@ function check_user($username)
 */
 $validator = new LtValidator;
 $username = "fuck my life";
-$result = $validator -> validate($username, $dtd);
+$result = $validator->validate($username, $dtd);
 print_r($result);

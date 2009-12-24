@@ -22,4 +22,4 @@ $acl['deny']['Users'][] = 'User/AddUser';
 // RBAC
 $rbac = new LtRbac();
 $rbac->acl = $acl;
-var_dump($rbac -> checkAcl($roles, 'admin/test'));
+var_dump($rbac->checkAcl($roles, 'admin/test'));

@@ -16,13 +16,13 @@ class LtDbConnectionAdapterPgsql extends LtDbConnectionAdapter
 
 	public function exec($sql)
 	{
-		$result = pg_query($this -> connResource, $sql);
+		$result = pg_query($this->connResource, $sql);
 		return pg_affected_rows($result);
 	}
 
 	public function query($sql)
 	{
-		$result = pg_query($this -> connResource, $sql);
+		$result = pg_query($this->connResource, $sql);
 		return pg_fetch_all($result);
 	}
 
@@ -34,7 +34,7 @@ class LtDbConnectionAdapterPgsql extends LtDbConnectionAdapter
 	// $$ LANGUAGE SQL VOLATILE;
 	public function lastInsertId()
 	{
-		$result = pg_query($this -> connResource, "SELECT lastval()");
+		$result = pg_query($this->connResource, "SELECT lastval()");
 		$row = pg_fetch_array($result, 0, PGSQL_NUM);
 		return $row[0];
 	}

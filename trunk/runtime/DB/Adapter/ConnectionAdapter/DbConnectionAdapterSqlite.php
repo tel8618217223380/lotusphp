@@ -33,24 +33,24 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 
 	public function exec($sql)
 	{
-		sqlite_exec($this -> connResource, $sql); 
+		sqlite_exec($this->connResource, $sql); 
 		// echo '<pre>';
 		// print_r(debug_backtrace());
 		// debug_print_backtrace();
 		// echo '</pre>';
 		// delete from table 结果为0，原因未知。
-		return sqlite_changes($this -> connResource);
+		return sqlite_changes($this->connResource);
 	} 
 
 	public function query($sql)
 	{
-		$result = sqlite_query($this -> connResource, $sql, SQLITE_ASSOC);
+		$result = sqlite_query($this->connResource, $sql, SQLITE_ASSOC);
 		return sqlite_fetch_all($result, SQLITE_ASSOC);
 	} 
 
 	public function lastInsertId()
 	{
-		return sqlite_last_insert_rowid($this -> connResource);
+		return sqlite_last_insert_rowid($this->connResource);
 	} 
 
 	public function escape($string)
