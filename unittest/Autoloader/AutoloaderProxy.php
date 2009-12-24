@@ -27,8 +27,13 @@ class LtAutoloaderProxy extends LtAutoloader
 		return parent::parseLibNames($src);
 	}
 
-	public function prepareDirs($dirs)
+	public function isAllowedFile($filename)
 	{
-		return parent::prepareDirs($dirs);
+		return parent::isAllowedFile($filename);
+	}
+
+	public function isSkippedDir($dir)
+	{
+		return parent::isSkippedDir($dir);
 	}
 }

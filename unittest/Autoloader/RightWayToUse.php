@@ -62,39 +62,39 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 		return array(
 			//用一个数组传递多个目录，绝对路径，不带拖尾斜线
 			array(
-				array("$cd/class_dir_1", "$cd/class_dir_2"),//$userParameter，addDirs()的参数
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),//$expected，正确结果
+				array("$cd/class_dir_1", "$cd/class_dir_2"),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
 			),
 
 			//只有一个目录，可以不用数组传
 			array(
-				"$cd/class_dir_1",//$userParameter，addDirs()的参数
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),//$expected，正确结果
+				"$cd/class_dir_1",
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
 			),
 			
 			//用二维数组传递多个目录（不推荐）
 			array(
-				array("class_dir_1", array("class_dir_2")),//$userParameter
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),//$expected
+				array("class_dir_1", array("class_dir_2")),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
 			),
 
 			//相对路径（不推荐）
 			array(
-				array("class_dir_1", "./class_dir_2"),//$userParameter，addDirs()的参数
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),//$expected，正确结果
+				array("class_dir_1", "./class_dir_2"),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
 			),
 
 			//带拖尾斜线
 			array(
-				array("class_dir_1/", "class_dir_2\\"),//$userParameter，addDirs()的参数
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),//$expected，正确结果
+				array("class_dir_1/", "class_dir_2\\"),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
 			),
-				
+
 			/**
 			添加新的测试条件，只需要复制下面这段代码，去掉注释，换掉相应的参数，即可
 			array(
-				array("$cd/class_dir_1", "$cd/class_dir_2"),//$userParameter，addDirs()的参数
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),//$expected，正确结果
+				array("$cd/class_dir_1", "$cd/class_dir_2"), //$userParameter，addDirs()的参数
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"), //$expected，正确结果
 			),
 			*/
 		);
@@ -108,19 +108,84 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 		return array(
 			//最常用的Class写法
 			array("<?php
-			class Src", array("class" => array("Src"), "function" => array())),
+				class Src", 
+				array("class" => array("Src"), "function" => array()) 
+			),
 			
 			//class关键字大写，class和类名间有多个空格或者tab
 			array("
-			  Class   	Source{}", array("class" => array("Source"), "function" => array())),
+			  Class   	Source{}", array("class" => array("Source"), "function" => array())
+			),
 
 			//接口，interface和接口名间有换行
 			array("Interface 
-			Trade{}", array("class" => array("Trade"), "function" => array())),
+				Trade{}", array("class" => array("Trade"), "function" => array())
+			),
 
 			//函数
 			array("function 
-			function1(){}", array("class" => array(), "function" => array("function1"))),
+				function1(){}", array("class" => array(), "function" => array("function1"))
+			),
+				
+			/**
+			添加新的测试条件，只需要复制下面这段代码，去掉注释，换掉相应的参数，即可
+			array("<?php
+				class Src", //$src，定义类或函数的代码 
+				array("class" => array("Src"), "function" => array()) //$expected，正确结果
+			),
+			*/
+		);
+	}
+
+	/**
+	 * 本用例展示了怎样设置允许加载的文件类型
+	 */
+	public function isAllowedFileDataProvider()
+	{
+		return array(
+			array(
+				array("php", "php5"),
+				"test.php3",
+				false,
+			),
+			
+			array(
+				array("php", "php5"),
+				"test.php",
+				true,
+			),
+
+			/**
+			添加新的测试条件，只需要复制下面这段代码，去掉注释，换掉相应的参数，即可
+			array(
+				array("php", "php5"), //$extArray，允许加载的文件类型
+				"test.php3", //$filename，用于测试的文件名
+				false, //$expected，正确结果
+			),
+			*/
+		);
+	}
+
+	/**
+	 * 本用例展示了怎样设置禁止扫描的子目录名称
+	 */
+	public function isSkippedDirDataProvider()
+	{
+		return array(
+			array(
+				array(".setting", "bak"),
+				".setting",
+				false,
+			),
+
+			/**
+			添加新的测试条件，只需要复制下面这段代码，去掉注释，换掉相应的参数，即可
+			array(
+				array(".setting", "bak"), //$dirBlackListArray，允许加载的文件类型
+				".setting", //$dir，用于测试的目录名
+				false, //$expected，正确结果
+			),
+			*/
 		);
 	}
 
@@ -141,5 +206,25 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	{
 		$ap = new LtAutoloaderProxy();
 		$this->assertEquals($ap->parseLibNames($src), $expected);
+	}
+
+	/**
+	 * @dataProvider isAllowedFileDataProvider
+	 */
+	public function testIsAllowedFile($extArray, $filename, $expected)
+	{
+		$ap = new LtAutoloaderProxy();
+		$ap->conf->allowFileExtension = $extArray;
+		$this->assertEquals($ap->isAllowedFile($filename), $expected);
+	}
+
+	/**
+	 * @dataProvider isSkippedDirDataProvider
+	 */
+	public function testIsSkippedDir($dirBlackListArray, $dir, $expected)
+	{
+		$ap = new LtAutoloaderProxy();
+		$ap->conf->allowFileExtension = $dirBlackListArray;
+		$this->assertEquals($ap->isSkippedDir($dir), $expected);
 	}
 }
