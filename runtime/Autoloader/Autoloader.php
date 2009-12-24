@@ -2,6 +2,7 @@
 class LtAutoloader
 {
 	public $storeHandle;
+	public $storeKeyPrefix = "";
 	protected $dirs;
 
 	public function __construct()
@@ -25,12 +26,12 @@ class LtAutoloader
 
 	public function init()
 	{
-		if (!isset($this->storeHandle->keyPrefix))
+		if (!isset($this->storeKeyPrefix))
 		{
-			$this->storeHandle->keyPrefix = '';
+			$this->storeKeyPrefix = '';
 		}
 		// 尚未扫描目录
-		if (0 == $this->storeHandle->get($this->storeHandle->keyPrefix . ".class_total") && 0 == $this->storeHandle->get($this->storeHandle->keyPrefix . ".function_total"))
+		if (0 == $this->storeHandle->get($this->storeKeyPrefix . ".class_total") && 0 == $this->storeHandle->get($this->storeKeyPrefix . ".function_total"))
 		{
 			if (!empty($this->dirs))
 			{
@@ -41,7 +42,7 @@ class LtAutoloader
 				trigger_error("No dir passed");
 			}
 		}
-		if ($functionFiles = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations"))
+		if ($functionFiles = $this->storeHandle->get($this->storeKeyPrefix . ".funcations"))
 		{
 			foreach ($functionFiles as $functionFile)
 			{
@@ -53,7 +54,7 @@ class LtAutoloader
 
 	public function loadClass($className)
 	{
-		if ($classFile = $this->storeHandle->get($this->storeHandle->keyPrefix . strtolower($className)))
+		if ($classFile = $this->storeHandle->get($this->storeKeyPrefix . strtolower($className)))
 		{
 			include($classFile);
 		}
@@ -129,7 +130,7 @@ class LtAutoloader
 
 	protected function addClass($className, $file)
 	{
-		$key = $this->storeHandle->keyPrefix . strtolower($className);
+		$key = $this->storeKeyPrefix . strtolower($className);
 		if ($this->storeHandle->get($key))
 		{
 			trigger_error("dumplicate class name : $className");
@@ -137,7 +138,7 @@ class LtAutoloader
 		else
 		{
 			$this->storeHandle->add($key, $file);
-			$classTotalKey = $this->storeHandle->keyPrefix . ".class_total";
+			$classTotalKey = $this->storeKeyPrefix . ".class_total";
 			$classTotal = $this->storeHandle->get($classTotalKey);
 			$this->storeHandle->del($classTotalKey);
 			$this->storeHandle->add($classTotalKey, $classTotal + 1);
@@ -147,7 +148,7 @@ class LtAutoloader
 	protected function addFunction($functionName, $file)
 	{
 		$functionName = strtolower($functionName);
-		$foundFunctions = $this->storeHandle->get($this->storeHandle->keyPrefix . ".funcations");
+		$foundFunctions = $this->storeHandle->get($this->storeKeyPrefix . ".funcations");
 		if (array_key_exists($functionName, $foundFunctions))
 		{
 			trigger_error("dumplicate function name: $functionName");
@@ -155,9 +156,9 @@ class LtAutoloader
 		else
 		{
 			$foundFunctions[$functionName] = $file;
-			$this->storeHandle->del($this->storeHandle->keyPrefix . ".funcations");
-			$this->storeHandle->add($this->storeHandle->keyPrefix . ".funcations", $foundFunctions);
-			$functionTotalKey = $this->storeHandle->keyPrefix . ".function_total";
+			$this->storeHandle->del($this->storeKeyPrefix . ".funcations");
+			$this->storeHandle->add($this->storeKeyPrefix . ".funcations", $foundFunctions);
+			$functionTotalKey = $this->storeKeyPrefix . ".function_total";
 			$functionTotal = $this->storeHandle->get($functionTotalKey);
 			$this->storeHandle->del($functionTotalKey);
 			$this->storeHandle->add($functionTotalKey, $functionTotal + 1);
@@ -213,7 +214,6 @@ class LtAutoloader
 
 class LtAutoloaderStore
 {
-	public $keyPrefix = '';
 	public $fileMapping = array(".class_total" => 0, ".function_total" => 0, ".funcations" => array());
 
 	public function add($key, $value)

@@ -37,7 +37,7 @@ $autoloader->storeHandle = new LtCacheAdapterApc;
  * 如果你有在一台机器上有多个程序都在使用apc, xcache加速LtAutoloader，记得给缓存key加个前缀，以免冲突
  * 如果就一个程序使用，则可以不加前缀（默认前缀是空字串）
  */
-$autoloader->storeHandle->keyPrefix = "abc";
+$autoloader->storeKeyPrefix = "abc";
 $autoloader->init();
 
 /*

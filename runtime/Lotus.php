@@ -94,7 +94,7 @@ class Lotus
 		if ("dev" != $this->envMode)
 		{
 			$autoloader->storeHandle = LtObjectUtil::singleton("LtCache");
-			$autoloader->storeHandle->keyPrefix = "la" . crc32($this->entranceFile);
+			$autoloader->storeKeyPrefix = "la" . crc32($this->entranceFile);
 		}
 		$autoloader->init();
 	}
