@@ -3,6 +3,7 @@
  * 本测试文档演示了LtAutoloader的正确使用方法
  * 按本文档操作一定会得到正确的结果
  */
+include dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
 class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 {
 	/**
@@ -60,29 +61,10 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 		{
 			$dirs[] = dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2";
 		}
-		$autoloaderToBeTest = new Autoloader4Test($dirs);
+		$autoloaderToBeTest = new AutoloaderProxy($dirs);
 		$this->assertEquals($autoloaderToBeTest->dirs, array(
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2"
 		));
-	}
-}
-
-/**
- * 用这个类把LtAutoloader的protected属性和方法暴露出来测试
- */
-class Autoloader4Test extends LtAutoloader
-{
-	public function __get($prop)
-	{
-		if (isset($this->$prop))
-		{
-			return $this->$prop;
-		}
-	}
-
-	public function __call($method, $arg)
-	{
-		$this->$method($arg);
 	}
 }
