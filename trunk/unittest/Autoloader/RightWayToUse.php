@@ -35,7 +35,8 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	 */
 	public function testMostUsedWay()
 	{
-		$autoloader = new LtAutoloader(
+		$autoloader = new LtAutoloader;
+		$autoloader->addDirs(
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR,
 			"class_dir_2",//为了测试这个相对目录，请到unittest/Autoloader目录下运行php ..\TestHelper.php RightWayToUse.php
 			"function_dir_1"
@@ -53,17 +54,35 @@ class RightWayToUseAutoloade extends PHPUnit_Framework_TestCase
 	 * 适用场合：
 	 * 多个目录名不是写死在代码中，当需要动态组合时，用数组方便
 	 */
-	public function testPassAnArrayParameter()
+	public function testAddDirs()
 	{
 		$dirs = array(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1");
 		if (is_dir(dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2"))
 		{
 			$dirs[] = dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2";
 		}
-		$autoloaderToBeTest = new LtAutoloaderProxy($dirs);
-		$this->assertEquals($autoloaderToBeTest->dirs, array(
+		$ap = new LtAutoloaderProxy();
+		$ap->addDirs($dirs);
+		$this->assertEquals($ap->dirs, array(
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2"
+		));
+	}
+
+	public function testParseLibNams()
+	{
+		$ap = new LtAutoloaderProxy();
+		$src = "
+		class Src
+		{}
+		Class   Source{}
+		Interface 
+		Trade{}
+		function function1(){}
+		";
+		$this->assertEquals($ap->parseLibNames($src), array(
+			"class" => array("Src", "Source", "Trade"),
+			"function" => array("function1")
 		));
 	}
 }

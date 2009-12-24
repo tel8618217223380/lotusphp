@@ -12,8 +12,8 @@ class LtAutoloaderProxy extends LtAutoloader
 		}
 	}
 
-	public function __call($method, $arg)
+	public function parseLibNames($src)
 	{
-		$this->$method($arg);
+		return parent::parseLibNames($src);
 	}
 }

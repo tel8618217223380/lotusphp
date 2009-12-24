@@ -7,7 +7,8 @@ include $lotusHome . "/runtime/Autoloader/Autoloader.php";
 include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
 
 $directories = array("Classes");
-$autoloader = new LtAutoloader($directories);
+$autoloader = new LtAutoloader();
+$autoloader->addDirs($directories);
 
 /**
  * 给LtAutoloader设置存储句柄

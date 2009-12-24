@@ -8,6 +8,10 @@ class LtAutoloader
 	{
 		$this->conf = new LtAutoloaderConfig();
 		$this->storeHandle = new LtAutoloaderStore();
+	}
+
+	public function addDirs()
+	{
 		if (func_num_args() > 0)
 		{
 			$args = func_get_args();
