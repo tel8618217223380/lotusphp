@@ -45,7 +45,7 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 	*/
 	protected function _getConfig($group, $node, $role = 'master', $host = null)
 	{
-		return $this -> _getBasicConfig($group, $node, $role, $host);
+		return $this->_getBasicConfig($group, $node, $role, $host);
 	}
 
 	/**
@@ -85,7 +85,7 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 	public function setCharset($charset, $connection)
 	{
 		// $sql = 'PRAGMA encoding = "' . $charset . '"';
-		// $connection -> exec($sql);
+		// $connection->exec($sql);
 	}
 
 	/**
@@ -97,7 +97,7 @@ class LtDbAdapterPdoSqlite extends LtDbAdapterPdo
 	public function getFields($table)
 	{
 		$sql = "PRAGMA table_info('" . $table . "')";
-		$queryResult = $this -> query($sql);
+		$queryResult = $this->query($sql);
 		$result = $queryResult['rows'];
 		$fields = array();
 		foreach ($result as $key => $value)

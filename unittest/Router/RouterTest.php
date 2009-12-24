@@ -14,17 +14,17 @@ class RouterTest extends PHPUnit_Framework_TestCase
 	{
 		$_SERVER['argv'] = array('--module', 'hello', '--action', 'world',);
 		$router = new LtRouter();
-		$router -> init();
-		$this -> assertEquals('hello', $router -> module);
-		$this -> assertEquals('world', $router -> action);
+		$router->init();
+		$this->assertEquals('hello', $router->module);
+		$this->assertEquals('world', $router->action);
 	} 
 	public function testCLI2()
 	{
 		$_SERVER['argv'] = array('-m', 'hello', '-a', 'world',);
 		$router = new LtRouter();
-		$router -> init();
-		$this -> assertEquals('hello', $router -> module);
-		$this -> assertEquals('world', $router -> action);
+		$router->init();
+		$this->assertEquals('hello', $router->module);
+		$this->assertEquals('world', $router->action);
 	} 
 	/**
 	 * index.php?module=hello&action=world
@@ -35,9 +35,9 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		$_REQUEST['module'] = 'hello';
 		$_REQUEST['action'] = 'world';
 		$router = new LtRouter();
-		$router -> init();
-		$this -> assertEquals('hello', $router -> module);
-		$this -> assertEquals('world', $router -> action);
+		$router->init();
+		$this->assertEquals('hello', $router->module);
+		$this->assertEquals('world', $router->action);
 	} 
 	/**
 	 * index.php/hello/world
@@ -47,9 +47,9 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
 		$_SERVER["PATH_INFO"] = '/hello/world';
 		$router = new LtRouter();
-		$router -> init();
-		$this -> assertEquals('hello', $router -> module);
-		$this -> assertEquals('world', $router -> action);
+		$router->init();
+		$this->assertEquals('hello', $router->module);
+		$this->assertEquals('world', $router->action);
 	} 
 	/**
 	 * index.php
@@ -57,9 +57,9 @@ class RouterTest extends PHPUnit_Framework_TestCase
 	public function testDefault()
 	{
 		$router = new LtRouter();
-		$router -> init();
-		$this -> assertEquals('Module', $router -> module);
-		$this -> assertEquals('Action', $router -> action);
+		$router->init();
+		$this->assertEquals('Module', $router->module);
+		$this->assertEquals('Action', $router->action);
 	} 
 
 	/**
@@ -70,9 +70,9 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		$router = new LtRouter();
 		$router->conf->module = 'hello';
 		$router->conf->action = 'world';
-		$router -> init();
-		$this -> assertEquals('hello', $router -> module);
-		$this -> assertEquals('world', $router -> action);
+		$router->init();
+		$this->assertEquals('hello', $router->module);
+		$this->assertEquals('world', $router->action);
 	} 
 
 	/**
@@ -86,7 +86,7 @@ class RouterTest extends PHPUnit_Framework_TestCase
 			'action' => 'world',
 		);
 		$router = new LtRouter();
-		$router -> init();
+		$router->init();
 	}
 
 	/**
@@ -100,6 +100,6 @@ class RouterTest extends PHPUnit_Framework_TestCase
 			'action' => 'wor/ld',
 		);
 		$router = new LtRouter();
-		$router -> init();
+		$router->init();
 	}
 } 

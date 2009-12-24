@@ -34,15 +34,15 @@ class LtRbac {
 		{
 			foreach($roles as $role) 
 			{
-				if (isset($this -> acl[$operation][$role])) 
+				if (isset($this->acl[$operation][$role])) 
 				{
 					// everyone *
-					if (in_array($resource, $this -> acl[$operation]['*'])) 
+					if (in_array($resource, $this->acl[$operation]['*'])) 
 					{
 						$allow = "allow" == $operation ? true : false;
 						break;
 					} 
-					if (in_array($resource, $this -> acl[$operation][$role])) 
+					if (in_array($resource, $this->acl[$operation][$role])) 
 					{
 						$allow = "allow" == $operation ? true : false;
 						break;
@@ -54,7 +54,7 @@ class LtRbac {
 						{
 							$res[$i] = '*';
 							$tmp = implode('/', $res);
-							if (in_array($tmp, $this -> acl[$operation][$role])) 
+							if (in_array($tmp, $this->acl[$operation][$role])) 
 							{
 								$allow = "allow" == $operation ? true : false;
 								break;
