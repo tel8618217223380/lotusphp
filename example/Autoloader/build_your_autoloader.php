@@ -15,17 +15,14 @@ class MyAutoloader extends LtAutoloader
 	 * 覆盖LtAutoloader->init()方法
 	 * 不加载非class文件
 	 */
-	public function init()
-	{
-		spl_autoload_register(array($this, "loadClass"));
-	}
 }
 
 /*
  * 试用MyAutoloader
  */
 $directories = array("Classes", "function");
-$myAutoloader = new MyAutoloader($directories);
+$myAutoloader = new MyAutoloader();
+$myAutoloader->addDirs($directories);
 
 /*
  * 看看有哪些文件被包含进来了
