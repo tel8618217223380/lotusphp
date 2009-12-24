@@ -22,7 +22,7 @@ class MyAutoloader extends LtAutoloader
  */
 $directories = array("Classes", "function");
 $myAutoloader = new MyAutoloader();
-$myAutoloader->addDirs($directories);
+$myAutoloader->setAutoloadPath($directories);
 
 /*
  * 看看有哪些文件被包含进来了

@@ -90,7 +90,7 @@ class Lotus
 			$autoloadDirs[] = $this->option["app_lib"];
 		}
 		$autoloader = new LtAutoloader();
-		$autoloader->addDirs($autoloadDirs);
+		$autoloader->setAutoloadPath($autoloadDirs);
 		if ("dev" != $this->envMode)
 		{
 			$autoloader->storeHandle = LtObjectUtil::singleton("LtCache");

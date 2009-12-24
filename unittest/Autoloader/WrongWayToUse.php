@@ -19,7 +19,7 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testDirNameInvalid()
 	{
 		$autoloader = new LtAutoloader();
-		$autoloader->addDirs(__FILE__);
+		$autoloader->setAutoloadPath(__FILE__);
 	}
 
 	/**
@@ -32,7 +32,7 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testDirNameWithSpace()
 	{
 		$autoloader = new LtAutoloader();
-		$autoloader->addDirs("./dirname with space");//这个目录确实存在
+		$autoloader->setAutoloadPath("./dirname with space");//这个目录确实存在
 	}
 
 	/**
