@@ -23,9 +23,37 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		);
 		$cache->init();
 		
-		$this->assertTrue($cache->add("thread", 1, "LtCache is good!"));
-		$this->assertEquals($cache->get("thread", 1), "LtCache is good!");
+		$this->assertTrue($cache->add("thread", 1, "This is thread 1"));
+		$this->assertEquals($cache->get("thread", 1), "This is thread 1");
 		$this->assertEquals($cache->del("thread", 1));
 		$this->assertFalse($cache->get("thread", 1));
+	}
+
+	/**
+	 * @dataProvider addDataProvider
+	 */
+	public function testAdd($namespace, $key, $value, $ttl, $expected)
+	{
+	}
+
+	/**
+	 * @dataProvider delDataProvider
+	 */
+	public function testDel($namespace, $key, $expect)
+	{
+	}
+
+	/**
+	 * @dataProvider getDataProvider
+	 */
+	public function testGet($namespace, $key, $waitSeconds, $expected)
+	{
+	}
+
+	/**
+	 * @dataProvider updateDataProvider
+	 */
+	public function testUpdate($namespace, $key, $value, $expected)
+	{
 	}
 }
