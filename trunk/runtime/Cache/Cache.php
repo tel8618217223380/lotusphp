@@ -58,7 +58,7 @@ class LtCache
 		}
 		else
 		{
-			$keyPrefix = crc32($namespace);
+			$keyPrefix = sprintf("%u", crc32($namespace));
 		}
 	}
 }
