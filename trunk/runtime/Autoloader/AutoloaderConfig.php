@@ -25,5 +25,5 @@ class LtAutoloaderConfig
 	 * 若该属性设置为array(".svn", ".setting")，则所有名为".setting"的目录也会被忽略
 	 * @var array
 	 */
-	public $skipDirNames = array(".svn");
+	public $skipDirNames = array('.svn');
 }
