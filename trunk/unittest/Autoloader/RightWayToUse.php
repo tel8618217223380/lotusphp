@@ -5,6 +5,7 @@
  * @todo 增加performance_tuning.php的测试用例
  * @todo 增加loadClass()和scanDirs()的测试
  */
+chdir(dirname(__FILE__));
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
 class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 {
@@ -76,25 +77,28 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			
 			//用二维数组传递多个目录（不推荐）
 			array(
-				array("class_dir_1", array("class_dir_2")),
+				array("$cd/class_dir_1", array("$cd/class_dir_2")),
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
 			),
 
-			//相对路径（不推荐）
+			/*
+			 * 相对路径（不推荐）
+			 * 因为前面执行过chdir(dirname(__FILE__))，相当于命令行下的cd /lotus/trunk/unittest/Autoloader，相对路径的测试才能成功。
+			 */
 			array(
-				array("class_dir_1", "./class_dir_2"),
+				array("./class_dir_1", "./class_dir_2"),
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
 			),
 
 			//带拖尾斜线
 			array(
-				array("class_dir_1/", "class_dir_2\\"),
+				array("$cd/class_dir_1/", "$cd/class_dir_2\\"),
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
 			),
 
-			// 目录分隔符\/任意
+			// 目录分隔符\/任意（不推荐）Linux只支持/，windows同时支持/和\
 			array(
-				array("$cd\class_dir_1", "$cd/class_dir_1"),
+				array("$cd\class_dir_1/", "$cd/class_dir_1\\"),
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
 			),
 
