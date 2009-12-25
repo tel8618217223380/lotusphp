@@ -1,4 +1,7 @@
 <?php
+/**
+ * @todo DbAdapter封装的方法移到Db下面去
+ */
 class LtDbHandler
 {
 	protected $group;
@@ -6,11 +9,6 @@ class LtDbHandler
 
 	public $connectionAdapter;
 	protected $sqlAdapter;
-
-	public function __construct()
-	{
-		$this->init();
-	}
 
 	/**
 	 * Trancaction methods
@@ -179,7 +177,7 @@ class LtDbHandler
 	 * Init connection
 	 * @todo 连接失败处理
 	 */
-	protected function init($role = "master")
+	public function init($role = "master")
 	{
 		$hosts = LtDbStaticData::$servers[$this->getGroup()][$this->getNode()][$role];
 		$connection = false;

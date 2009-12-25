@@ -25,6 +25,7 @@ class DbHandlerTest extends PHPUnit_Framework_TestCase
 	{				
 		LtDbStaticData::$servers = $this->dbConfigBuilder->getServers();
 		$this->dbh = new LtDbHandler();
+		$this->dbh->init();
 		$this->assertEquals($this->dbh->query("USE mysql"), 0);
 	}
 
@@ -36,6 +37,7 @@ class DbHandlerTest extends PHPUnit_Framework_TestCase
 	{				
 		LtDbStaticData::$servers = $this->dbConfigBuilder->getServers();
 		$this->dbh = new LtDbHandler();
+		$this->dbh->init();
 		$this->dbh->query("USE mysql");
 		$row = mysql_fetch_row(mysql_query("SELECT DATABASE()"));
 		$this->assertEquals($row[0], "mysql");
