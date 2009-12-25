@@ -46,6 +46,7 @@ LtDbStaticData::$servers = $dbConfigBuilder->getServers();
  * 由于mysql_query()的潜规则,每次只能执行一条SQL
  */
 $dba = new LtDbHandler();
+$dba->init();
 
 echo "\nUSE, DROP, CREATE应该返回受影响的行数（执行成功）或者false（执行失败）：\n";
 var_dump($dba->query('DROP TABLE IF EXISTS "user"'));

@@ -27,7 +27,7 @@ $lotus->init();
  * 如果你用别的方式（例如从ini或者yaml读取配置）构造一个同样的数组然后赋值给Db::$servers，效果是一样的
  */
 $dbConfigBuilder = new LtDbConfigBuilder();
-$adapter = "mysqli";//使用pdo_mysql扩展,目前支持mysql,mysqli,pdo_mysql,sqlite,pdo_sqlite,pgsql,pdo_pgsql
+$adapter = "mysql";//使用pdo_mysql扩展,目前支持mysql,mysqli,pdo_mysql,sqlite,pdo_sqlite,pgsql,pdo_pgsql
 $dbConfigBuilder->addSingleHost(array(
 	"host" => "localhost",
 	"port" => "3306",
@@ -45,6 +45,7 @@ LtDbStaticData::$servers = $dbConfigBuilder->getServers();
  * 由于mysql_query()的潜规则,每次只能执行一条SQL
  */
 $dba = new LtDbHandler();
+$dba->init();
 
 echo "\nUSE, DROP, CREATE应该返回受影响的行数（执行成功）或者false（执行失败）：\n";
 var_dump($dba->query("USE shycat"));//故意使用另一个database（和配置里写的不一样），测试各驱动use db好不好用

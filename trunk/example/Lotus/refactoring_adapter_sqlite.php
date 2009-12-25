@@ -43,7 +43,7 @@ LtDbStaticData::$servers = $dbConfigBuilder->getServers();
  * 2.x 不支持 IF NOT EXISTS 不支持 AUTOINCREMENT
  */
 $dba = new LtDbHandler();
-
+$dba->init();
 
 echo "\nDROP, CREATE应该返回true（执行成功）或者false（执行失败）：\n";
 
