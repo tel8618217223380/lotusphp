@@ -5,7 +5,7 @@
  * @todo 增加performance_tuning.php的测试用例
  * @todo 增加loadClass()和scanDirs()的测试
  */
-include dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
 class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 {
 	/**
