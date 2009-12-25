@@ -36,4 +36,9 @@ class LtAutoloaderProxy extends LtAutoloader
 	{
 		return parent::isSkippedDir($dir);
 	}
+
+	public function scanDirs($dir)
+	{
+		return parent::scanDirs($dir);
+	}
 }
