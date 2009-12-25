@@ -9,7 +9,7 @@ class LtAutoloaderConfig
 	 *  # false  跳过函数，只自动加载定义了class或者interface的文件
 	 * @var boolean
 	 */
-	public $loadFunction = true;
+	public $isLoadFunction = true;
 
 	/**
 	 * 要扫描的文件类型

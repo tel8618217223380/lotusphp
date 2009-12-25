@@ -36,6 +36,15 @@ class LtAutoloader
 			unset($autoloadPath);
 		} 
 		// Whether loading function files
+		if($this->conf->isLoadFunction)
+		{
+			$this->loadFunction();
+		}
+		spl_autoload_register(array($this, "loadClass"));
+	}
+
+	public function loadFunction()
+	{
 		if ($functionFiles = $this->storeHandle->get($this->storeKeyPrefix . ".funcations"))
 		{
 			foreach ($functionFiles as $functionFile)
@@ -43,7 +52,6 @@ class LtAutoloader
 				include($functionFile);
 			}
 		}
-		spl_autoload_register(array($this, "loadClass"));
 	}
 
 	public function loadClass($className)
@@ -94,19 +102,75 @@ class LtAutoloader
 		return $ret;
 	}
 
-	protected function isAllowedFile($file)
+	protected function preparePath($path)
 	{
-		return in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension);
+		if (is_array($path))
+		{
+			foreach($path as $key => $dir)
+			{
+				$dir = rtrim(realpath($dir), '\/');
+				if (preg_match("/\s/i", $dir))
+				{
+					trigger_error("Directory is invalid: {$dir}");
+				}
+				$path[$key] = $dir;
+			}
+		}
+		else
+		{
+			$path = rtrim(realpath($path), '\/');
+			if (preg_match("/\s/i", $path))
+			{
+				trigger_error("Directory is invalid: {$dir}");
+			}
+		}
+		return $path;
 	}
 
-	protected function isSkippedDir($dir)
+	/**
+	 * Using iterative algorithm scanning subdirectories
+	 * save autoloader filemap
+	 * 
+	 * @param array $dirs one-dimensional
+	 * @return 
+	 */
+	protected function scanDirs($dirs)
 	{
-		return in_array($dir, array(".", "..")) || in_array($dir, $this->conf->skipDirNames);
+		$i = 0;
+		while (isset($dirs[$i]))
+		{
+			$dir = $this->preparePath($dirs[$i]);
+			$files = scandir($dir);
+			foreach ($files as $file)
+			{
+				if (in_array($file, array(".", "..")) || in_array($file, $this->conf->skipDirNames))
+				{
+					continue;
+				}
+				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
+				if (is_file($currentFile))
+				{
+					$this->addFileMap($currentFile);
+				}
+				else if (is_dir($currentFile))
+				{ 
+					// if $currentFile is a directory, pass through the next loop.
+					$dirs[] = $currentFile;
+				}
+				else
+				{
+					trigger_error("$currentFile is not a file or a directory.");
+				}
+			} //end foreach
+			unset($dirs[$i]);
+			$i ++;
+		} //end while
 	}
 
 	protected function parseLibNames($src)
 	{
 		$libNames = array("class" => array(), "function" => array());
+		$classes = $functions = array();
 		if (preg_match_all('~^\s*(?:abstract\s+|final\s+)?(?:class|interface)\s+(\w+).*~mi', $src, $classes) > 0)
 		{
 			foreach($classes[1] as $class)
@@ -138,6 +202,7 @@ class LtAutoloader
 		if ($this->storeHandle->get($key))
 		{
 			trigger_error("dumplicate class name : $className");
+			return false;
 		}
 		else
 		{
@@ -146,6 +211,7 @@ class LtAutoloader
 			$classTotal = $this->storeHandle->get($classTotalKey);
 			$this->storeHandle->del($classTotalKey);
 			$this->storeHandle->add($classTotalKey, $classTotal + 1);
+			return true;
 		}
 	}
 
@@ -160,6 +226,7 @@ class LtAutoloader
 		if (array_key_exists($functionName, $foundFunctions))
 		{
 			trigger_error("dumplicate function name: $functionName");
+			return false;
 		}
 		else
 		{
@@ -170,37 +237,13 @@ class LtAutoloader
 			$functionTotal = $this->storeHandle->get($functionTotalKey);
 			$this->storeHandle->del($functionTotalKey);
 			$this->storeHandle->add($functionTotalKey, $functionTotal + 1);
+			return true;
 		}
-	}
-
-	protected function preparePath($path)
-	{
-		if (is_array($path))
-		{
-			foreach($path as $key => $dir)
-			{
-				$dir = rtrim(realpath($dir), '\/');
-				if (preg_match("/\s/i", $dir))
-				{
-					trigger_error("Directory is invalid: {$dir}");
-				}
-				$path[$key] = $dir;
-			}
-		}
-		else
-		{
-			$path = rtrim(realpath($path), '\/');
-			if (preg_match("/\s/i", $path))
-			{
-				trigger_error("Directory is invalid: {$dir}");
-			}
-		}
-		return $path;
 	}
 
 	protected function addFileMap($file)
 	{
-		if ($this->isAllowedFile($file))
+		if (in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension))
 		{
 			$src = trim(file_get_contents($file));
 			$libNames = $this->parseLibNames($src);
@@ -212,46 +255,9 @@ class LtAutoloader
 			{
 				$this->addFunction($function, $file);
 			}
+			return true;
 		}
-	}
-	/**
-	 * Using iterative algorithm scanning subdirectories
-	 * save autoloader filemap
-	 * 
-	 * @param array $dirs one-dimensional
-	 * @return 
-	 */
-	protected function scanDirs($dirs)
-	{
-		$i = 0;
-		while (isset($dirs[$i]))
-		{
-			$dir = $this->preparePath($dirs[$i]);
-			$files = scandir($dir);
-			foreach ($files as $file)
-			{
-				if ($this->isSkippedDir($file))
-				{
-					continue;
-				}
-				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
-				if (is_file($currentFile))
-				{
-					$this->addFileMap($currentFile);
-				}
-				else if (is_dir($currentFile))
-				{ 
-					// if $currentFile is a directory, pass through the next loop.
-					$dirs[] = $currentFile;
-				}
-				else
-				{
-					trigger_error("$currentFile is not a file or a directory.");
-				}
-			} //end foreach
-			unset($dirs[$i]);
-			$i ++;
-		} //end while
+		return false;
 	}
 }
 
@@ -262,11 +268,20 @@ class LtAutoloaderStore
 	public function add($key, $value)
 	{
 		$this->fileMapping[$key] = $value;
+		return true;
 	}
 
 	public function del($key)
 	{
-		unset($this->fileMapping[$key]);
+		if(isset($this->fileMapping[$key]))
+		{
+			unset($this->fileMapping[$key]);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	public function get($key)
