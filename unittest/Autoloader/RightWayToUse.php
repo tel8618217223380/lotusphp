@@ -6,7 +6,7 @@
  * php.exe ..\TestHelper.php RightWayToUse.php
  *
  * @todo 增加performance_tuning.php的测试用例
- * @todo 增加loadClass()和scanDirs()的测试
+ * @todo 增加loadClass(), scanDirs(), conf->loadFunction的测试
  */
 chdir(dirname(__FILE__));
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
@@ -101,14 +101,14 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	{
 		return array(
 			array(
-				array("php", "php5"),
-				"test.php3",
+				array("php3", "php5"),
+				"test.php",
 				false,
 				),
 
 			array(
 				array("php", "php5"),
-				"test.php",
+				"test.php5",
 				true,
 				),
 			// 添加新的测试条件请复制下面这段代码并换掉相应的参数.
