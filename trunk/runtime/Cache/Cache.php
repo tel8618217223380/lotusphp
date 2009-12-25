@@ -1,7 +1,9 @@
 <?php
 class LtCache
 {
-	public $adapter;
+	protected $cacheHandle;
+
+	public $namespaceMapping;
 
 	public function __construct()
 	{
@@ -11,22 +13,52 @@ class LtCache
 	public function init()
 	{
 		$adapterClassName = "LtCacheAdapter" . ucfirst($this->conf->adapter);
-		$this->adapter = new $adapterClassName;
-		$this->adapter->options = $this->conf->options;
+		$this->cacheHandle = new $adapterClassName;
+		$this->cacheHandle->options = $this->conf->options;
 	}
 
-	public function add($key, $value, $ttl=0)
+	public function add($namespace, $key, $value, $ttl = 0)
 	{
-		return $this->adapter->add($key, $value, $ttl);
+		return $this->cacheHandle->add($this->getRealKey($namespace, $key), $value, $ttl);
 	}
 
-	public function del($key)
+	public function del($namespace, $key)
 	{
-		return $this->adapter->del($key);
+		return $this->cacheHandle->del($this->getRealKey($namespace, $key));
 	}
 
-	public function get($key)
+	public function get($namespace, $key)
 	{
-		return $this->adapter->get($key);
+		return $this->cacheHandle->get($this->getRealKey($namespace, $key));
+	}
+
+	public function update($namespace, $key, $value, $ttl = 0)
+	{
+		$realKey = $this->getRealKey($namespace, $key);
+		if ($result = $this->cacheHandle->del($realKey))
+		{
+			return $this->cacheHandle->add($realKey, $value, $ttl);
+		}
+		return $result;
+	}
+
+	protected function getRealKey($namespace, $key)
+	{
+		$keyPrefix = "";
+		if ($this->namespaceMapping)
+		{
+			if (isset($this->namespaceMapping[$namespace]))
+			{
+				$keyPrefix = $this->namespaceMapping[$namespace];
+			}
+			else
+			{
+				trigger_error("Invalid namespace: $namespace, please register it first");
+			}
+		}
+		else
+		{
+			$keyPrefix = crc32($namespace);
+		}
 	}
 }

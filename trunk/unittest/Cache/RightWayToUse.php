@@ -16,7 +16,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	public function testMostUsedWay()
 	{
 		$cache = new LtCache;
-		$cache->sysHash = array(
+		$cache->conf->adapter = "apc";
+		$cache->namespaceMapping = array(
 			"thread" => 1,
 			"post" => 2,
 			"user" => 3,
