@@ -4,6 +4,8 @@
  */
 class LtAutoloaderProxy extends LtAutoloader
 {
+	public $conf;
+
 	public function __get($prop)
 	{
 		if (isset($this->$prop))
@@ -37,14 +39,9 @@ class LtAutoloaderProxy extends LtAutoloader
 		return parent::parseLibNames($src);
 	}
 
-	public function isAllowedFile($filename)
+	public function addFileMap($filename)
 	{
-		return parent::isAllowedFile($filename);
-	}
-
-	public function isSkippedDir($dir)
-	{
-		return parent::isSkippedDir($dir);
+		return parent::addFileMap($filename);
 	}
 
 	public function scanDirs($dir)

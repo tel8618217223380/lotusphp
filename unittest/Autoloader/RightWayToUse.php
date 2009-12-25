@@ -1,8 +1,8 @@
 <?php
 /**
- * 本测试文档演示了LtAutoloader的正确使用方法
+ * 本测试文档演示了LtAutoloader的正确使用方法 
  * 按本文档操作一定会得到正确的结果
- *
+ * 
  * @todo 增加performance_tuning.php的测试用例
  * @todo 增加loadClass(), scanDirs(), conf->loadFunction的测试
  */
@@ -11,8 +11,9 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
 class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 {
 	/**
-	 *
+	 * 
 	 * @example $autoloader = new LtAutoloader();
+	 * $autoloader->autoloadPath = 'class/path_1';
 	 * $autoloader->autoloadPath = array('class/path_1','func/path_2');
 	 * $autoloader->storeKeyPrefix = "abc_";
 	 * $autoloader->init();
@@ -23,14 +24,14 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * -------------------------------------------------------------------
 	 * LtAutoloader不在意：
 	 * 目录名有没有拖尾斜线
-	 * 目录下面有无子目录
-	 * 文件名和文件路径跟类名有无关联
-	 * 定义和使用类时，类名是大写还是小写
+	 * 目录下面有无子目录 
+	 * 文件名和文件路径跟类名有无关联 
+	 * 定义和使用类时，类名是大写还是小写 
 	 * -------------------------------------------------------------------
 	 * LtAutoloader不支持（出错演示和不支持的原因参见WrongWayToUse.php）：
-	 * 传入的参数不是目录名（如/proj/lib/class.php）
-	 * 传入的参数不是真实存在的目录（如http://some_dir这样的）
-	 * 目录名或者文件名带空格（如Zend Framework）
+	 * 传入的参数不是目录名（如/proj/lib/class.php） 
+	 * 传入的参数不是真实存在的目录（如http://some_dir这样的） 
+	 * 目录名或者文件名带空格（如Zend Framework） 
 	 * 类或接口重名，函数和函数重名
 	 * -------------------------------------------------------------------
 	 * LtAutoloader建议（不强求）：
@@ -40,18 +41,18 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * class/function里不要使用__FILE__魔术变量
 	 * -------------------------------------------------------------------
 	 * 本测试用例期望效果：
-	 * 在new CLASS_NAME, class_exists("CLASS_NAME"), extends CLASS_NAME的时候
+	 * 在new CLASS_NAME, class_exists("CLASS_NAME"), extends CLASS_NAME的时候 
 	 * 自动把包含该类的文件加载进来
 	 */
 	public function testMostUsedWay()
 	{
 		$autoloader = new LtAutoloader;
 		$autoloader->autoloadPath = array(
-				dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
-				dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2",
-				dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_1",
-				dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_2"
-				);
+			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
+			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2",
+			dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_1",
+			dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_2"
+			);
 		$autoloader->init();
 		$this->assertTrue(new Goodbye() instanceof GoodBye);
 		$this->assertTrue(class_exists("HelloWorld"));
@@ -61,65 +62,60 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * 本用例展示了怎样给LtAutoloader传递需要自动加载的目录
+	 * 本用例展示了怎样给LtAutoloader->autoloadPath传递需要自动加载的目录
+	 * 
+	 * 添加新的测试条请增加一个数组 
+	 * array('autoloadPath', '正确结果')
 	 */
-	public function setAutoloadPathDataProvider()
+	public function autoloadPathDataProvider()
 	{
-		$cd = dirname(__FILE__);//current dir, 当前目录
+		$cd = dirname(__FILE__); //current dir, 当前目录
 		return array(
-			//用一个数组传递多个目录，绝对路径，不带拖尾斜线
+			// 用一个数组传递多个目录，绝对路径，不带拖尾斜线
 			array(
 				array("$cd/class_dir_1", "$cd/class_dir_2"),
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
-			),
-
-			//只有一个目录，可以不用数组传
-			array(
-				"$cd/class_dir_1",
+				), 
+			// 只有一个目录，可以不用数组传
+			array("$cd/class_dir_1",
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
-			),
-			
-			//用二维数组传递多个目录（不推荐）
+				), 
+			// 用二维数组传递多个目录（不推荐）
 			array(
 				array("class_dir_1", array("class_dir_2")),
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
-			),
-
-			//相对路径（不推荐）
+				), 
+			// 相对路径（不推荐）
 			array(
 				array("class_dir_1", "./class_dir_2"),
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
-			),
-
-			//带拖尾斜线
+				), 
+			// 带拖尾斜线
 			array(
 				array("class_dir_1/", "class_dir_2\\"),
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
-			),
-
+				), 
 			// 目录分隔符\/任意
 			array(
 				array("$cd\class_dir_1", "$cd/class_dir_1"),
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
-			),
-
+				), 
 			// 可以是文件
-			array(
-				"$cd/class_dir_1/GoodBye.php", 
+			array("$cd/class_dir_1/GoodBye.php",
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR . 'GoodBye.php')
-			),
-			/**
-			添加新的测试条件，只需要复制下面这段代码，去掉注释，换掉相应的参数，即可
-			array(
-				array("$cd/class_dir_1", "$cd/class_dir_2"), //$userParameter，setAutoloadPath()的参数
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"), //$expected，正确结果
-			),
-			*/
-		);
+				), 
+			// 可以是空值（不推荐）
+			array('',
+				array("$cd")
+				),
+			);
 	}
 
 	/**
-	 * 本用例展示了LtAutoloader能识别哪些类和函数定义
+	 * 本用例展示了LtAutoloader能识别哪些类和函数定义 
+	 * 
+	 * 添加新的测试条请增加一个数组 
+	 * array('定义类或函数的代码','正确结果')
 	 */
 	public function parseLibNamesDataProvider()
 	{
@@ -128,30 +124,28 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			array("<?php
 				class Src",
 				array("class" => array("Src"), "function" => array())
-				),
+				), 
 			// class关键字大写，class和类名间有多个空格或者tab
 			array("
 			  Class   	Source{}",
 				array("class" => array("Source"), "function" => array())
-				),
+				), 
 			// 接口，interface和接口名间有换行
 			array("Interface
 				Trade{}", array("class" => array("Trade"), "function" => array())
-				),
+				), 
 			// 函数
 			array("function
 				function1(){}", array("class" => array(), "function" => array("function1"))
 				),
-			// 添加新的测试条件请复制下面这段代码并换掉相应的参数.
-			// array("<?php
-			// class Src", //$src，定义类或函数的代码
-			// array("class" => array("Src"), "function" => array()) //$expected，正确结果
-			// ),
 			);
 	}
 
 	/**
-	 * 本用例展示了怎样设置允许加载的文件类型
+	 * 本用例展示了怎样设置允许加载的文件类型 
+	 * 
+	 * 添加新的测试条请增加一个数组 
+	 * array('允许加载的文件类型', '用于测试的文件名', '正确结果')
 	 */
 	public function isAllowedFileDataProvider()
 	{
@@ -167,42 +161,102 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 				"test.php5",
 				true,
 				),
-			// 添加新的测试条件请复制下面这段代码并换掉相应的参数.
-			// array(
-			// array("php", "php5"), //$extArray，允许加载的文件类型
-			// "test.php3", //$filename，用于测试的文件名
-			// false, //$expected，正确结果
-			// ),
 			);
 	}
 
 	/**
 	 * 本用例展示了怎样设置禁止扫描的子目录名称
+	 * 
+	 * 添加新的测试条请增加一个数组 
+	 * array(array('禁止扫描的子目录'), '用于测试的目录名', '正确结果')
 	 */
 	public function isSkippedDirDataProvider()
 	{
+		$cd = dirname(__FILE__); //current dir, 当前目录
 		return array(
 			array(
-				array(".setting", "bak"),
-				".setting",
+				array(".svn", "subdir"),
+				array("$cd" . DIRECTORY_SEPARATOR . 'class_dir_2'),
 				true,
 				),
 
 			array(
-				array(".setting", "bak"),
-				"source",
+				array(".svn", "bak"),
+				array("$cd" . DIRECTORY_SEPARATOR . 'class_dir_2'),
 				false,
 				),
-			// 添加新的测试条件请复制下面这段代码并换掉相应的参数.
-			// array(
-			// array(".setting", "bak"), //$dirBlackListArray，允许加载的文件类型
-			// ".setting", //$dir，用于测试的目录名
-			// false, //$expected，正确结果
-			// ),
 			);
 	}
+
 	/**
-	 * @dataProvider setAutoloadPathDataProvider
+	 * 测试scanDirs()扫描目录 
+	 * 
+	 * 添加新的测试条请增加一个数组 
+	 * array('目录', '类名或者函数名小写字母', '正确结果')
+	 */
+	public function scanDirsDataProvider()
+	{
+		$cd = dirname(__FILE__); //current dir, 当前目录
+		return array(
+			array(
+				array("$cd/class_dir_1", "$cd/class_dir_2"),
+				array('goodbye', 'helloworld', 'hellolotus'),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR . 'GoodBye.php',
+					"$cd" . DIRECTORY_SEPARATOR . "class_dir_2" . DIRECTORY_SEPARATOR . 'HelloWorld.php',
+					"$cd" . DIRECTORY_SEPARATOR . "class_dir_2" . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'anotherClass.inc',
+					),
+				),
+			);
+	} 
+
+	/**
+	 * 测试loaderClass() 
+	 * 
+	 * 添加新的测试条请增加一个数组 
+	 * array('文件', '类名或者函数名')
+	 */
+	public function loadClassDataProvider()
+	{
+		$cd = dirname(__FILE__); //current dir, 当前目录
+		return array(
+			array(
+				"$cd/class_dir_1/LoadClass.php", 
+				'isLoadClass',
+				),
+			);
+	} 
+
+	/**
+	 * 测试isLoadFunction
+	 * 
+	 * 添加新的测试条请增加一个数组 
+	 * array('文件', '函数名', '是否加载')
+	 */
+	public function isLoadFunctionDataProvider()
+	{
+		$cd = dirname(__FILE__); //current dir, 当前目录
+		return array(
+			array(
+				"$cd/is_load_func/welcome.php", 
+				'welcome',
+				true,
+				),
+			array(
+				"$cd/is_load_func/welcome2.php", 
+				'welcome2',
+				false,
+				),
+			);
+	} 
+
+	// -----------------------------------------------------------------
+	// 后边的测试依赖前边的测试结果正确
+	// -----------------------------------------------------------------
+	/**
+	 * 测试LtAutoloader初始化的时候 
+	 * 能否正确的将传给autoloadPath的值转为系统能识别的绝对路径
+	 * 
+	 * @dataProvider autoloadPathDataProvider
 	 */
 	public function testpreparePath($userParameter, $expected)
 	{
@@ -212,47 +266,88 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$this->assertEquals($path, $expected);
 	}
 	/**
-	 *
+	 * 测试parseLibNames()能否正确的识别源文件中定义的类,接口,函数
+	 * 
 	 * @dataProvider parseLibNamesDataProvider
 	 */
-	public function testParseLibNams($src, $expected)
+	public function testParseLibNames($src, $expected)
 	{
 		$ap = new LtAutoloaderProxy();
 		$this->assertEquals($ap->parseLibNames($src), $expected);
 	}
 
 	/**
-	 *
+	 * 测试addFileMap()能否正确的识别允许自动加载的文件 
+	 * addFileMap()依赖parseLibNames,addClass,addFunction
+	 * 
 	 * @dataProvider isAllowedFileDataProvider
 	 */
 	public function testIsAllowedFile($extArray, $filename, $expected)
 	{
 		$ap = new LtAutoloaderProxy();
 		$ap->conf->allowFileExtension = $extArray;
-		$this->assertEquals($ap->isAllowedFile($filename), $expected);
+		$this->assertEquals($ap->addFileMap($filename), $expected);
 	}
 
 	/**
-	 *
+	 * 测试scanDirs()能否正确的识别允许扫描的子目录 
+	 * scanDirs()依赖preparePath,addFileMap
+	 * 本测试依赖storeHandle->get
+	 * 
 	 * @dataProvider isSkippedDirDataProvider
 	 */
 	public function testIsSkippedDir($dirBlackListArray, $dir, $expected)
 	{
 		$ap = new LtAutoloaderProxy();
 		$ap->conf->skipDirNames = $dirBlackListArray;
-		$this->assertEquals($ap->isSkippedDir($dir), $expected);
+		$ap->scanDirs($dir);
+		$isSkip = $ap->storeHandle->get($ap->storeKeyPrefix . 'hellolotus') ? false : true;
+		$this->assertEquals($isSkip, $expected);
 	}
-
-	public function testscanDirs()
+	/**
+	 * 测试scanDirs能否正确的扫描目录包括子目录
+	 * scanDirs()依赖 addFileMap()
+	 * 本测试依赖storeHandle->get
+	 * 
+	 * @dataProvider scanDirsDataProvider
+	 */
+	public function testscanDirs($path, $classORfunction, $pathFile)
 	{
 		$ap = new LtAutoloaderProxy();
-		$ap->scanDirs(array('class_dir_1','class_dir_2'));
-		$this->assertEquals($ap->storeHandle->get($ap->storeKeyPrefix.'goodbye'), dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR . 'GoodBye.php');
-
-		$this->assertEquals($ap->storeHandle->get($ap->storeKeyPrefix.'helloworld'), dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2" . DIRECTORY_SEPARATOR . 'HelloWorld.php');
-
-		$this->assertEquals($ap->storeHandle->get($ap->storeKeyPrefix.'hellolotus'), dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2" . DIRECTORY_SEPARATOR  . "subdir" . DIRECTORY_SEPARATOR . 'anotherClass.inc');
-
+		$ap->scanDirs($path);
+		foreach($classORfunction as $key=>$value)
+		{
+			$this->assertEquals($ap->storeHandle->get($ap->storeKeyPrefix . $classORfunction[$key]), $pathFile[$key]);
+		}
 	}
 
+	/**
+	 * 测试loadClass()
+	 * 
+	 * @dataProvider loadClassDataProvider
+	 */
+	public function testLoadClass($pathfile, $class)
+	{
+		$ap = new LtAutoloaderProxy();
+		$ap->addFileMap($pathfile);
+		$ap->loadClass($class);
+		$this->assertTrue(class_exists($class));
+	}
+
+	/**
+	 * 测试 conf->isLoadFunction 能否加载函数文件 
+	 * 
+	 * @dataProvider isLoadFunctionDataProvider
+	 */
+	public function testisLoadFunction($pathfile, $function, $isLoadFunction)
+	{
+		$ap = new LtAutoloaderProxy();
+		$ap->conf->isLoadFunction = $isLoadFunction;
+		$ap->addFileMap($pathfile);
+		if($ap->conf->isLoadFunction)
+		{
+			$ap->loadFunction();
+		}
+		$this->assertEquals(function_exists($function), $isLoadFunction);
+	}
 }
