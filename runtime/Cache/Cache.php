@@ -17,22 +17,22 @@ class LtCache
 		$this->cacheHandle->options = $this->conf->options;
 	}
 
-	public function add($namespace, $key, $value, $ttl = 0)
+	public function add($key, $value, $ttl = 0, $namespace='')
 	{
 		return $this->cacheHandle->add($this->getRealKey($namespace, $key), $value, $ttl);
 	}
 
-	public function del($namespace, $key)
+	public function del($key, $namespace='')
 	{
 		return $this->cacheHandle->del($this->getRealKey($namespace, $key));
 	}
 
-	public function get($namespace, $key)
+	public function get($key, $namespace='')
 	{
 		return $this->cacheHandle->get($this->getRealKey($namespace, $key));
 	}
 
-	public function update($namespace, $key, $value, $ttl = 0)
+	public function update($key, $value, $ttl = 0, $namespace='')
 	{
 		$realKey = $this->getRealKey($namespace, $key);
 		if ($result = $this->cacheHandle->del($realKey))
@@ -58,7 +58,7 @@ class LtCache
 		}
 		else
 		{
-			$keyPrefix = sprintf("%u", crc32($namespace));
+			$keyPrefix = sprintf("%u-", crc32($namespace));
 		}
 	}
 }
