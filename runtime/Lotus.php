@@ -94,7 +94,7 @@ class Lotus
 		if ("dev" != $this->envMode)
 		{
 			$autoloader->storeHandle = LtObjectUtil::singleton("LtCache");
-			$autoloader->storeKeyPrefix = "la" . crc32($this->entranceFile);
+			$autoloader->storeKeyPrefix = "la" . sprintf("%u", crc32($this->entranceFile));
 		}
 		$autoloader->init();
 	}
@@ -106,7 +106,7 @@ class Lotus
 	 */
 	protected function prepareConfig()
 	{
-		$this->sysCacheKey["config_key"] = "lotus_config_" . crc32($this->entranceFile);
+		$this->sysCacheKey["config_key"] = "lotus_config_" . sprintf("%u", crc32($this->entranceFile));
 		if ("dev" != $this->envMode && LtObjectUtil::singleton("LtConfig")->app = LtObjectUtil::singleton("LtCache")->get($this->sysCacheKey["config_key"]))
 		{
 		}
