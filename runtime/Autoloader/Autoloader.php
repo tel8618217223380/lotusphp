@@ -23,6 +23,14 @@ class LtAutoloader
 		{
 			$autoloadPath = $this->var2array($this->autoloadPath);
 			$this->autoloadPath = $this->preparePath($autoloadPath);
+			foreach($this->autoloadPath as $key=>$path)
+			{
+				if (is_file($path))
+				{
+					$this->addFileMap($path);
+					unset($this->autoloadPath[$key]);
+				}
+			}
 			$this->scanDirs($this->autoloadPath);
 		} 
 		// Whether loading function files
@@ -188,6 +196,22 @@ class LtAutoloader
 		return $path;
 	}
 
+	protected function addFileMap($file)
+	{
+		if ($this->isAllowedFile($file))
+		{
+			$src = trim(file_get_contents($file));
+			$libNames = $this->parseLibNames($src);
+			foreach ($libNames["class"] as $class)
+			{
+				$this->addClass($class, $file);
+			}
+			foreach ($libNames["function"] as $function)
+			{
+				$this->addFunction($function, $file);
+			}
+		}
+	}
 	/**
 	 * Using iterative algorithm scanning subdirectories
 	 * save autoloader filemap
@@ -201,25 +225,6 @@ class LtAutoloader
 		while (isset($dirs[$i]))
 		{
 			$dir = $this->preparePath($dirs[$i]);
-			if (is_file($dir))
-			{
-				if ($this->isAllowedFile($dir))
-				{
-					$src = trim(file_get_contents($dir));
-					$libNames = $this->parseLibNames($src);
-					foreach ($libNames["class"] as $class)
-					{
-						$this->addClass($class, $dir);
-					}
-					foreach ($libNames["function"] as $function)
-					{
-						$this->addFunction($function, $dir);
-					}
-				}
-				unset($dirs[$i]);
-				$i ++;
-				continue;
-			}
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
@@ -230,19 +235,20 @@ class LtAutoloader
 				$currentFile = $dir . DIRECTORY_SEPARATOR . $file;
 				if (is_file($currentFile))
 				{
-					if ($this->isAllowedFile($currentFile))
-					{
-						$src = trim(file_get_contents($currentFile));
-						$libNames = $this->parseLibNames($src);
-						foreach ($libNames["class"] as $class)
-						{
-							$this->addClass($class, $currentFile);
-						}
-						foreach ($libNames["function"] as $function)
-						{
-							$this->addFunction($function, $currentFile);
-						}
-					}
+					$this->addFileMap($currentFile);
+					//if ($this->isAllowedFile($currentFile))
+					//{
+						//$src = trim(file_get_contents($currentFile));
+						//$libNames = $this->parseLibNames($src);
+						//foreach ($libNames["class"] as $class)
+						//{
+							//$this->addClass($class, $currentFile);
+						//}
+						//foreach ($libNames["function"] as $function)
+						//{
+							//$this->addFunction($function, $currentFile);
+						//}
+					//}
 				}
 				else if (is_dir($currentFile))
 				{ 
