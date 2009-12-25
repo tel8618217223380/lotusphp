@@ -12,6 +12,16 @@ class LtAutoloaderProxy extends LtAutoloader
 		}
 	}
 
+	public function var2array($var)
+	{
+		return parent::var2array($var);
+	}
+
+	public function preparePath($path)
+	{
+		return parent::preparePath($path);
+	}
+
 	public function addClass($className, $file)
 	{
 		return parent::addClass($className, $file);

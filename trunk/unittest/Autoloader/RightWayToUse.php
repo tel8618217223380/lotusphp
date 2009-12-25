@@ -2,8 +2,6 @@
 /**
  * 本测试文档演示了LtAutoloader的正确使用方法
  * 按本文档操作一定会得到正确的结果
- * 测试相对目录请在当前目录运行
- * php.exe ..\TestHelper.php RightWayToUse.php
  *
  * @todo 增加performance_tuning.php的测试用例
  * @todo 增加loadClass(), scanDirs(), conf->loadFunction的测试
@@ -60,6 +58,64 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$this->assertEquals(HelloLotus::sayHello(), "hello");
 		$this->assertEquals(say_hello(), "hello");
 		$this->assertEquals(say_hello_2(), "hello_2");
+	}
+
+	/**
+	 * 本用例展示了怎样给LtAutoloader传递需要自动加载的目录
+	 */
+	public function setAutoloadPathDataProvider()
+	{
+		$cd = dirname(__FILE__);//current dir, 当前目录
+		return array(
+			//用一个数组传递多个目录，绝对路径，不带拖尾斜线
+			array(
+				array("$cd/class_dir_1", "$cd/class_dir_2"),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
+			),
+
+			//只有一个目录，可以不用数组传
+			array(
+				"$cd/class_dir_1",
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
+			),
+			
+			//用二维数组传递多个目录（不推荐）
+			array(
+				array("class_dir_1", array("class_dir_2")),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
+			),
+
+			//相对路径（不推荐）
+			array(
+				array("class_dir_1", "./class_dir_2"),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
+			),
+
+			//带拖尾斜线
+			array(
+				array("class_dir_1/", "class_dir_2\\"),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
+			),
+
+			// 目录分隔符\/任意
+			array(
+				array("$cd\class_dir_1", "$cd/class_dir_1"),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
+			),
+
+			// 可以是文件
+			array(
+				"$cd/class_dir_1/GoodBye.php", 
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR . 'GoodBye.php')
+			),
+			/**
+			添加新的测试条件，只需要复制下面这段代码，去掉注释，换掉相应的参数，即可
+			array(
+				array("$cd/class_dir_1", "$cd/class_dir_2"), //$userParameter，setAutoloadPath()的参数
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"), //$expected，正确结果
+			),
+			*/
+		);
 	}
 
 	/**
@@ -145,7 +201,16 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			// ),
 			);
 	}
-
+	/**
+	 * @dataProvider setAutoloadPathDataProvider
+	 */
+	public function testpreparePath($userParameter, $expected)
+	{
+		$ap = new LtAutoloaderProxy();
+		$path = $ap->var2array($userParameter);
+		$path = $ap->preparePath($path);
+		$this->assertEquals($path, $expected);
+	}
 	/**
 	 *
 	 * @dataProvider parseLibNamesDataProvider
