@@ -17,13 +17,14 @@ class LtAutoloader
 		if (empty($this->storeHandle))
 		{
 			$this->storeHandle = new LtAutoloaderStore();
-		}
+		} 
 		// Whether scanning directory
 		if (0 == $this->storeHandle->get($this->storeKeyPrefix . ".class_total") && 0 == $this->storeHandle->get($this->storeKeyPrefix . ".function_total"))
 		{
 			$autoloadPath = $this->var2array($this->autoloadPath);
-			$this->scanDirs($autoloadPath);
-		}
+			$this->autoloadPath = $this->preparePath($autoloadPath);
+			$this->scanDirs($this->autoloadPath);
+		} 
 		// Whether loading function files
 		if ($functionFiles = $this->storeHandle->get($this->storeKeyPrefix . ".funcations"))
 		{
@@ -49,7 +50,7 @@ class LtAutoloader
 
 	/**
 	 * The string or an Multidimensional array into a one-dimensional array
-	 *
+	 * 
 	 * @param array $ or string
 	 * @return array one-dimensional array
 	 */
@@ -111,7 +112,7 @@ class LtAutoloader
 			}
 		}
 		else
-		{
+		{ 
 			// 没有类也没有函数的文件忽略
 		}
 		return $libNames;
@@ -161,24 +162,64 @@ class LtAutoloader
 			$this->storeHandle->add($functionTotalKey, $functionTotal + 1);
 		}
 	}
+
+	protected function preparePath($path)
+	{
+		if (is_array($path))
+		{
+			foreach($path as $key => $dir)
+			{
+				$dir = rtrim(realpath($dir), '\/');
+				if (preg_match("/\s/i", $dir))
+				{
+					trigger_error("Directory is invalid: {$dir}");
+				}
+				$path[$key] = $dir;
+			}
+		}
+		else
+		{
+			$path = rtrim(realpath($path), '\/');
+			if (preg_match("/\s/i", $path))
+			{
+				trigger_error("Directory is invalid: {$dir}");
+			}
+		}
+		return $path;
+	}
+
 	/**
 	 * Using iterative algorithm scanning subdirectories
 	 * save autoloader filemap
-	 *
+	 * 
 	 * @param array $dirs one-dimensional
-	 * @return
+	 * @return 
 	 */
 	protected function scanDirs($dirs)
 	{
 		$i = 0;
 		while (isset($dirs[$i]))
 		{
-			$dir = rtrim(realpath($dirs[$i]), '\/');
-			if (preg_match("/\s/i", $dir) || !is_dir($dir))
+			$dir = $this->preparePath($dirs[$i]);
+			if (is_file($dir))
 			{
-				trigger_error("Directory is invalid: {$dir}");
+				if ($this->isAllowedFile($dir))
+				{
+					$src = trim(file_get_contents($dir));
+					$libNames = $this->parseLibNames($src);
+					foreach ($libNames["class"] as $class)
+					{
+						$this->addClass($class, $dir);
+					}
+					foreach ($libNames["function"] as $function)
+					{
+						$this->addFunction($function, $dir);
+					}
+				}
+				unset($dirs[$i]);
+				$i ++;
+				continue;
 			}
-
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
@@ -204,7 +245,7 @@ class LtAutoloader
 					}
 				}
 				else if (is_dir($currentFile))
-				{
+				{ 
 					// if $currentFile is a directory, pass through the next loop.
 					$dirs[] = $currentFile;
 				}

@@ -11,7 +11,7 @@ include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
  * 初始化Autoloader类
  * 将当前目录下的Classes和function目录加到“自动加载目录列表中”
  */
-$directories = array("Classes\\", "function/");
+$directories = array("Classes\\", "file/inc.php", "function");
 $autoloader = new LtAutoloader();
 //
 //$autoloader->storeHandle = new LtCacheAdapterFile;
