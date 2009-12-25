@@ -7,23 +7,6 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
 class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 {
 	/**
-	 * 路径名不是目录
-	 *
-	 * 不支持这样做的原因
-	 * 文件都可以放在目录下面，如果有文件需要加载
-	 * 建个目录把这个文件放进去，然后传递目录名给autoloader就好了
-	 * 如果不是一个合法的目录名，也不是合法的文件名，autoloader只能报错
-	 *
-	 * @expectedException PHPUnit_Framework_Error
-	 */
-	public function testDirNameInvalid()
-	{
-		$autoloader = new LtAutoloader();
-		$autoloader->autoloadPath = __FILE__;
-		$autoloader->init();
-	}
-
-	/**
 	 * 目录名带空格
 	 *
 	 * 不支持这样做的原因：
