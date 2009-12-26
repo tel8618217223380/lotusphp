@@ -3,8 +3,6 @@ require_once 'PHPUnit/Extensions/PerformanceTestCase.php';
 
 chdir(dirname(__FILE__));
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
-//require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "CacheFile.php";
-
 
 class PerformanceTest extends PHPUnit_Extensions_PerformanceTestCase
 {
@@ -14,7 +12,11 @@ class PerformanceTest extends PHPUnit_Extensions_PerformanceTestCase
 		for($i = 0; $i < 100; $i++)
 		{
 			$ap = new LtAutoloaderProxy;
-			$ap->storeHandle = new LtCacheAdapterFile;
+			// ------ cache init ----------
+			$ap->storeHandle = new LtCache;
+			$ap->storeHandle->conf->adapter = 'file';
+			$ap->storeHandle->init();
+			// ------ cache init end ------
 			$ap->storeKeyPrefix = "abc";
 			$ap->conf->isLoadFunction = false;
 			$ap->autoloadPath = array(
