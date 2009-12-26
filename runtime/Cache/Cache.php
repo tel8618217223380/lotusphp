@@ -14,7 +14,7 @@ class LtCache
 	{
 		$adapterClassName = "LtCacheAdapter" . ucfirst($this->conf->adapter);
 		$this->cacheHandle = new $adapterClassName;
-		if (isset($this->cacheHandle->options))
+		if (property_exists($this->cacheHandle, "options"))
 		{
 			$this->cacheHandle->options = $this->conf->options;
 		}
