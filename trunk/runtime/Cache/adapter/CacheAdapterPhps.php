@@ -6,7 +6,7 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 	protected function getCacheFile($key)
 	{
 		$token = md5($key);
-		$cachePath = rtrim($this->options["cache_file_root"], '\/') . DIRECTORY_SEPARATOR
+		$cachePath = rtrim($this->options["cache_file_root"], '\\/') . DIRECTORY_SEPARATOR
 		. substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2);
 		if(!is_dir($cachePath))
 		{
