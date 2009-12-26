@@ -14,7 +14,7 @@ class PerformanceTest extends PHPUnit_Extensions_PerformanceTestCase
 			$ap = new LtAutoloaderProxy;
 			// ------ cache init ----------
 			$ap->storeHandle = new LtCache;
-			$ap->storeHandle->conf->adapter = 'file';
+			$ap->storeHandle->conf->adapter = 'file'; // 本应用file优于phps
 			$ap->storeHandle->init();
 			// ------ cache init end ------
 			$ap->storeKeyPrefix = "abc";
