@@ -1,1 +1,1 @@
-php.exe TestHelper.php %*
+php.exe TestHelper.php --verbose %*
