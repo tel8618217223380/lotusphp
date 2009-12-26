@@ -3,35 +3,44 @@ class LtCacheAdapterFile implements LtCacheAdapter
 {
 	public $options;
 
-	protected function getCacheFile($key)
+	protected function getCacheFile($key, $namespace='')
 	{
-		$this->options["cache_file_root"] = rtrim(realpath($this->options["cache_file_root"]),'\/') . DIRECTORY_SEPARATOR;
+		//////////echo $this->options["cache_file_root"];
+		$namespace = $this->getRealKey($namespace, $key);
 		$token = md5($key);
-		return $this->options["cache_file_root"] . substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .  DIRECTORY_SEPARATOR . "file-key-$token.php";
+		$cachePath = preg_replace('/[\\\\|\/]+/i', '/', $this->options["cache_file_root"]);
+		$cachePath = rtrim($cachePath,'\/') . '/';
+		$cachePath .= substr($token, 0,2) . '/';
+		$cachePath .= substr($token, 2,2);
+		if(!is_dir($cachePath))
+		{
+			if(!mkdir($cachePath, 0777, true))
+			{
+				trigger_error("Can not create $dir");
+			}
+		}
+		$cachePath = realpath($cachePath);
+		$cacheFile = $cachePath . DIRECTORY_SEPARATOR . $namespace . '-file-' . $token. '.php';
+		return $cacheFile;		
 	}
 
-	public function add($key, $value, $ttl=0)
+	public function add($key, $value, $ttl=0, $namespace='')
 	{
-		$cacheFile = $this->getCacheFile($key);
-		$cacheDir = dirname($cacheFile);
-		if (!is_dir($cacheDir))
-		{
-			mkdir($cacheDir, 0777, true);
-		}
+		$cacheFile = $this->getCacheFile($key, $namespace);
 		$data['ttl'] = (0 >= $ttl) ? 0 : (time()+intval($ttl));
 		$data['value'] = $value;
 		return file_put_contents($cacheFile, "<?php\nreturn ".var_export($data, true).";\n");
 	}
 	
-	public function del($key)
+	public function del($key, $namespace='')
 	{
-		$cacheFile = $this->getCacheFile($key);
-		return unlink($cacheFile);
+		$cacheFile = $this->getCacheFile($key, $namespace);
+		return @unlink($cacheFile);
 	}
 	
-	public function get($key)
+	public function get($key, $namespace='')
 	{
-		$cacheFile = $this->getCacheFile($key);
+		$cacheFile = $this->getCacheFile($key, $namespace);
 		if (!is_file($cacheFile))
 		{
 			return false;
@@ -41,7 +50,7 @@ class LtCacheAdapterFile implements LtCacheAdapter
 			$data = include($cacheFile);
 			if(0 != $data['ttl'] && time() > $data['ttl'])
 			{
-				unlink($cacheFile);
+				@unlink($cacheFile);
 				return false;
 			}
 			else
@@ -49,5 +58,18 @@ class LtCacheAdapterFile implements LtCacheAdapter
 				return $data['value'];
 			}
 		}
+	}
+
+	public function update($key, $value, $ttl=0, $namespace='')
+	{
+		$cacheFile = $this->getCacheFile($key, $namespace);
+		$data['ttl'] = (0 >= $ttl) ? 0 : (time()+intval($ttl));
+		$data['value'] = $value;
+		return file_put_contents($cacheFile, "<?php\nreturn ".var_export($data, true).";\n");
+	}
+
+	protected function getRealKey($namespace, $key)
+	{
+		return sprintf("%u", crc32($namespace)) . $key;
 	}
 }

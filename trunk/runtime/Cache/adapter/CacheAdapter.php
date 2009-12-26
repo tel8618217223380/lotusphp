@@ -1,7 +1,8 @@
 <?php
 interface LtCacheAdapter
 {
-	public function add($key, $value, $ttl=0);
-	public function del($key);
-	public function get($key);
+	public function add($key, $value, $ttl=0, $namespace='');
+	public function del($key, $namespace='');
+	public function get($key, $namespace='');
+	public function update($key, $value, $ttl = 0, $namespace='');
 }
