@@ -108,6 +108,11 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			array('',
 				array("$cd")
 				),
+			// 去除重复目录分隔符\/
+			array(
+				array("$cd\\class_dir_1", "$cd//class_dir_1"),
+				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
+				), 
 			);
 	}
 
@@ -351,4 +356,25 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		}
 		$this->assertEquals(function_exists($function), $isLoadFunction);
 	}
+
+	/**
+	测试 storeHandle
+$autoloader->storeHandle = new LtCacheAdapterApc;
+$autoloader->storeKeyPrefix = "abc";
+$autoloader->setAutoloadPath($directories);
+
+dataProvider storeHandleDataProvider
+
+	public function teststoreHandle($storeHandle, $function, $isLoadFunction)
+	{
+		$ap = new LtAutoloaderProxy();
+		$ap->conf->isLoadFunction = $isLoadFunction;
+		$ap->addFileMap($pathfile);
+		if($ap->conf->isLoadFunction)
+		{
+			$ap->loadFunction();
+		}
+		$this->assertEquals(function_exists($function), $isLoadFunction);
+	}*/
 }
+
