@@ -21,6 +21,9 @@ class LtAutoloader
 		// Whether scanning directory
 		if (0 == $this->storeHandle->get(".class_total", $this->storeKeyPrefix) && 0 == $this->storeHandle->get(".function_total", $this->storeKeyPrefix))
 		{
+			$this->storeHandle->add(".class_total", 0, 0, $this->storeKeyPrefix);
+			$this->storeHandle->add(".function_total", 0, 0, $this->storeKeyPrefix);
+			$this->storeHandle->add(".functions", array(), 0, $this->storeKeyPrefix);
 			$autoloadPath = $this->var2array($this->autoloadPath);
 			$this->autoloadPath = $this->preparePath($autoloadPath);
 			$autoloadPath = $this->autoloadPath;
