@@ -34,7 +34,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		parent::__construct();
 		$this->adapterList = array(
 			//"$adapter" => $options
-			"apc" => null,
+			//"apc" => null,
 			//"eAccelerator" => null, //ea不支持命令行模式
 			"file" => null,
 			"phps" => null,
@@ -52,7 +52,21 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		);
 	}
 
-	public function test1()
+	public function getCacheHandle($adapter, $options = null)
+	{
+		$cache = new LtCache;
+		$cache->conf->adapter = $adapter;
+		if ($options)
+		{
+			$cache->conf->options = $options;
+		}
+		$cache->init();
+		return $cache;
+	}
+	/**
+	基本功能测试
+	*/
+	public function testBase()
 	{		
 		foreach ($this->adapterList as $ad => $op)
 		{
@@ -70,16 +84,81 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			}
 		}
 	}
-	
-	public function getCacheHandle($adapter, $options = null)
+
+	/**
+	测试多个namespace的用法
+	*/
+	public function testNameSpace()
 	{
-		$cache = new LtCache;
-		$cache->conf->adapter = $adapter;
-		if ($options)
+		$ttl   = 0;
+		$key   = 'key';
+		$v1    = 'data1';
+		$v2    = 'data2';
+		$v3    = 'data3';
+		$v4    = 'data4';
+		$v5    = 'data5';
+		$v6    = 'data6';
+		$name1 = '';
+		$name2 = 'namespace2';
+		$name3 = 'namespace3';
+		foreach ($this->adapterList as $ad => $op)
 		{
-			$cache->conf->options = $options;
+			$ch = $this->getCacheHandle($ad, $op);
+			$this->assertTrue($ch->add($k, $v1, $ttl, $name1));
+			$this->assertTrue($ch->add($k, $v2, $ttl, $name2));
+			$this->assertTrue($ch->add($k, $v3, $ttl, $name3));
+
+			$this->assertEquals($ch->get($k, $name1), $v1);
+			$this->assertEquals($ch->get($k, $name2), $v2);
+			$this->assertEquals($ch->get($k, $name3), $v3);
+
+			$this->assertTrue($ch->update($k, 0, $ttl, $name1));
+			$this->assertTrue($ch->update($k, 0, $ttl, $name2));
+			$this->assertTrue($ch->update($k, 0, $ttl, $name3));
+
+			$this->assertEquals($ch->get($k, $name1), 0);
+			$this->assertEquals($ch->get($k, $name2), 0);
+			$this->assertEquals($ch->get($k, $name3), 0);
+
+			$this->assertTrue($ch->update($k, $v4, $ttl, $name1));
+			$this->assertTrue($ch->update($k, $v5, $ttl, $name2));
+			$this->assertTrue($ch->update($k, $v6, $ttl, $name3));
+
+			$this->assertEquals($ch->get($k, $name1), $v4);
+			$this->assertEquals($ch->get($k, $name2), $v5);
+			$this->assertEquals($ch->get($k, $name3), $v6);
+
+			$this->assertTrue($ch->del($k, $name1));
+			$this->assertTrue($ch->del($k, $name2));
+			$this->assertTrue($ch->del($k, $name3));
+
+			$this->assertFalse($ch->get($k, $name1));
+			$this->assertFalse($ch->get($k, $name2));
+			$this->assertFalse($ch->get($k, $name3));
 		}
-		$cache->init();
-		return $cache;
+	}
+
+	/**
+	测试ttl
+	*/
+	public function testTTL()
+	{
+		$ttl_add = 0;
+		$ttl_update = 2;
+		foreach ($this->adapterList as $ad => $op)
+		{
+			$ch = $this->getCacheHandle($ad, $op);
+			foreach ($this->testDataList as $k => $v)
+			{
+				$this->assertTrue($ch->add($k, $v, $ttl_add));
+				sleep(1);
+				$this->assertEquals($ch->get($k), $v);
+				$this->assertTrue($ch->update($k, $v, $ttl_update));
+				sleep(1);
+				$this->assertEquals($ch->get($k), $v);
+				sleep(2);
+				$this->assertFalse($ch->get($k));
+			}
+		}
 	}
 }
