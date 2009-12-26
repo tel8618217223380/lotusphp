@@ -12,7 +12,7 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 		{
 			if(!mkdir($cachePath, 0777, true))
 			{
-				trigger_error("Can not create $dir");
+				trigger_error("Can not create $cachePath");
 			}
 		}
 		$cacheFile = $cachePath . DIRECTORY_SEPARATOR . 'phps-' . $token. '.php';
