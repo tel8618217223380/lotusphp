@@ -1,9 +1,7 @@
 <?php
-class LtCacheAdapterFile extends LtCacheAdapter
+class LtCacheAdapterFile implements LtCacheAdapter
 {
-	public function __construct()
-	{
-	}
+	public $options;
 
 	protected function getCacheFile($key)
 	{

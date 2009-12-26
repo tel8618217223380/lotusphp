@@ -14,7 +14,10 @@ class LtCache
 	{
 		$adapterClassName = "LtCacheAdapter" . ucfirst($this->conf->adapter);
 		$this->cacheHandle = new $adapterClassName;
-		$this->cacheHandle->options = $this->conf->options;
+		if (isset($this->cacheHandle->options))
+		{
+			$this->cacheHandle->options = $this->conf->options;
+		}
 	}
 
 	public function add($key, $value, $ttl = 0, $namespace='')
@@ -58,7 +61,8 @@ class LtCache
 		}
 		else
 		{
-			$keyPrefix = sprintf("%u-", crc32($namespace));
+			$keyPrefix = sprintf("%u", crc32($namespace));
 		}
+		return $keyPrefix.$key;
 	}
 }
