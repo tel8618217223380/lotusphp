@@ -356,25 +356,5 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		}
 		$this->assertEquals(function_exists($function), $isLoadFunction);
 	}
-
-	/**
-	测试 storeHandle
-$autoloader->storeHandle = new LtCacheAdapterApc;
-$autoloader->storeKeyPrefix = "abc";
-$autoloader->setAutoloadPath($directories);
-
-dataProvider storeHandleDataProvider
-
-	public function teststoreHandle($storeHandle, $function, $isLoadFunction)
-	{
-		$ap = new LtAutoloaderProxy();
-		$ap->conf->isLoadFunction = $isLoadFunction;
-		$ap->addFileMap($pathfile);
-		if($ap->conf->isLoadFunction)
-		{
-			$ap->loadFunction();
-		}
-		$this->assertEquals(function_exists($function), $isLoadFunction);
-	}*/
 }
 
