@@ -3,7 +3,6 @@ class Lotus
 {
 	public $option;
 	public $envMode = "dev";
-	public $lotusCoreClass = array();
 	protected $lotusRuntimeDir;
 	protected $entranceFile;
 	protected $sysCacheKey = array();
@@ -37,32 +36,20 @@ class Lotus
 		/**
 		 * Load core component
 		 */
-		$lotusClass = array(
-			"ltautoloader"			=> $this->lotusRuntimeDir . "Autoloader/Autoloader.php",
-			"ltautoloaderconfig"			=> $this->lotusRuntimeDir . "Autoloader/AutoloaderConfig.php",
-			"ltcache"				=> $this->lotusRuntimeDir . "Cache/Cache.php",
-			"ltcacheconfig"			=> $this->lotusRuntimeDir . "Cache/CacheConfig.php",
-			"ltcacheadapter"		=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapter.php",
-			"ltcacheadapterapc"		=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterApc.php",
-			"ltcacheeaccelerator"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterEAccelerator.php",
-			"ltcacheadapterphps"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterPhps.php",
-			"ltcacheadapterxcache"	=> $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterXcache.php",
-			"ltobjectutil"			=> $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php",
-		);
-		$this->lotusCoreClass = array_merge($lotusClass, $this->lotusCoreClass);
+		require $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
+		require $this->lotusRuntimeDir . "Autoloader/AutoloaderConfig.php";
+		require $this->lotusRuntimeDir . "Cache/Cache.php";
+		require $this->lotusRuntimeDir . "Cache/CacheConfig.php";
+		require $this->lotusRuntimeDir . "Cache/adapter/CacheAdapter.php";
+		require $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterApc.php";
+		require $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterEAccelerator.php";
+		require $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterFile.php";
+		require $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterPhps.php";
+		require $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterXcache.php";
+		require $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
 
 		/**
-		 * Init autoloader to load Cache, ObjectUtil components
-		 */
-		require $this->lotusCoreClass["ltautoloader"];
-		require $this->lotusCoreClass["ltautoloaderconfig"];
-		$autoloader = new LtAutoloader();
-		$autoloader->storeHandle->fileMapping = $this->lotusCoreClass;
-		$autoloader->storeHandle->fileMapping[".class_total"] = 10;
-		$autoloader->init();
-
-		/**
-		 * Init Cache component to sotre LtAutoloader->fileMapping, Config->app
+		 * Init Cache component to sotre LtAutoloader, LtConfig data
 		 */
 		$cache = LtObjectUtil::singleton("LtCache");
 		if(isset($this->option["cache_adapter"]))
@@ -74,23 +61,17 @@ class Lotus
 			$cache->conf->options = $this->option["cache_options"];
 		}
 		$cache->init();
-		spl_autoload_unregister(array($autoloader, "loadClass"));
-		unset($autoloader);
 
 		/**
 		 * Prepare autoloader to load all lotus components and user-defined libraries;
 		 */
 		$autoloadDirs = array($this->lotusRuntimeDir);
-		if (isset($this->option["proj_lib"]))
+		if (isset($this->option["autoload_path"]))
 		{
-			$autoloadDirs[] = $this->option["proj_lib"];
-		}
-		if (isset($this->option["app_lib"]))
-		{
-			$autoloadDirs[] = $this->option["app_lib"];
+			$autoloadDirs[] = $this->option["autoload_path"];
 		}
 		$autoloader = new LtAutoloader();
-		$autoloader->setAutoloadPath($autoloadDirs);
+		$autoloader->autoloadPath = $autoloadDirs;
 		if ("dev" != $this->envMode)
 		{
 			$autoloader->storeHandle = LtObjectUtil::singleton("LtCache");
