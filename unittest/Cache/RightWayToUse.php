@@ -16,45 +16,64 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	public function testMostUsedWay()
 	{
 		$cache = new LtCache;
-		$cache->conf->adapter = "apc";
-		$cache->namespaceMapping = array(
-			"thread" => 1,
-			"post" => 2,
-			"user" => 3,
-		);
+		$cache->conf->adapter = "phps";
 		$cache->init();
 		
-		$this->assertTrue($cache->add("thread", 1, "This is thread 1"));
-		$this->assertEquals($cache->get("thread", 1), "This is thread 1");
-		$this->assertEquals($cache->del("thread", 1));
-		$this->assertFalse($cache->get("thread", 1));
+		$this->assertTrue($cache->add(1, "This is thread 1"));
+		$this->assertEquals($cache->get(1), "This is thread 1");
+		$this->assertTrue($cache->del(1));
+		$this->assertFalse($cache->get(1));
 	}
 
-	/**
-	 * @dataProvider addDataProvider
-	 */
-	public function testAdd($namespace, $key, $value, $ttl, $expected)
+	public function __construct()
 	{
+		parent::__construct();
+		$this->adapterList = array(
+			//"$adapter" => $options
+			//"apc" => null,
+			//"ea" => null,
+			"file" => null,
+			"phps" => null,
+		);
+		$this->testDataList = array(
+			//$key => value
+			1 => 2,
+			1.1 => null,
+			-1 => "",
+			"array" => array(1,2,4),
+			//"object" => new LtCache(), file cache不能通过这个测试
+			"test_key" => "test_value",
+		);
 	}
 
-	/**
-	 * @dataProvider delDataProvider
-	 */
-	public function testDel($namespace, $key, $expect)
-	{
+	public function test1()
+	{		
+		foreach ($this->adapterList as $ad => $op)
+		{
+			$ch = $this->getCacheHandle($ad, $op);
+			foreach ($this->testDataList as $k => $v)
+			{
+				$this->assertTrue($ch->add($k, $v));
+				$this->assertEquals($ch->get($k), $v);
+				$this->assertTrue($ch->update($k, 0));
+				$this->assertEquals($ch->get($k), 0);
+				$this->assertTrue($ch->update($k, $v));
+				$this->assertEquals($ch->get($k), $v);
+				$this->assertTrue($ch->del($k));
+				$this->assertFalse($ch->get($k));
+			}
+		}
 	}
-
-	/**
-	 * @dataProvider getDataProvider
-	 */
-	public function testGet($namespace, $key, $waitSeconds, $expected)
+	
+	public function getCacheHandle($adapter, $options = null)
 	{
-	}
-
-	/**
-	 * @dataProvider updateDataProvider
-	 */
-	public function testUpdate($namespace, $key, $value, $expected)
-	{
+		$cache = new LtCache;
+		$cache->conf->adapter = $adapter;
+		if ($options)
+		{
+			$cache->conf->options = $options;
+		}
+		$cache->init();
+		return $cache;
 	}
 }

@@ -3,9 +3,8 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 {
 	public $options;
 
-	protected function getCacheFile($key, $namespace='')
+	protected function getCacheFile($key)
 	{
-		$namespace = $this->getRealKey($namespace, $key);
 		$token = md5($key);
 		$cachePath = preg_replace('/[\\\\|\/]+/i', '/', $this->options["cache_file_root"]);
 		$cachePath = rtrim($cachePath,'\/') . '/';
@@ -19,26 +18,26 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 			}
 		}
 		$cachePath = realpath($cachePath);
-		$cacheFile = $cachePath . DIRECTORY_SEPARATOR . $namespace . '-phps-' . $token. '.php';
+		$cacheFile = $cachePath . DIRECTORY_SEPARATOR . 'phps-' . $token. '.php';
 		return $cacheFile;	
 	}
 
-	public function add($key, $value, $ttl=0, $namespace='')
+	public function add($key, $value, $ttl=0)
 	{
-		$cacheFile = $this->getCacheFile($key, $namespace);
+		$cacheFile = $this->getCacheFile($key);
 		$expireTime = (0 == $ttl) ? '0000000000' : (time()+$ttl);
-		return file_put_contents($cacheFile, '<?php exit;?>' . $expireTime . serialize($value));
+		return (boolean) file_put_contents($cacheFile, '<?php exit;?>' . $expireTime . serialize($value));
 	}
 	
-	public function del($key, $namespace='')
+	public function del($key)
 	{
-		$cacheFile = $this->getCacheFile($key, $namespace);
+		$cacheFile = $this->getCacheFile($key);
 		return unlink($cacheFile);
 	}
 	
-	public function get($key, $namespace='')
+	public function get($key)
 	{
-		$cacheFile = $this->getCacheFile($key, $namespace);
+		$cacheFile = $this->getCacheFile($key);
 		if (!is_file($cacheFile))
 		{
 			return false;
@@ -57,17 +56,5 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 				return unserialize(file_get_contents($cacheFile,false,null,23));
 			}
 		}
-	}
-
-	public function update($key, $value, $ttl=0, $namespace='')
-	{
-		$cacheFile = $this->getCacheFile($key, $namespace);
-		$expireTime = (0 == $ttl) ? '0000000000' : (time()+$ttl);
-		return file_put_contents($cacheFile, '<?php exit;?>' . $expireTime . serialize($value));
-	}
-
-	protected function getRealKey($namespace, $key)
-	{
-		return sprintf("%u", crc32($namespace)) . $key;
 	}
 }
