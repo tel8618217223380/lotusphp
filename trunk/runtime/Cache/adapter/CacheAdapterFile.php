@@ -3,10 +3,8 @@ class LtCacheAdapterFile implements LtCacheAdapter
 {
 	public $options;
 
-	protected function getCacheFile($key, $namespace='')
+	protected function getCacheFile($key)
 	{
-		//////////echo $this->options["cache_file_root"];
-		$namespace = $this->getRealKey($namespace, $key);
 		$token = md5($key);
 		$cachePath = preg_replace('/[\\\\|\/]+/i', '/', $this->options["cache_file_root"]);
 		$cachePath = rtrim($cachePath,'\/') . '/';
@@ -20,27 +18,27 @@ class LtCacheAdapterFile implements LtCacheAdapter
 			}
 		}
 		$cachePath = realpath($cachePath);
-		$cacheFile = $cachePath . DIRECTORY_SEPARATOR . $namespace . '-file-' . $token. '.php';
+		$cacheFile = $cachePath . DIRECTORY_SEPARATOR . 'file-' . $token. '.php';
 		return $cacheFile;		
 	}
 
-	public function add($key, $value, $ttl=0, $namespace='')
+	public function add($key, $value, $ttl=0)
 	{
-		$cacheFile = $this->getCacheFile($key, $namespace);
+		$cacheFile = $this->getCacheFile($key);
 		$data['ttl'] = (0 >= $ttl) ? 0 : (time()+intval($ttl));
 		$data['value'] = $value;
-		return file_put_contents($cacheFile, "<?php\nreturn ".var_export($data, true).";\n");
+		return (boolean) file_put_contents($cacheFile, "<?php\nreturn ".var_export($data, true).";\n");
 	}
 	
-	public function del($key, $namespace='')
+	public function del($key)
 	{
-		$cacheFile = $this->getCacheFile($key, $namespace);
+		$cacheFile = $this->getCacheFile($key);
 		return @unlink($cacheFile);
 	}
 	
-	public function get($key, $namespace='')
+	public function get($key)
 	{
-		$cacheFile = $this->getCacheFile($key, $namespace);
+		$cacheFile = $this->getCacheFile($key);
 		if (!is_file($cacheFile))
 		{
 			return false;
@@ -58,18 +56,5 @@ class LtCacheAdapterFile implements LtCacheAdapter
 				return $data['value'];
 			}
 		}
-	}
-
-	public function update($key, $value, $ttl=0, $namespace='')
-	{
-		$cacheFile = $this->getCacheFile($key, $namespace);
-		$data['ttl'] = (0 >= $ttl) ? 0 : (time()+intval($ttl));
-		$data['value'] = $value;
-		return file_put_contents($cacheFile, "<?php\nreturn ".var_export($data, true).";\n");
-	}
-
-	protected function getRealKey($namespace, $key)
-	{
-		return sprintf("%u", crc32($namespace)) . $key;
 	}
 }
