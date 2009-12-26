@@ -3,7 +3,7 @@
  * 这是一个最简单的示例，没有配置文件，没有MVC，不需要Web服务器
  * 适合用来开发服务器上定时运行的脚本，如数据迁移的脚本
  */
-$lotusHome = dirname(dirname(dirname(__FILE__)));
+$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example"));
 include $lotusHome . "/runtime/Lotus.php";
 
 /**

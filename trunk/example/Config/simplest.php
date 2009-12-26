@@ -2,7 +2,7 @@
 /* 
  * 加载Config类文件
  */
-$lotusHome = dirname(dirname(dirname(__FILE__)));
+$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example"));
 include $lotusHome . "/runtime/Config/Config.php";
 include $lotusHome . "/runtime/Config/ConfigExpression.php";
 /* 

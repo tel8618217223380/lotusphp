@@ -3,7 +3,7 @@
  * 加载Cache类文件
  * 加载的类很多，且需要注意先后顺序，推荐使用LtAutoloader自动加载
  */
-$lotusHome = dirname(dirname(dirname(__FILE__)));
+$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example"));
 include $lotusHome . "/runtime/Cache/Cache.php";
 include $lotusHome . "/runtime/Cache/CacheConfig.php";
 include $lotusHome . "/runtime/Cache/adapter/CacheAdapter.php";

@@ -2,7 +2,7 @@
 /**
  * Lotus class autoloading
  */
-$lotusHome = dirname(dirname(__FILE__));
+$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
 include $lotusHome . "/runtime/Autoloader/Autoloader.php";
 include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
 $autoloader = new LtAutoloader();

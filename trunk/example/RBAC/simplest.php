@@ -1,6 +1,6 @@
 <?php
 
-$lotusHome = dirname(dirname(dirname(__FILE__)));
+$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example"));
 include $lotusHome . "/runtime/RBAC/RBAC.php";
 
 // 角色
