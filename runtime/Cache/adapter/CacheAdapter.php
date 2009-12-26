@@ -1,9 +1,7 @@
 <?php
-abstract class LtCacheAdapter
+interface LtCacheAdapter
 {
-	public $options;
-
-	abstract public function add($key, $value, $ttl=0);
-	abstract public function del($key);
-	abstract public function get($key);
+	public function add($key, $value, $ttl=0);
+	public function del($key);
+	public function get($key);
 }
