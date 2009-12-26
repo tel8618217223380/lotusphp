@@ -45,10 +45,6 @@ class LtAutoloader
 
 	public function loadFunction()
 	{
-		if (!is_object($this->storeHandle))
-		{
-			$this->storeHandle = new LtAutoloaderStore();
-		}
 		if ($functionFiles = $this->storeHandle->get(".functions", $this->storeKeyPrefix))
 		{
 			foreach ($functionFiles as $functionFile)
@@ -60,10 +56,6 @@ class LtAutoloader
 
 	public function loadClass($className)
 	{
-		if (!is_object($this->storeHandle))
-		{
-			$this->storeHandle = new LtAutoloaderStore();
-		}
 		if ($classFile = $this->storeHandle->get(strtolower($className), $this->storeKeyPrefix))
 		{
 			include($classFile);
