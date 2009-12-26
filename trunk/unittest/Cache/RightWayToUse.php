@@ -1,4 +1,8 @@
 <?php
+/**
+ * @todo 测试ttl
+ * @todo 测试多个namespace的用法
+ */
 class RightWayToUseCache extends PHPUnit_Framework_TestCase
 {
 	/**

@@ -16,6 +16,8 @@ $lotus = new Lotus();
  * envMode不等于dev的时候（如prod-生产环境，testing-测试环境），性能会有提高
  * $lotus->envMode = "prod";
  */
+$lotus->envMode = "prod";
+$lotus->option["cache_adapter"] = "file";
 $lotus->init();
 
 /**
