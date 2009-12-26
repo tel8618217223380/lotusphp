@@ -68,7 +68,7 @@ class LtAutoloader
 	/**
 	 * The string or an Multidimensional array into a one-dimensional array
 	 * 
-	 * @param array $ or string
+	 * @param array or string $var
 	 * @return array one-dimensional array
 	 */
 	protected function var2array($var)
@@ -186,7 +186,7 @@ class LtAutoloader
 		}
 		else
 		{ 
-			// 没有类也没有函数的文件忽略
+			// No classes and No function ignore
 		}
 		return $libNames;
 	}
