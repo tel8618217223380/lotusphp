@@ -34,6 +34,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			//"eAccelerator" => null, //ea不支持命令行模式
 			"file" => null,
 			"phps" => null,
+			//"xcache" => null,
+			//"memcached" => null,
 		);
 		$this->testDataList = array(
 			//$key => value
@@ -50,7 +52,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	{		
 		foreach ($this->adapterList as $ad => $op)
 		{
-			echo "\n" . $ad;
 			$ch = $this->getCacheHandle($ad, $op);
 			foreach ($this->testDataList as $k => $v)
 			{

@@ -6,10 +6,8 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 	protected function getCacheFile($key)
 	{
 		$token = md5($key);
-		$cachePath = preg_replace('/[\\\\|\/]+/i', '/', $this->options["cache_file_root"]);
-		$cachePath = rtrim($cachePath,'\/') . '/';
-		$cachePath .= substr($token, 0,2) . '/';
-		$cachePath .= substr($token, 2,2);
+		$cachePath = rtrim($this->options["cache_file_root"], '\/') . DIRECTORY_SEPARATOR
+		. substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2);
 		if(!is_dir($cachePath))
 		{
 			if(!mkdir($cachePath, 0777, true))
@@ -17,9 +15,8 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 				trigger_error("Can not create $dir");
 			}
 		}
-		$cachePath = realpath($cachePath);
 		$cacheFile = $cachePath . DIRECTORY_SEPARATOR . 'phps-' . $token. '.php';
-		return $cacheFile;	
+		return $cacheFile;
 	}
 
 	public function add($key, $value, $ttl=0)
