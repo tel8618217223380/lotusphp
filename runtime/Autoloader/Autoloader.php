@@ -14,12 +14,12 @@ class LtAutoloader
 
 	public function init()
 	{
-		if (empty($this->storeHandle))
+		if (!is_object($this->storeHandle))
 		{
 			$this->storeHandle = new LtAutoloaderStore();
 		} 
 		// Whether scanning directory
-		if (0 == $this->storeHandle->get($this->storeKeyPrefix . ".class_total") && 0 == $this->storeHandle->get($this->storeKeyPrefix . ".function_total"))
+		if (0 == $this->storeHandle->get(".class_total", $this->storeKeyPrefix) && 0 == $this->storeHandle->get(".function_total", $this->storeKeyPrefix))
 		{
 			$autoloadPath = $this->var2array($this->autoloadPath);
 			$this->autoloadPath = $this->preparePath($autoloadPath);
@@ -45,7 +45,7 @@ class LtAutoloader
 
 	public function loadFunction()
 	{
-		if ($functionFiles = $this->storeHandle->get($this->storeKeyPrefix . ".funcations"))
+		if ($functionFiles = $this->storeHandle->get(".functions", $this->storeKeyPrefix))
 		{
 			foreach ($functionFiles as $functionFile)
 			{
@@ -60,7 +60,7 @@ class LtAutoloader
 		{
 			$this->storeHandle = new LtAutoloaderStore();
 		}
-		if ($classFile = $this->storeHandle->get($this->storeKeyPrefix . strtolower($className)))
+		if ($classFile = $this->storeHandle->get(strtolower($className), $this->storeKeyPrefix))
 		{
 			include($classFile);
 		}
@@ -194,36 +194,29 @@ class LtAutoloader
 
 	protected function addClass($className, $file)
 	{
+		$key = strtolower($className);
 		if (empty($this->storeHandle))
 		{
 			$this->storeHandle = new LtAutoloaderStore();
 		}
-		$key = $this->storeKeyPrefix . strtolower($className);
-		if ($this->storeHandle->get($key))
+		if ($this->storeHandle->get($key, $this->storeKeyPrefix))
 		{
 			trigger_error("dumplicate class name : $className");
 			return false;
 		}
 		else
 		{
-			$this->storeHandle->add($key, $file);
-			$classTotalKey = $this->storeKeyPrefix . ".class_total";
-			$classTotal = $this->storeHandle->get($classTotalKey);
-			$this->storeHandle->del($classTotalKey);
-			$this->storeHandle->add($classTotalKey, $classTotal + 1);
+			$this->storeHandle->add($key, $file, 0, $this->storeKeyPrefix);
+			$this->storeHandle->update(".class_total", $this->storeHandle->get(".class_total", $this->storeKeyPrefix) + 1, 0, $this->storeKeyPrefix);
 			return true;
 		}
 	}
 
 	protected function addFunction($functionName, $file)
 	{
-		if (empty($this->storeHandle))
-		{
-			$this->storeHandle = new LtAutoloaderStore();
-		}
 		$functionName = strtolower($functionName);
-		$foundFunctions = $this->storeHandle->get($this->storeKeyPrefix . ".funcations");
-		if (array_key_exists($functionName, $foundFunctions))
+		$foundFunctions = $this->storeHandle->get(".functions", $this->storeKeyPrefix);
+		if ($foundFunctions && array_key_exists($functionName, $foundFunctions))
 		{
 			trigger_error("dumplicate function name: $functionName");
 			return false;
@@ -231,12 +224,8 @@ class LtAutoloader
 		else
 		{
 			$foundFunctions[$functionName] = $file;
-			$this->storeHandle->del($this->storeKeyPrefix . ".funcations");
-			$this->storeHandle->add($this->storeKeyPrefix . ".funcations", $foundFunctions);
-			$functionTotalKey = $this->storeKeyPrefix . ".function_total";
-			$functionTotal = $this->storeHandle->get($functionTotalKey);
-			$this->storeHandle->del($functionTotalKey);
-			$this->storeHandle->add($functionTotalKey, $functionTotal + 1);
+			$this->storeHandle->update(".functions", $foundFunctions, 0, $this->storeKeyPrefix);
+			$this->storeHandle->update(".function_total", $this->storeHandle->get(".function_total", $this->storeKeyPrefix) + 1, 0, $this->storeKeyPrefix);
 			return true;
 		}
 	}
@@ -263,16 +252,17 @@ class LtAutoloader
 
 class LtAutoloaderStore
 {
-	public $fileMapping = array(".class_total" => 0, ".function_total" => 0, ".funcations" => array());
+	public $fileMapping;
 
-	public function add($key, $value)
+	public function add($key, $value, $ttl, $namespace)
 	{
-		$this->fileMapping[$key] = $value;
+		$this->fileMapping[$key = $this->getRealKey($namespace, $key)] = $value;
 		return true;
 	}
 
-	public function del($key)
+	public function del($key, $namespace)
 	{
+		$key = $this->getRealKey($namespace, $key);
 		if(isset($this->fileMapping[$key]))
 		{
 			unset($this->fileMapping[$key]);
@@ -284,8 +274,20 @@ class LtAutoloaderStore
 		}
 	}
 
-	public function get($key)
+	public function get($key, $namespace)
 	{
+		$key = $this->getRealKey($namespace, $key);
 		return isset($this->fileMapping[$key]) ? $this->fileMapping[$key] : false;
+	}
+
+	public function update($key, $value, $ttl, $namespace)
+	{
+		$this->fileMapping[$this->getRealKey($namespace, $key)] = $value;
+		return true;
+	}
+
+	protected function getRealKey($namespace, $key)
+	{
+		return sprintf("%u", crc32($namespace)) . $key;
 	}
 }
