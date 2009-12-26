@@ -2,7 +2,7 @@
 /*
  * 加载Url类文件
  */
-$lotusHome = dirname(dirname(dirname(__FILE__)));
+$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example"));
 include $lotusHome . "/runtime/Url/Url.php";
 include $lotusHome . "/runtime/Url/UrlConfig.php";
 /*

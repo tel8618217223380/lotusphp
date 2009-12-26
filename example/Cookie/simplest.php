@@ -2,7 +2,7 @@
 /* 
  * 加载Cookie类文件
  */
-$lotusHome = dirname(dirname(dirname(__FILE__)));
+$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example"));
 include $lotusHome . "/runtime/Cookie/Cookie.php";
 include $lotusHome . "/runtime/Cookie/CookieConfig.php";
 /* 
