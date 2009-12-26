@@ -30,8 +30,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		parent::__construct();
 		$this->adapterList = array(
 			//"$adapter" => $options
-			//"apc" => null,
-			//"ea" => null,
+			"apc" => null,
+			//"eAccelerator" => null, //ea不支持命令行模式
 			"file" => null,
 			"phps" => null,
 		);
@@ -41,7 +41,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			1.1 => null,
 			-1 => "",
 			"array" => array(1,2,4),
-			//"object" => new LtCache(), file cache不能通过这个测试
+			//"object" => new LtCache(), //file cache不能通过这个测试
 			"test_key" => "test_value",
 		);
 	}
@@ -50,6 +50,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	{		
 		foreach ($this->adapterList as $ad => $op)
 		{
+			echo "\n" . $ad;
 			$ch = $this->getCacheHandle($ad, $op);
 			foreach ($this->testDataList as $k => $v)
 			{
