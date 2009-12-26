@@ -306,9 +306,9 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	{
 		$ap = new LtAutoloaderProxy();
 		$ap->conf->skipDirNames = $dirBlackListArray;
-		$ap->scanDirs($dir);
 		$ap->storeHandle = new LtAutoloaderStore();
 		$ap->storeKeyPrefix = "";
+		$ap->scanDirs($dir);
 		$isSkip = $ap->storeHandle->get('hellolotus', $ap->storeKeyPrefix) ? false : true;
 		$this->assertEquals($isSkip, $expected);
 	}
@@ -322,6 +322,8 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testScanDirs($path, $classORfunction, $pathFile)
 	{
 		$ap = new LtAutoloaderProxy();
+		$ap->storeHandle = new LtAutoloaderStore();
+		$ap->storeKeyPrefix = "";
 		$ap->scanDirs($path);
 		foreach($classORfunction as $key=>$value)
 		{
@@ -337,6 +339,8 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testLoadClass($pathfile, $class)
 	{
 		$ap = new LtAutoloaderProxy();
+		$ap->storeHandle = new LtAutoloaderStore();
+		$ap->storeKeyPrefix = "";
 		$ap->addFileMap($pathfile);
 		$ap->loadClass($class);
 		$this->assertTrue(class_exists($class));

@@ -195,10 +195,6 @@ class LtAutoloader
 	protected function addClass($className, $file)
 	{
 		$key = strtolower($className);
-		if (empty($this->storeHandle))
-		{
-			$this->storeHandle = new LtAutoloaderStore();
-		}
 		if ($this->storeHandle->get($key, $this->storeKeyPrefix))
 		{
 			trigger_error("dumplicate class name : $className");
@@ -252,20 +248,20 @@ class LtAutoloader
 
 class LtAutoloaderStore
 {
-	public $fileMapping;
+	protected $stack;
 
 	public function add($key, $value, $ttl, $namespace)
 	{
-		$this->fileMapping[$key = $this->getRealKey($namespace, $key)] = $value;
+		$this->stack[$key = $this->getRealKey($namespace, $key)] = $value;
 		return true;
 	}
 
 	public function del($key, $namespace)
 	{
 		$key = $this->getRealKey($namespace, $key);
-		if(isset($this->fileMapping[$key]))
+		if(isset($this->stack[$key]))
 		{
-			unset($this->fileMapping[$key]);
+			unset($this->stack[$key]);
 			return true;
 		}
 		else
@@ -277,12 +273,12 @@ class LtAutoloaderStore
 	public function get($key, $namespace)
 	{
 		$key = $this->getRealKey($namespace, $key);
-		return isset($this->fileMapping[$key]) ? $this->fileMapping[$key] : false;
+		return isset($this->stack[$key]) ? $this->stack[$key] : false;
 	}
 
 	public function update($key, $value, $ttl, $namespace)
 	{
-		$this->fileMapping[$this->getRealKey($namespace, $key)] = $value;
+		$this->stack[$this->getRealKey($namespace, $key)] = $value;
 		return true;
 	}
 
