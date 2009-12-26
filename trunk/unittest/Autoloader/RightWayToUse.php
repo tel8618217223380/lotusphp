@@ -307,7 +307,9 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap = new LtAutoloaderProxy();
 		$ap->conf->skipDirNames = $dirBlackListArray;
 		$ap->scanDirs($dir);
-		$isSkip = $ap->storeHandle->get($ap->storeKeyPrefix . 'hellolotus') ? false : true;
+		$ap->storeHandle = new LtAutoloaderStore();
+		$ap->storeKeyPrefix = "";
+		$isSkip = $ap->storeHandle->get('hellolotus', $ap->storeKeyPrefix) ? false : true;
 		$this->assertEquals($isSkip, $expected);
 	}
 	/**
@@ -323,7 +325,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap->scanDirs($path);
 		foreach($classORfunction as $key=>$value)
 		{
-			$this->assertEquals($ap->storeHandle->get($ap->storeKeyPrefix . $classORfunction[$key]), $pathFile[$key]);
+			$this->assertEquals($ap->storeHandle->get($classORfunction[$key], $ap->storeKeyPrefix), $pathFile[$key]);
 		}
 	}
 
@@ -345,10 +347,12 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 
 	 * @dataProvider isLoadFunctionDataProvider
 	 */
-	public function testisLoadFunction($pathfile, $function, $isLoadFunction)
+	public function testIsLoadFunction($pathfile, $function, $isLoadFunction)
 	{
 		$ap = new LtAutoloaderProxy();
 		$ap->conf->isLoadFunction = $isLoadFunction;
+		$ap->storeHandle = new LtAutoloaderStore();
+		$ap->storeKeyPrefix = "";
 		$ap->addFileMap($pathfile);
 		if($ap->conf->isLoadFunction)
 		{
