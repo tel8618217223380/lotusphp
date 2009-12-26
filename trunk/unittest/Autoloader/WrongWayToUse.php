@@ -36,8 +36,6 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testDumplicateNameOfClasses()
 	{
 		$ap = new LtAutoloaderProxy();
-		$ap->storeHandle = new LtAutoloaderStore();
-		$ap->storeKeyPrefix = "";
 		$ap->addClass("ClassA", __FILE__);
 		$ap->addClass("classa", __FILE__);
 	}
@@ -56,8 +54,6 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testDumplicateNameOfFunctions()
 	{
 		$ap = new LtAutoloaderProxy();
-		$ap->storeHandle = new LtAutoloaderStore();
-		$ap->storeKeyPrefix = "";
 		$ap->addFunction("Function1", __FILE__);
 		$ap->addFunction("function1", __FILE__);
 	}

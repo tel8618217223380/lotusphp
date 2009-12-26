@@ -6,6 +6,12 @@ class LtAutoloaderProxy extends LtAutoloader
 {
 	public $conf;
 
+	public function __construct()
+	{
+		parent::__construct();
+		$this->storeHandle = new LtAutoloaderStore();
+		$this->storeKeyPrefix = "";
+	}
 	public function __get($prop)
 	{
 		if (isset($this->$prop))
