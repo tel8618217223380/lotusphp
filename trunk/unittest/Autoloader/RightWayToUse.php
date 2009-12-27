@@ -43,11 +43,11 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	{
 		$autoloader = new LtAutoloader;
 		$autoloader->autoloadPath = array(
-			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_1",
-			dirname(__FILE__) . DIRECTORY_SEPARATOR . "class_dir_2",
-			dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_1",
-			dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_2"
-			);
+			dirname(__FILE__) . "/test_data/class_dir_1",
+			dirname(__FILE__) . "/test_data/class_dir_2",
+			dirname(__FILE__) . "/test_data/function_dir_1",
+			dirname(__FILE__) . "/test_data/function_dir_2"
+		);
 		$autoloader->init();
 
 		$this->assertTrue(new Goodbye() instanceof GoodBye);
@@ -69,38 +69,38 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		return array(
 			// 用一个数组传递多个目录，绝对路径，不带拖尾斜线
 			array(
-				array("$cd/class_dir_1", "$cd/class_dir_2"),
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
+				array("$cd/test_data/class_dir_1", "$cd/test_data/class_dir_2"),
+				array("$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_2"),
 				), 
 			// 只有一个目录，可以不用数组传
 			array(
-				"$cd/class_dir_1",
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
+				"$cd/test_data/class_dir_1",
+				array("$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1"),
 				), 
 			// 用二维数组传递多个目录（不推荐）
 			array(
-				array("class_dir_1", array("class_dir_2")),
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
+				array("test_data/class_dir_1", array("test_data/class_dir_2")),
+				array("$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_2"),
 				), 
 			// 相对路径（不推荐）
 			array(
-				array("class_dir_1", "./class_dir_2"),
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
+				array("test_data/class_dir_1", "test_data/class_dir_2"),
+				array("$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_2"),
 				), 
 			// 带拖尾斜线
 			array(
-				array("class_dir_1/", "class_dir_2\\"),
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
+				array("test_data/class_dir_1/", "test_data/class_dir_2\\"),
+				array("$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_2"),
 				), 
 			// 目录分隔符\/任意
 			array(
-				array("$cd\class_dir_1", "$cd/class_dir_1"),
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
+				array("$cd\\test_data\\class_dir_1", "$cd/test_data/class_dir_1"),
+				array("$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1"),
 				), 
 			// 可以是文件
 			array(
-				"$cd/class_dir_1/GoodBye.php",
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR . 'GoodBye.php')
+				"$cd/test_data/class_dir_1/GoodBye.php",
+				array("$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR . 'GoodBye.php')
 				), 
 			// 可以是空值（不推荐）
 			array(
@@ -109,8 +109,8 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 				),
 			// 去除重复目录分隔符\/
 			array(
-				array("$cd\\class_dir_1", "$cd//class_dir_1"),
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
+				array("$cd\\test_data\\class_dir_1", "$cd//test_data//class_dir_1"),
+				array("$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1"),
 				), 
 			);
 	}
@@ -156,13 +156,13 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		return array(
 			array(
 				array("php3", "php5"),
-				"is_allowed_file/test.php",
+				"test_data/is_allowed_file/test.php",
 				false,
 				),
 
 			array(
 				array("php", "php5"),
-				"is_allowed_file/test.php5",
+				"test_data/is_allowed_file/test.php5",
 				true,
 				),
 			);
@@ -180,13 +180,13 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		return array(
 			array(
 				array(".svn", "subdir"),
-				array("$cd" . DIRECTORY_SEPARATOR . 'class_dir_2'),
+				array("$cd/test_data/class_dir_2"),
 				true,
 				),
 
 			array(
 				array(".svn", "bak"),
-				array("$cd" . DIRECTORY_SEPARATOR . 'class_dir_2'),
+				array("$cd/test_data/class_dir_2"),
 				false,
 				),
 			);
@@ -203,12 +203,12 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$cd = dirname(__FILE__); //current dir, 当前目录
 		return array(
 			array(
-				"$cd/is_load_func/welcome.php", 
+				"$cd/test_data/is_load_func/welcome.php", 
 				'welcome',
 				true,
 				),
 			array(
-				"$cd/is_load_func/welcome2.php", 
+				"$cd/test_data/is_load_func/welcome2.php", 
 				'welcome2',
 				false,
 				),
@@ -232,11 +232,11 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$cd = dirname(__FILE__); //current dir, 当前目录
 		return array(
 			array(
-				array("$cd/class_dir_1", "$cd/class_dir_2"),
+				array("$cd/test_data/class_dir_1", "$cd/test_data/class_dir_2"),
 				array('goodbye', 'helloworld', 'hellolotus'),
-				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR . 'GoodBye.php',
-					"$cd" . DIRECTORY_SEPARATOR . "class_dir_2" . DIRECTORY_SEPARATOR . 'HelloWorld.php',
-					"$cd" . DIRECTORY_SEPARATOR . "class_dir_2" . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'anotherClass.inc',
+				array("$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR . 'GoodBye.php',
+					"$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_2" . DIRECTORY_SEPARATOR . 'HelloWorld.php',
+					"$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_2" . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'anotherClass.inc',
 					),
 				),
 			);
@@ -253,7 +253,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$cd = dirname(__FILE__); //current dir, 当前目录
 		return array(
 			array(
-				"$cd/class_dir_1/LoadClass.php", 
+				"$cd/test_data/class_dir_1/LoadClass.php", 
 				'isLoadClass',
 				),
 			);
