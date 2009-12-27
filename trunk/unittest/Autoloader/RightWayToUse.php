@@ -157,13 +157,13 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		return array(
 			array(
 				array("php3", "php5"),
-				"test.php",
+				"is_allowed_file/test.php",
 				false,
 				),
 
 			array(
 				array("php", "php5"),
-				"test.php5",
+				"is_allowed_file/test.php5",
 				true,
 				),
 			);
