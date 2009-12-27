@@ -1,7 +1,7 @@
 <?php
 $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
-include $lotusHome . "/runtime/Autoloader/Autoloader.php";
-include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
+require_once $lotusHome . "/runtime/Autoloader/Autoloader.php";
+require_once $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
 
 /**
  * 用这个类把LtAutoloader的protected属性和方法暴露出来测试
@@ -14,7 +14,7 @@ class LtAutoloaderProxy extends LtAutoloader
 	{
 		parent::__construct();
 		$this->storeHandle = new LtAutoloaderStore();
-		$this->storeKeyPrefix = "";
+		$this->namespace = "";
 	}
 	public function __get($prop)
 	{

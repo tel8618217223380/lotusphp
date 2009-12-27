@@ -1,6 +1,7 @@
 <?php
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Autoloader/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Cache/AllTest.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Config/AllTest.php";
 
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Lotus/AllTest.php";
 
@@ -12,6 +13,7 @@ class AllTest
 
         $suite->addTestSuite('AutoloaderAllTest');
         $suite->addTestSuite('CacheAllTest');
+        $suite->addTestSuite('ConfigAllTest');
         $suite->addTestSuite('LotusAllTest');
 
         return $suite;
