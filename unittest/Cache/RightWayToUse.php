@@ -1,7 +1,8 @@
 <?php
 /**
- * @todo 测试ttl
- * @todo 测试多个namespace的用法
+ * @todo 测试用户通过数组传入namespaceMapping时能否正常工作
+ * @todo 自行实现的phps/file cache，注意：
+ *       1. update，del时检查key是否存在 2.add时，如果该key已经存在，但已过期，也允许add
  */
 class RightWayToUseCache extends PHPUnit_Framework_TestCase
 {
@@ -104,37 +105,37 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		foreach ($this->adapterList as $ad => $op)
 		{
 			$ch = $this->getCacheHandle($ad, $op);
-			$this->assertTrue($ch->add($k, $v1, $ttl, $name1));
-			$this->assertTrue($ch->add($k, $v2, $ttl, $name2));
-			$this->assertTrue($ch->add($k, $v3, $ttl, $name3));
+			$this->assertTrue($ch->add($key, $v1, $ttl, $name1));
+			$this->assertTrue($ch->add($key, $v2, $ttl, $name2));
+			$this->assertTrue($ch->add($key, $v3, $ttl, $name3));
 
-			$this->assertEquals($ch->get($k, $name1), $v1);
-			$this->assertEquals($ch->get($k, $name2), $v2);
-			$this->assertEquals($ch->get($k, $name3), $v3);
+			$this->assertEquals($ch->get($key, $name1), $v1);
+			$this->assertEquals($ch->get($key, $name2), $v2);
+			$this->assertEquals($ch->get($key, $name3), $v3);
 
-			$this->assertTrue($ch->update($k, 0, $ttl, $name1));
-			$this->assertTrue($ch->update($k, 0, $ttl, $name2));
-			$this->assertTrue($ch->update($k, 0, $ttl, $name3));
+			$this->assertTrue($ch->update($key, 0, $ttl, $name1));
+			$this->assertTrue($ch->update($key, 0, $ttl, $name2));
+			$this->assertTrue($ch->update($key, 0, $ttl, $name3));
 
-			$this->assertEquals($ch->get($k, $name1), 0);
-			$this->assertEquals($ch->get($k, $name2), 0);
-			$this->assertEquals($ch->get($k, $name3), 0);
+			$this->assertEquals($ch->get($key, $name1), 0);
+			$this->assertEquals($ch->get($key, $name2), 0);
+			$this->assertEquals($ch->get($key, $name3), 0);
 
-			$this->assertTrue($ch->update($k, $v4, $ttl, $name1));
-			$this->assertTrue($ch->update($k, $v5, $ttl, $name2));
-			$this->assertTrue($ch->update($k, $v6, $ttl, $name3));
+			$this->assertTrue($ch->update($key, $v4, $ttl, $name1));
+			$this->assertTrue($ch->update($key, $v5, $ttl, $name2));
+			$this->assertTrue($ch->update($key, $v6, $ttl, $name3));
 
-			$this->assertEquals($ch->get($k, $name1), $v4);
-			$this->assertEquals($ch->get($k, $name2), $v5);
-			$this->assertEquals($ch->get($k, $name3), $v6);
+			$this->assertEquals($ch->get($key, $name1), $v4);
+			$this->assertEquals($ch->get($key, $name2), $v5);
+			$this->assertEquals($ch->get($key, $name3), $v6);
 
-			$this->assertTrue($ch->del($k, $name1));
-			$this->assertTrue($ch->del($k, $name2));
-			$this->assertTrue($ch->del($k, $name3));
+			$this->assertTrue($ch->del($key, $name1));
+			$this->assertTrue($ch->del($key, $name2));
+			$this->assertTrue($ch->del($key, $name3));
 
-			$this->assertFalse($ch->get($k, $name1));
-			$this->assertFalse($ch->get($k, $name2));
-			$this->assertFalse($ch->get($k, $name3));
+			$this->assertFalse($ch->get($key, $name1));
+			$this->assertFalse($ch->get($key, $name2));
+			$this->assertFalse($ch->get($key, $name3));
 		}
 	}
 
