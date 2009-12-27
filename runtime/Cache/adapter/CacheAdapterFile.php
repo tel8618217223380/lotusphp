@@ -30,7 +30,7 @@ class LtCacheAdapterFile implements LtCacheAdapter
 		$data['ttl'] = (0 >= $ttl) ? 0 : (time()+intval($ttl));
 		if(is_object($value) || is_resource($value))
 		{
-			return (boolean) file_put_contents($cacheFile, "<?php\nreturn array('ttl' => ". $data['ttl'] . ", 'value' =>  unserialize(\"" . addslashes(serialize($value)) . "\"));\n");
+			return (boolean) file_put_contents($cacheFile, "<?php\nreturn array('ttl'=>". $data['ttl'] . ",'value'=>unserialize(\"" . addslashes(serialize($value)) . "\"));\n");
 		}
 		else
 		{
