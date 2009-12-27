@@ -13,6 +13,10 @@ class LtCache
 	public function init()
 	{
 		$adapterClassName = "LtCacheAdapter" . ucfirst($this->conf->adapter);
+		if(!class_exists($adapterClassName))
+		{
+			trigger_error('Invalid adapter');
+		}
 		$this->cacheHandle = new $adapterClassName;
 		if (property_exists($this->cacheHandle, "options"))
 		{

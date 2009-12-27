@@ -23,7 +23,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	 * -------------------------------------------------------------------
 	 * LtCache建议（不强求）：
 	    # 如果你的服务器上有apc/eaccelerator/xcache等opcode cache
-	                最好不要再使用file adapter
+	                ☆★最好不要再使用file adapter★☆
 	    # 为保证key不冲突，最好使用namespace功能
 
 	 * 本测试用例期望效果：
