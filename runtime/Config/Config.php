@@ -20,9 +20,14 @@ class LtConfig
 		{
 			$this->storeHandle = new LtConfigStore();
 		}
+		else
+		{
+			$this->namespace = md5($this->configFile);
+			$this->storeHandle->namespaceMapping[$this->namespace] = crc32($this->namespace);
+		}
 		if (0 == $this->storeHandle->get(".config_total", $this->namespace))
 		{
-			$this->storeHandle->add(".config_total", $this->namespace);
+			$this->storeHandle->add(".config_total", 0, 0, $this->namespace);
 			$this->configFromUserFile = include($this->configFile);
 			$this->storeConfigArray(include($this->configFile));
 		}

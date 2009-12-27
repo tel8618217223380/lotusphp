@@ -1,13 +1,13 @@
 <?php
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "include_classes.inc";
-require $lotusHome . "runtime/Cache/Cache.php";
-require $lotusHome . "runtime/Cache/CacheConfig.php";
-require $lotusHome . "runtime/Cache/adapter/CacheAdapter.php";
-require $lotusHome . "runtime/Cache/adapter/CacheAdapterApc.php";
-require $lotusHome . "runtime/Cache/adapter/CacheAdapterEAccelerator.php";
-require $lotusHome . "runtime/Cache/adapter/CacheAdapterFile.php";
-require $lotusHome . "runtime/Cache/adapter/CacheAdapterPhps.php";
-require $lotusHome . "runtime/Cache/adapter/CacheAdapterXcache.php";
+require_once $lotusHome . "runtime/Cache/Cache.php";
+require_once $lotusHome . "runtime/Cache/CacheConfig.php";
+require_once $lotusHome . "runtime/Cache/adapter/CacheAdapter.php";
+require_once $lotusHome . "runtime/Cache/adapter/CacheAdapterApc.php";
+require_once $lotusHome . "runtime/Cache/adapter/CacheAdapterEAccelerator.php";
+require_once $lotusHome . "runtime/Cache/adapter/CacheAdapterFile.php";
+require_once $lotusHome . "runtime/Cache/adapter/CacheAdapterPhps.php";
+require_once $lotusHome . "runtime/Cache/adapter/CacheAdapterXcache.php";
 class PerformanceTuning4Db extends PHPUnit_Framework_TestCase
 {
 	/**
