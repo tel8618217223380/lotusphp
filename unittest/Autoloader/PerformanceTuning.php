@@ -1,11 +1,18 @@
 <?php
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
-
+/**
+ * 本测试展示了如何用LtCache给LtAutoloader提高性能
+ */
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "include_classes.inc";
+require $lotusHome . "runtime/Cache/Cache.php";
+require $lotusHome . "runtime/Cache/CacheConfig.php";
+require $lotusHome . "runtime/Cache/adapter/CacheAdapter.php";
+require $lotusHome . "runtime/Cache/adapter/CacheAdapterApc.php";
+require $lotusHome . "runtime/Cache/adapter/CacheAdapterEAccelerator.php";
+require $lotusHome . "runtime/Cache/adapter/CacheAdapterFile.php";
+require $lotusHome . "runtime/Cache/adapter/CacheAdapterPhps.php";
+require $lotusHome . "runtime/Cache/adapter/CacheAdapterXcache.php";
 class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * 本测试展示了如何用LtCache给LtAutoloader提高性能
-	 */
 	public function testPerformance()
 	{
 		/**

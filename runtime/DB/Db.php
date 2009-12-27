@@ -38,10 +38,10 @@ class LtDb
 	 * INSERT return the ID generated for an AUTO_INCREMENT column
 	 * UPDATE, DELETE return affected count
 	 * USE, DROP, ALTER, CREATE, SET etc, return affected count
-	 * @todo 如果是读操作，自动去读slave服务器，除非设置了强制读master服务器
+	 * @todo 如果是读操作，自动去读slave服务器，除非设置了强制读master服务器（此功能行动到上级类去实现）
 	 * @notice 每次只能执行一条SQL
 	 */
-	public function query($sql, $bind = null, $forceUseMaster = false)
+	public function query($sql, $bind = null)
 	{
 		if(empty($sql))
 		{
