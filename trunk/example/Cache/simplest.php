@@ -10,6 +10,7 @@ include $lotusHome . "/runtime/Cache/adapter/CacheAdapter.php";
 include $lotusHome . "/runtime/Cache/adapter/CacheAdapterApc.php";
 include $lotusHome . "/runtime/Cache/adapter/CacheAdapterEAccelerator.php";
 include $lotusHome . "/runtime/Cache/adapter/CacheAdapterPhps.php";
+include $lotusHome . "/runtime/Cache/adapter/CacheAdapterFile.php";
 include $lotusHome . "/runtime/Cache/adapter/CacheAdapterXcache.php";
 /**
  * 加载Cache类文件
@@ -29,12 +30,25 @@ if(!$cache->get("test_key"))
 echo "\n" . $cache->get("test_key");
 
 /**
- * 使用apc
+ * 使用 file 缓存 object
  */
-$cache->conf->adapter= "apc";
+$cache->conf->adapter= "file";
+$cache->init();
+if(!$cache->get("test_key"))
+{
+	$cache->add("test_key", $cache);
+}
+echo "\n" ;
+print_r($cache->get("test_key"));
+
+/**
+ * 使用apc
+
+$cache->conf->adapter= "apcz";
 $cache->init();
 if(!$cache->get("test_key"))
 {
 	$cache->add("test_key", "hello apc");
 }
 echo "\n" . $cache->get("test_key");
+ */
