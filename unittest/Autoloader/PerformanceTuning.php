@@ -57,9 +57,9 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 		$endTime = microtime(true);
 		$totalTime = number_format(($endTime-$startTime), 6);
 		$average = number_format(($totalTime/$times), 6);
-		echo "\n-------------------------------------------------------\n";
+		echo "\n--------------------------------------------------\n";
 		echo "times $times totalTime $totalTime average $average";
-		echo "\n-------------------------------------------------------\n";
+		echo "\n--------------------------------------------------\n";
 		$this->assertTrue(1 > $totalTime);
 	}
 }
