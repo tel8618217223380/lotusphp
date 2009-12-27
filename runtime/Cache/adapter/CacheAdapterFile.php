@@ -1,4 +1,8 @@
 <?php
+/**
+不支持缓存object, 建议使用phps缓存
+参考: http://php.net/manual/en/function.var-export.php
+*/
 class LtCacheAdapterFile implements LtCacheAdapter
 {
 	public $options;
