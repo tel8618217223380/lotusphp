@@ -2,43 +2,38 @@
 /**
  * 本测试文档演示了LtAutoloader的正确使用方法 
  * 按本文档操作一定会得到正确的结果
- * 
- * @todo 增加performance_tuning.php的测试用例
- * @todo 增加loadClass(), scanDirs(), conf->loadFunction的测试
  */
 chdir(dirname(__FILE__));
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
 class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 {
 	/**
-	 * 
-	 * @example $autoloader = new LtAutoloader();
-	 * $autoloader->autoloadPath = 'class/path_1';
-	 * $autoloader->autoloadPath = array('class/path_1','func/path_2');
-	 * $autoloader->storeKeyPrefix = "abc_";
-	 * $autoloader->init();
 	 * -------------------------------------------------------------------
-	 * 需要被自动加载的文件都以.php或者.inc结尾
-	 * 如果既有php文件，又有html文件，html文件将被忽略，php文件正常加载
-	 * 可配置，详情参见LtAutoloaderCofig
+	 * LtAutoloader要求：
+			# 需要被自动加载的文件都以.php或者.inc结尾
+			 	如果既有php文件，又有html文件，html文件将被忽略，php文件正常加载
+				 可配置，详情参见LtAutoloaderCofig
+
 	 * -------------------------------------------------------------------
 	 * LtAutoloader不在意：
-	 * 目录名有没有拖尾斜线
-	 * 目录下面有无子目录 
-	 * 文件名和文件路径跟类名有无关联 
-	 * 定义和使用类时，类名是大写还是小写 
+	    # 目录名有没有拖尾斜线
+	    # 目录下面有无子目录 
+	    # 文件名和文件路径跟类名有无关联 
+	    # 定义和使用类时，类名是大写还是小写 
+
 	 * -------------------------------------------------------------------
 	 * LtAutoloader不支持（出错演示和不支持的原因参见WrongWayToUse.php）：
-	 * 传入的参数不是目录名（如/proj/lib/class.php） 
-	 * 传入的参数不是真实存在的目录（如http://some_dir这样的） 
-	 * 目录名或者文件名带空格（如Zend Framework） 
-	 * 类或接口重名，函数和函数重名
+	    # 传入的参数不是真实存在的目录（如http://some_dir这样的） 
+	    # 目录名或者文件名带空格（如Zend Framework） 
+	    # 类或接口重名，函数和函数重名
+
 	 * -------------------------------------------------------------------
 	 * LtAutoloader建议（不强求）：
-	 * autoloadPath使用绝对路径
-	 * 使用class而不是function来封装你的逻辑
-	 * 每个class都放在单独的一个文件中，且不要在已经定义了类的文件里再定义函数
-	 * class/function里不要使用__FILE__魔术变量
+	    # autoloadPath使用绝对路径
+	    # 使用class而不是function来封装你的逻辑
+	    # 每个class都放在单独的一个文件中，且不要在已经定义了类的文件里再定义函数
+	    # class/function里不要使用__FILE__魔术变量
+
 	 * -------------------------------------------------------------------
 	 * 本测试用例期望效果：
 	 * 在new CLASS_NAME, class_exists("CLASS_NAME"), extends CLASS_NAME的时候 
@@ -54,6 +49,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			dirname(__FILE__) . DIRECTORY_SEPARATOR . "function_dir_2"
 			);
 		$autoloader->init();
+
 		$this->assertTrue(new Goodbye() instanceof GoodBye);
 		$this->assertTrue(class_exists("HelloWorld"));
 		$this->assertEquals(HelloLotus::sayHello(), "hello");
@@ -77,7 +73,8 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_2"),
 				), 
 			// 只有一个目录，可以不用数组传
-			array("$cd/class_dir_1",
+			array(
+				"$cd/class_dir_1",
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
 				), 
 			// 用二维数组传递多个目录（不推荐）
@@ -101,11 +98,13 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1", "$cd" . DIRECTORY_SEPARATOR . "class_dir_1"),
 				), 
 			// 可以是文件
-			array("$cd/class_dir_1/GoodBye.php",
+			array(
+				"$cd/class_dir_1/GoodBye.php",
 				array("$cd" . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR . 'GoodBye.php')
 				), 
 			// 可以是空值（不推荐）
-			array('',
+			array(
+				'',
 				array("$cd")
 				),
 			// 去除重复目录分隔符\/
@@ -191,8 +190,37 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 				false,
 				),
 			);
-	}
+	} 
 
+	/**
+	 * 本用例展示了怎样设置是否自动加载函数文件
+	 * 
+	 * 添加新的测试条请增加一个数组 
+	 * array('文件', '函数名', '是否加载')
+	 */
+	public function isLoadFunctionDataProvider()
+	{
+		$cd = dirname(__FILE__); //current dir, 当前目录
+		return array(
+			array(
+				"$cd/is_load_func/welcome.php", 
+				'welcome',
+				true,
+				),
+			array(
+				"$cd/is_load_func/welcome2.php", 
+				'welcome2',
+				false,
+				),
+			);
+	} 
+
+/**
+ * ============================================================
+ * 下面是内部接口的测试用例，是给开发者保证质量用的
+ * 使用者可以不往下看
+ * ============================================================
+ */
 	/**
 	 * 测试scanDirs()扫描目录 
 	 * 
@@ -215,7 +243,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	} 
 
 	/**
-	 * 测试loaderClass() 
+	 * 测试loadClass() 
 	 * 
 	 * 添加新的测试条请增加一个数组 
 	 * array('文件', '类名或者函数名')
@@ -229,34 +257,8 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 				'isLoadClass',
 				),
 			);
-	} 
+	}
 
-	/**
-	 * 测试isLoadFunction
-	 * 
-	 * 添加新的测试条请增加一个数组 
-	 * array('文件', '函数名', '是否加载')
-	 */
-	public function isLoadFunctionDataProvider()
-	{
-		$cd = dirname(__FILE__); //current dir, 当前目录
-		return array(
-			array(
-				"$cd/is_load_func/welcome.php", 
-				'welcome',
-				true,
-				),
-			array(
-				"$cd/is_load_func/welcome2.php", 
-				'welcome2',
-				false,
-				),
-			);
-	} 
-
-	// -----------------------------------------------------------------
-	// 后边的测试依赖前边的测试结果正确
-	// -----------------------------------------------------------------
 	/**
 	 * 测试LtAutoloader初始化的时候 
 	 * 能否正确的将传给autoloadPath的值转为合法的不重复的的绝对路径
@@ -271,6 +273,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$path = $ap->preparePath($path);
 		$this->assertEquals($path, $expected);
 	}
+
 	/**
 	 * 测试parseLibNames()能否正确的识别源文件中定义的类,接口,函数
 	 * 
@@ -310,6 +313,24 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$isSkip = $ap->storeHandle->get('hellolotus', $ap->storeKeyPrefix) ? false : true;
 		$this->assertEquals($isSkip, $expected);
 	}
+
+	/**
+	 * 测试 conf->isLoadFunction 能否加载函数文件 
+	 * 
+	 * @dataProvider isLoadFunctionDataProvider
+	 */
+	public function testIsLoadFunction($pathfile, $function, $isLoadFunction)
+	{
+		$ap = new LtAutoloaderProxy();
+		$ap->conf->isLoadFunction = $isLoadFunction;
+		$ap->addFileMap($pathfile);
+		if($ap->conf->isLoadFunction)
+		{
+			$ap->loadFunction();
+		}
+		$this->assertEquals(function_exists($function), $isLoadFunction);
+	}
+
 	/**
 	 * 测试scanDirs能否正确的扫描目录包括子目录
 	 * scanDirs()依赖 addFileMap()
@@ -338,23 +359,6 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap->addFileMap($pathfile);
 		$ap->loadClass($class);
 		$this->assertTrue(class_exists($class));
-	}
-
-	/**
-	 * 测试 conf->isLoadFunction 能否加载函数文件 
-	 * 
-	 * @dataProvider isLoadFunctionDataProvider
-	 */
-	public function testIsLoadFunction($pathfile, $function, $isLoadFunction)
-	{
-		$ap = new LtAutoloaderProxy();
-		$ap->conf->isLoadFunction = $isLoadFunction;
-		$ap->addFileMap($pathfile);
-		if($ap->conf->isLoadFunction)
-		{
-			$ap->loadFunction();
-		}
-		$this->assertEquals(function_exists($function), $isLoadFunction);
 	}
 }
 

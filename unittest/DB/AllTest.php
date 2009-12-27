@@ -1,8 +1,9 @@
 <?php
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "RightWayToUse.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "WrongWayToUse.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "PerformanceTuning.php";
 
-class AutoloaderAllTests
+class DbAllTest
 {
     public static function suite()
     {
@@ -10,6 +11,7 @@ class AutoloaderAllTests
 
         $suite->addTestSuite('RightWayToUseDb');
         $suite->addTestSuite('WrongWayToUseDb');
+        $suite->addTestSuite('PerformanceTuning4Db');
 
         return $suite;
     }
