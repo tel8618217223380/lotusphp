@@ -4,7 +4,7 @@ class LtAutoloader
 	public $storeHandle;
 	public $storeKeyPrefix;
 	public $autoloadPath;
-	protected $conf;
+	public $conf;
 
 	public function __construct()
 	{
