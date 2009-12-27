@@ -21,7 +21,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	public function testMostUsedWay()
 	{
 		$cache = new LtCache;
-		$cache->conf->adapter = "phps";
+		$cache->conf->adapter = "file";
 		$cache->init();
 		
 		$this->assertTrue($cache->add(1, "This is thread 1"));
@@ -48,7 +48,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			1.1 => null,
 			-1 => "",
 			"array" => array(1,2,4),
-			//"object" => new LtCache(), //file cache不能通过这个测试
+			"object" => new LtCache(), //file cache可以通过这个测试
 			"test_key" => "test_value",
 		);
 	}

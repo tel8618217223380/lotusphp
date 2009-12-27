@@ -1,7 +1,8 @@
 <?php
 /**
-不支持缓存object, 建议使用phps缓存
+var_export不支持object
 参考: http://php.net/manual/en/function.var-export.php
+serialize支持object
 */
 class LtCacheAdapterFile implements LtCacheAdapter
 {
@@ -27,8 +28,18 @@ class LtCacheAdapterFile implements LtCacheAdapter
 	{
 		$cacheFile = $this->getCacheFile($key);
 		$data['ttl'] = (0 >= $ttl) ? 0 : (time()+intval($ttl));
-		$data['value'] = $value;
-		return (boolean) file_put_contents($cacheFile, "<?php\nreturn ".var_export($data, true).";\n");
+		if(is_object($value) || is_resource($value))
+		{
+			$str  = "<?php\n";
+			$str .= '$obj = unserialize("' . addslashes(serialize($value)) . '");'."\n";
+			$str .= 'return array(\'ttl\' => '. $data['ttl'] . ', \'value\' => $obj,);'."\n";
+			return (boolean) file_put_contents($cacheFile, $str);
+		}
+		else
+		{
+			$data['value'] = $value;
+			return (boolean) file_put_contents($cacheFile, "<?php\nreturn ".var_export($data, true).";\n");
+		}
 	}
 	
 	public function del($key)
