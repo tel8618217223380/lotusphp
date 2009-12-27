@@ -1,15 +1,5 @@
 <?php
 /**
- * Lotus class autoloading
- */
-$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
-include $lotusHome . "/runtime/Autoloader/Autoloader.php";
-include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
-$autoloader = new LtAutoloader();
-$autoloader->autoloadPath = $lotusHome . "/runtime";
-$autoloader->init();
-
-/**
  * PHPUnit bootstrap
  */
 require_once 'PHPUnit/Util/Filter.php';

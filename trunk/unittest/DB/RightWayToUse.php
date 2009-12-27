@@ -3,6 +3,7 @@
  * 本测试文档演示了LtDb的正确使用方法 
  * 按本文档操作一定会得到正确的结果
  */
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "include_classes.inc";
 class RightWayToUseDb extends PHPUnit_Framework_TestCase
 {
 	/**
@@ -30,6 +31,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			),
 		);
 		$this->testDataList = array(
+			//array("SQL语句", 正确结果)
 			array("USE test", 0),
 			array("SELECT DATABASE()", array(array("DATABASE()" => "test"))),
 		);

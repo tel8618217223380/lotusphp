@@ -4,7 +4,7 @@
  * 按本文档操作一定会得到正确的结果
  */
 chdir(dirname(__FILE__));
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "include_classes.inc";
 class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 {
 	/**
