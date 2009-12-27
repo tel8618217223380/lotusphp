@@ -23,10 +23,14 @@ class RightWayToUseConfig extends PHPUnit_Framework_TestCase
 	public function testMostUsedWay()
 	{
 		$conf = new LtConfig;
-		$conf->configFile = "./test_data/conf.php";
+		$conf->configFile = dirname(__FILE__) . "/test_data/conf.php";
 		$conf->init();
 		
 		$this->assertEquals($conf->get("db.conn.host"), "localhost");
+		$this->assertEquals($conf->get("misc.test_array"), array(
+			"test_array_key_1" => "test_array_value_1",
+			"test_array_key_2" => "test_array_value_2",
+		));
 	}
 }
 
