@@ -2,7 +2,7 @@
 /**
  * 利用测试用例单步调试的模板
  */
-require "common.inc";
+require "phpunit_bootstrap.inc";
 
 /**
  * 调试代码
