@@ -140,6 +140,64 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	}
 
 	/**
+	通过数组传入 namespaceMapping
+	*/
+	public function testNamespaceMapping()
+	{
+		$ttl   = 0;
+		$key   = 'key';
+		$v1    = 'data1';
+		$v2    = 'data2';
+		$v3    = 'data3';
+		$v4    = 'data4';
+		$v5    = 'data5';
+		$v6    = 'data6';
+		$name1 = '';
+		$name2 = 'namespace2';
+		$name3 = 'namespace3';
+
+		foreach ($this->adapterList as $ad => $op)
+		{
+			$ch = $this->getCacheHandle($ad, $op);
+			// 通过数组传入 namespaceMapping
+			$ch->namespaceMapping = array('default'=>'default', ''=>'', 'namespace2'=>'namespace2', 'namespace3'=>'namespace3');
+
+			$this->assertTrue($ch->add($key, $v1, $ttl, $name1));
+			$this->assertTrue($ch->add($key, $v2, $ttl, $name2));
+			$this->assertTrue($ch->add($key, $v3, $ttl, $name3));
+
+			$this->assertEquals($ch->get($key, $name1), $v1);
+			$this->assertEquals($ch->get($key, $name2), $v2);
+			$this->assertEquals($ch->get($key, $name3), $v3);
+
+			$this->assertTrue($ch->update($key, 0, $ttl, $name1));
+			$this->assertTrue($ch->update($key, 0, $ttl, $name2));
+			$this->assertTrue($ch->update($key, 0, $ttl, $name3));
+
+			$this->assertEquals($ch->get($key, $name1), 0);
+			$this->assertEquals($ch->get($key, $name2), 0);
+			$this->assertEquals($ch->get($key, $name3), 0);
+
+			$this->assertTrue($ch->update($key, $v4, $ttl, $name1));
+			$this->assertTrue($ch->update($key, $v5, $ttl, $name2));
+			$this->assertTrue($ch->update($key, $v6, $ttl, $name3));
+
+			$this->assertEquals($ch->get($key, $name1), $v4);
+			$this->assertEquals($ch->get($key, $name2), $v5);
+			$this->assertEquals($ch->get($key, $name3), $v6);
+
+			$this->assertTrue($ch->del($key, $name1));
+			$this->assertTrue($ch->del($key, $name2));
+			$this->assertTrue($ch->del($key, $name3));
+
+			$this->assertFalse($ch->get($key, $name1));
+			$this->assertFalse($ch->get($key, $name2));
+			$this->assertFalse($ch->get($key, $name3));
+		}
+	}
+
+
+	/**
 	测试ttl
 	*/
 	public function testTTL()
