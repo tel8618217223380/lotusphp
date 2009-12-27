@@ -44,8 +44,9 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 		/**
 		 * 运行5000次，要求在1秒内运行完
 		 */
+		$times = 5000;
 		$startTime = microtime(true);
-		for($i = 0; $i < 5000; $i++)
+		for($i = 0; $i < $times; $i++)
 		{
 			$autoloader = new LtAutoloader;
 			$autoloader->storeHandle = $cacheHandle;
@@ -54,6 +55,11 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 			$autoloader->init();
 		}
 		$endTime = microtime(true);
-		$this->assertTrue(1 > $endTime-$startTime);
+		$totalTime = number_format(($endTime-$startTime), 6);
+		$average = number_format(($totalTime/$times), 6);
+		echo "\n-------------------------------------------------------\n";
+		echo "times $times totalTime $totalTime average $average";
+		echo "\n-------------------------------------------------------\n";
+		$this->assertTrue(1 > $totalTime);
 	}
 }
