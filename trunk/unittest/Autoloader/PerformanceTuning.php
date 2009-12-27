@@ -34,11 +34,11 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 		 * 运行autoloader成功加载一个类
 		 * 这是为了证明：使用LtCache作为LtAutoloader的存储，功能是正常的
 		 */
-		$ap = new LtAutoloaderProxy;
-		$ap->storeHandle = $cacheHandle;
-		$ap->conf->isLoadFunction = false;
-		$ap->autoloadPath = $autoloadPath;
-		$ap->init();
+		$autoloader = new LtAutoloader;
+		$autoloader->storeHandle = $cacheHandle;
+		$autoloader->conf->isLoadFunction = false;
+		$autoloader->autoloadPath = $autoloadPath;
+		$autoloader->init();
 		$this->assertTrue(class_exists("HelloWorld"));
 		
 		/**
@@ -47,11 +47,11 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 		$startTime = microtime(true);
 		for($i = 0; $i < 5000; $i++)
 		{
-			$ap = new LtAutoloaderProxy;
-			$ap->storeHandle = $cacheHandle;
-			$ap->conf->isLoadFunction = false;
-			$ap->autoloadPath = $autoloadPath;
-			$ap->init();
+			$autoloader = new LtAutoloader;
+			$autoloader->storeHandle = $cacheHandle;
+			$autoloader->conf->isLoadFunction = false;
+			$autoloader->autoloadPath = $autoloadPath;
+			$autoloader->init();
 		}
 		$endTime = microtime(true);
 		$this->assertTrue(1 > $endTime-$startTime);
