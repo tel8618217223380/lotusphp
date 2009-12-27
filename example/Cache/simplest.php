@@ -38,9 +38,10 @@ if(!$cache->get("test_key"))
 {
 	$cache->add("test_key", $cache);
 }
-echo "\n" ;
-print_r($cache->get("test_key"));
 
+$obj = $cache->get("test_key");
+echo "\n" . $obj->conf->adapter . "\n";
+var_dump($obj);
 /**
  * 使用apc
 
