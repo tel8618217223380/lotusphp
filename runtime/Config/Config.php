@@ -22,6 +22,7 @@ class LtConfig
 		}
 		if (0 == $this->storeHandle->get(".config_total", $this->namespace))
 		{
+			$this->storeHandle->add(".config_total", $this->namespace);
 			$this->configFromUserFile = include($this->configFile);
 			$this->storeConfigArray(include($this->configFile));
 		}
@@ -37,6 +38,7 @@ class LtConfig
 		foreach($configArray as $key => $value)
 		{
 			$this->storeHandle->add($key, $value, 0, $this->namespace);
+			$this->storeHandle->update(".config_total", $this->storeHandle->get(".config_total", $this->namespace) + 1, 0, $this->namespace);
 		}
 	}
 }

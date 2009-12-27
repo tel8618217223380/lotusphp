@@ -23,7 +23,7 @@ class PerformanceTuning4Config extends PHPUnit_Framework_TestCase
 		$cacheHandle->init();
 		
 		//准备confif_file
-		$config_file = "./conf/conf.php";
+		$config_file = dirname(__FILE__) . "/test_data/conf.php";
 		
 		/**
 		 * 运行autoloader成功取到一个配置
@@ -31,10 +31,9 @@ class PerformanceTuning4Config extends PHPUnit_Framework_TestCase
 		 */
 		$conf = new LtConfig;
 		$conf->storeHandle = $cacheHandle;
-		$conf->conf->isLoadFunction = false;
-		$conf->autoloadPath = $autoloadPath;
+		$conf->configFile = $config_file;
 		$conf->init();
-		$this->assertTrue(class_exists("HelloWorld"));
+		$this->assertEquals($conf->get("db.conn.host"), "localhost");
 		
 		/**
 		 * 运行5000次，要求在1秒内运行完
