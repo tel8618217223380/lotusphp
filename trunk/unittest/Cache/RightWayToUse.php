@@ -1,5 +1,8 @@
 <?php
 /**
+ * 本测试文档演示了LtCache的正确使用方法 
+ * 按本文档操作一定会得到正确的结果
+ * 
  * @todo 测试用户通过数组传入namespaceMapping时能否正常工作
  * @todo 自行实现的phps/file cache，注意：
  *       1. update，del时检查key是否存在 2.add时，如果该key已经存在，但已过期，也允许add
@@ -8,26 +11,40 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * 最常用的使用方式（推荐）
-	 * 
+	 * -------------------------------------------------------------------
 	 * LtCache要求：
-	 *  # 以这样的流程使用LtCache：
-	 *    1. new LtCache()
-	 *    2. LtCache->sysHash = array(), LtCache->adapter = "apc" //这步是建议的，而非必须的，用默认值也能运行
-	 *    3. init()
-	 *
+			# key必须是数字或者字串，不能是数组，对象
+
+	 * -------------------------------------------------------------------
+	 * LtCache不在意：
+	    # value的数据类型是什么（但一般来说resource型数据是不能被缓存的）
+
+	 * -------------------------------------------------------------------
+	 * LtCache建议（不强求）：
+	    # 如果你的服务器上有apc/eaccelerator/xcache等opcode cache
+	                最好不要再使用file adapter
+	    # 为保证key不冲突，最好使用namespace功能
+
 	 * 本测试用例期望效果：
-	 * 能成功通过add(), get(), del()接口读写数据
+	 * 能成功通过add(), get(), del(), update()接口读写数据
 	 */
 	public function testMostUsedWay()
 	{
 		$cache = new LtCache;
-		$cache->conf->adapter = "file";
+		$cache->conf->adapter = "file"; //默认值是phps, 可以设成file, apc, eAccelerator, xcache
 		$cache->init();
 		
 		$this->assertTrue($cache->add(1, "This is thread 1"));
 		$this->assertEquals($cache->get(1), "This is thread 1");
+		$this->assertTrue($cache->update(1, "new value"));
+		$this->assertEquals($cache->get(1), "new value");
 		$this->assertTrue($cache->del(1));
 		$this->assertFalse($cache->get(1));
+	}
+
+	public function testMostUsedWayWithNamespace()
+	{
+		
 	}
 
 	public function __construct()
@@ -40,15 +57,15 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			"file" => null,
 			"phps" => null,
 			//"xcache" => null,
-			//"memcached" => null,
 		);
 		$this->testDataList = array(
 			//$key => value
 			1 => 2,
 			1.1 => null,
 			-1 => "",
+			true => false,
 			"array" => array(1,2,4),
-			"object" => new LtCache(), //file cache可以通过这个测试
+			"object" => new LtCache(),
 			"test_key" => "test_value",
 		);
 	}
@@ -64,9 +81,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$cache->init();
 		return $cache;
 	}
+
 	/**
-	基本功能测试
-	*/
+	 * 基本功能测试
+	 */ 
 	public function testBase()
 	{		
 		foreach ($this->adapterList as $ad => $op)
@@ -87,8 +105,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	测试多个namespace的用法
-	*/
+	 * 测试多个namespace的用法
+	 */
 	public function testNameSpace()
 	{
 		$ttl   = 0;
@@ -140,8 +158,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	通过数组传入 namespaceMapping
-	*/
+	 * 通过数组传入 namespaceMapping
+	 */
 	public function testNamespaceMapping()
 	{
 		$ttl   = 0;
@@ -160,7 +178,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		{
 			$ch = $this->getCacheHandle($ad, $op);
 			// 通过数组传入 namespaceMapping
-			$ch->namespaceMapping = array('default'=>'default', ''=>'', 'namespace2'=>'namespace2', 'namespace3'=>'namespace3');
+			$ch->namespaceMapping = array('default'=>1, ''=>0, 'namespace2'=>2, 'namespace3'=>3);
 
 			$this->assertTrue($ch->add($key, $v1, $ttl, $name1));
 			$this->assertTrue($ch->add($key, $v2, $ttl, $name2));
@@ -196,10 +214,9 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		}
 	}
 
-
 	/**
-	测试ttl
-	*/
+	 * 测试ttl
+	 */
 	public function testTTL()
 	{
 		$ttl_add = 0;
