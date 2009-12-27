@@ -70,18 +70,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		);
 	}
 
-	public function getCacheHandle($adapter, $options = null)
-	{
-		$cache = new LtCache;
-		$cache->conf->adapter = $adapter;
-		if ($options)
-		{
-			$cache->conf->options = $options;
-		}
-		$cache->init();
-		return $cache;
-	}
-
 	/**
 	 * 基本功能测试
 	 */ 
@@ -236,5 +224,17 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 				$this->assertFalse($ch->get($k));
 			}
 		}
+	}
+
+	protected function getCacheHandle($adapter, $options = null)
+	{
+		$cache = new LtCache;
+		$cache->conf->adapter = $adapter;
+		if ($options)
+		{
+			$cache->conf->options = $options;
+		}
+		$cache->init();
+		return $cache;
 	}
 }
