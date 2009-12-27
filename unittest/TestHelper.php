@@ -1,19 +1,6 @@
 <?php
 /**
- * Lotus class autoloading
+ * 单元测试入口文件
  */
-$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
-include $lotusHome . "/runtime/Autoloader/Autoloader.php";
-include $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
-$autoloader = new LtAutoloader();
-$autoloader->autoloadPath = $lotusHome . "/runtime";
-$autoloader->init();
-
-/**
- * PHPUnit bootstrap
- */
-require_once 'PHPUnit/Util/Filter.php';
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-require 'PHPUnit/TextUI/Command.php';
-define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
+require "common.inc";
 PHPUnit_TextUI_Command::main();
