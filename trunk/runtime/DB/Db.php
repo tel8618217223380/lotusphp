@@ -1,83 +1,142 @@
 <?php
-/**
- * Database class
- */
 class LtDb
 {
-	/**
-	 * Factory for Adapter
-	 * 
-	 * @assert ('pdoMssql') throws Exception
-	 * @assert ('') throws Exception
-	 * @param string $driver
-	 * @return object
-	 */
-	static public function factory($driver)
+	public $conf;
+	public $connectionAdapter;
+	protected $sqlAdapter;
+
+	public function __construct()
 	{
-		$adapterClassName = 'LtDbAdapter' . ucfirst($driver);
-		if (!empty($driver))
+		$this->conf = new LtDbConfig();
+	}
+
+	/**
+	 * Trancaction methods
+	 */
+	public function beginTransaction()
+	{
+		return $this->connectionAdapter->exec($this->sqlAdapter->beginTransaction());
+	}
+
+	public function commit()
+	{
+		return $this->connectionAdapter->exec($this->sqlAdapter->commit());
+	}
+
+	public function rollBack()
+	{
+		return $this->connectionAdapter->exec($this->sqlAdapter->rollBack());
+	}
+
+	/**
+	 * Execute an sql query
+	 * @param $sql
+	 * @param $bind
+	 * @param $forceUseMaster
+	 * @return false on failed
+	 * SELECT, SHOW, DESECRIBE, EXPLAIN return rowset or NULL when no record found
+	 * INSERT return the ID generated for an AUTO_INCREMENT column
+	 * UPDATE, DELETE return affected count
+	 * USE, DROP, ALTER, CREATE, SET etc, return affected count
+	 * @todo 如果是读操作，自动去读slave服务器，除非设置了强制读master服务器
+	 * @notice 每次只能执行一条SQL
+	 */
+	public function query($sql, $bind = null, $forceUseMaster = false)
+	{
+		if(empty($sql))
 		{
-			if (class_exists($adapterClassName))
+			// trigger_error('Empty the SQL statement', E_USER_WARNING);
+			return null;
+		}
+		if (is_array($bind))
+		{
+			$sql = $this->bindParameter($sql, $bind);
+		}
+		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))//read query: SELECT, SHOW, DESCRIBE
+		{
+			$result = $this->connectionAdapter->query($sql);
+			//if (0 === count($result))
+			if (empty($result))
 			{
-				return new $adapterClassName();
+				return null;
 			}
 			else
 			{
-				DebugHelper::debug('DB_DRIVER_NOT_SUPPORTED', array('driver' => $driver));
+				return $result;
+			}			
+		}
+		else
+		{
+			$result = $this->connectionAdapter->exec($sql);
+			if (preg_match("/^\s*INSERT/i", $sql))//INSERT
+			{
+				return $this->connectionAdapter->lastInsertId();
+			}
+			else if (preg_match("/^\s*UPDATE|^\s*DELETE|^\s*REPLACE/i", $sql))//UPDATE, DELETE, REPLACE
+			{
+				return $result;
+			}
+			else//USE, SET, CREATE, DROP, ALTER
+			{
+				return $result;
+			}
+		}
+	}
+
+	public function init()
+	{
+		if (preg_match("/^pdo_/i", $this->conf->conn["adapter"]))
+		{
+			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst(substr($this->conf->conn["adapter"], 4));
+			$LtDbConnectionAdapter = "LtDbConnectionAdapterPdo";
+		}
+		else
+		{
+			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst($this->conf->conn["adapter"]);
+			$LtDbConnectionAdapter = "LtDbConnectionAdapter" . ucfirst($this->conf->conn["adapter"]);
+		}
+		/**
+		 * Mysqli use mysql syntax
+		 */
+		if ("mysqli" == $this->conf->conn["adapter"])
+		{
+			$LtDbSqlAdapter = "LtDbSqlAdapterMysql";
+		}
+		$this->sqlAdapter = new $LtDbSqlAdapter();
+		$this->connectionAdapter = new $LtDbConnectionAdapter();
+		if($this->connectionAdapter->connResource = $this->connectionAdapter->connect($this->conf->conn))
+		{
+			$this->query($this->sqlAdapter->setCharset($this->conf->conn["charset"]));
+			if (!empty($this->conf->conn["schema"]))//set default schema, for pgsql, oracle
+			{
+				$this->query($this->sqlAdapter->setSchema($this->conf->conn["schema"]));
 			}
 		}
 		else
 		{
-			DebugHelper::debug('NO_DB_DRIVER_PASSED', array('driver' => $driver));
+			//don't trigger_error() here, because the caller may catch this exception
+			throw new Exception("Can not connect to db server");
 		}
 	}
 
 	/**
-	 * Get an instance of a db table
-	 *
-	 * @assert ('some_does_not_exist_table') throws Exception
-	 * @param string $table
-	 * @param mixed $tableName
-	 * @return object DbTable
+	 * Generate complete sql from sql template (with placeholder) and parameter
+	 * @param $sql
+	 * @param $parameter
+	 * @return string
+	 * @todo 移动到DbHandler下面去，兼容各驱动的escape()方法
+	 * @todo 兼容pgsql等其它数据库，pgsql的某些数据类型不接受单引号引起来的值
 	 */
-	static public function newDbTable($table)
+	public function bindParameter($sql, $parameter)
 	{
-		if (isset(LtDbStaticData::$tables[$table]) || 1 == count(LtDbStaticData::$servers))
+		$delimiter = "\x01\x02\x03";
+		foreach($parameter as $key => $value)
 		{
-			$newDbTable = new LtDbTable();
-			if (1 == count(LtDbStaticData::$servers))
-			{
-				$groupId = key(LtDbStaticData::$servers);
-				$newDbTable->group = $groupId;
-				$newDbTable->schema = $groupId;
-				$newDbTable->tableName = $table;
-			}
-			else
-			{
-				$newDbTable->group = LtDbStaticData::$tables[$table]['group'];
-				$newDbTable->schema = LtDbStaticData::$tables[$table]['schema'];
-				if (isset(LtDbStaticData::$tables[$table]['created_column']))
-				{
-					$newDbTable->createdColumn = LtDbStaticData::$tables[$table]['created_column'];
-				}
-				if (isset(LtDbStaticData::$tables[$table]['modified_column']))
-				{
-					$newDbTable->modifiedColumn = LtDbStaticData::$tables[$table]['modified_column'];
-				}
-				if (isset(LtDbStaticData::$tables[$table]['table_name']))
-				{
-					$newDbTable->tableName = LtDbStaticData::$tables[$table]['table_name'];
-				}
-			}
-			$newDbTable->db = $newDbTable->getAdapterInstance();
-			$newDbTable->db->setGroup($newDbTable->group);
-			$newDbTable->db->setSchema($newDbTable->schema);
-			return $newDbTable;
+			$newPlaceHolder = "$delimiter$key$delimiter";
+			$find[] = $newPlaceHolder;
+			$replacement[] = "'" . $this->connectionAdapter->escape($value) . "'";
+			$sql = str_replace(":$key", $newPlaceHolder, $sql);
 		}
-		else
-		{
-			DebugHelper::debug('DB_TABLE_CONFIG_IS_MISSING', array('table' => $table));
-		}
+		return str_replace($find, $replacement, $sql);
 	}
 }
-
