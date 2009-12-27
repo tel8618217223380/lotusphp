@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "AutoloaderProxy.php";
 
-class PerformanceTest4Autoloader extends PHPUnit_Extensions_PerformanceTestCase
+class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * 本测试展示了如何用LtCache给LtAutoloader提高性能
@@ -37,7 +37,7 @@ class PerformanceTest4Autoloader extends PHPUnit_Extensions_PerformanceTestCase
 		/**
 		 * 运行5000次，要求在1秒内运行完
 		 */
-		$this->setMaxRunningTime(1);
+		$startTime = microtime(true);
 		for($i = 0; $i < 5000; $i++)
 		{
 			$ap = new LtAutoloaderProxy;
@@ -46,5 +46,7 @@ class PerformanceTest4Autoloader extends PHPUnit_Extensions_PerformanceTestCase
 			$ap->autoloadPath = $autoloadPath;
 			$ap->init();
 		}
+		$endTime = microtime(true);
+		$this->assertTrue(1 > $endTime-$startTime);
 	}
 }
