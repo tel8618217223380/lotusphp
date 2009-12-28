@@ -5,11 +5,6 @@ class LtDbHandle
 	public $connectionAdapter;
 	protected $sqlAdapter;
 
-	public function __construct()
-	{
-		$this->conf = new LtDbConfig();
-	}
-
 	/**
 	 * Trancaction methods
 	 */
@@ -85,31 +80,31 @@ class LtDbHandle
 
 	public function init()
 	{
-		if (preg_match("/^pdo_/i", $this->conf->conn["adapter"]))
+		if (preg_match("/^pdo_/i", $this->conf["adapter"]))
 		{
-			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst(substr($this->conf->conn["adapter"], 4));
+			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst(substr($this->conf["adapter"], 4));
 			$LtDbConnectionAdapter = "LtDbConnectionAdapterPdo";
 		}
 		else
 		{
-			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst($this->conf->conn["adapter"]);
-			$LtDbConnectionAdapter = "LtDbConnectionAdapter" . ucfirst($this->conf->conn["adapter"]);
+			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst($this->conf["adapter"]);
+			$LtDbConnectionAdapter = "LtDbConnectionAdapter" . ucfirst($this->conf["adapter"]);
 		}
 		/**
 		 * Mysqli use mysql syntax
 		 */
-		if ("mysqli" == $this->conf->conn["adapter"])
+		if ("mysqli" == $this->conf["adapter"])
 		{
 			$LtDbSqlAdapter = "LtDbSqlAdapterMysql";
 		}
 		$this->sqlAdapter = new $LtDbSqlAdapter();
 		$this->connectionAdapter = new $LtDbConnectionAdapter();
-		if($this->connectionAdapter->connResource = $this->connectionAdapter->connect($this->conf->conn))
+		if($this->connectionAdapter->connResource = $this->connectionAdapter->connect($this->conf))
 		{
-			$this->query($this->sqlAdapter->setCharset($this->conf->conn["charset"]));
-			if (!empty($this->conf->conn["schema"]))//set default schema, for pgsql, oracle
+			$this->query($this->sqlAdapter->setCharset($this->conf["charset"]));
+			if (!empty($this->conf["schema"]))//set default schema, for pgsql, oracle
 			{
-				$this->query($this->sqlAdapter->setSchema($this->conf->conn["schema"]));
+				$this->query($this->sqlAdapter->setSchema($this->conf["schema"]));
 			}
 		}
 		else
