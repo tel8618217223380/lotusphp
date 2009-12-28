@@ -65,11 +65,11 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 		$averageMemory = round(($memory_usage/$times),2);
 		$averageMemory = ($averageMemory >= 1048576) ? round((round($averageMemory / 1048576 * 100) / 100), 2) . 'MB' : (($averageMemory >= 1024) ? round((round($averageMemory / 1024 * 100) / 100), 2) . 'KB' : $averageMemory . 'BYTES');
 
-		echo "\n--------------------------------------------------\n";
-		echo "times\t$times\n";
-		echo "totalTime\t{$totalTime}s\taverageTime\t{$averageTime}s\n";
+		echo "\n---------------------------------------------------------\n";
+		echo "times      \t$times\n";
+		echo "totalTime  \t{$totalTime}s\taverageTime  \t{$averageTime}s\n";
 		echo "memoryUsage\t{$memory_usage}\taverageMemory\t{$averageMemory}";
-		echo "\n--------------------------------------------------\n";
+		echo "\n---------------------------------------------------------\n";
 		$this->assertTrue(1 > $totalTime);
 	}
 }
