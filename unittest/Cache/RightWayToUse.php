@@ -13,34 +13,42 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐） 
 	 * -------------------------------------------------------------------
 	 * LtCache要求： 
-	 * # key必须是数字或者字串，不能是数组，对象
+	 *  # key必须是数字或者字串，不能是数组，对象 
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCache不在意：
-	 * # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
+	 *  # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCache建议（不强求）：
-	 * # 如果你的服务器上有apc/eaccelerator/xcache等opcode cache
-	 * 最好不要再使用file adapter
-	 * # 为保证key不冲突，最好使用namespace功能
+	 *  # 如果你的服务器上有apc/eaccelerator/xcache等opcode cache
+	 *    最好不要再使用file adapter
+	 *  # 为保证key不冲突，最好使用namespace功能
 	 * 
 	 * 本测试用例期望效果：
 	 * 能成功通过add(), get(), del(), update()接口读写数据
 	 */
 	public function testMostUsedWay()
 	{
+		/**
+		 * Lotus组件初始化三步曲
+		 */
+		// 1. 实例化
 		$cache = new LtCache;
-		$cache->conf->adapter = "file"; //默认值是phps, 可以设成file, apc, eAccelerator, xcache
+		// 2. 设置属性
+		$cache->adapter = "file";
+		// 3. 调init()方法
 		$cache->init();
 
-		$this->assertTrue($cache->add(1, "This is thread 1"));
-		$this->assertEquals($cache->get(1), "This is thread 1");
-		$this->assertTrue($cache->update(1, "new value"));
-		$this->assertEquals($cache->get(1), "new value");
-		$this->assertTrue($cache->del(1));
-		$this->assertFalse($cache->get(1));
+		//初始化完毕，测试其效果
+		$this->assertTrue($cache->add("test_key", "test_value"));
+		$this->assertEquals($cache->get("test_key"), "test_value");
+		$this->assertTrue($cache->update("test_key", "new_value"));
+		$this->assertEquals($cache->get("test_key"), "new_value");
+		$this->assertTrue($cache->del("test_key"));
+		$this->assertFalse($cache->get("test_key"));
 	}
+
 
 	public function testMostUsedWayWithNamespace()
 	{
@@ -66,8 +74,9 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			"array" => array(1, 2, 4),
 			"object" => new LtCache(),
 			"test_key" => "test_value",
-			);
+		);
 	}
+
 
 	/**
 	 * 基本功能测试
