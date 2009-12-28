@@ -8,6 +8,7 @@ class WrongWayToUseCaptcha extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * 调用getImageResource()和verify()接口不带seed参数
+	 * @expectedException PHPUnit_Framework_Error
 	 */
 	public function testBlankSeed()
 	{
