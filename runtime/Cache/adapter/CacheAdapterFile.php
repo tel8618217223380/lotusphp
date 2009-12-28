@@ -30,7 +30,7 @@ class LtCacheAdapterFile implements LtCacheAdapter
 
 	public function add($key, $value, $ttl=0)
 	{
-		if($this->get($key))
+		if(false !== $this->get($key))
 		{
 			trigger_error("Key Conflict: {$key}");
 			return false;
@@ -50,13 +50,16 @@ class LtCacheAdapterFile implements LtCacheAdapter
 	
 	public function del($key)
 	{
-		if(!$this->get($key))
+		$cacheFile = $this->getCacheFile($key);
+		if(!is_file($cacheFile))
 		{
 			trigger_error("Key not exists: {$key}");
 			return false;
 		}
-		$cacheFile = $this->getCacheFile($key);
-		return @unlink($cacheFile);
+		else
+		{
+			return @unlink($cacheFile);
+		}
 	}
 	
 	public function get($key)
