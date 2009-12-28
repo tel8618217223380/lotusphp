@@ -29,6 +29,6 @@ class LtDbConnectionAdapterMysql extends LtDbConnectionAdapter
 
 	public function escape($sql)
 	{
-		return mysql_escape_string($sql);
+		return mysql_real_escape_string($sql, $this->connResource);
 	}
 }
