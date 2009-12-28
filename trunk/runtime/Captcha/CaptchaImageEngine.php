@@ -21,34 +21,23 @@ class LtCaptchaImageEngine
 			imagefilter($this->im, IMG_FILTER_GAUSSIAN_BLUR);
 		}
 		$this->ReduceImage();
-
-
-		if ($this->conf->debug) {
-			imagestring($this->im, 1, 1, $this->conf->height-8,
-                "$text {$fontcfg['font']} ".round((microtime(true)-$ini)*1000)."ms",
-			$this->GdFgColor
-			);
-		}
-
-		/** Output */
-		$this->WriteImage();
-		$this->Cleanup();
+		return $this->im;
 	}
 
-	public $maxWordLength = 9;
+	protected $maxWordLength = 9;
 
 	/** Background color in RGB-array */
-	public $backgroundColor = array(255, 255, 255);
+	protected $backgroundColor = array(255, 255, 255);
 
 	/** Foreground colors in RGB-array */
-	public $colors = array(
+	protected $colors = array(
 		array(27,78,181), // blue
 		array(22,163,35), // green
 		array(214,36,7),  // red
 	);
 
 	/** Shadow color in RGB-array or null */
-	public $shadowColor = null; //array(0, 0, 0);
+	protected $shadowColor = null; //array(0, 0, 0);
 
 	/**
 	 * Font configuration
@@ -58,7 +47,7 @@ class LtCaptchaImageEngine
 	 * - minSize: min font size
 	 * - maxSize: max font size
 	 */
-	public $fonts = array(
+	protected $fonts = array(
         'Antykwa'  => array('spacing' => -3, 'minSize' => 27, 'maxSize' => 30, 'font' => 'AntykwaBold.ttf'),
         'Candice'  => array('spacing' =>-1.5,'minSize' => 28, 'maxSize' => 31, 'font' => 'Candice.ttf'),
         'DingDong' => array('spacing' => -2, 'minSize' => 24, 'maxSize' => 30, 'font' => 'Ding-DongDaddyO.ttf'),
@@ -70,13 +59,13 @@ class LtCaptchaImageEngine
 	);
 
 	/** Wave configuracion in X and Y axes */
-	public $Yperiod    = 12;
-	public $Yamplitude = 14;
-	public $Xperiod    = 11;
-	public $Xamplitude = 5;
+	protected $Yperiod    = 12;
+	protected $Yamplitude = 14;
+	protected $Xperiod    = 11;
+	protected $Xamplitude = 5;
 
 	/** GD image */
-	public $im;
+	protected $im;
 
 	/**
 	 * Creates the image resources
@@ -188,26 +177,5 @@ class LtCaptchaImageEngine
 		);
 		imagedestroy($this->im);
 		$this->im = $imResampled;
-	}
-
-	/**
-	 * File generation
-	 */
-	protected function WriteImage() 
-	{
-		if ($this->conf->imageFormat == 'png' && function_exists('imagepng')) {
-			header("Content-type: image/png");
-			imagepng($this->im);
-		} else {
-			header("Content-type: image/jpeg");
-			imagejpeg($this->im, null, 80);
-		}
-	}
-
-	/**
-	 * Cleanup
-	 */
-	protected function Cleanup() {
-		imagedestroy($this->im);
 	}
 }

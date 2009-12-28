@@ -2,4 +2,6 @@
 include("./captcha.inc.php");
 
 //绘制验证码图片
-$captcha->generateImage($_GET["seed"]);
+$imageResource = $captcha->getImageResource($_GET["seed"]);
+header("Content-type: image/png");
+imagepng($imageResource);

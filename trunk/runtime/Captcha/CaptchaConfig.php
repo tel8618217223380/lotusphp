@@ -23,10 +23,4 @@ class LtCaptchaConfig
 	 * Better image results with scale=3
 	 */
 	public $blur = false;
-
-	/** Debug? */
-	public $debug = false;
-
-	/** Image format: jpeg or png */
-	public $imageFormat = 'jpeg';
 }
