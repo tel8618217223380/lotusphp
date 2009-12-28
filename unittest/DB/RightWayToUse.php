@@ -24,8 +24,16 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$this->confList = array(
 			"mysql" => array(
 				array(
-					"password" => "123456",
-					"dbname" => "mysql",
+					"host"           => "localhost",          //some ip, hostname
+					"port"           => 3306,
+					"username"       => "root",
+					"password"       => "123456",
+					"adapter"        => "mysql",              //mysql,mysqli,pdo_mysql,sqlite,pdo_sqlite
+					"charset"        => "UTF-8",
+					"pconnect"       => false,                //true,false
+					"connection_ttl" => 30,                   //any seconds
+					"dbname"         => "",
+					"schema"         => "",
 				),
 				array("mysql", "mysqli", "pdo_mysql"),
 			),
@@ -57,11 +65,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 	public function getDbHandle($conf)
 	{
 		$db = new LtDb;
-		foreach ($conf as $k => $v)
-		{
-			$db->conf->conn[$k] = $v;
-		}
-		$db->init();
-		return $db;
+		$dbh = $db->getDbHandle($conf);
+		return $dbh;
 	}
 }
