@@ -3,7 +3,6 @@
  * 本测试文档演示了LtAutoloader的正确使用方法 
  * 按本文档操作一定会得到正确的结果
  */
-chdir(dirname(__FILE__));
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "include_classes.inc";
 class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 {
@@ -66,6 +65,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function autoloadPathDataProvider()
 	{
 		$cd = dirname(__FILE__); //current dir, 当前目录
+		chdir($cd);
 		return array(
 			// 用一个数组传递多个目录，绝对路径，不带拖尾斜线
 			array(
