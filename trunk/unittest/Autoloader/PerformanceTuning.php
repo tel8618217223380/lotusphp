@@ -44,6 +44,7 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 		/**
 		 * 运行1000次，要求在1秒内运行完
 		 */
+		$base_memory_usage = memory_get_usage();
 		$times = 1000;
 		$startTime = microtime(true);
 		for($i = 0; $i < $times; $i++)
@@ -55,10 +56,19 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 			$autoloader->init();
 		}
 		$endTime = microtime(true);
-		$totalTime = number_format(($endTime-$startTime), 6);
-		$average = number_format(($totalTime/$times), 6);
+		$totalTime = round(($endTime-$startTime), 6);
+		$averageTime = round(($totalTime/$times), 6);
+
+		$memory_usage = memory_get_usage() - $base_memory_usage;
+		$memory_usage = ($memory_usage >= 1048576) ? round((round($memory_usage / 1048576 * 100) / 100), 2) . 'MB' : (($memory_usage >= 1024) ? round((round($memory_usage / 1024 * 100) / 100), 2) . 'KB' : $memory_usage . 'BYTES');
+		
+		$averageMemory = round(($memory_usage/$times),2);
+		$averageMemory = ($averageMemory >= 1048576) ? round((round($averageMemory / 1048576 * 100) / 100), 2) . 'MB' : (($averageMemory >= 1024) ? round((round($averageMemory / 1024 * 100) / 100), 2) . 'KB' : $averageMemory . 'BYTES');
+
 		echo "\n--------------------------------------------------\n";
-		echo "times $times totalTime $totalTime average $average";
+		echo "times\t$times\n";
+		echo "totalTime\t{$totalTime}s\taverageTime\t\t{$averageTime}s\n";
+		echo "memoryUsage\t{$memory_usage}\taverageMemory\t{$averageMemory}";
 		echo "\n--------------------------------------------------\n";
 		$this->assertTrue(1 > $totalTime);
 	}
