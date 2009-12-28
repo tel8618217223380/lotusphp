@@ -16,15 +16,15 @@ class LtDb
 		
 	}
 
-	public function getSqlMap($group)
+	public function getSqlMap($group = null)
 	{
 		
 	}
 
-	public function getDbHandle($conf)
+	public function getDbHandle($group = null)
 	{
 		$dbh = new LtDbHandle();
-		$dbh->conf = $conf;
+		$dbh->group = $group;
 		$dbh->init();
 		return $dbh;
 	}
