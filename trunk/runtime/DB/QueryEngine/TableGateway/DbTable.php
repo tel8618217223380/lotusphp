@@ -6,7 +6,7 @@
  */
 class LtDbTable
 {
-
+	public $sqlAdapter;
 	/**
 	 * The created field name
 	 *
@@ -15,32 +15,11 @@ class LtDbTable
 	public $createdColumn;
 
 	/**
-	 * The database handle
-	 *
-	 * @var DbAdapter
-	 */
-	public $db;
-
-	/**
-	 * The group name
-	 *
-	 * @var string
-	 */
-	public $group;
-
-	/**
 	 * The modified field name
 	 *
 	 * @var string
 	 */
 	public $modifiedColumn;
-
-	/**
-	 * The schema name
-	 *
-	 * @var string
-	 */
-	public $schema = null;
 
 	/**
 	 * The table name
@@ -54,52 +33,36 @@ class LtDbTable
 	 *
 	 * @var array
 	 */
-	protected $_fields;
+	protected $fields;
 
 	/**
 	 * The primary key
 	 *
 	 * @var string
 	 */
-	protected $_primaryKey;
+	protected $primaryKey;
 
 	/**
 	 * Build table's field list
 	 *
 	 * @return array
 	 */
-	protected function _buildFieldList()
+	protected function buildFieldList()
 	{
-		if (!$this->_fields)
+		if (!$this->fields)
 		{
-			$this->_fields = $this->db->getFields($this->tableName);
+			$this->fields = $this->db->getFields($this->tableName);
 		}
-		if (!$this->_primaryKey) 
+		if (!$this->primaryKey) 
 		{
-			foreach($this->_fields as $field)
+			foreach($this->fields as $field)
 			{
 				if ($field['primary'] == 1)
 				{
-					$this->_primaryKey = $field['name'];
+					$this->primaryKey = $field['name'];
 					break;
 				}
 			}
-		}
-	}
-
-	/**
-	 * The constructor function
-	 *
-	 */
-	public function __construct()
-	{
-		$this->createdColumn = isset($this->createdColumn) ? $this->createdColumn : 'created';
-		$this->modifiedColumn = isset($this->modifiedColumn) ? $this->modifiedColumn : 'modified';
-		if (get_parent_class($this))
-		{
-			$this->db = $this->getAdapterInstance();
-			$this->db->setGroup($this->group);
-			$this->db->setSchema($this->schema);
 		}
 	}
 
@@ -131,9 +94,9 @@ class LtDbTable
 	 */
 	public function delete($primaryKeyId)
 	{
-		$this->_buildFieldList();
-		$where['expression'] = $this->_primaryKey . '=:' . $this->_primaryKey;
-		$where['value'][$this->_primaryKey] = $primaryKeyId;
+		$this->buildFieldList();
+		$where['expression'] = $this->primaryKey . '=:' . $this->primaryKey;
+		$where['value'][$this->primaryKey] = $primaryKeyId;
 		return $this->deleteRows($where);
 	}
 
@@ -167,9 +130,9 @@ class LtDbTable
 	 */
 	public function fetch($primaryKeyId, $args = null, $useSlave = true)
 	{
-		$this->_buildFieldList();
-		$fetchRowsArgs['where']['expression'] =  $this->tableName . '.' . $this->_primaryKey . '=:' . $this->_primaryKey;
-		$fetchRowsArgs['where']['value'][$this->_primaryKey] = $primaryKeyId;
+		$this->buildFieldList();
+		$fetchRowsArgs['where']['expression'] =  $this->tableName . '.' . $this->primaryKey . '=:' . $this->primaryKey;
+		$fetchRowsArgs['where']['value'][$this->primaryKey] = $primaryKeyId;
 		$fetchRowsArgs['fields'] = isset($args['fields']) ? $args['fields'] : null;
 		$fetchRowsArgs['join'] = isset($args['join']) ? $args['join'] : null;
 		$fetchResult = $this->fetchRows($fetchRowsArgs, $useSlave);
@@ -198,23 +161,10 @@ class LtDbTable
 		if (isset($args['limit']))
 		{
 			$offset = isset($args['offset']) ? $args['offset'] : 0;
-			$sql = $this->db->limit($sql, $args['limit'], $offset);
+			$sql = $this->sqlAdapter->limit($sql, $args['limit'], $offset);
 		}
 		$queryResult = $this->db->query($sql, $bind, $useSlave);
 		return $queryResult['rows'];
-	}
-
-	/**
-	 * Get adapter instance by driver name
-	 *
-	 * @return resource
-	 */
-	public function getAdapterInstance()
-	{
-		$nodeArray = array_keys(LtDbStaticData::$servers[$this->group]);
-		$masterIndexArray = array_keys(LtDbStaticData::$servers[$this->group][$nodeArray[0]]['master']);
-		$config = array_merge(LtDbStaticData::$servers[$this->group][$nodeArray[0]]['master'][$masterIndexArray[0]]);
-		return LtDb::factory($config['adapter']);
 	}
 
 	/**
@@ -226,26 +176,26 @@ class LtDbTable
 	 */
 	public function insert($args = null)
 	{
-		$this->_buildFieldList();
+		$this->buildFieldList();
 		$insertTemplate = 'INSERT INTO %s (%s) VALUES (%s)';
 		$fields = array();
 		$placeHolders = array();
 		foreach($args as $field => $value)
 		{
-			if (isset($this->_fields[$field]))
+			if (isset($this->fields[$field]))
 			{
 				$fields[] = $field;
 				$placeholders[] = ":$field";
 				$values[$field] = $value;
 			}
 		}
-		if (isset($this->_fields[$this->createdColumn]) && !isset($args[$this->createdColumn]))
+		if (isset($this->fields[$this->createdColumn]) && !isset($args[$this->createdColumn]))
 		{
 			$fields[] = $this->createdColumn;
 			$placeholders[] = ':' . $this->createdColumn;
 			$values[$this->createdColumn] = time();
 		}
-		if (isset($this->_fields[$this->modifiedColumn]) && !isset($args[$this->modifiedColumn]))
+		if (isset($this->fields[$this->modifiedColumn]) && !isset($args[$this->modifiedColumn]))
 		{
 			$fields[] = $this->modifiedColumn;
 			$placeholders[] = ':' . $this->modifiedColumn;
@@ -254,7 +204,7 @@ class LtDbTable
 		$sql = sprintf($insertTemplate, $this->tableName, implode(",", $fields), implode(",", $placeholders));
 		$bind = $values;
 		$queryResult = $this->db->query($sql, $bind);
-		return isset($args[$this->_primaryKey]) ? $args[$this->_primaryKey] : $this->db->lastInsertId($this->tableName, $this->_primaryKey);
+		return isset($args[$this->primaryKey]) ? $args[$this->primaryKey] : $this->db->lastInsertId($this->tableName, $this->primaryKey);
 	}
 
 	/**
@@ -267,9 +217,9 @@ class LtDbTable
 	 */
 	public function update($primaryKeyId, $args = null)
 	{
-		$this->_buildFieldList();
-		$where['expression'] = $this->_primaryKey . '=:' . $this->_primaryKey;
-		$where['value'][$this->_primaryKey] = $primaryKeyId;
+		$this->buildFieldList();
+		$where['expression'] = $this->primaryKey . '=:' . $this->primaryKey;
+		$where['value'][$this->primaryKey] = $primaryKeyId;
 		return $this->updateRows($where, $args);
 	}
 
@@ -284,14 +234,14 @@ class LtDbTable
 	 */
 	public function updateRows($where, $args = null)
 	{
-		$this->_buildFieldList();
+		$this->buildFieldList();
 		$updateTemplate = 'UPDATE %s SET %s%s';
 		$fields = array();
 		$bindParameters = array();
 		$placeholderStyle = isset($where['value']) && array_key_exists(0, $where['value']) ? 'questionMark' : 'named';
 		foreach($args as $field => $value)
 		{
-			if (isset($this->_fields[$field]))
+			if (isset($this->fields[$field]))
 			{
 				if ($args[$field] instanceof DbExpression)
 				{
@@ -312,7 +262,7 @@ class LtDbTable
 				}
 			}
 		}
-		if (isset($this->_fields[$this->modifiedColumn]) && !isset($args[$this->modifiedColumn]))
+		if (isset($this->fields[$this->modifiedColumn]) && !isset($args[$this->modifiedColumn]))
 		{
 			if ('named' == $placeholderStyle)
 			{
