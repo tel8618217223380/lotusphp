@@ -1,5 +1,5 @@
 <?php
-class LtDb
+class LtDbHandle
 {
 	public $conf;
 	public $connectionAdapter;
