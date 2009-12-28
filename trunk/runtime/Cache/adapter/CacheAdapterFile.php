@@ -19,7 +19,7 @@ class LtCacheAdapterFile implements LtCacheAdapter
 		. substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2);
 		if(!is_dir($cachePath))
 		{
-			if(!mkdir($cachePath, 0777, true))
+			if(!@mkdir($cachePath, 0777, true))
 			{
 				trigger_error("Can not create $cachePath");
 			}
@@ -30,6 +30,11 @@ class LtCacheAdapterFile implements LtCacheAdapter
 
 	public function add($key, $value, $ttl=0)
 	{
+		if($this->get($key))
+		{
+			trigger_error("Key Conflict: {$key}");
+			return false;
+		}
 		$cacheFile = $this->getCacheFile($key);
 		$data['ttl'] = (0 >= $ttl) ? 0 : (time()+intval($ttl));
 		if(is_object($value) || is_resource($value))
@@ -45,6 +50,11 @@ class LtCacheAdapterFile implements LtCacheAdapter
 	
 	public function del($key)
 	{
+		if(!$this->get($key))
+		{
+			trigger_error("Key not exists: {$key}");
+			return false;
+		}
 		$cacheFile = $this->getCacheFile($key);
 		return @unlink($cacheFile);
 	}
