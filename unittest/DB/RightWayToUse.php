@@ -52,6 +52,10 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			)", null, true),
 			array("ALTER TABLE user CHANGE id id INT( 11 ) NOT NULL AUTO_INCREMENT", null, true),
 			array("INSERT INTO user VALUES (:id, :name, :age)", array("id" => 1, "name" => "lotus", "age" => 5), 1),
+			array("UPDATE user SET age = :age", array("age" => 50), 1),
+			array("SELECT * FROM user WHERE id = :id", array("id" => 1), array("0" => array("id" => 1, "name" => "lotus", "age" => 50))),
+			array("DELETE FROM user", null, 1),
+			array("SELECT * FROM user WHERE id = :id", array("id" => 1), null),
 		);
 	}
 
