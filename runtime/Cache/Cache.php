@@ -38,17 +38,15 @@ class LtCache
 	{
 		return $this->cacheHandle->get($this->getRealKey($namespace, $key));
 	}
-	/**
-	* @todo ÊÇ·ñ¿¼ÂÇºÏ²¢add update
-	*/
+
 	public function update($key, $value, $ttl = 0, $namespace='')
 	{
 		$realKey = $this->getRealKey($namespace, $key);
-		//if ($result = $this->cacheHandle->del($realKey))
-		//{
+		if ($result = $this->cacheHandle->del($realKey))
+		{
 			return $this->cacheHandle->add($realKey, $value, $ttl);
-		//}
-		//return $result;
+		}
+		return $result;
 	}
 
 	protected function getRealKey($namespace, $key)
