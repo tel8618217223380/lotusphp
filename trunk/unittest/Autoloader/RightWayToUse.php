@@ -9,9 +9,9 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	/**
 	 * -------------------------------------------------------------------
 	 * LtAutoloader要求：
-      # 需要被自动加载的文件都以.php或者.inc结尾
-                     如果既有php文件，又有html文件，html文件将被忽略，php文件正常加载
-                      可配置，详情参见LtAutoloaderCofig
+	    # 需要被自动加载的文件都以.php或者.inc结尾
+	      如果既有php文件，又有html文件，html文件将被忽略，php文件正常加载
+	      可配置，详情参见LtAutoloaderCofig
 
 	 * -------------------------------------------------------------------
 	 * LtAutoloader不在意：
