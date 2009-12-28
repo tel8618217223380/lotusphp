@@ -1,17 +1,17 @@
 <?php
 class LtObjectUtil
 {
+	static $instances;
 	static public function singleton($className)
 	{
-		static $instances;
 		if (class_exists($className))
 		{
 			$key = strtolower($className);
-			if (!isset($instances[$key]))
+			if (!isset(self::$instances[$key]))
 			{
-				$instances[$key] = new $className;
+				self::$instances[$key] = new $className;
 			}
-			return $instances[$key];
+			return self::$instances[$key];
 		}
 		else
 		{
