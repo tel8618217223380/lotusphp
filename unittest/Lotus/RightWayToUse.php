@@ -20,11 +20,11 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		$lotus = new Lotus();
 		
 		/**
-		 * envMode的默认值是dev，即开发模式
-		 * envMode不等于dev的时候（如prod-生产环境，testing-测试环境），性能会有提高
-		 * $lotus->envMode = "prod";
+		 * devMode的默认值是true，即默认处于开发模式
+		 * devMode等于false的时候（如生产环境，测试环境），性能会有提高
+		 * $lotus->devMode = false;
 		 */
-		$lotus->envMode = "prod";
+		$lotus->devMode = false;
 		$lotus->option["cache_adapter"] = "file";
 		$lotus->init();
 		
