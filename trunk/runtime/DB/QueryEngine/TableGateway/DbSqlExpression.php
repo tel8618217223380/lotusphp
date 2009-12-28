@@ -1,5 +1,5 @@
 <?php
-class LtDbExpression
+class LtDbSqlExpression
 {
 	private $_expression;
 	
