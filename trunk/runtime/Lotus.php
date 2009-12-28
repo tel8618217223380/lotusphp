@@ -2,7 +2,7 @@
 class Lotus
 {
 	public $option;
-	public $envMode = "dev";
+	public $devMode = true;
 	protected $lotusRuntimeDir;
 
 	public function __construct()
@@ -68,7 +68,7 @@ class Lotus
 		}
 		$autoloader = new LtAutoloader();
 		$autoloader->autoloadPath = $autoloadDirs;
-		if ("dev" != $this->envMode)
+		if (!$this->devMode)
 		{
 			$autoloader->storeHandle = LtObjectUtil::singleton("LtCache");
 		}
@@ -78,7 +78,7 @@ class Lotus
 	protected function prepareConfig()
 	{
 		$conf = LtObjectUtil::singleton("LtConfig");
-		if ("dev" != $this->envMod)
+		if (!$this->devMode)
 		{
 			$conf->storeHandle = LtObjectUtil::singleton("LtCache");
 		}
