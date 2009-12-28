@@ -32,7 +32,7 @@ class LtDbHandle
 	 * SELECT, SHOW, DESECRIBE, EXPLAIN return rowset or NULL when no record found
 	 * INSERT return the ID generated for an AUTO_INCREMENT column
 	 * UPDATE, DELETE return affected count
-	 * USE, DROP, ALTER, CREATE, SET etc, return affected count
+	 * USE, DROP, ALTER, CREATE, SET etc, return true
 	 * @todo 如果是读操作，自动去读slave服务器，除非设置了强制读master服务器（此功能行动到上级类去实现）
 	 * @notice 每次只能执行一条SQL
 	 */
@@ -73,7 +73,7 @@ class LtDbHandle
 			}
 			else//USE, SET, CREATE, DROP, ALTER
 			{
-				return $result;
+				return true;
 			}
 		}
 	}
@@ -119,7 +119,6 @@ class LtDbHandle
 	 * @param $sql
 	 * @param $parameter
 	 * @return string
-	 * @todo 移动到DbHandler下面去，兼容各驱动的escape()方法
 	 * @todo 兼容pgsql等其它数据库，pgsql的某些数据类型不接受单引号引起来的值
 	 */
 	public function bindParameter($sql, $parameter)
