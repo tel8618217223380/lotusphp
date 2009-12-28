@@ -5,6 +5,8 @@ class LtCache
 
 	public $namespaceMapping;
 
+	public $conf;
+
 	public function __construct()
 	{
 		$this->conf = new LtCacheConfig;

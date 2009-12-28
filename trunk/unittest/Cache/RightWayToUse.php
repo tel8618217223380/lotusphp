@@ -36,7 +36,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		// 1. 实例化
 		$cache = new LtCache;
 		// 2. 设置属性
-		$cache->adapter = "file";
+		$cache->conf->adapter = "file";
 		// 3. 调init()方法
 		$cache->init();
 
@@ -51,12 +51,13 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	/**
 	 * 使用namespace功能
 	 */
-
 	public function testMostUsedWayWithNamespace()
 	{
 		$cache = new LtCache; 
 		// 默认值是phps, 可以设成file, apc, eAccelerator, xcache
-		// $cache->conf->adapter = "apc";
+		// $cache->conf->adapter = "phps";
+		// 默认的options值
+		// $cache->conf->options = array("cache_file_root" => "/tmp/LtCache");
 		// -------------------------------------
 		// 也可以通过数组传入 namespaceMapping
 		// $cache->namespaceMapping = array('namespace' => 1, 'namespace2' => 2);
