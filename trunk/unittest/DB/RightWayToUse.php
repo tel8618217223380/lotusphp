@@ -39,9 +39,19 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			),
 		);
 		$this->testDataList = array(
-			//array("SQL语句", 正确结果)
-			array("USE test", 0),
-			array("SELECT DATABASE()", array(array("DATABASE()" => "test"))),
+			//array("SQL语句", 参数,  正确结果)
+			array("DROP DATABASE IF EXISTS test", null, true),
+			array("CREATE DATABASE test", null, true),
+			array("USE test", null, true),
+			array("SELECT DATABASE()", null, array(array("DATABASE()" => "test"))),
+			array("CREATE TABLE `user` (
+					id INT NOT NULL ,
+					name VARCHAR( 20 ) NOT NULL ,
+					age INT NOT NULL ,
+					PRIMARY KEY ( id ) 
+			)", null, true),
+			array("ALTER TABLE user CHANGE id id INT( 11 ) NOT NULL AUTO_INCREMENT", null, true),
+			array("INSERT INTO user VALUES (:id, :name, :age)", array("id" => 1, "name" => "lotus", "age" => 5), 1),
 		);
 	}
 
@@ -57,7 +67,9 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 				$conf[0]["adapter"] = $ext;
 				$dbh = $this->getDbHandle($conf[0]);
 				foreach($this->testDataList as $testData)
-				$this->assertEquals($dbh->query($testData[0]), $testData[1]);
+				{
+					$this->assertEquals($dbh->query($testData[0], $testData[1]), $testData[2]);
+				}
 			}
 		}
 	}
