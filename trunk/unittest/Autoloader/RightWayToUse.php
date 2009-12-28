@@ -263,7 +263,6 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 测试LtAutoloader初始化的时候 
 	 * 能否正确的将传给autoloadPath的值转为合法的不重复的的绝对路径
 	 * 
-	 * @todo 测试去重功能，如 用户传入array("D:/lotus", "D:\\Lotus")
 	 * @dataProvider autoloadPathDataProvider
 	 */
 	public function testPreparePath($userParameter, $expected)
