@@ -10,20 +10,14 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐） 
 	 * -------------------------------------------------------------------
 	 * LtCaptcha要求： 
-	 *  # key必须是数字或者字串，不能是数组，对象 
-	 * 
-	 * -------------------------------------------------------------------
-	 * LtCaptcha不在意：
-	 *  # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
+	 *  # 调用getImageResource()时传入唯一的seed，不能是常量
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCaptcha建议（不强求）：
-	 *  # 如果你的服务器上有apc/eaccelerator/xCaptcha等opcode Captcha
-	 *    最好不要再使用file adapter
-	 *  # 为保证key不冲突，最好使用namespace功能
+	 *  # 使用md5(uniqid())得到随机不冲突的seed
 	 * 
 	 * 本测试用例期望效果：
-	 * 能成功通过add(), get(), del(), update()接口读写数据
+	 * 无法对图片进行单元测试，实际使用方法和效果参见example/Captcha/simplest.php
 	 */
 	public function testMostUsedWay()
 	{
@@ -37,7 +31,22 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 		// 3. 调init()方法
 		$captcha->init();
 
-		//初始化完毕，测试其效果
-		$this->assertTrue($captcha->getImageResource("test_key"));
+		/**
+		 * 初始化完毕，测试其效果
+		 */
+		$this->assertTrue(is_resource($captcha->getImageResource(md5(uniqid()))));
+	}
+
+	/**
+	 * 测试verify接口是否能正常工作
+	 */
+	public function testVerify()
+	{
+		$cp = new CaptchaProxy();
+		$cp->init();
+		$seed = md5(uniqid());
+		$cp->getImageResource($seed);
+		$word = $cp->getSavedCaptchaWord($seed);
+		$this->assertTrue($cp->verify($seed, $word));
 	}
 }

@@ -14,3 +14,4 @@ include $lotusHome . "/runtime/Captcha/CaptchaImageEngine.php";
  * 开始使用Captcha
  */
 $captcha = new LtCaptcha();
+$captcha->init();

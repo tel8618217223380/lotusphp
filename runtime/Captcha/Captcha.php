@@ -29,7 +29,15 @@ class LtCaptcha
 
 	public function verify($seed, $userInput)
 	{
-		return $userInput == $this->getSavedCaptchaWord($seed);
+		if ($word = $this->getSavedCaptchaWord($seed))
+		{
+			$this->delSeedFile($seed);
+			return $userInput === $word;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	protected function saveCaptchaWord($seed, $word)
@@ -52,10 +60,13 @@ class LtCaptcha
 		}
 		else
 		{
-			$word = file_get_contents($seedFile, false, null, 13);
-			unlink($seedFile);
-			return $word;
+			return file_get_contents($seedFile, false, null, 13);
 		}
+	}
+
+	protected function delSeedFile($seed)
+	{
+		unlink($this->getSeedFile($seed));
 	}
 
 	protected function getSeedFile($seed)
