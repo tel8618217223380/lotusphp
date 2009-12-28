@@ -1,31 +1,31 @@
 <?php
+/**
+ * @todo mysql/firebird/mssql等初始化配置的时候，schema = dbname, dbname = ""
+ */
 class LtDb
 {
 	public $configHandle;
+	public $group;
+	public $node;
+	public $table;
+	public $tableGateway;//Table Gateway
+	public $sqlMap;
+	protected $connectionManager;
+	protected $connectionResource;
 
 	public function init()
 	{
-		
+		$this->connectionManager = new LtDbConnectionManager;
 	}
 
 	/**
-	 * TG = Table Gateway
+	 * raw query
 	 */
-	public function getTG($table, $group = null)
+	public function query($group = null)
 	{
-		
 	}
 
-	public function getSqlMap($group = null)
+	protected function prepareConnection()
 	{
-		
-	}
-
-	public function getDbHandle($group = null)
-	{
-		$dbh = new LtDbHandle();
-		$dbh->group = $group;
-		$dbh->init();
-		return $dbh;
 	}
 }
