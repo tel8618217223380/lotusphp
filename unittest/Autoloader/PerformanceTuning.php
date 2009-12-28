@@ -67,7 +67,7 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 
 		echo "\n--------------------------------------------------\n";
 		echo "times\t$times\n";
-		echo "totalTime\t{$totalTime}s\taverageTime\t\t{$averageTime}s\n";
+		echo "totalTime\t{$totalTime}s\taverageTime\t{$averageTime}s\n";
 		echo "memoryUsage\t{$memory_usage}\taverageMemory\t{$averageMemory}";
 		echo "\n--------------------------------------------------\n";
 		$this->assertTrue(1 > $totalTime);
