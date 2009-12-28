@@ -81,6 +81,8 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 	public function getDbHandle($conf)
 	{
 		$db = new LtDb;
+		
+		$db->init();
 		$dbh = $db->getDbHandle($conf);
 		return $dbh;
 	}
