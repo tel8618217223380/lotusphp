@@ -1,8 +1,14 @@
 == 如何运行 ==
-1. 到http://pear.phpunit.de/get/下载PHPUnit-3.4.5，解压放到任意目录，使目录结构看起来就像这样：D:\kiss\PHP\PEAR\PHPUnit\Framework.php
-2. 修改php.ini，设置include_path，就像这样：include_path = ".;D:/kiss/PHP/PEAR/"
-3. 打开命令行（windows下是CMD），用CD命令进入到lotusphp/trunk/unittest目录
-4. 执行php.exe TestHelper.php DB\DbHandlertest.php
+1. 下载
+         到http://pear.phpunit.de/get/下载PHPUnit-3.4.5，解压放到任意目录，使目录结构看起来就像这样：D:\kiss\PHP\PEAR\PHPUnit\Framework.php
+
+2. 设置include_path
+        打开lotusphp/trunk/unittest/phpunit_bootstrap.php，找到set_include_path()那一行，把D:\kiss\PHP\PEAR改为你的phpnit所在目录
+
+3. 运行
+       执行单元测试的命令模板：php.exe TestHelper.php TestCase/TestSuite文件名，如：
+   # php.exe TestHelper.php Autoloader/RightWayToUse.php
+   # php.exe lotusphp/trunk/unittest/TestHelper.php lotusphp/trunk/unittest/Autoloader/AllTest.php
 
 == 如何写测试用例 ==
-参见unittest/DB/DbHandlerTest.php，及PHPUnit的文档：http://www.phpunit.de/manual/current/en/writing-tests-for-phpunit.html
+参见unittest/目录下已有的示例，及PHPUnit的文档：http://www.phpunit.de/manual/current/en/writing-tests-for-phpunit.html
