@@ -48,10 +48,26 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertTrue($cache->del("test_key"));
 		$this->assertFalse($cache->get("test_key"));
 	}
-
+	/**
+	 * 使用namespace功能
+	 */
 
 	public function testMostUsedWayWithNamespace()
 	{
+		$cache = new LtCache; 
+		// 默认值是phps, 可以设成file, apc, eAccelerator, xcache
+		// $cache->conf->adapter = "apc";
+		// -------------------------------------
+		// 也可以通过数组传入 namespaceMapping
+		// $cache->namespaceMapping = array('namespace' => 1, 'namespace2' => 2);
+		$cache->init();
+
+		$this->assertTrue($cache->add(1, "This is thread 1", 0, 'namespace'));
+		$this->assertEquals($cache->get(1, 'namespace'), "This is thread 1");
+		$this->assertTrue($cache->update(1, "new value", 0, 'namespace'));
+		$this->assertEquals($cache->get(1, 'namespace'), "new value");
+		$this->assertTrue($cache->del(1, 'namespace'));
+		$this->assertFalse($cache->get(1, 'namespace'));
 	}
 
 	public function __construct()
