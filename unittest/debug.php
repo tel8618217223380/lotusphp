@@ -7,6 +7,6 @@ require_once "phpunit_bootstrap.inc";
 /**
  * 调试代码
  */
-require_once './Autoloader/Performance.php';
-$i = new PerformanceTest4Autoloader();
-$i->testPerformance();
+require_once './DB/RightWayToUse.php';
+$i = new RightWayToUseDb();
+$i->testBase();
