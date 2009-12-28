@@ -42,9 +42,9 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 		$this->assertTrue(class_exists("HelloWorld"));
 		
 		/**
-		 * 运行5000次，要求在1秒内运行完
+		 * 运行1000次，要求在1秒内运行完
 		 */
-		$times = 5000;
+		$times = 1000;
 		$startTime = microtime(true);
 		for($i = 0; $i < $times; $i++)
 		{

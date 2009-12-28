@@ -39,7 +39,7 @@ class PerformanceTuning4Config extends PHPUnit_Framework_TestCase
 		 * 运行5000次，要求在1秒内运行完
 		 */
 		$startTime = microtime(true);
-		for($i = 0; $i < 5000; $i++)
+		for($i = 0; $i < 1000; $i++)
 		{
 			$conf = new LtConfig;
 			$conf->storeHandle = $cacheHandle;
