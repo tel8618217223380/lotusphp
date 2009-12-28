@@ -9,30 +9,30 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	/**
 	 * -------------------------------------------------------------------
 	 * LtAutoloader要求：
-	    # 需要被自动加载的文件都以.php或者.inc结尾
-	      如果既有php文件，又有html文件，html文件将被忽略，php文件正常加载
-	      可配置，详情参见LtAutoloaderCofig
-
+	 *  # 需要被自动加载的文件都以.php或者.inc结尾
+	 *    如果既有php文件，又有html文件，html文件将被忽略，php文件正常加载
+	 *    可配置，详情参见LtAutoloaderCofig
+	 * 
 	 * -------------------------------------------------------------------
 	 * LtAutoloader不在意：
-	    # 目录名有没有拖尾斜线
-	    # 目录下面有无子目录 
-	    # 文件名和文件路径跟类名有无关联 
-	    # 定义和使用类时，类名是大写还是小写 
-
+	 *  # 目录名有没有拖尾斜线
+	 *  # 目录下面有无子目录
+	 *  # 文件名和文件路径跟类名有无关联
+	 *  # 定义和使用类时，类名是大写还是小写 
+	 * 
 	 * -------------------------------------------------------------------
 	 * LtAutoloader不支持（出错演示和不支持的原因参见WrongWayToUse.php）：
-	    # 传入的参数不是真实存在的目录（如http://some_dir这样的） 
-	    # 目录名或者文件名带空格（如Zend Framework） 
-	    # 类或接口重名，函数和函数重名
-
+	 *  # 传入的参数不是真实存在的目录（如http://some_dir这样的） 
+	 *  # 目录名或者文件名带空格（如Zend Framework） 
+	 *  # 类或接口重名，函数和函数重名
+	 * 
 	 * -------------------------------------------------------------------
 	 * LtAutoloader建议（不强求）：
-	    # autoloadPath使用绝对路径
-	    # 使用class而不是function来封装你的逻辑
-	    # 每个class都放在单独的一个文件中，且不要在已经定义了类的文件里再定义函数
-	    # class/function里不要使用__FILE__魔术变量
-
+	 *  # autoloadPath使用绝对路径
+	 *  # 使用class而不是function来封装你的逻辑
+	 *  # 每个class都放在单独的一个文件中，且不要在已经定义了类的文件里再定义函数
+	 *  # class/function里不要使用__FILE__魔术变量
+	 * 
 	 * -------------------------------------------------------------------
 	 * 本测试用例期望效果：
 	 * 在new CLASS_NAME, class_exists("CLASS_NAME"), extends CLASS_NAME的时候 
@@ -40,15 +40,22 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 */
 	public function testMostUsedWay()
 	{
+		/**
+		 * Lotus组件初始化三步曲
+		 */
+		// 1. 实例化
 		$autoloader = new LtAutoloader;
+		// 2. 设置属性
 		$autoloader->autoloadPath = array(
 			dirname(__FILE__) . "/test_data/class_dir_1",
 			dirname(__FILE__) . "/test_data/class_dir_2",
 			dirname(__FILE__) . "/test_data/function_dir_1",
 			dirname(__FILE__) . "/test_data/function_dir_2"
 		);
+		// 3. 调init()方法
 		$autoloader->init();
 
+		//初始化完毕，测试其效果
 		$this->assertTrue(new Goodbye() instanceof GoodBye);
 		$this->assertTrue(class_exists("HelloWorld"));
 		$this->assertEquals(HelloLotus::sayHello(), "hello");
