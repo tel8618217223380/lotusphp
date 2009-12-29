@@ -2,6 +2,7 @@
 class LtDbHandle
 {
 	public $group;
+	public $node;
 	public $connectionAdapter;
 	public $sqlAdapter;
 
@@ -28,29 +29,40 @@ class LtDbHandle
 	 * @param $sql
 	 * @param $bind
 	 * @param $forceUseMaster
-	 * @return false on failed
-	 * SELECT, SHOW, DESECRIBE, EXPLAIN return rowset or NULL when no record found
-	 * INSERT return the ID generated for an AUTO_INCREMENT column
-	 * UPDATE, DELETE return affected count
-	 * USE, DROP, ALTER, CREATE, SET etc, return true
-	 * @todo 如果是读操作，自动去读slave服务器，除非设置了强制读master服务器（此功能行动到上级类去实现）
+	 * @return false on query failed
+	 *         --sql type--                         --return value--
+	 *         SELECT, SHOW, DESECRIBE, EXPLAIN     rowset or NULL when no record found
+	 *         INSERT                               the ID generated for an AUTO_INCREMENT column
+	 *         UPDATE, DELETE, REPLACE              affected count
+	 *         USE, DROP, ALTER, CREATE, SET etc    true
 	 * @notice 每次只能执行一条SQL
+	 *         不要通过此接口执行USE DATABASE, SET NAMES这样的语句
 	 */
-	public function query($sql, $bind = null)
+	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
 		if(empty($sql))
 		{
 			// trigger_error('Empty the SQL statement', E_USER_WARNING);
 			return null;
 		}
+		$connectionManager = new LtDbConnectionManager;
 		if (is_array($bind))
 		{
 			$sql = $this->bindParameter($sql, $bind);
 		}
-		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))//read query: SELECT, SHOW, DESCRIBE
-		{
+		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))
+		{//read query (use ): SELECT, EXPLAIN, SHOW, DESCRIBE
+			if (!$forceUseMaster && isset(LtDbStaticData::$servers[$this->group][$this->node]["slave"]))
+			{
+				$adapters = $connectionManager->getAdapters($this->group, $this->node, "slave");
+			}
+			else
+			{
+				$adapters = $connectionManager->getAdapters($this->group, $this->node, "master");
+			}
+			$this->connectionAdapter = $adapters["connectionAdapter"];
+			$this->sqlAdapter = $adapters["sqlAdapter"];
 			$result = $this->connectionAdapter->query($sql);
-			//if (0 === count($result))
 			if (empty($result))
 			{
 				return null;
@@ -62,6 +74,9 @@ class LtDbHandle
 		}
 		else
 		{
+			$adapters = $connectionManager->getAdapters($this->group, $this->node, "master");
+			$this->connectionAdapter = $adapters["connectionAdapter"];
+			$this->sqlAdapter = $adapters["sqlAdapter"];
 			$result = $this->connectionAdapter->exec($sql);
 			if (preg_match("/^\s*INSERT/i", $sql))//INSERT
 			{
@@ -75,42 +90,6 @@ class LtDbHandle
 			{
 				return true;
 			}
-		}
-	}
-
-	public function init($connConf)
-	{
-		if (preg_match("/^pdo_/i", $connConf["adapter"]))
-		{
-			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst(substr($connConf["adapter"], 4));
-			$LtDbConnectionAdapter = "LtDbConnectionAdapterPdo";
-		}
-		else
-		{
-			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst($connConf["adapter"]);
-			$LtDbConnectionAdapter = "LtDbConnectionAdapter" . ucfirst($connConf["adapter"]);
-		}
-		/**
-		 * Mysqli use mysql syntax
-		 */
-		if ("mysqli" == $connConf["adapter"])
-		{
-			$LtDbSqlAdapter = "LtDbSqlAdapterMysql";
-		}
-		$this->sqlAdapter = new $LtDbSqlAdapter();
-		$this->connectionAdapter = new $LtDbConnectionAdapter();
-		if($this->connectionAdapter->connResource = $this->connectionAdapter->connect($connConf))
-		{
-			$this->query($this->sqlAdapter->setCharset($connConf["charset"]));
-			if (!empty($connConf["schema"]))//set default schema, for pgsql, oracle
-			{
-				$this->query($this->sqlAdapter->setSchema($connConf["schema"]));
-			}
-		}
-		else
-		{
-			//don't trigger_error() here, because the caller may catch this exception
-			throw new Exception("Can not connect to db server");
 		}
 	}
 

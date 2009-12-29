@@ -24,38 +24,28 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$this->confList = array(
 			"mysql" => array(
 				array(
-					"host"           => "localhost",          //some ip, hostname
-					"port"           => 3306,
-					"username"       => "root",
 					"password"       => "123456",
-					"adapter"        => "mysql",              //mysql,mysqli,pdo_mysql,sqlite,pdo_sqlite
-					"charset"        => "UTF-8",
-					"pconnect"       => false,                //true,false
-					"connection_ttl" => 30,                   //any seconds
-					"dbname"         => "",
-					"schema"         => "",
+					"dbname"         => "test",
 				),
 				array("mysql", "mysqli", "pdo_mysql"),
 			),
 		);
 		$this->testDataList = array(
 			//array("SQL语句", 参数,  正确结果)
-			array("DROP DATABASE IF EXISTS test", null, true),
-			array("CREATE DATABASE test", null, true),
-			array("USE test", null, true),
-			array("SELECT DATABASE()", null, array(array("DATABASE()" => "test"))),
-			array("CREATE TABLE `user` (
+			array("DROP TABLE IF EXISTS test_user", null, true),
+			//array("USE test", null, true),不再支持通过query()执行USE DATABASE和SET NAMES
+			array("CREATE TABLE test_user (
 					id INT NOT NULL ,
 					name VARCHAR( 20 ) NOT NULL ,
 					age INT NOT NULL ,
 					PRIMARY KEY ( id ) 
 			)", null, true),
-			array("ALTER TABLE user CHANGE id id INT( 11 ) NOT NULL AUTO_INCREMENT", null, true),
-			array("INSERT INTO user VALUES (:id, :name, :age)", array("id" => 1, "name" => "lotus", "age" => 5), 1),
-			array("UPDATE user SET age = :age", array("age" => 50), 1),
-			array("SELECT * FROM user WHERE id = :id", array("id" => 1), array("0" => array("id" => 1, "name" => "lotus", "age" => 50))),
-			array("DELETE FROM user", null, 1),
-			array("SELECT * FROM user WHERE id = :id", array("id" => 1), null),
+			array("ALTER TABLE test_user CHANGE id id INT( 11 ) NOT NULL AUTO_INCREMENT", null, true),
+			array("INSERT INTO test_user VALUES (:id, :name, :age)", array("id" => 1, "name" => "lotus", "age" => 5), 1),
+			array("UPDATE test_user SET age = :age", array("age" => 50), 1),
+			array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), array("0" => array("id" => 1, "name" => "lotus", "age" => 50))),
+			array("DELETE FROM test_user", null, 1),
+			array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), null),
 		);
 	}
 
@@ -80,10 +70,12 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 
 	public function getDbHandle($conf)
 	{
+		$dcb = new LtDbConfigBuilder;
+		$dcb->addSingleHost($conf);
+		LtDbStaticData::$servers = $dcb->getServers();
+
 		$db = new LtDb;
-		
 		$db->init();
-		$dbh = $db->getDbHandle($conf);
-		return $dbh;
+		return $db->dbh;
 	}
 }
