@@ -36,12 +36,12 @@ class Lotus
 		require_once $this->lotusRuntimeDir . "Autoloader/AutoloaderConfig.php";
 		require_once $this->lotusRuntimeDir . "Cache/Cache.php";
 		require_once $this->lotusRuntimeDir . "Cache/CacheConfig.php";
-		require_once $this->lotusRuntimeDir . "Cache/adapter/CacheAdapter.php";
-		require_once $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterApc.php";
-		require_once $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterEAccelerator.php";
-		require_once $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterFile.php";
-		require_once $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterPhps.php";
-		require_once $this->lotusRuntimeDir . "Cache/adapter/CacheAdapterXcache.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapter.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterApc.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterEAccelerator.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterFile.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterPhps.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
 		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
 
 		/**
