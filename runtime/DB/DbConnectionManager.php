@@ -5,8 +5,9 @@ class LtDbConnectionManager
 	 * Connection management
 	 * array(
 	 * 	"connection"  => connection resource id,
-	 * 	"schema"      => default schema name,
 	 * 	"expire_time" => expire time,
+	 * 	"schema"      => default schema name,
+	 * 	"charset"     => char set / encoding
 	 * )
 	 */
 	protected function getConnectionKey($connConf)
@@ -26,12 +27,15 @@ class LtDbConnectionManager
 		LtDbStaticData::$connections[$key] = $connectionInfo;
 	}
 
-	public function getConnection($group, $node, $role = "master", $schema)
+	public function getConnection($group, $node, $role = "master")
 	{
 		$connectionInfo = null;
 		$hosts = LtDbStaticData::$servers[$group][$node][$role];
 		foreach($hosts as $host => $hostConfig)
 		{
+			/**
+	 		 * @todo 检查当前schema和charset与用户要操作的目标是否一致
+	 		 */
 			if($connectionInfo = $this->getCachedConnectionInfo($this->getConnectionKey($hostConfig)))
 			{//cached connection resource FOUND
 				break;
@@ -46,10 +50,13 @@ class LtDbConnectionManager
 				$hashNumber = substr(microtime(),7,1) % $hostTotal;
 				$hostConfig = LtDbStaticData::$servers[$group][$node][$role][$hostIndexArray[$hashNumber]];
 				$connectionAdapter = LtDbFactory::getConnectionAdapter($hostConfig["adapter"]);
+				$sqlAdapter = LtDbFactory::getSqlAdapter($hostConfig["adapter"]);
 				if ($connection = $connectionAdapter->connect($hostConfig))
 				{
 					$ttl = isset($hostConfig["connection_ttl"]) ? $hostConfig["connection_ttl"] : 30;
-					$connectionInfo = array("connection" => $connection, "schema" => "");
+					$connectionAdapter->exec($sqlAdapter->setSchema($hostConfig["schema"]));
+					$connectionAdapter->exec($sqlAdapter->setCharset($hostConfig["charset"]));
+					$connectionInfo = array("connection" => $connection, "schema" => $hostConfig["schema"], "charset" => $hostConfig["charset"]);
 					$this->cacheConnection($this->getConnectionKey($hostConfig), $connectionInfo, $ttl);
 					break;
 				}
@@ -66,9 +73,6 @@ class LtDbConnectionManager
 				}//end else
 			}//end while
 		}//end if
-		$sqlAdapter = LtDbFactory::getSqlAdapter($hostConfig["adapter"]);
-		$connectionAdapter->exec($sqlAdapter->setSchema($hostConfig["schema"]));
-		$connectionAdapter->exec($sqlAdapter->setCharset($hostConfig["charset"]));
 		return $connectionInfo["connection"];
 	}
 }
