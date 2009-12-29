@@ -1,7 +1,7 @@
 <?php
 class LtDbFactory
 {
-	static function getConnectionAdapter($extension)
+	public function getConnectionAdapter($extension)
 	{
 		if (preg_match("/^pdo_/i", $extension))
 		{
@@ -14,7 +14,7 @@ class LtDbFactory
 		return new $LtDbConnectionAdapter;
 	}
 
-	static function getSqlAdapter()
+	public function getSqlAdapter($extension)
 	{
 		if (preg_match("/^pdo_/i", $extension))
 		{

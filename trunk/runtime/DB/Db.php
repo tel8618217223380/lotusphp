@@ -4,28 +4,30 @@
  */
 class LtDb
 {
-	public $configHandle;
+	public $dbh;
 	public $group;
 	public $node;
-	public $table;
-	public $tableGateway;//Table Gateway
-	public $sqlMap;
-	protected $connectionManager;
-	protected $connectionResource;
 
 	public function init()
 	{
-		$this->connectionManager = new LtDbConnectionManager;
+		$this->dbh = new LtDbHandle;
+		$this->dbh->group = $this->getGroup();
+		$this->dbh->node = $this->getNode();
 	}
 
-	/**
-	 * raw query
-	 */
-	public function query($group = null)
+	protected function getGroup()
 	{
+		if (1 == count(LtDbStaticData::$servers))
+		{
+			return key(LtDbStaticData::$servers);
+		}
 	}
 
-	protected function prepareConnection()
+	protected function getNode()
 	{
+		if (1 == count(LtDbStaticData::$servers[$this->getGroup()]))
+		{
+			return key(LtDbStaticData::$servers[$this->getGroup()]);
+		}
 	}
 }

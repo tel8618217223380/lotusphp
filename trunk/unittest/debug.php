@@ -7,7 +7,7 @@ require_once "phpunit_bootstrap.inc";
 /**
  * 调试代码
  */
-require_once './Captcha/include_classes.inc';
-require_once './Captcha/RightWayToUse.php';
-$i = new RightWayToUseCaptcha();
-$i->testVerify();
+require_once './DB/include_classes.inc';
+require_once './DB/RightWayToUse.php';
+$i = new RightWayToUseDb();
+$i->testBase();
