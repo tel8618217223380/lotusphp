@@ -1,1 +1,1 @@
-php.exe TestHelper.php --verbose %*
+D:/kiss/PHP/php.exe TestHelper.php --verbose %*

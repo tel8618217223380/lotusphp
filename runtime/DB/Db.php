@@ -22,7 +22,14 @@ class LtDb
 
 	public function getTableGateway($table)
 	{
-		
+		$tg = new LtDbTable;
+		$tg->dbh = $this->dbh;
+	}
+
+	public function getSqlMapClient()
+	{
+		$smc = new DbSqlMapClient();
+		$smc->dbh = $this->dbh;
 	}
 
 	protected function getGroup()
