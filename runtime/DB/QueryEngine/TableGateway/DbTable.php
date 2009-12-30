@@ -6,7 +6,7 @@
  */
 class LtDbTable
 {
-	public $sqlAdapter;
+	public $dbh;
 	/**
 	 * The created field name
 	 *
@@ -51,7 +51,7 @@ class LtDbTable
 	{
 		if (!$this->fields)
 		{
-			$this->fields = $this->db->getFields($this->tableName);
+			$this->fields = $this->dbh->sqlAdapter->getFields($this->dbh->query($this->dbh->sqlAdapter->showFields($this->tableName)));
 		}
 		if (!$this->primaryKey) 
 		{
@@ -80,9 +80,8 @@ class LtDbTable
 		$bind = isset($args['where']['value']) ? $args['where']['value'] : array();
 		$join = isset($args['join']) ? ' ' . $args['join'] : '';
 		$sql = sprintf($selectTemplate, $this->tableName, $join . $where);
-		$queryResult = $this->db->query($sql, $bind, true);
-		$rows = $queryResult['rows'];
-		return $rows[0]['total'];
+		$queryResult = $this->dbh->query($sql, $bind);
+		return $queryResult[0]['total'];
 	}
 
 	/**
@@ -114,8 +113,7 @@ class LtDbTable
 		$where = isset($args['expression']) ? ' WHERE ' . $args['expression'] : '';
 		$bind = isset($args['value']) ? $args['value'] : array();
 		$sql = sprintf($deleteTemplate, $this->tableName, $where);
-		$queryResult = $this->db->query($sql, $bind);
-		return $queryResult['row_total'];
+		return $this->dbh->query($sql, $bind);
 	}
 
 	/**
@@ -161,10 +159,9 @@ class LtDbTable
 		if (isset($args['limit']))
 		{
 			$offset = isset($args['offset']) ? $args['offset'] : 0;
-			$sql = $this->sqlAdapter->limit($sql, $args['limit'], $offset);
+			$sql = $this->dbh->sqlAdapter->limit($sql, $args['limit'], $offset);
 		}
-		$queryResult = $this->db->query($sql, $bind, $useSlave);
-		return $queryResult['rows'];
+		return $this->dbh->query($sql, $bind);
 	}
 
 	/**
@@ -203,8 +200,8 @@ class LtDbTable
 		}
 		$sql = sprintf($insertTemplate, $this->tableName, implode(",", $fields), implode(",", $placeholders));
 		$bind = $values;
-		$queryResult = $this->db->query($sql, $bind);
-		return isset($args[$this->primaryKey]) ? $args[$this->primaryKey] : $this->db->lastInsertId($this->tableName, $this->primaryKey);
+		$queryResult = $this->dbh->query($sql, $bind);
+		return isset($args[$this->primaryKey]) ? $args[$this->primaryKey] : $queryResult;
 	}
 
 	/**
@@ -278,7 +275,6 @@ class LtDbTable
 		$whereCause = isset($where['expression']) ? ' WHERE ' . $where['expression'] : '';
 		$bind = isset($where['value']) ? array_merge($bindParameters, $where['value']) : $bindParameters;
 		$sql = sprintf($updateTemplate, $this->tableName, implode(",", $fields), $whereCause);
-		$queryResult = $this->db->query($sql, $bind);
-		return $queryResult['row_total'];
+		return $this->dbh->query($sql, $bind);
 	}
 }

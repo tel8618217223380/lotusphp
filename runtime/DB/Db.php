@@ -20,10 +20,12 @@ class LtDb
 		return $this->dbh;
 	}
 
-	public function getTableGateway($table)
+	public function getTableGateway($tableName)
 	{
 		$tg = new LtDbTable;
+		$tg->tableName = $tableName;
 		$tg->dbh = $this->dbh;
+		return $tg;
 	}
 
 	public function getSqlMapClient()

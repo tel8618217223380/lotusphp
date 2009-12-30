@@ -86,7 +86,15 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 				 * 用法 2： 使用Table Gateway查询引擎
 				 */
 				$tg = $db->getTableGateway("test_user");
-				//$this->assertTrue($id = $tg->insert(array("name" => "kiwiphp", "age" => 4)));
+				$this->assertEquals($id = $tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4)), 2);
+				$this->assertEquals($tg->fetch($id), array("id" => 2, "name" => "kiwiphp", "age" => 4));
+				$this->assertEquals($id = $tg->insert(array("name" => "chin", "age" => 28)), 3);
+				$this->assertEquals($tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4),array("id" => 3, "name" => "chin", "age" => 28)));
+				$this->assertEquals($tg->update(3, array("name" => "Qin")), 1);
+				$this->assertEquals($tg->fetch($id), array("id" => 3, "name" => "Qin", "age" => 28));
+				$this->assertEquals($tg->count(), 2);
+				$this->assertEquals($tg->delete(3), 1);
+				$this->assertEquals($tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4)));
 			}
 		}
 	}
