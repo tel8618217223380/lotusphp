@@ -46,7 +46,7 @@ class LtDbHandle
 			return null;
 		}
 		$connectionManager = new LtDbConnectionManager;
-		if (is_array($bind))
+		if (is_array($bind) && 0 < count($bind))
 		{
 			$sql = $this->bindParameter($sql, $bind);
 		}
