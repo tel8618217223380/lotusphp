@@ -51,31 +51,48 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 
 	/**
 	 * 基本功能测试
+	 * 单机单库，适合只有一个数据库的小型应用
 	 */
-	public function testBase()
-	{		
+	public function testMostUsedWay()
+	{
 		foreach ($this->confList as $conf)
 		{
 			foreach ($conf[1] as $ext)
 			{
 				$conf[0]["adapter"] = $ext;
-				$dbh = $this->getDbHandle($conf[0]);
+				/**
+				 * 配置数据库连接信息
+				 */
+				$dcb = new LtDbConfigBuilder;
+				$dcb->addSingleHost($conf[0]);
+				LtDbStaticData::$servers = $dcb->getServers();
+
+				/**
+				 * 实例化组件入口类
+				 */
+				$db = new LtDb;
+				$db->init();
+
+				/**
+				 * 用法 1： 直接操作数据库
+				 */
+				$dbh = $db->getDbHandle();
 				foreach($this->testDataList as $testData)
 				{
 					$this->assertEquals($dbh->query($testData[0], $testData[1]), $testData[2]);
 				}
+
+				/**
+				 * 用法 2： 使用Table Gateway查询引擎
+				 */
+				$tg = $db->getTableGateway("test_user");
+				//$this->assertTrue($id = $tg->insert(array("name" => "kiwiphp", "age" => 4)));
 			}
 		}
 	}
 
-	public function getDbHandle($conf)
+	public function testDistDb()
 	{
-		$dcb = new LtDbConfigBuilder;
-		$dcb->addSingleHost($conf);
-		LtDbStaticData::$servers = $dcb->getServers();
-
-		$db = new LtDb;
-		$db->init();
-		return $db->dbh;
+		
 	}
 }
