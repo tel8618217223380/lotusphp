@@ -4,7 +4,7 @@
  */
 class LtDb
 {
-	public $dbh;
+	protected $dbh;
 	public $group;
 	public $node;
 
@@ -13,6 +13,16 @@ class LtDb
 		$this->dbh = new LtDbHandle;
 		$this->dbh->group = $this->getGroup();
 		$this->dbh->node = $this->getNode();
+	}
+
+	public function getDbHandle()
+	{
+		return $this->dbh;
+	}
+
+	public function getTableGateway($table)
+	{
+		
 	}
 
 	protected function getGroup()

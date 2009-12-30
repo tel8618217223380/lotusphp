@@ -12,6 +12,7 @@ class LtDbConnectionManager
 	 */
 	protected $connectionAdapter;
 	protected $sqlAdapter;
+	static $connectionPool;
 
 	protected function getConnectionKey($connConf)
 	{
@@ -26,7 +27,7 @@ class LtDbConnectionManager
 			"schema"      => $connConf["schema"],
 			"charset"     => $connConf["charset"],
 		);
-		LtDbStaticData::$connections[$this->getConnectionKey($connConf)] = $connectionInfo;
+		self::$connectionPool[$this->getConnectionKey($connConf)] = $connectionInfo;
 	}
 
 	protected function getCachedConnection($group, $node, $role)
@@ -34,9 +35,9 @@ class LtDbConnectionManager
 		foreach(LtDbStaticData::$servers[$group][$node][$role] as $hostConfig)
 		{
 			$key = $this->getConnectionKey($hostConfig);
-			if(isset(LtDbStaticData::$connections[$key]) && time() < LtDbStaticData::$connections[$key]['expire_time'])
+			if(isset(self::$connectionPool[$key]) && time() < self::$connectionPool[$key]['expire_time'])
 			{//cached connection resource FOUND
-				$connectionInfo = LtDbStaticData::$connections[$key];
+				$connectionInfo = self::$connectionPool[$key];
 				if ($connectionInfo["schema"] != $hostConfig["schema"] || $connectionInfo["charset"] != $hostConfig["charset"])
 				{//检查当前schema和charset与用户要操作的目标不一致
 					$hostConfig = LtDbStaticData::$servers[$group][$node][$role][$hostIndexArray[$hashNumber]];
