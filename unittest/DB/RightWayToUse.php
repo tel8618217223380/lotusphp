@@ -75,6 +75,12 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 
 				/**
 				 * 用法 1： 直接操作数据库
+				 * 
+				 * 优点：学习成本低，快速入门
+				 * 
+				 * 适用场景：
+				 *     1. 临时写个脚本操作数据库，不想花时间学习LtDb的查询引擎
+				 *     2. 只写少量脚本，不是一个完整持续的项目，不需要SqlMap来管理SQL语句
 				 */
 				$dbh = $db->getDbHandle();
 				foreach($this->testDataList as $testData)
@@ -84,6 +90,12 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 
 				/**
 				 * 用法 2： 使用Table Gateway查询引擎
+				 * 
+				 * 优点：自动生成SQL语句
+				 * 
+				 * 适用场景：
+				 *     1. 对数据表进行增简单的删查改操作，尤其是单条数据的操作
+				 *     2. 简单的SELECT，动态合成WHERE子句
 				 */
 				$tg = $db->getTableGateway("test_user");
 				$this->assertEquals($id = $tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4)), 2);
@@ -98,6 +110,12 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 
 				/**
 				 * 用法3：使用SqlMapClient
+				 * 
+				 * 优点：自定义SQL，不受任何限制；SQL语句统一存储在配置文件里，便于DBA审查、管理
+				 * 
+				 * 适用场景：
+				 *     1. Table Gateway无法实现的查询，尤其是复杂SELECT、子查询
+				 *     2. 动态传入表名
 				 */
 				$smc = $db->getSqlMapClient();
 				$this->assertEquals($smc->execute("getAgeTotal"), array(0 => array("age_total" => 1)));
