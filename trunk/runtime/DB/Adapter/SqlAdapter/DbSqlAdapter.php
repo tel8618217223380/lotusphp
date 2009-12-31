@@ -46,24 +46,35 @@ abstract class LtDbSqlAdapter
 	 * 2. 能不能用Salve
 	 * 3. 是否改变当前连接的会话参数（如USE DB改变了当前默认的DB）
 	 */
+	/**
+	 * 
+	 * @param string $sql 一条查询语句
+	 * @return string unknow, rs, int, count, conn, bool
+	 */
 	public function detectQueryType($sql)
 	{
-		$ddl = 'create,drop';
-		$dml = 'select,insert,update,delete';
-		$conn = 'use,set nmaes';
-		$ret = '';
-			if (preg_match("/^\s*INSERT/i", $sql))//INSERT
-			{
-				$ret = 'insert';
-			}
-			else if (preg_match("/^\s*UPDATE|^\s*DELETE|^\s*REPLACE/i", $sql))//UPDATE, DELETE, REPLACE
-			{
-				$ret = 'update';
-			}
-			else//USE, SET, CREATE, DROP, ALTER
-			{
-				$ret = 'conn';
-			}
+		$ret = 'unknow';
+		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))
+		{
+			$ret = 'rs'; //RecorderSet 记录集 或者 NULL
+		}
+		else if (preg_match("/^\s*INSERT/i", $sql))
+		{
+			$ret = 'int'; //自动增长字段值
+		}
+		else if (preg_match("/^\s*UPDATE|^\s*DELETE|^\s*REPLACE/i", $sql))
+		{
+			$ret = 'count'; //影响计数
+		}
+		else if (preg_match("/^\s*USE/i", $sql))
+		{
+			$ret = 'conn'; //改变连接
+		}
+		else
+		{ 
+			// SET, CREATE, DROP, ALTER
+			$ret = 'bool'; //操作成功或者失败
+		}
 		return $ret;
 	}
 }
