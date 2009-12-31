@@ -1,5 +1,7 @@
-@ECHO OFF
-SET MyDir=D:/kiss/PHP
-SET Path=%PATH%;%MyDir%
-@ECHO ON
+@echo off
+set MyDir=D:/kiss/PHP
+set Path=%PATH%;%MyDir%
+set MyDir= 
+cls
+@echo on
 php.exe TestHelper.php --verbose %*
