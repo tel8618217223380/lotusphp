@@ -42,7 +42,7 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 		$this->assertTrue(class_exists("HelloWorld"));
 		
 		/**
-		 * 运行1000次，要求在1秒内运行完
+		 * 运行500次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
 		$times = 500;
@@ -67,8 +67,8 @@ class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
 
 		echo "\n---------------------------------------------------------\n";
 		echo "times      \t$times\n";
-		echo "totalTime  \t{$totalTime}s\taverageTime  \t{$averageTime}s\n";
-		echo "memoryUsage\t{$memory_usage}\taverageMemory\t{$averageMemory}";
+		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
+		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
 		echo "\n---------------------------------------------------------\n";
 		$this->assertTrue(1 > $totalTime);
 	}

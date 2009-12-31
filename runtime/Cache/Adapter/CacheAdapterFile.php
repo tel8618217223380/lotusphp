@@ -71,7 +71,16 @@ class LtCacheAdapterFile implements LtCacheAdapter
 		}
 		else
 		{
-			$data = include($cacheFile);
+			// ----------------------------
+			// $data = include($cacheFile);
+			// -----------------------------
+			// 防止过多include文件被记录到php引擎
+			// 通过查看get_included_files()可知
+			// 同时防止过多include文件被apc缓存
+			// ------------------------------------------------
+			$data = file_get_contents($cacheFile,false,null,6);
+			$data = eval($data);
+			// ------------------------------------------------
 			if(0 != $data['ttl'] && time() > $data['ttl'])
 			{
 				@unlink($cacheFile);
