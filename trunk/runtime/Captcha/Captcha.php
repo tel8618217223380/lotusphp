@@ -17,6 +17,11 @@ class LtCaptcha
 
 	public function getImageResource($seed)
 	{
+		if (empty($seed))
+		{
+			trigger_error("empty seed");
+			return false;
+		}
 		if (!is_object($this->imageEngine))
 		{
 			$this->imageEngine = new LtCaptchaImageEngine();
