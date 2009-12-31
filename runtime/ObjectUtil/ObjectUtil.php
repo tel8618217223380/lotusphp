@@ -4,6 +4,11 @@ class LtObjectUtil
 	static $instances;
 	static public function singleton($className)
 	{
+		if (empty($className))
+		{
+			trigger_error('empty class name');
+			return false;
+		}
 		if (class_exists($className))
 		{
 			$key = strtolower($className);
