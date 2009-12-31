@@ -20,7 +20,7 @@ class LtAutoloader
 		else
 		{
 			$this->namespace = md5(serialize($this->autoloadPath));
-			$this->storeHandle->namespaceMapping[$this->namespace] = crc32($this->namespace);
+			$this->storeHandle->namespaceMapping[$this->namespace] = sprintf("%u", crc32($this->namespace));
 		}
 		// Whether scanning directory
 		if (0 == $this->storeHandle->get(".class_total", $this->namespace) && 0 == $this->storeHandle->get(".function_total", $this->namespace))
