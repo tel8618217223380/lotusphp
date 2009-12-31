@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "include_classes.inc";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 require_once $lotusHome . "runtime/Cache/Cache.php";
 require_once $lotusHome . "runtime/Cache/CacheConfig.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapter.php";

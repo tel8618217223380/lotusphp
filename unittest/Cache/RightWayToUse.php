@@ -6,7 +6,7 @@
  * 1. update，del时检查key是否存在 
  * 2.add时，如果该key已经存在，但已过期，也允许add
  */
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "include_classes.inc";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseCache extends PHPUnit_Framework_TestCase
 {
 	/**

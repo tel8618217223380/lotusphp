@@ -2,7 +2,7 @@
 /**
  * 本测试展示了如何用LtCache给LtAutoloader提高性能
  */
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "include_classes.inc";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 require_once $lotusHome . "runtime/Cache/Cache.php";
 require_once $lotusHome . "runtime/Cache/CacheConfig.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapter.php";
