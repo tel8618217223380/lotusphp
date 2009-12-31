@@ -12,9 +12,9 @@ class LtConfig
 	 */
 	public function init()
 	{
-		if (null === $this->configFile)
+		if (null === $this->configFile || !is_file($this->configFile))
 		{
-			trigger_error("no config file specified");
+			trigger_error("no config file specified or invalid config file");
 		}
 		if (!is_object($this->storeHandle))
 		{
@@ -23,19 +23,31 @@ class LtConfig
 		else
 		{
 			$this->namespace = md5($this->configFile);
-			$this->storeHandle->namespaceMapping[$this->namespace] = crc32($this->namespace);
+			$this->storeHandle->namespaceMapping[$this->namespace] = sprintf("%u", crc32($this->namespace));
 		}
 		if (0 == $this->storeHandle->get(".config_total", $this->namespace))
 		{
 			$this->storeHandle->add(".config_total", 0, 0, $this->namespace);
-			$this->configFromUserFile = include($this->configFile);
-			$this->storeConfigArray(include($this->configFile));
+			$conf = include($this->configFile);
+			if (!is_array($conf))
+			{
+				trigger_error("Not return array");
+			}
+			if (!empty($conf))
+			{
+				$this->storeConfigArray($conf);
+			}
 		}
 	}
 
 	public function get($key)
 	{
-		return $this->storeHandle->get($key, $this->namespace);
+		$ret = $this->storeHandle->get($key, $this->namespace);
+		if (false === $ret)
+		{
+			trigger_error("key not exists");
+		}
+		return $ret;
 	}
 
 	protected function storeConfigArray($configArray)
