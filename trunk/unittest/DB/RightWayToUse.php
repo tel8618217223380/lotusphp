@@ -95,6 +95,12 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 				$this->assertEquals($tg->count(), 2);
 				$this->assertEquals($tg->delete(3), 1);
 				$this->assertEquals($tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4)));
+
+				/**
+				 * 用法3：使用SqlMapClient
+				 */
+				$smc = $db->getSqlMapClient();
+				$this->assertEquals($smc->execute("getAgeTotal"), array(0 => array("age_total" => 1)));
 			}
 		}
 	}
