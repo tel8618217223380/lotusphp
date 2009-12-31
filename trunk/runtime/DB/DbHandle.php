@@ -5,6 +5,12 @@ class LtDbHandle
 	public $node;
 	public $connectionAdapter;
 	public $sqlAdapter;
+	protected $connectionManager;
+
+	public function __construct()
+	{
+		$this->connectionManager = new LtDbConnectionManager;
+	}
 
 	/**
 	 * Trancaction methods
@@ -45,7 +51,6 @@ class LtDbHandle
 			// trigger_error('Empty the SQL statement', E_USER_WARNING);
 			return null;
 		}
-		$connectionManager = new LtDbConnectionManager;
 		if (is_array($bind) && 0 < count($bind))
 		{
 			$sql = $this->bindParameter($sql, $bind);
@@ -54,11 +59,11 @@ class LtDbHandle
 		{//read query (use ): SELECT, EXPLAIN, SHOW, DESCRIBE
 			if (!$forceUseMaster && isset(LtDbStaticData::$servers[$this->group][$this->node]["slave"]))
 			{
-				$adapters = $connectionManager->getAdapters($this->group, $this->node, "slave");
+				$adapters = $this->connectionManager->getAdapters($this->group, $this->node, "slave");
 			}
 			else
 			{
-				$adapters = $connectionManager->getAdapters($this->group, $this->node, "master");
+				$adapters = $this->connectionManager->getAdapters($this->group, $this->node, "master");
 			}
 			$this->connectionAdapter = $adapters["connectionAdapter"];
 			$this->sqlAdapter = $adapters["sqlAdapter"];
@@ -74,7 +79,7 @@ class LtDbHandle
 		}
 		else
 		{
-			$adapters = $connectionManager->getAdapters($this->group, $this->node, "master");
+			$adapters = $this->connectionManager->getAdapters($this->group, $this->node, "master");
 			$this->connectionAdapter = $adapters["connectionAdapter"];
 			$this->sqlAdapter = $adapters["sqlAdapter"];
 			$result = $this->connectionAdapter->exec($sql);
