@@ -30,8 +30,9 @@ class LtDb
 
 	public function getSqlMapClient()
 	{
-		$smc = new DbSqlMapClient();
+		$smc = new LtDbSqlMapClient();
 		$smc->dbh = $this->dbh;
+		return $smc;
 	}
 
 	protected function getGroup()

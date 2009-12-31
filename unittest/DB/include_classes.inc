@@ -18,3 +18,4 @@ require_once $lotusHome . "runtime/DB/Adapter/SqlAdapter/DbSqlAdapterMysql.php";
 require_once $lotusHome . "runtime/DB/Adapter/SqlAdapter/DbSqlAdapterPgsql.php";
 require_once $lotusHome . "runtime/DB/Adapter/SqlAdapter/DbSqlAdapterSqlite.php";
 require_once $lotusHome . "runtime/DB/QueryEngine/TableGateway/DbTable.php";
+require_once $lotusHome . "runtime/DB/QueryEngine/SqlMap/DbSqlMapClient.php";
