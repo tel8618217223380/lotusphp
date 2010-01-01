@@ -1,4 +1,3 @@
-<<<<<<< .mine
 <?php
 /**
  * 本测试文档演示了LtDb的正确使用方法 
@@ -7,6 +6,9 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseDb extends PHPUnit_Framework_TestCase
 {
+	/**
+	 * 测试单机单库的配置方法
+	 */
 	public function configBuilderDataProvider()
 	{
 		$singleHost1 = array(
@@ -48,11 +50,11 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			"dbname"         => "test",
 			"schema"         => "sys_data",
 			"adapter"        => "pgsql",
-			"port"           => 1433,
+			"port"           => 5432,
 		);
 		$expected3["group_0"]["node_0"]["master"][] = array(
 			"host"           => "localhost",
-			"port"           => 1433,
+			"port"           => 5432,
 			"username"       => "root",
 			"password"       => "123456",
 			"adapter"        => "pgsql",
@@ -80,18 +82,41 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * 
+	 * 测试分布式数据库的配置方法
 	 */
 	public function testConfigBuilderDistDb()
 	{
 		$dcb = new LtDbConfigBuilder;
-		//配置系统数据组
-		$dcb->addHost(array("host" => "127.0.0.1", "password" => "123456", "dbname" => "sys_data"), "master", "sys_node_1", "sys_group");
-		$dcb->addHost(array("host" => "127.0.0.2"), "slave", "sys_node_1", "sys_group");
-		$dcb->addHost(array("host" => "127.0.0.3"), "slave", "sys_node_1", "sys_group");
-		//配置用户数据组
-		$dcb->addHost(array("host" => "127.0.0.4", "dbname" => "member_1"), "master", "user_node_1", "user_group");
-		$dcb->addHost(array("dbname" => "member_2"), "master", "user_node_2", "user_group");
+		/**
+		 * 配置系统数据组
+		 * 一个节点， 一主两从，分布在三台不同的机器上
+		 */
+		$dcb->addHost("sys_group", "sys_node_1", "master", array("host" => "10.0.0.1", "port" => 5432, "password" => "123456", "dbname" => "sys_data", "schema" => "public", "adapter" => "pgsql", "pconnect" => true));
+		$dcb->addHost("sys_group", "sys_node_1", "slave", array("host" => "10.0.0.2", "adapter" => "pdo_pgsql"));
+		$dcb->addHost("sys_group", "sys_node_1", "slave", array("host" => "10.0.0.3"));
+		
+		/**
+		 * 配置用户数据组
+		 * 两个节点
+		 * 每个节点一主一从
+		 * 都在同一台机器上，不同节点数据库名不同，主从服务器的端口不同
+		 */
+		$dcb->addHost("user_group", "user_node_1", "master", array("host" => "10.0.1.1", "password" => "123456", "adapter" => "mysqli", "dbname" => "member_1"));
+		$dcb->addHost("user_group", "user_node_1", "slave", array("port" => 3307));
+		$dcb->addHost("user_group", "user_node_2", "master", array("dbname" => "member_2"));
+		$dcb->addHost("user_group", "user_node_2", "slave", array("port" => 3307));
+
+		/**
+		 * 配置交易数据组
+		 * 三个节点
+		 * 每个节点两台机器互为主从
+		 */
+		$dcb->addHost("trade_group", "trade_node_1", "master", array("host" => "10.0.2.1", "password" => "123456", "adapter" => "oci", "dbname" => "finance", "schema" => "trade"));
+		$dcb->addHost("trade_group", "trade_node_1", "master", array("host" => "10.0.2.2"));
+		$dcb->addHost("trade_group", "trade_node_2", "master", array("host" => "10.0.2.3"));
+		$dcb->addHost("trade_group", "trade_node_2", "master", array("host" => "10.0.2.4"));
+		$dcb->addHost("trade_group", "trade_node_3", "master", array("host" => "10.0.2.5"));
+		$dcb->addHost("trade_group", "trade_node_3", "master", array("host" => "10.0.2.6"));
 
 		$this->assertEquals(
 		array(
@@ -99,80 +124,194 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 				"sys_node_1" => array(
 					"master" => array(
 						array(
-									"host"           => "127.0.0.1",
-									"port"           => 3306,
+									"host"           => "10.0.0.1",
+									"port"           => 5432,
 									"username"       => "root",
 									"password"       => "123456",
-									"adapter"        => "mysql",
+									"adapter"        => "pgsql",
 									"charset"        => "UTF-8",
-									"pconnect"       => false,
+									"pconnect"       => true,
 									"connection_ttl" => 30,
-									"dbname"         => null,
-									"schema"         => "sys_data",
+									"dbname"         => "sys_data",
+									"schema"         => "public",
 						),
-					),//end master
+					),
 					"slave" => array(
 						array(
-									"host"           => "127.0.0.2",
-									"port"           => 3306,
+									"host"           => "10.0.0.2",
+									"port"           => 5432,
 									"username"       => "root",
 									"password"       => "123456",
-									"adapter"        => "mysql",
+									"adapter"        => "pdo_pgsql",
 									"charset"        => "UTF-8",
-									"pconnect"       => false,
+									"pconnect"       => true,
 									"connection_ttl" => 30,
-									"dbname"         => null,
-									"schema"         => "sys_data",
+									"dbname"         => "sys_data",
+									"schema"         => "public",
 						),
 						array(
-									"host"           => "127.0.0.3",
-									"port"           => 3306,
+									"host"           => "10.0.0.3",
+									"port"           => 5432,
 									"username"       => "root",
 									"password"       => "123456",
-									"adapter"        => "mysql",
+									"adapter"        => "pdo_pgsql",
 									"charset"        => "UTF-8",
-									"pconnect"       => false,
+									"pconnect"       => true,
 									"connection_ttl" => 30,
-									"dbname"         => null,
-									"schema"         => "sys_data",
+									"dbname"         => "sys_data",
+									"schema"         => "public",
 						),
-					),//end slave
-				),//end sys_node_1
-			),//end sys_group
+					),
+				),
+			),
 			"user_group" => array(
 				"user_node_1" => array(
 					"master" => array(
 						array(
-									"host"           => "127.0.0.4",
+									"host"           => "10.0.1.1",
 									"port"           => 3306,
 									"username"       => "root",
 									"password"       => "123456",
-									"adapter"        => "mysql",
+									"adapter"        => "mysqli",
 									"charset"        => "UTF-8",
 									"pconnect"       => false,
 									"connection_ttl" => 30,
 									"dbname"         => null,
 									"schema"         => "member_1",
 						),
-					),//end master
-				),//end user_node_1
+					),
+					"slave" => array(
+						array(
+									"host"           => "10.0.1.1",
+									"port"           => 3307,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "mysqli",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => null,
+									"schema"         => "member_1",
+						),
+					),
+				),
 				"user_node_2" => array(
 					"master" => array(
 						array(
-									"host"           => "127.0.0.4",
+									"host"           => "10.0.1.1",
 									"port"           => 3306,
 									"username"       => "root",
 									"password"       => "123456",
-									"adapter"        => "mysql",
+									"adapter"        => "mysqli",
 									"charset"        => "UTF-8",
 									"pconnect"       => false,
 									"connection_ttl" => 30,
 									"dbname"         => null,
 									"schema"         => "member_2",
 						),
-					),//end master
-				),//end user_node_2
-			),//end user_group
+					),
+					"slave" => array(
+						array(
+									"host"           => "10.0.1.1",
+									"port"           => 3307,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "mysqli",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => null,
+									"schema"         => "member_2",
+						),
+					),
+				),
+			),
+			"trade_group" => array(
+				"trade_node_1" => array(
+					"master" => array(
+						array(
+									"host"           => "10.0.2.1",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "oci",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => "finance",
+									"schema"         => "trade",
+						),
+						array(
+									"host"           => "10.0.2.2",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "oci",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => "finance",
+									"schema"         => "trade",
+						),
+					),
+				),
+				"trade_node_2" => array(
+					"master" => array(
+						array(
+									"host"           => "10.0.2.3",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "oci",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => "finance",
+									"schema"         => "trade",
+						),
+						array(
+									"host"           => "10.0.2.4",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "oci",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => "finance",
+									"schema"         => "trade",
+						),
+					),
+				),
+				"trade_node_3" => array(
+					"master" => array(
+						array(
+									"host"           => "10.0.2.5",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "oci",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => "finance",
+									"schema"         => "trade",
+						),
+						array(
+									"host"           => "10.0.2.6",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "oci",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => "finance",
+									"schema"         => "trade",
+						),
+					),
+				),
+			),
 		),
 		$dcb->getServers()
 		);//end $this->assertEquals

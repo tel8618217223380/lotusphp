@@ -20,10 +20,10 @@ class LtDbConfigBuilder
 
 	public function addSingleHost($hostConfig)
 	{
-		$this->addHost($hostConfig, "master", "node_0", "group_0");
+		$this->addHost("group_0", "node_0", "master", $hostConfig);
 	}
 
-	public function addHost($hostConfig, $role = "master", $nodeId = "node_0", $groupId)
+	public function addHost($groupId, $nodeId = "node_0", $role = "master", $hostConfig)
 	{
 		if (isset($this->servers[$groupId][$nodeId][$role]))
 		{//以相同role的第一个host为默认配置
@@ -38,16 +38,16 @@ class LtDbConfigBuilder
 			$refNode = key($this->servers[$groupId]);
 			$ref = $this->servers[$groupId][$refNode]["master"][0];
 		}
-		else if (count($this->servers))
-		{//以第一个group第一个node的master第一个host为默认配置
-			$refGroup = key($this->servers);
-			$refNode = key($this->servers[$refGroup]);
-			$ref = $this->servers[$refGroup][$refNode]["master"][0];
-		}
+//		else if (count($this->servers))
+//		{//以第一个group第一个node的master第一个host为默认配置
+//			$refGroup = key($this->servers);
+//			$refNode = key($this->servers[$refGroup]);
+//			$ref = $this->servers[$refGroup][$refNode]["master"][0];
+//		}
 		else
 		{
 			$ref = $this->defaultConfig;
-		}//var_dump($ref);
+		}
 		$conf = array_merge($ref, $hostConfig);
 		$conf = $this->convertDbnameToSchema($conf);
 		$this->servers[$groupId][$nodeId][$role][] = $conf;
