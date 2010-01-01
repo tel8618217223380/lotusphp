@@ -14,8 +14,20 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseDb extends PHPUnit_Framework_TestCase
 {
-	public function MostUsedWay()
+	public function testMostUsedWay()
 	{
+		/**
+		 * 配置数据库连接信息
+		 */
+		$dcb = new LtDbConfigBuilder;
+		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
+		LtDbStaticData::$servers = $dcb->getServers();
+
+		/**
+		 * 实例化组件入口类
+		 */
+		$db = new LtDb;
+		$db->init();
 		/**
 		 * 用法 1： 直接操作数据库
 		 * 
@@ -26,11 +38,14 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 *     2. 只写少量脚本，不是一个完整持续的项目，不需要SqlMap来管理SQL语句
 		 */
 		$dbh = $db->getDbHandle();
-		foreach($this->testDataList as $testData)
-		{
-			$result = $dbh->query($testData[0], $testData[1]);
-			$this->assertEquals($result, $testData[2]);
-		}
+		$dbh->query("DROP TABLE IF EXISTS test_user");
+		$dbh->query("
+			CREATE TABLE test_user (
+			id INT NOT NULL AUTO_INCREMENT,
+			name VARCHAR( 20 ) NOT NULL ,
+			age INT NOT NULL ,
+			PRIMARY KEY ( id ) 
+		)");
 
 		/**
 		 * 用法 2： 使用Table Gateway查询引擎
