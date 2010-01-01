@@ -56,4 +56,8 @@ class LtDbSqlAdapterSqlite extends LtDbSqlAdapter
 	{
 		
 	}
+	public function detectQueryType($sql)
+	{
+		
+	}
 }

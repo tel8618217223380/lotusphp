@@ -74,4 +74,8 @@ class LtDbSqlAdapterPgsql extends LtDbSqlAdapter
 	{
 		
 	}
+	public function detectQueryType($sql)
+	{
+		
+	}
 }

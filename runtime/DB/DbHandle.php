@@ -3,6 +3,7 @@ class LtDbHandle
 {
 	public $group;
 	public $node;
+	public $role = "master";
 	public $connectionAdapter;
 	public $sqlAdapter;
 	protected $connectionManager;
@@ -48,54 +49,43 @@ class LtDbHandle
 	{
 		if(empty($sql))
 		{
-			// trigger_error('Empty the SQL statement', E_USER_WARNING);
-			return null;
+			trigger_error('Empty the SQL statement');
 		}
+		$this->sqlAdapter = $this->getCurrentSqlAdapter();
+		$queryType = $this->sqlAdapter->detectQueryType($sql);
+		switch ($queryType)
+		{
+			case "SELECT":
+				if (!$forceUseMaster && isset(LtDbStaticData::$servers[$this->group][$this->node]["slave"]))
+				{
+					$this->role = "slave";
+				}
+				$queryMethod = "select";
+				break;
+			case "INSERT":
+				$this->role = "master";
+				$queryMethod = "insert";
+				break;
+			case "CHANGE_ROWS":
+				$this->role = "master";
+				$queryMethod = "changeRows";
+				break;
+			case "SET_SESSION_VAR":
+				$queryMethod = "setSessionVar";
+				break;
+			case "OTHER":
+			default:
+				$this->role = "master";
+				$queryMethod = "other";
+				break;
+		}
+		$adapters = $this->connectionManager->getAdapters($this->group, $this->node, $this->role);
+		$this->connectionAdapter = $adapters["connectionAdapter"];
 		if (is_array($bind) && 0 < count($bind))
 		{
 			$sql = $this->bindParameter($sql, $bind);
 		}
-		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))
-		{//read query (use ): SELECT, EXPLAIN, SHOW, DESCRIBE
-			if (!$forceUseMaster && isset(LtDbStaticData::$servers[$this->group][$this->node]["slave"]))
-			{
-				$adapters = $this->connectionManager->getAdapters($this->group, $this->node, "slave");
-			}
-			else
-			{
-				$adapters = $this->connectionManager->getAdapters($this->group, $this->node, "master");
-			}
-			$this->connectionAdapter = $adapters["connectionAdapter"];
-			$this->sqlAdapter = $adapters["sqlAdapter"];
-			$result = $this->connectionAdapter->query($sql);
-			if (empty($result))
-			{
-				return null;
-			}
-			else
-			{
-				return $result;
-			}			
-		}
-		else
-		{
-			$adapters = $this->connectionManager->getAdapters($this->group, $this->node, "master");
-			$this->connectionAdapter = $adapters["connectionAdapter"];
-			$this->sqlAdapter = $adapters["sqlAdapter"];
-			$result = $this->connectionAdapter->exec($sql);
-			if (preg_match("/^\s*INSERT/i", $sql))//INSERT
-			{
-				return $this->connectionAdapter->lastInsertId();
-			}
-			else if (preg_match("/^\s*UPDATE|^\s*DELETE|^\s*REPLACE/i", $sql))//UPDATE, DELETE, REPLACE
-			{
-				return $result;
-			}
-			else//USE, SET, CREATE, DROP, ALTER
-			{
-				return true;
-			}
-		}
+		return $this->$queryMethod($sql);
 	}
 
 	/**
@@ -116,5 +106,55 @@ class LtDbHandle
 			$sql = str_replace(":$key", $newPlaceHolder, $sql);
 		}
 		return str_replace($find, $replacement, $sql);
+	}
+
+	protected function getCurrentSqlAdapter()
+	{
+		$factory = new LtDbFactory;
+		$host = key(LtDbStaticData::$servers[$this->group][$this->node][$this->role]);
+		return $factory->getSqlAdapter(LtDbStaticData::$servers[$this->group][$this->node][$this->role][$host]["adapter"]);
+	}
+
+	protected function select($sql)
+	{
+		$result = $this->connectionAdapter->query($sql);
+		if (empty($result))
+		{
+			return null;
+		}
+		else
+		{
+			return $result;
+		}
+	}
+
+	protected function insert($sql)
+	{
+		if($result = $this->connectionAdapter->exec($sql))
+		{
+			return $this->connectionAdapter->lastInsertId();
+		}
+		else
+		{
+			return $result;
+		}
+	}
+
+	protected function changeRows($sql)
+	{
+		return $this->connectionAdapter->exec($sql);
+	}
+
+	/**
+	 * @todo 更新连接缓存
+	 */
+	protected function setSessionVar($sql)
+	{
+		return $this->connectionAdapter->exec($sql);
+	}
+
+	protected function other($sql)
+	{
+		return false == $this->connectionAdapter->exec($sql) ? false : true;
 	}
 }

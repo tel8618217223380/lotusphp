@@ -2,7 +2,6 @@
 $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
 require_once $lotusHome . "runtime/DB/Db.php";
 require_once $lotusHome . "runtime/DB/DbHandle.php";
-require_once $lotusHome . "runtime/DB/DbConfig.php";
 require_once $lotusHome . "runtime/DB/DbConfigBuilder.php";
 require_once $lotusHome . "runtime/DB/DbConnectionManager.php";
 require_once $lotusHome . "runtime/DB/DbFactory.php";
