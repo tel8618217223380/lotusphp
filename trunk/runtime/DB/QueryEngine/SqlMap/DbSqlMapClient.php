@@ -3,6 +3,9 @@ class LtDbSqlMapClient
 {
 	public $dbh;
 
+	/**
+	 * @todo 实现sql map的存储
+	 */
 	public function execute($mapId, $bind = null)
 	{
 		$testMap = array(
