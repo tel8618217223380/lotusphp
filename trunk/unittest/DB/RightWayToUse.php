@@ -90,7 +90,15 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			foreach (array(
 				//array("SQL语句", 参数,  正确结果)
 				array("SELECT 'ok'", null, array(0 => array("ok" => "ok"))),
-	
+				array("DROP TABLE IF EXISTS test_user", null, true),
+				array("USE test", null, true),
+				array("CREATE TABLE test_user (
+						id INT NOT NULL ,
+						name VARCHAR( 20 ) NOT NULL ,
+						age INT NOT NULL ,
+						PRIMARY KEY ( id ) 
+				)", null, true),
+				array("ALTER TABLE test_user CHANGE id id INT( 11 ) NOT NULL AUTO_INCREMENT", null, true),
 				array("INSERT INTO test_user VALUES (:id, :name, :age)", array("id" => 1, "name" => "lotus", "age" => 5), 1),
 				array("UPDATE test_user SET age = :age", array("age" => 50), 1),
 				array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), array("0" => array("id" => 1, "name" => "lotus", "age" => 50))),

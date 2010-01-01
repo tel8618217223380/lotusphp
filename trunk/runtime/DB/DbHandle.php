@@ -150,11 +150,11 @@ class LtDbHandle
 	 */
 	protected function setSessionVar($sql)
 	{
-		return $this->connectionAdapter->exec($sql);
+		return false === $this->connectionAdapter->exec($sql) ? false : true;
 	}
 
 	protected function other($sql)
 	{
-		return false == $this->connectionAdapter->exec($sql) ? false : true;
+		return false === $this->connectionAdapter->exec($sql) ? false : true;
 	}
 }
