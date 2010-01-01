@@ -132,7 +132,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 	/**
 	 * 分布式数据库操作测试
 	 * 本例演示了垂直切分（多个Group）和水平切分（一个Group下多个节点）
-	 * 由于实际测试环境的限制，本例中不同的Group和Node只用dbnamw来区分，只有一个host
+	 * 由于实际测试环境的限制，本例中不同的Group和Node只用dbname来区分，共享一个mysql server
 	 *    Group 1：系统数据组，存储系统数据，因为数据较少，只包含一个节点
 	 *        Node 1：dbname=sys_data
 	 *    Group 2: 用户数据组，存储用户生产的数据，因为数据量可能会大，包含两个节点
