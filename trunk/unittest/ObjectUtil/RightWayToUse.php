@@ -28,9 +28,9 @@ class RightWayToUseObjectUtil extends PHPUnit_Framework_TestCase
 		$obj1 = LtObjectUtil::singleton("stdClass");//stdClass是php内置的类
 		$obj2 = LtObjectUtil::singleton("stdClass");
 		$this->assertTrue($obj1 === $obj2);
-		$this->assertEquals(count(LtObjectUtil::$instances), 1);
+		$this->assertEquals(1, count(LtObjectUtil::$instances));
 		
 		$obj2->prop = 1;
-		$this->assertEquals($obj1->prop, 1);
+		$this->assertEquals(1, $obj1->prop);
 	}
 }

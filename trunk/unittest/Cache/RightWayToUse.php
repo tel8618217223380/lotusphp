@@ -42,9 +42,9 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 
 		//初始化完毕，测试其效果
 		$this->assertTrue($cache->add("test_key", "test_value"));
-		$this->assertEquals($cache->get("test_key"), "test_value");
+		$this->assertEquals("test_value", $cache->get("test_key"));
 		$this->assertTrue($cache->update("test_key", "new_value"));
-		$this->assertEquals($cache->get("test_key"), "new_value");
+		$this->assertEquals("new_value", $cache->get("test_key"));
 		$this->assertTrue($cache->del("test_key"));
 		$this->assertFalse($cache->get("test_key"));
 	}
@@ -64,9 +64,9 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$cache->init();
 
 		$this->assertTrue($cache->add(1, "This is thread 1", 0, 'namespace'));
-		$this->assertEquals($cache->get(1, 'namespace'), "This is thread 1");
+		$this->assertEquals("This is thread 1", $cache->get(1, 'namespace'));
 		$this->assertTrue($cache->update(1, "new value", 0, 'namespace'));
-		$this->assertEquals($cache->get(1, 'namespace'), "new value");
+		$this->assertEquals("new value", $cache->get(1, 'namespace'));
 		$this->assertTrue($cache->del(1, 'namespace'));
 		$this->assertFalse($cache->get(1, 'namespace'));
 	}
@@ -106,11 +106,11 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			foreach ($this->testDataList as $k => $v)
 			{
 				$this->assertTrue($ch->add($k, $v));
-				$this->assertEquals($ch->get($k), $v);
+				$this->assertEquals($v, $ch->get($k));
 				$this->assertTrue($ch->update($k, 0));
-				$this->assertEquals($ch->get($k), 0);
+				$this->assertEquals(0, $ch->get($k));
 				$this->assertTrue($ch->update($k, $v));
-				$this->assertEquals($ch->get($k), $v);
+				$this->assertEquals($v, $ch->get($k));
 				$this->assertTrue($ch->del($k));
 				$this->assertFalse($ch->get($k));
 			}
@@ -140,25 +140,25 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$this->assertTrue($ch->add($key, $v2, $ttl, $name2));
 			$this->assertTrue($ch->add($key, $v3, $ttl, $name3));
 
-			$this->assertEquals($ch->get($key, $name1), $v1);
-			$this->assertEquals($ch->get($key, $name2), $v2);
-			$this->assertEquals($ch->get($key, $name3), $v3);
+			$this->assertEquals($v1, $ch->get($key, $name1));
+			$this->assertEquals($v2, $ch->get($key, $name2));
+			$this->assertEquals($v3, $ch->get($key, $name3));
 
 			$this->assertTrue($ch->update($key, 0, $ttl, $name1));
 			$this->assertTrue($ch->update($key, 0, $ttl, $name2));
 			$this->assertTrue($ch->update($key, 0, $ttl, $name3));
 
-			$this->assertEquals($ch->get($key, $name1), 0);
-			$this->assertEquals($ch->get($key, $name2), 0);
-			$this->assertEquals($ch->get($key, $name3), 0);
+			$this->assertEquals(0, $ch->get($key, $name1));
+			$this->assertEquals(0, $ch->get($key, $name2));
+			$this->assertEquals(0, $ch->get($key, $name3));
 
 			$this->assertTrue($ch->update($key, $v4, $ttl, $name1));
 			$this->assertTrue($ch->update($key, $v5, $ttl, $name2));
 			$this->assertTrue($ch->update($key, $v6, $ttl, $name3));
 
-			$this->assertEquals($ch->get($key, $name1), $v4);
-			$this->assertEquals($ch->get($key, $name2), $v5);
-			$this->assertEquals($ch->get($key, $name3), $v6);
+			$this->assertEquals($v4, $ch->get($key, $name1));
+			$this->assertEquals($v5, $ch->get($key, $name2));
+			$this->assertEquals($v6, $ch->get($key, $name3));
 
 			$this->assertTrue($ch->del($key, $name1));
 			$this->assertTrue($ch->del($key, $name2));
@@ -197,25 +197,25 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$this->assertTrue($ch->add($key, $v2, $ttl, $name2));
 			$this->assertTrue($ch->add($key, $v3, $ttl, $name3));
 
-			$this->assertEquals($ch->get($key, $name1), $v1);
-			$this->assertEquals($ch->get($key, $name2), $v2);
-			$this->assertEquals($ch->get($key, $name3), $v3);
+			$this->assertEquals($v1, $ch->get($key, $name1));
+			$this->assertEquals($v2, $ch->get($key, $name2));
+			$this->assertEquals($v3, $ch->get($key, $name3));
 
 			$this->assertTrue($ch->update($key, 0, $ttl, $name1));
 			$this->assertTrue($ch->update($key, 0, $ttl, $name2));
 			$this->assertTrue($ch->update($key, 0, $ttl, $name3));
 
-			$this->assertEquals($ch->get($key, $name1), 0);
-			$this->assertEquals($ch->get($key, $name2), 0);
-			$this->assertEquals($ch->get($key, $name3), 0);
+			$this->assertEquals(0, $ch->get($key, $name1));
+			$this->assertEquals(0, $ch->get($key, $name2));
+			$this->assertEquals(0, $ch->get($key, $name3));
 
 			$this->assertTrue($ch->update($key, $v4, $ttl, $name1));
 			$this->assertTrue($ch->update($key, $v5, $ttl, $name2));
 			$this->assertTrue($ch->update($key, $v6, $ttl, $name3));
 
-			$this->assertEquals($ch->get($key, $name1), $v4);
-			$this->assertEquals($ch->get($key, $name2), $v5);
-			$this->assertEquals($ch->get($key, $name3), $v6);
+			$this->assertEquals($v4, $ch->get($key, $name1));
+			$this->assertEquals($v5, $ch->get($key, $name2));
+			$this->assertEquals($v6, $ch->get($key, $name3));
 
 			$this->assertTrue($ch->del($key, $name1));
 			$this->assertTrue($ch->del($key, $name2));
@@ -241,10 +241,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			{
 				$this->assertTrue($ch->add($k, $v, $ttl_add));
 				sleep(1);
-				$this->assertEquals($ch->get($k), $v);
+				$this->assertEquals($v, $ch->get($k));
 				$this->assertTrue($ch->update($k, $v, $ttl_update));
 				sleep(1);
-				$this->assertEquals($ch->get($k), $v);
+				$this->assertEquals($v, $ch->get($k));
 				sleep(2);
 				$this->assertFalse($ch->get($k));
 			}

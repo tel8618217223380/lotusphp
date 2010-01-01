@@ -58,9 +58,9 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		//初始化完毕，测试其效果
 		$this->assertTrue(new Goodbye() instanceof GoodBye);
 		$this->assertTrue(class_exists("HelloWorld"));
-		$this->assertEquals(HelloLotus::sayHello(), "hello");
-		$this->assertEquals(say_hello(), "hello");
-		$this->assertEquals(say_hello_2(), "hello_2");
+		$this->assertEquals("hello", HelloLotus::sayHello());
+		$this->assertEquals("hello", say_hello());
+		$this->assertEquals("hello_2", say_hello_2());
 	}
 
 	/**
@@ -277,7 +277,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap = new LtAutoloaderProxy();
 		$path = $ap->var2array($userParameter);
 		$path = $ap->preparePath($path);
-		$this->assertEquals($path, $expected);
+		$this->assertEquals($expected, $path);
 	}
 
 	/**
@@ -288,7 +288,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testParseLibNames($src, $expected)
 	{
 		$ap = new LtAutoloaderProxy();
-		$this->assertEquals($ap->parseLibNames($src), $expected);
+		$this->assertEquals($expected, $ap->parseLibNames($src));
 	}
 
 	/**
@@ -301,7 +301,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	{
 		$ap = new LtAutoloaderProxy();
 		$ap->conf->allowFileExtension = $extArray;
-		$this->assertEquals($ap->addFileMap($filename), $expected);
+		$this->assertEquals($expected, $ap->addFileMap($filename));
 	}
 
 	/**
@@ -317,7 +317,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap->conf->skipDirNames = $dirBlackListArray;
 		$ap->scanDirs($dir);
 		$isSkip = $ap->storeHandle->get('hellolotus', $ap->namespace) ? false : true;
-		$this->assertEquals($isSkip, $expected);
+		$this->assertEquals($expected, $isSkip);
 	}
 
 	/**
@@ -334,7 +334,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		{
 			$ap->loadFunction();
 		}
-		$this->assertEquals(function_exists($function), $isLoadFunction);
+		$this->assertEquals($isLoadFunction, function_exists($function));
 	}
 
 	/**
@@ -350,7 +350,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap->scanDirs($path);
 		foreach($classORfunction as $key=>$value)
 		{
-			$this->assertEquals($ap->storeHandle->get($classORfunction[$key], $ap->namespace), $pathFile[$key]);
+			$this->assertEquals($pathFile[$key], $ap->storeHandle->get($classORfunction[$key], $ap->namespace));
 		}
 	}
 

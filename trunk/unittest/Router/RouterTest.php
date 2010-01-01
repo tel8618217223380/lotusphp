@@ -15,16 +15,16 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		$_SERVER['argv'] = array('--module', 'hello', '--action', 'world',);
 		$router = new LtRouter();
 		$router->init();
-		$this->assertEquals('hello', $router->module);
-		$this->assertEquals('world', $router->action);
+		$this->assertEquals($router->module, 'hello');
+		$this->assertEquals($router->action, 'world');
 	} 
 	public function testCLI2()
 	{
 		$_SERVER['argv'] = array('-m', 'hello', '-a', 'world',);
 		$router = new LtRouter();
 		$router->init();
-		$this->assertEquals('hello', $router->module);
-		$this->assertEquals('world', $router->action);
+		$this->assertEquals($router->module, 'hello');
+		$this->assertEquals($router->action, 'world');
 	} 
 	/**
 	 * index.php?module=hello&action=world
@@ -36,8 +36,8 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		$_REQUEST['action'] = 'world';
 		$router = new LtRouter();
 		$router->init();
-		$this->assertEquals('hello', $router->module);
-		$this->assertEquals('world', $router->action);
+		$this->assertEquals($router->module, 'hello');
+		$this->assertEquals($router->action, 'world');
 	} 
 	/**
 	 * index.php/hello/world
@@ -48,8 +48,8 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		$_SERVER["PATH_INFO"] = '/hello/world';
 		$router = new LtRouter();
 		$router->init();
-		$this->assertEquals('hello', $router->module);
-		$this->assertEquals('world', $router->action);
+		$this->assertEquals($router->module, 'hello');
+		$this->assertEquals($router->action, 'world');
 	} 
 	/**
 	 * index.php
@@ -58,8 +58,8 @@ class RouterTest extends PHPUnit_Framework_TestCase
 	{
 		$router = new LtRouter();
 		$router->init();
-		$this->assertEquals('Module', $router->module);
-		$this->assertEquals('Action', $router->action);
+		$this->assertEquals($router->module, 'Module');
+		$this->assertEquals($router->action, 'Action');
 	} 
 
 	/**
@@ -71,8 +71,8 @@ class RouterTest extends PHPUnit_Framework_TestCase
 		$router->conf->module = 'hello';
 		$router->conf->action = 'world';
 		$router->init();
-		$this->assertEquals('hello', $router->module);
-		$this->assertEquals('world', $router->action);
+		$this->assertEquals($router->module, 'hello');
+		$this->assertEquals($router->action, 'world');
 	} 
 
 	/**

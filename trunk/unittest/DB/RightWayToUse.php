@@ -85,7 +85,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 				$dbh = $db->getDbHandle();
 				foreach($this->testDataList as $testData)
 				{
-					$this->assertEquals($dbh->query($testData[0], $testData[1]), $testData[2]);
+					$this->assertEquals($testData[2], $dbh->query($testData[0], $testData[1]));
 				}
 
 				/**
@@ -98,15 +98,15 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 				 *     2. 简单的SELECT，动态合成WHERE子句
 				 */
 				$tg = $db->getTableGateway("test_user");
-				$this->assertEquals($id = $tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4)), 2);
-				$this->assertEquals($tg->fetch($id), array("id" => 2, "name" => "kiwiphp", "age" => 4));
-				$this->assertEquals($id = $tg->insert(array("name" => "chin", "age" => 28)), 3);
-				$this->assertEquals($tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4),array("id" => 3, "name" => "chin", "age" => 28)));
-				$this->assertEquals($tg->update(3, array("name" => "Qin")), 1);
-				$this->assertEquals($tg->fetch($id), array("id" => 3, "name" => "Qin", "age" => 28));
-				$this->assertEquals($tg->count(), 2);
-				$this->assertEquals($tg->delete(3), 1);
-				$this->assertEquals($tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4)));
+				$this->assertEquals(2, $id = $tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4)));
+				$this->assertEquals("age" => 4), $tg->fetch($id), array("id" => 2, "name" => "kiwiphp");
+				$this->assertEquals(3, $id = $tg->insert(array("name" => "chin", "age" => 28)));
+				$this->assertEquals("age" => 28)), $tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4),array("id" => 3, "name" => "chin");
+				$this->assertEquals(1, $tg->update(3, array("name" => "Qin")));
+				$this->assertEquals("age" => 28), $tg->fetch($id), array("id" => 3, "name" => "Qin");
+				$this->assertEquals(2, $tg->count());
+				$this->assertEquals(1, $tg->delete(3));
+				$this->assertEquals("age" => 4)), $tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp");
 
 				/**
 				 * 用法3：使用SqlMapClient
@@ -118,7 +118,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 				 *     2. 动态传入表名
 				 */
 				$smc = $db->getSqlMapClient();
-				$this->assertEquals($smc->execute("getAgeTotal"), array(0 => array("age_total" => 1)));
+				$this->assertEquals(array(0 => array("age_total" => 1)), $smc->execute("getAgeTotal"));
 			}
 		}
 	}
