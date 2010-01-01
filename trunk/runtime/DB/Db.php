@@ -37,7 +37,11 @@ class LtDb
 
 	protected function getGroup()
 	{
-		if (1 == count(LtDbStaticData::$servers))
+		if ($this->group)
+		{
+			return $this->group;
+		}
+		elseif (1 == count(LtDbStaticData::$servers))
 		{
 			return key(LtDbStaticData::$servers);
 		}
