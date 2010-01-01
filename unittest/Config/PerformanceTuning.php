@@ -33,7 +33,7 @@ class PerformanceTuning4Config extends PHPUnit_Framework_TestCase
 		$conf->storeHandle = $cacheHandle;
 		$conf->configFile = $config_file;
 		$conf->init();
-		$this->assertEquals($conf->get("db.conn.host"), "localhost");
+		$this->assertEquals("localhost", $conf->get("db.conn.host"));
 		
 		/**
 		 * 运行200次，要求在1秒内运行完
