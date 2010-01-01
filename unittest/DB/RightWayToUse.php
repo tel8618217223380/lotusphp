@@ -1,3 +1,4 @@
+<<<<<<< .mine
 <?php
 /**
  * 本测试文档演示了LtDb的正确使用方法 
@@ -6,125 +7,174 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseDb extends PHPUnit_Framework_TestCase
 {
+	public function configBuilderDataProvider()
+	{
+		$singleHost1 = array(
+			"password"       => "123456",
+			"dbname"         => "test",
+		);
+		$expected1["group_0"]["node_0"]["master"][] = array(
+			"host"           => "localhost",
+			"port"           => 3306,
+			"username"       => "root",
+			"password"       => "123456",
+			"adapter"        => "mysql",
+			"charset"        => "UTF-8",
+			"pconnect"       => false,
+			"connection_ttl" => 30,
+			"dbname"         => null,
+			"schema"         => "test",
+		);
+		$singleHost2 = array(
+			"password"       => "123456",
+			"dbname"         => "test",
+			"adapter"        => "mssql",
+			"port"           => 1433,
+		);
+		$expected2["group_0"]["node_0"]["master"][] = array(
+			"host"           => "localhost",
+			"port"           => 1433,
+			"username"       => "root",
+			"password"       => "123456",
+			"adapter"        => "mssql",
+			"charset"        => "UTF-8",
+			"pconnect"       => false,
+			"connection_ttl" => 30,
+			"dbname"         => null,
+			"schema"         => "test",
+		);
+		$singleHost3 = array(
+			"password"       => "123456",
+			"dbname"         => "test",
+			"schema"         => "sys_data",
+			"adapter"        => "pgsql",
+			"port"           => 1433,
+		);
+		$expected3["group_0"]["node_0"]["master"][] = array(
+			"host"           => "localhost",
+			"port"           => 1433,
+			"username"       => "root",
+			"password"       => "123456",
+			"adapter"        => "pgsql",
+			"charset"        => "UTF-8",
+			"pconnect"       => false,
+			"connection_ttl" => 30,
+			"dbname"         => "test",
+			"schema"         => "sys_data",
+		);
+		return array(
+			array($singleHost1, $expected1),
+			array($singleHost2, $expected2),
+			array($singleHost3, $expected3),
+		);
+	}
+
 	/**
-	 * 最常用的使用方式（推荐）
+	 * @dataProvider configBuilderDataProvider
+	 */
+	public function testConfigBuilder($singleHost, $expected)
+	{
+		$dcb = new LtDbConfigBuilder;
+		$dcb->addSingleHost($singleHost);
+		$this->assertEquals($expected, $dcb->getServers());
+	}
+
+	/**
 	 * 
-	 * 本测试用例期望效果：
-	 * 能成功通过query()接口存取数据
 	 */
-	public function MostUsedWay()
+	public function testConfigBuilderDistDb()
 	{
-		$cache = new LtDb;
-		$cache->init();
-	}
+		$dcb = new LtDbConfigBuilder;
+		//配置系统数据组
+		$dcb->addHost(array("host" => "127.0.0.1", "password" => "123456", "dbname" => "sys_data"), "master", "sys_node_1", "sys_group");
+		$dcb->addHost(array("host" => "127.0.0.2"), "slave", "sys_node_1", "sys_group");
+		$dcb->addHost(array("host" => "127.0.0.3"), "slave", "sys_node_1", "sys_group");
+		//配置用户数据组
+		$dcb->addHost(array("host" => "127.0.0.4", "dbname" => "member_1"), "master", "user_node_1", "user_group");
+		$dcb->addHost(array("dbname" => "member_2"), "master", "user_node_2", "user_group");
 
-	public function __construct()
-	{
-		parent::__construct();
-		$this->confList = array(
-			"mysql" => array(
-				array(
-					"password"       => "123456",
-					"dbname"         => "test",
-				),
-				array("mysql", "mysqli", "pdo_mysql"),
-			),
-		);
-		$this->testDataList = array(
-			//array("SQL语句", 参数,  正确结果)
-			array("DROP TABLE IF EXISTS test_user", null, true),
-			//array("USE test", null, true),不再支持通过query()执行USE DATABASE和SET NAMES
-			array("CREATE TABLE test_user (
-					id INT NOT NULL ,
-					name VARCHAR( 20 ) NOT NULL ,
-					age INT NOT NULL ,
-					PRIMARY KEY ( id ) 
-			)", null, true),
-			array("ALTER TABLE test_user CHANGE id id INT( 11 ) NOT NULL AUTO_INCREMENT", null, true),
-			array("INSERT INTO test_user VALUES (:id, :name, :age)", array("id" => 1, "name" => "lotus", "age" => 5), 1),
-			array("UPDATE test_user SET age = :age", array("age" => 50), 1),
-			array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), array("0" => array("id" => 1, "name" => "lotus", "age" => 50))),
-			array("DELETE FROM test_user", null, 1),
-			array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), null),
-		);
-	}
-
-	/**
-	 * 基本功能测试
-	 * 单机单库，适合只有一个数据库的小型应用
-	 */
-	public function testMostUsedWay()
-	{
-		foreach ($this->confList as $conf)
-		{
-			foreach ($conf[1] as $ext)
-			{
-				$conf[0]["adapter"] = $ext;
-				/**
-				 * 配置数据库连接信息
-				 */
-				$dcb = new LtDbConfigBuilder;
-				$dcb->addSingleHost($conf[0]);
-				LtDbStaticData::$servers = $dcb->getServers();
-
-				/**
-				 * 实例化组件入口类
-				 */
-				$db = new LtDb;
-				$db->init();
-
-				/**
-				 * 用法 1： 直接操作数据库
-				 * 
-				 * 优点：学习成本低，快速入门
-				 * 
-				 * 适用场景：
-				 *     1. 临时写个脚本操作数据库，不想花时间学习LtDb的查询引擎
-				 *     2. 只写少量脚本，不是一个完整持续的项目，不需要SqlMap来管理SQL语句
-				 */
-				$dbh = $db->getDbHandle();
-				foreach($this->testDataList as $testData)
-				{
-					$this->assertEquals($testData[2], $dbh->query($testData[0], $testData[1]));
-				}
-
-				/**
-				 * 用法 2： 使用Table Gateway查询引擎
-				 * 
-				 * 优点：自动生成SQL语句
-				 * 
-				 * 适用场景：
-				 *     1. 对数据表进行增简单的删查改操作，尤其是单条数据的操作
-				 *     2. 简单的SELECT，动态合成WHERE子句
-				 */
-				$tg = $db->getTableGateway("test_user");
-				$this->assertEquals(2, $id = $tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4)));
-				$this->assertEquals("age" => 4), $tg->fetch($id), array("id" => 2, "name" => "kiwiphp");
-				$this->assertEquals(3, $id = $tg->insert(array("name" => "chin", "age" => 28)));
-				$this->assertEquals("age" => 28)), $tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4),array("id" => 3, "name" => "chin");
-				$this->assertEquals(1, $tg->update(3, array("name" => "Qin")));
-				$this->assertEquals("age" => 28), $tg->fetch($id), array("id" => 3, "name" => "Qin");
-				$this->assertEquals(2, $tg->count());
-				$this->assertEquals(1, $tg->delete(3));
-				$this->assertEquals("age" => 4)), $tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp");
-
-				/**
-				 * 用法3：使用SqlMapClient
-				 * 
-				 * 优点：自定义SQL，不受任何限制；SQL语句统一存储在配置文件里，便于DBA审查、管理
-				 * 
-				 * 适用场景：
-				 *     1. Table Gateway无法实现的查询，尤其是复杂SELECT、子查询
-				 *     2. 动态传入表名
-				 */
-				$smc = $db->getSqlMapClient();
-				$this->assertEquals(array(0 => array("age_total" => 1)), $smc->execute("getAgeTotal"));
-			}
-		}
-	}
-
-	public function testDistDb()
-	{
-		
+		$this->assertEquals(
+		array(
+			"sys_group" => array(
+				"sys_node_1" => array(
+					"master" => array(
+						array(
+									"host"           => "127.0.0.1",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "mysql",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => null,
+									"schema"         => "sys_data",
+						),
+					),//end master
+					"slave" => array(
+						array(
+									"host"           => "127.0.0.2",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "mysql",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => null,
+									"schema"         => "sys_data",
+						),
+						array(
+									"host"           => "127.0.0.3",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "mysql",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => null,
+									"schema"         => "sys_data",
+						),
+					),//end slave
+				),//end sys_node_1
+			),//end sys_group
+			"user_group" => array(
+				"user_node_1" => array(
+					"master" => array(
+						array(
+									"host"           => "127.0.0.4",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "mysql",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => null,
+									"schema"         => "member_1",
+						),
+					),//end master
+				),//end user_node_1
+				"user_node_2" => array(
+					"master" => array(
+						array(
+									"host"           => "127.0.0.4",
+									"port"           => 3306,
+									"username"       => "root",
+									"password"       => "123456",
+									"adapter"        => "mysql",
+									"charset"        => "UTF-8",
+									"pconnect"       => false,
+									"connection_ttl" => 30,
+									"dbname"         => null,
+									"schema"         => "member_2",
+						),
+					),//end master
+				),//end user_node_2
+			),//end user_group
+		),
+		$dcb->getServers()
+		);//end $this->assertEquals
 	}
 }
