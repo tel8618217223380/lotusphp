@@ -14,6 +14,9 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseDb extends PHPUnit_Framework_TestCase
 {
+	/**
+	 * 单机单库用法示例
+	 */
 	public function testMostUsedWay()
 	{
 		/**
@@ -57,15 +60,15 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 *     2. 简单的SELECT，动态合成WHERE子句
 		 */
 		$tg = $db->getTableGateway("test_user");
-		$this->assertEquals($id = $tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4)), 2);
-		$this->assertEquals($tg->fetch($id), array("id" => 2, "name" => "kiwiphp", "age" => 4));
-		$this->assertEquals($id = $tg->insert(array("name" => "chin", "age" => 28)), 3);
-		$this->assertEquals($tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4),array("id" => 3, "name" => "chin", "age" => 28)));
-		$this->assertEquals($tg->update(3, array("name" => "Qin")), 1);
-		$this->assertEquals($tg->fetch($id), array("id" => 3, "name" => "Qin", "age" => 28));
-		$this->assertEquals($tg->count(), 2);
-		$this->assertEquals($tg->delete(3), 1);
-		$this->assertEquals($tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4)));
+		$this->assertEquals(2, $id = $tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4)));
+		$this->assertEquals(array("id" => 2, "name" => "kiwiphp", "age" => 4), $tg->fetch($id));
+		$this->assertEquals(3, $id = $tg->insert(array("name" => "chin", "age" => 28)));
+		$this->assertEquals(array(array("id" => 2, "name" => "kiwiphp", "age" => 4),array("id" => 3, "name" => "chin", "age" => 28)), $tg->fetchRows());
+		$this->assertEquals(1, $tg->update(3, array("name" => "Qin")));
+		$this->assertEquals(array("id" => 3, "name" => "Qin", "age" => 28), $tg->fetch($id));
+		$this->assertEquals(2, $tg->count());
+		$this->assertEquals(1, $tg->delete(3));
+		$this->assertEquals(array(array("id" => 2, "name" => "kiwiphp", "age" => 4)), $tg->fetchRows());
 
 		/**
 		 * 用法3：使用SqlMapClient
@@ -77,7 +80,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 *     2. 动态传入表名
 		 */
 		$smc = $db->getSqlMapClient();
-		$this->assertEquals($smc->execute("getAgeTotal"), array(0 => array("age_total" => 1)));
+		$this->assertEquals(array(0 => array("age_total" => 1)), $smc->execute("getAgeTotal"));
 	}
 	/**
 	 * 测试Mysql
@@ -124,6 +127,106 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 				$this->assertEquals($testData[2], $dbh->query($testData[0], $testData[1]));
 			}
 		}
+	}
+
+	/**
+	 * 分布式数据库操作测试
+	 * 本例演示了垂直切分（多个Group）和水平切分（一个Group下多个节点）
+	 * 由于实际测试环境的限制，本例中不同的Group和Node只用dbnamw来区分，只有一个host
+	 *    Group 1：系统数据组，存储系统数据，因为数据较少，只包含一个节点
+	 *        Node 1：dbname=sys_data
+	 *    Group 2: 用户数据组，存储用户生产的数据，因为数据量可能会大，包含两个节点
+	 *        Node 1：dbname=member_1
+	 *        Node 2：dbname=member_2
+	 */
+	public function testDistDb()
+	{
+		$dcb = new LtDbConfigBuilder;
+		/**
+		 * 配置系统数据组
+		 * 一个节点， 一主零从
+		 */
+		$dcb->addHost("sys_group", "sys_node_1", "master", array("password" => "123456", "dbname" => "sys_data"));
+		
+		/**
+		 * 配置用户数据组
+		 * 两个节点
+		 * 每个节点一主零从
+		 * 都在同一台机器上，不同节点数据库名不同
+		 */
+		$dcb->addHost("user_group", "user_node_1", "master", array("password" => "123456", "dbname" => "member_1"));
+		$dcb->addHost("user_group", "user_node_2", "master", array("dbname" => "member_2"));
+
+		LtDbStaticData::$servers = $dcb->getServers();
+
+		/**
+		 * ========== LtDb的第一个实例，仅用于操作sys_group ==========
+		 */
+		$db1 = new LtDb;
+		$db1->group = "sys_group";
+		$db1->init();
+
+		//用DbHandle直接操作数据库
+		$dbh1 = $db1->getDbHandle();
+		$this->assertEquals(true, $dbh1->query("DROP TABLE IF EXISTS sys_category"));
+		$this->assertEquals(true, $dbh1->query("CREATE TABLE sys_category (
+			id INT NOT NULL auto_increment,
+			name VARCHAR( 20 ) NOT NULL ,
+			PRIMARY KEY ( id ) 
+		)"));
+
+		//使用Table Gateway查询引擎
+		$tg1 = $db1->getTableGateway("sys_category");
+		$this->assertEquals(1, $id = $tg1->insert(array("id" => 1, "name" => "PHP")));
+		$this->assertEquals(array("id" => 1, "name" => "PHP"), $tg1->fetch($id));
+
+		//使用SqlMapClient
+		$smc1 = $db1->getSqlMapClient();
+		$this->assertEquals(array(0 => array("category_total" => 1)), $smc1->execute("sys.getSysCateTotal"));
+
+		/**
+		 * ========== LtDb的第二个实例，仅用于操作user_group ==========
+		 */
+		$db2 = new LtDb;
+		$db2->group = "user_group";
+		$db2->init();
+
+		//设置要操作的节点
+		$db2->setNode("user_node_1");
+
+		//用DbHandle直接操作数据库
+		$dbh2 = $db2->getDbHandle();
+		$this->assertEquals(true, $dbh2->query("DROP TABLE IF EXISTS user_account"));
+		$this->assertEquals(true, $dbh2->query("CREATE TABLE user_account (
+			id INT NOT NULL auto_increment,
+			username VARCHAR( 20 ) NOT NULL ,
+			PRIMARY KEY ( id ) 
+		)"));
+
+		//使用Table Gateway查询引擎
+		$tg2 = $db2->getTableGateway("user_account");
+		$this->assertEquals(1, $id = $tg2->insert(array("id" => 1, "username" => "lotusphp")));
+		$this->assertEquals(array("id" => 1, "username" => "lotusphp"), $tg2->fetch($id));
+
+		/**
+		 * 重新设置要操作的节点
+		 * 重新设置节点后，DbHanlde和Table Gateway都会去操作新的节点
+		 */
+		$db2->setNode("user_node_2");
+
+		//用DbHandle直接操作数据库
+		$dbh2 = $db2->getDbHandle();
+		$this->assertEquals(true, $dbh2->query("DROP TABLE IF EXISTS user_account"));
+		$this->assertEquals(true, $dbh2->query("CREATE TABLE user_account (
+			id INT NOT NULL auto_increment,
+			username VARCHAR( 20 ) NOT NULL ,
+			PRIMARY KEY ( id ) 
+		)"));
+
+		//使用Table Gateway查询引擎
+		$tg2 = $db2->getTableGateway("user_account");
+		$this->assertEquals(2, $id = $tg2->insert(array("id" => 2, "username" => "talkativedoggy")));
+		$this->assertEquals(array("id" => 2, "username" => "talkativedoggy"), $tg2->fetch($id));
 	}
 
 	/**

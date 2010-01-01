@@ -35,10 +35,10 @@ class LtDb
 		return $smc;
 	}
 
-	public function changeNode($node)
+	public function setNode($node)
 	{
 		$this->node = $node;
-		$this->dbh->changeNode($node);
+		$this->dbh->node = $node;
 	}
 
 	protected function getGroup()
