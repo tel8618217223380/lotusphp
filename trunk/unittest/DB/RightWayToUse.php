@@ -67,27 +67,10 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 	/**
 	 * 测试Mysql
 	 */
-	public function mysqlDataProvider()
-	{
-		return array(
-			//array("SQL语句", 参数,  正确结果)
-			array("SELECT 'ok'", null, array(0 => array("ok" => "ok"))),
-
-			array("INSERT INTO test_user VALUES (:id, :name, :age)", array("id" => 1, "name" => "lotus", "age" => 5), 1),
-			array("UPDATE test_user SET age = :age", array("age" => 50), 1),
-			array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), array("0" => array("id" => 1, "name" => "lotus", "age" => 50))),
-			array("DELETE FROM test_user", null, 1),
-			array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), null),
-		);
-	}
-
-	/**
-	 * @dataProvider mysqlDataProvider
-	 */
-	public function testMysql($sql, $bind, $expected)
+	public function testMysql()
 	{
 		$host = array("password" => "123456", "dbname" => "test");
-		foreach (array("mysql") as $adapter)
+		foreach (array("mysql", "mysqli", "pdo_mysql") as $adapter)
 		{
 			$host["adapter"] = $adapter;
 			/**
@@ -104,7 +87,19 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			$db->init();
 
 			$dbh = $db->getDbHandle();
-			$this->assertEquals($expected, $dbh->query($sql, $bind));
+			foreach (array(
+				//array("SQL语句", 参数,  正确结果)
+				array("SELECT 'ok'", null, array(0 => array("ok" => "ok"))),
+	
+				array("INSERT INTO test_user VALUES (:id, :name, :age)", array("id" => 1, "name" => "lotus", "age" => 5), 1),
+				array("UPDATE test_user SET age = :age", array("age" => 50), 1),
+				array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), array("0" => array("id" => 1, "name" => "lotus", "age" => 50))),
+				array("DELETE FROM test_user", null, 1),
+				array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), null),
+			) as $testData)
+			{
+				$this->assertEquals($testData[2], $dbh->query($testData[0], $testData[1]));
+			}
 		}
 	}
 
