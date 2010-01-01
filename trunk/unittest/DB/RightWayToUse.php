@@ -2,10 +2,112 @@
 /**
  * 本测试文档演示了LtDb的正确使用方法 
  * 按本文档操作一定会得到正确的结果
+ * 
+ * 使用分布式数据注意事项：
+ *   1. 同一节点下相同角色的服务器必须使用同一种数据系统
+ *      不能master1用oracle, master2用pgsql
+ *   2. 同一节点的master和slave服务器可以使用不同的数据库系统
+ *      比如所有master都用oracle,所有slave都用mysql
+ *      这种情况下，使用DbHandle和SqlMap查询DB前
+ *      必须手工指定DbHandle->role是master还是slave
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseDb extends PHPUnit_Framework_TestCase
 {
+	public function MostUsedWay()
+	{
+		/**
+		 * 用法 1： 直接操作数据库
+		 * 
+		 * 优点：学习成本低，快速入门
+		 * 
+		 * 适用场景：
+		 *     1. 临时写个脚本操作数据库，不想花时间学习LtDb的查询引擎
+		 *     2. 只写少量脚本，不是一个完整持续的项目，不需要SqlMap来管理SQL语句
+		 */
+		$dbh = $db->getDbHandle();
+		foreach($this->testDataList as $testData)
+		{
+			$result = $dbh->query($testData[0], $testData[1]);
+			$this->assertEquals($result, $testData[2]);
+		}
+
+		/**
+		 * 用法 2： 使用Table Gateway查询引擎
+		 * 
+		 * 优点：自动生成SQL语句
+		 * 
+		 * 适用场景：
+		 *     1. 对数据表进行增简单的删查改操作，尤其是单条数据的操作
+		 *     2. 简单的SELECT，动态合成WHERE子句
+		 */
+		$tg = $db->getTableGateway("test_user");
+		$this->assertEquals($id = $tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4)), 2);
+		$this->assertEquals($tg->fetch($id), array("id" => 2, "name" => "kiwiphp", "age" => 4));
+		$this->assertEquals($id = $tg->insert(array("name" => "chin", "age" => 28)), 3);
+		$this->assertEquals($tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4),array("id" => 3, "name" => "chin", "age" => 28)));
+		$this->assertEquals($tg->update(3, array("name" => "Qin")), 1);
+		$this->assertEquals($tg->fetch($id), array("id" => 3, "name" => "Qin", "age" => 28));
+		$this->assertEquals($tg->count(), 2);
+		$this->assertEquals($tg->delete(3), 1);
+		$this->assertEquals($tg->fetchRows(), array(array("id" => 2, "name" => "kiwiphp", "age" => 4)));
+
+		/**
+		 * 用法3：使用SqlMapClient
+		 * 
+		 * 优点：自定义SQL，不受任何限制；SQL语句统一存储在配置文件里，便于DBA审查、管理
+		 * 
+		 * 适用场景：
+		 *     1. Table Gateway无法实现的查询，尤其是复杂SELECT、子查询
+		 *     2. 动态传入表名
+		 */
+		$smc = $db->getSqlMapClient();
+		$this->assertEquals($smc->execute("getAgeTotal"), array(0 => array("age_total" => 1)));
+	}
+	/**
+	 * 测试Mysql
+	 */
+	public function mysqlDataProvider()
+	{
+		return array(
+			//array("SQL语句", 参数,  正确结果)
+			array("SELECT 'ok'", null, array(0 => array("ok" => "ok"))),
+
+			array("INSERT INTO test_user VALUES (:id, :name, :age)", array("id" => 1, "name" => "lotus", "age" => 5), 1),
+			array("UPDATE test_user SET age = :age", array("age" => 50), 1),
+			array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), array("0" => array("id" => 1, "name" => "lotus", "age" => 50))),
+			array("DELETE FROM test_user", null, 1),
+			array("SELECT * FROM test_user WHERE id = :id", array("id" => 1), null),
+		);
+	}
+
+	/**
+	 * @dataProvider mysqlDataProvider
+	 */
+	public function testMysql($sql, $bind, $expected)
+	{
+		$host = array("password" => "123456", "dbname" => "test");
+		foreach (array("mysql") as $adapter)
+		{
+			$host["adapter"] = $adapter;
+			/**
+			 * 配置数据库连接信息
+			 */
+			$dcb = new LtDbConfigBuilder;
+			$dcb->addSingleHost($host);
+			LtDbStaticData::$servers = $dcb->getServers();
+
+			/**
+			 * 实例化组件入口类
+			 */
+			$db = new LtDb;
+			$db->init();
+
+			$dbh = $db->getDbHandle();
+			$this->assertEquals($expected, $dbh->query($sql, $bind));
+		}
+	}
+
 	/**
 	 * 测试单机单库的配置方法
 	 */
