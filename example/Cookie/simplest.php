@@ -21,7 +21,7 @@ $parameters = array(
 	"expire" => time()+3600
 );
 
-$cookie = new LtCookie();
+$cookie = new LtCookie;
 $cookie->conf->secretKey = "lotusphp";
 $cookie->setCookie($parameters);
 

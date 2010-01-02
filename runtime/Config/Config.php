@@ -18,7 +18,7 @@ class LtConfig
 		}
 		if (!is_object($this->storeHandle))
 		{
-			$this->storeHandle = new LtConfigStore();
+			$this->storeHandle = new LtConfigStore;
 		}
 		else
 		{

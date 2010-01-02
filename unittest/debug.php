@@ -9,6 +9,6 @@ require_once "phpunit_bootstrap.inc.php";
  */
 require_once './DB/common.inc.php';
 require_once './DB/RightWayToUse.php';
-$i = new RightWayToUseDb();
+$i = new RightWayToUseDb;
 
 $i->testMostUsedWay();

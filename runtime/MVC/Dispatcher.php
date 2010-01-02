@@ -22,7 +22,7 @@ class LtDispatcher
 		{
 			if (!($context instanceof Context))
 			{
-				$newContext = new LtContext();
+				$newContext = new LtContext;
 			}
 			else
 			{

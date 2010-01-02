@@ -89,7 +89,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			-1 => "",
 			true => false,
 			"array" => array(1, 2, 4),
-			"object" => new LtCache(),
+			"object" => new LtCache,
 			"test_key" => "test_value",
 		);
 	}

@@ -17,7 +17,7 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		/**
 		 * 初始化Lotus类
 		 */
-		$lotus = new Lotus();
+		$lotus = new Lotus;
 		
 		/**
 		 * devMode的默认值是true，即默认处于开发模式

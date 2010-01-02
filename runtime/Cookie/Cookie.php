@@ -5,7 +5,7 @@ class LtCookie
 
 	public function __construct()
 	{
-		$this->conf = new LtCookieConfig();
+		$this->conf = new LtCookieConfig;
 	}
 
 	/**

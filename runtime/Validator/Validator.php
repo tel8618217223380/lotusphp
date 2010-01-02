@@ -5,7 +5,7 @@ class LtValidator
 
 	public function __construct()
 	{
-		$this->conf = new LtValidatorConfig();
+		$this->conf = new LtValidatorConfig;
 	}
 
 	protected function _ban($value, $ruleValue)

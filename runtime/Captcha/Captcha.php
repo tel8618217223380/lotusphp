@@ -6,7 +6,7 @@ class LtCaptcha
 
 	public function __construct()
 	{
-		$this->conf = new LtCaptchaConfig();
+		$this->conf = new LtCaptchaConfig;
 		$this->conf->seedFileRoot = rtrim($this->conf->seedFileRoot, '\/') . DIRECTORY_SEPARATOR;
 	}
 
@@ -24,7 +24,7 @@ class LtCaptcha
 		}
 		if (!is_object($this->imageEngine))
 		{
-			$this->imageEngine = new LtCaptchaImageEngine();
+			$this->imageEngine = new LtCaptchaImageEngine;
 			$this->imageEngine->conf = $this->conf;
 		}		
 		$word = $this->generateRandCaptchaWord($seed);

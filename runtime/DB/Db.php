@@ -36,7 +36,7 @@ class LtDb
 
 	public function getSqlMapClient()
 	{
-		$smc = new LtDbSqlMapClient();
+		$smc = new LtDbSqlMapClient;
 		$smc->dbh = $this->dbh;
 		return $smc;
 	}

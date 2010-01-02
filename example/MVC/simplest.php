@@ -18,6 +18,6 @@ include $appDir . "action/UserSigninAction.php";
 /*
  * 实例化
  */
-$dispatcher = new LtDispatcher();
+$dispatcher = new LtDispatcher;
 $dispatcher->viewDir = "./simplest_app/view/";
 $dispatcher->dispatchAction("User", "Signin");

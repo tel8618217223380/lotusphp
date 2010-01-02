@@ -10,7 +10,7 @@ class LtRouter
 
 	public function __construct()
 	{
-		$this->conf = new LtRouterConfig();
+		$this->conf = new LtRouterConfig;
 	}
 
 	public function init()

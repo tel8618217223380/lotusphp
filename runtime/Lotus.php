@@ -66,7 +66,7 @@ class Lotus
 		{
 			$autoloadDirs[] = $this->option["autoload_path"];
 		}
-		$autoloader = new LtAutoloader();
+		$autoloader = new LtAutoloader;
 		$autoloader->autoloadPath = $autoloadDirs;
 		if (!$this->devMode)
 		{
