@@ -104,7 +104,14 @@ class LtDbHandle
 		{
 			$newPlaceHolder = "$delimiter$key$delimiter";
 			$find[] = $newPlaceHolder;
-			$replacement[] = "'" . $this->connectionAdapter->escape($value, $this->connectionResource) . "'";
+			if ($value instanceof LtDbSqlExpression)
+			{
+				$replacement[] = $value->__toString();
+			}
+			else
+			{
+				$replacement[] = "'" . $this->connectionAdapter->escape($value, $this->connectionResource) . "'";
+			}
 			$sql = str_replace(":$key", $newPlaceHolder, $sql);
 		}
 		return str_replace($find, $replacement, $sql);
