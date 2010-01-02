@@ -10,8 +10,6 @@ class LtDbConnectionManager
 	 * 	"charset"     => char set / encoding
 	 * )
 	 */
-	public $storeHandle;
-	public $namespace;
 	protected $connectionAdapter;
 	protected $sqlAdapter;
 	static $connectionPool;
@@ -34,7 +32,7 @@ class LtDbConnectionManager
 
 	protected function getCachedConnection($group, $node, $role)
 	{
-		$servers = $this->storeHandle->get("servers", $this->namespace);
+		$servers = LtDb::$storeHandle->get("servers", LtDb::$namespace);
 		foreach($servers[$group][$node][$role] as $hostConfig)
 		{
 			$key = $this->getConnectionKey($hostConfig);
@@ -65,7 +63,7 @@ class LtDbConnectionManager
 
 	protected function getNewConnection($group, $node, $role)
 	{
-		$servers = $this->storeHandle->get("servers", $this->namespace);
+		$servers = LtDb::$storeHandle->get("servers", LtDb::$namespace);
 		$hostTotal = count($servers[$group][$node][$role]);
 		$hostIndexArray = array_keys($servers[$group][$node][$role]);
 		while ($hostTotal)
