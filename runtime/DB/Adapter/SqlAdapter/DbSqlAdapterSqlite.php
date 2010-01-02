@@ -1,5 +1,5 @@
 <?php
-class LtDbSqlAdapterSqlite extends LtDbSqlAdapter
+class LtDbSqlAdapterSqlite implements LtDbSqlAdapter
 {
 	public function setCharset($charset)
 	{

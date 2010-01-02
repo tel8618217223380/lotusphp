@@ -1,5 +1,5 @@
 <?php
-class LtDbSqlAdapterPgsql extends LtDbSqlAdapter
+class LtDbSqlAdapterPgsql implements LtDbSqlAdapter
 {
 	public function setCharset($charset)
 	{

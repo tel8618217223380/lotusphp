@@ -1,28 +1,31 @@
 <?php
-abstract class LtDbSqlAdapter
+Interface LtDbSqlAdapter
 {
 	/**
 	 * Return SQL statements
 	 */
-	abstract public function setCharset($charset);
-	abstract public function setSchema($schema);
+	public function setCharset($charset);
+	public function setSchema($schema);
 
-	abstract public function showSchemas($database);
-	abstract public function showTables($schema);
-	abstract public function showFields($table);
+	public function showSchemas($database);
+	public function showTables($schema);
+	public function showFields($table);
 
-	abstract public function beginTransaction();
-	abstract public function commit();
-	abstract public function rollBack();
+	public function beginTransaction();
+	public function commit();
+	public function rollBack();
 
-	abstract public function limit($limit, $offset);
+	public function limit($limit, $offset);
 
 	/**
 	 * Retrive recordset
 	 */
-	abstract public function getSchemas($queryResult);
-	abstract public function getTables($queryResult);
-	abstract public function getFields($queryResult);
+	public function getSchemas($queryResult);
+	public function getTables($queryResult);
+	public function getFields($queryResult);
 
-	abstract public function detectQueryType($sql);
+	/**
+	 * Parse SQL
+	 */
+	public function detectQueryType($sql);
 }
