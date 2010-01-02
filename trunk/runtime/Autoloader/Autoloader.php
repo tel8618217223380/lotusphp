@@ -255,7 +255,7 @@ class LtAutoloaderStore
 
 	public function add($key, $value, $ttl, $namespace)
 	{
-		$this->stack[$key = $this->getRealKey($namespace, $key)] = $value;
+		$this->stack[$this->getRealKey($namespace, $key)] = $value;
 		return true;
 	}
 
