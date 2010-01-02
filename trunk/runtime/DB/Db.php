@@ -4,21 +4,19 @@
  */
 class LtDb
 {
-	protected $dbh;
+	static public $storeHandle;
+	static public $namespace = "";
 	public $group;
 	public $node;
-	public $storeHandle;
-	public $namespace = "";
+	protected $dbh;
 
 	public function init()
 	{
-		if (!is_object($this->storeHandle))
+		if (!is_object(self::$storeHandle))
 		{
-			$this->storeHandle = new LtDbStore;
+			self::$storeHandle = new LtDbStore;
 		}
 		$this->dbh = new LtDbHandle;
-		$this->dbh->storeHandle = $this->storeHandle;
-		$this->dbh->namespace = $this->namespace;
 		$this->dbh->group = $this->getGroup();
 		$this->dbh->node = $this->getNode();
 	}
@@ -55,15 +53,15 @@ class LtDb
 		{
 			return $this->group;
 		}
-		elseif (1 == count($this->storeHandle->get("servers", $this->namespace)))
+		elseif (1 == count(self::$storeHandle->get("servers", self::$namespace)))
 		{
-			return key($this->storeHandle->get("servers", $this->namespace));
+			return key(self::$storeHandle->get("servers", self::$namespace));
 		}
 	}
 
 	protected function getNode()
 	{
-		$servers = $this->storeHandle->get("servers", $this->namespace);
+		$servers = self::$storeHandle->get("servers", self::$namespace);
 		if (1 == count($servers[$this->getGroup()]))
 		{
 			return key($servers[$this->getGroup()]);
