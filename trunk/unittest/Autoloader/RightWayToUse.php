@@ -56,7 +56,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$autoloader->init();
 
 		//初始化完毕，测试其效果
-		$this->assertTrue(new Goodbye() instanceof GoodBye);
+		$this->assertTrue(new Goodbye instanceof GoodBye);
 		$this->assertTrue(class_exists("HelloWorld"));
 		$this->assertEquals("hello", HelloLotus::sayHello());
 		$this->assertEquals("hello", say_hello());
@@ -274,7 +274,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 */
 	public function testPreparePath($userParameter, $expected)
 	{
-		$ap = new LtAutoloaderProxy();
+		$ap = new LtAutoloaderProxy;
 		$path = $ap->var2array($userParameter);
 		$path = $ap->preparePath($path);
 		$this->assertEquals($expected, $path);
@@ -287,7 +287,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 */
 	public function testParseLibNames($src, $expected)
 	{
-		$ap = new LtAutoloaderProxy();
+		$ap = new LtAutoloaderProxy;
 		$this->assertEquals($expected, $ap->parseLibNames($src));
 	}
 
@@ -299,7 +299,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 */
 	public function testIsAllowedFile($extArray, $filename, $expected)
 	{
-		$ap = new LtAutoloaderProxy();
+		$ap = new LtAutoloaderProxy;
 		$ap->conf->allowFileExtension = $extArray;
 		$this->assertEquals($expected, $ap->addFileMap($filename));
 	}
@@ -313,7 +313,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 */
 	public function testIsSkippedDir($dirBlackListArray, $dir, $expected)
 	{
-		$ap = new LtAutoloaderProxy();
+		$ap = new LtAutoloaderProxy;
 		$ap->conf->skipDirNames = $dirBlackListArray;
 		$ap->scanDirs($dir);
 		$isSkip = $ap->storeHandle->get('hellolotus', $ap->namespace) ? false : true;
@@ -327,7 +327,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 */
 	public function testIsLoadFunction($pathfile, $function, $isLoadFunction)
 	{
-		$ap = new LtAutoloaderProxy();
+		$ap = new LtAutoloaderProxy;
 		$ap->conf->isLoadFunction = $isLoadFunction;
 		$ap->addFileMap($pathfile);
 		if($ap->conf->isLoadFunction)
@@ -346,7 +346,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 */
 	public function testScanDirs($path, $classORfunction, $pathFile)
 	{
-		$ap = new LtAutoloaderProxy();
+		$ap = new LtAutoloaderProxy;
 		$ap->scanDirs($path);
 		foreach($classORfunction as $key=>$value)
 		{
@@ -361,7 +361,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 */
 	public function testLoadClass($pathfile, $class)
 	{
-		$ap = new LtAutoloaderProxy();
+		$ap = new LtAutoloaderProxy;
 		$ap->addFileMap($pathfile);
 		$ap->loadClass($class);
 		$this->assertTrue(class_exists($class));

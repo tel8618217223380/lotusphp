@@ -18,7 +18,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	public function testCLI()
 	{
 		$_SERVER['argv'] = array('--module', 'hello', '--action', 'world',);
-		$router = new LtRouter();
+		$router = new LtRouter;
 		$router->init();
 		$this->assertEquals('hello', $router->module);
 		$this->assertEquals('world', $router->action);
@@ -26,7 +26,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	public function testCLI2()
 	{
 		$_SERVER['argv'] = array('-m', 'hello', '-a', 'world',);
-		$router = new LtRouter();
+		$router = new LtRouter;
 		$router->init();
 		$this->assertEquals('hello', $router->module);
 		$this->assertEquals('world', $router->action);
@@ -39,7 +39,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
 		$_REQUEST['module'] = 'hello';
 		$_REQUEST['action'] = 'world';
-		$router = new LtRouter();
+		$router = new LtRouter;
 		$router->init();
 		$this->assertEquals('hello', $router->module);
 		$this->assertEquals('world', $router->action);
@@ -51,7 +51,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	{
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
 		$_SERVER["PATH_INFO"] = '/hello/world';
-		$router = new LtRouter();
+		$router = new LtRouter;
 		$router->init();
 		$this->assertEquals('hello', $router->module);
 		$this->assertEquals('world', $router->action);
@@ -61,7 +61,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	 */
 	public function testDefault()
 	{
-		$router = new LtRouter();
+		$router = new LtRouter;
 		$router->init();
 		$this->assertEquals('Module', $router->module);
 		$this->assertEquals('Action', $router->action);
@@ -72,7 +72,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	 */
 	public function testCustom()
 	{
-		$router = new LtRouter();
+		$router = new LtRouter;
 		$router->conf->module = 'hello';
 		$router->conf->action = 'world';
 		$router->init();
@@ -90,7 +90,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 			'module' => 'hel?lo',
 			'action' => 'world',
 		);
-		$router = new LtRouter();
+		$router = new LtRouter;
 		$router->init();
 	}
 
@@ -104,7 +104,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 			'module' => 'hello',
 			'action' => 'wor/ld',
 		);
-		$router = new LtRouter();
+		$router = new LtRouter;
 		$router->init();
 	}
 } 

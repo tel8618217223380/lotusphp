@@ -24,7 +24,7 @@ $autoloader = new LtAutoloader($directories);
 /*
  * 初始化完成，开始享受Autoloader的便利
  */
-$class = new ClassA();//只要ClassA的文件在前面你指定的"目录1","目录2"或其子目录中,就能自动加载进来了.
+$class = new ClassA;//只要ClassA的文件在前面你指定的"目录1","目录2"或其子目录中,就能自动加载进来了.
 }}}
 
 == 示例2：在生产环境获取更好的性能 ==
@@ -35,7 +35,7 @@ $class = new ClassA();//只要ClassA的文件在前面你指定的"目录1","目
 $cacheKey = "autoloader_cache_key";
 if ($cachedFileMapping = apc_fetch($cacheKey))//若从apc中获取到了class file mapping，则不要扫描目录了
 {
-    $autoloader = new LtAutoloader();
+    $autoloader = new LtAutoloader;
     $autoloader->setFileMapping($autoloader);
     $autoloader->init();
 }
@@ -132,7 +132,7 @@ Zend_Debug::dump($rows);
 
 == 常见问题 ==
  # Q:类名是不是必须得唯一?如果重名怎么办?<br>A:类名必须唯一,如果重名会被覆盖
- # Q:Autoloader会不会把所有的class都加载进来?<br>A:不会,只有在new HelloWorld()的时候,才把HelloWorld所在的文件include进来,绝对的按需加载!
+ # Q:Autoloader会不会把所有的class都加载进来?<br>A:不会,只有在new HelloWorld的时候,才把HelloWorld所在的文件include进来,绝对的按需加载!
  # Q:怎么在Lotus里没看到__autoload()函数?<br>A:Lotus Autoloader自动加载的函数实际是LtAutoloader->loadClass(),spl_autoload_register(array($this, "loadClass"));这个语句等于是告诉 php引擎:当你找__autoload()的时候,就直接去找LtAutoloader->loadClass()吧.通过spl_autoload_register注册了自己的函数，PHP就不会调用__autoload()函数，而会调用自定义的函数,也就是loadClass
 
 

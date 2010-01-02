@@ -107,7 +107,7 @@ abstract class LtAction
 			default:
 				if (null === $this->view)
 				{
-					$this->view = new LtView();
+					$this->view = new LtView;
 				}
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;

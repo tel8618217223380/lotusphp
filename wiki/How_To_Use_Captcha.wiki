@@ -24,7 +24,7 @@ include "/Captcha所在目录/runtime/Captcha/CaptchaConfig.php";
 /*
  * 开始使用Captcha
  */
-$captcha = new LtCaptcha();
+$captcha = new LtCaptcha;
 $captcha->conf->secretKey = "lotusphp";
 $seed = uniqid();
 $captcha->generateImage($seed);

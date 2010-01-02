@@ -5,7 +5,7 @@ class LtUrl
 
 	public function __construct()
 	{
-		$this->conf = new LtUrlConfig();
+		$this->conf = new LtUrlConfig;
 	}
 
 	public function link($string)

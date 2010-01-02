@@ -8,14 +8,14 @@ class LtAutoloader
 
 	public function __construct()
 	{
-		$this->conf = new LtAutoloaderConfig();
+		$this->conf = new LtAutoloaderConfig;
 	}
 
 	public function init()
 	{
 		if (!is_object($this->storeHandle))
 		{
-			$this->storeHandle = new LtAutoloaderStore();
+			$this->storeHandle = new LtAutoloaderStore;
 		}
 		else
 		{
