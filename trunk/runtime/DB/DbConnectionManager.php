@@ -44,14 +44,13 @@ class LtDbConnectionManager
 					$dbFactory = new LtDbFactory;
 					$this->connectionAdapter = $dbFactory->getConnectionAdapter($hostConfig["adapter"]);
 					$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["adapter"]);
-					$this->connectionAdapter->connResource = $connectionInfo["connection"];
 					if ($connectionInfo["schema"] != $hostConfig["schema"])
 					{
-						$this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]));
+						$this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]), $connectionInfo["connection"]);
 					}
 					if ($connectionInfo["charset"] != $hostConfig["charset"])
 					{
-						$this->connectionAdapter->exec($this->sqlAdapter->setCharset($hostConfig["charset"]));
+						$this->connectionAdapter->exec($this->sqlAdapter->setCharset($hostConfig["charset"]), $connectionInfo["connection"]);
 					}
 					$this->saveConnection($hostConfig, $connectionInfo["connection"], $hostConfig["connection_ttl"]);
 				}
@@ -74,9 +73,8 @@ class LtDbConnectionManager
 			$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["adapter"]);
 			if ($connection = $this->connectionAdapter->connect($hostConfig))
 			{
-				$this->connectionAdapter->connResource = $connection;
-				$this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]));
-				$this->connectionAdapter->exec($this->sqlAdapter->setCharset($hostConfig["charset"]));
+				$this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]), $connection);
+				$this->connectionAdapter->exec($this->sqlAdapter->setCharset($hostConfig["charset"]), $connection);
 				$this->saveConnection($hostConfig, $connection, $hostConfig["connection_ttl"]);
 				return $connection;
 			}
@@ -97,11 +95,11 @@ class LtDbConnectionManager
 
 	public function getAdapters($group, $node, $role = "master")
 	{
-		if ($connection = $this->getNewConnection($group, $node, $role) || $connection = $this->getNewConnection($group, $node, $role))
+		if ($connection = $this->getNewConnection($group, $node, $role))
 		{
 			return array(
 				"connectionAdapter" => $this->connectionAdapter,
-				"sqlAdapter" => $this->sqlAdapter
+				"connectionResource" => $connection
 			);
 		}
 		else

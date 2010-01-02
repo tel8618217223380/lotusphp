@@ -5,6 +5,7 @@ class LtDbHandle
 	public $node;
 	public $role = "master";
 	public $connectionAdapter;
+	public $connectionResource;
 	public $sqlAdapter;
 	protected $connectionManager;
 
@@ -18,17 +19,17 @@ class LtDbHandle
 	 */
 	public function beginTransaction()
 	{
-		return $this->connectionAdapter->exec($this->sqlAdapter->beginTransaction());
+		return $this->connectionAdapter->exec($this->sqlAdapter->beginTransaction(), $this->connectionResource);
 	}
 
 	public function commit()
 	{
-		return $this->connectionAdapter->exec($this->sqlAdapter->commit());
+		return $this->connectionAdapter->exec($this->sqlAdapter->commit(), $this->connectionResource);
 	}
 
 	public function rollBack()
 	{
-		return $this->connectionAdapter->exec($this->sqlAdapter->rollBack());
+		return $this->connectionAdapter->exec($this->sqlAdapter->rollBack(), $this->connectionResource);
 	}
 
 	/**
@@ -81,11 +82,12 @@ class LtDbHandle
 		}
 		$adapters = $this->connectionManager->getAdapters($this->group, $this->node, $this->role);
 		$this->connectionAdapter = $adapters["connectionAdapter"];
+		$this->connectionResource = $adapters["connectionResource"];
 		if (is_array($bind) && 0 < count($bind))
 		{
 			$sql = $this->bindParameter($sql, $bind);
 		}
-		return $this->$queryMethod($sql);
+		return $this->$queryMethod($sql, $this->connectionResource);
 	}
 
 	/**
@@ -102,7 +104,7 @@ class LtDbHandle
 		{
 			$newPlaceHolder = "$delimiter$key$delimiter";
 			$find[] = $newPlaceHolder;
-			$replacement[] = "'" . $this->connectionAdapter->escape($value) . "'";
+			$replacement[] = "'" . $this->connectionAdapter->escape($value, $this->connectionResource) . "'";
 			$sql = str_replace(":$key", $newPlaceHolder, $sql);
 		}
 		return str_replace($find, $replacement, $sql);
@@ -115,9 +117,9 @@ class LtDbHandle
 		return $factory->getSqlAdapter(LtDbStaticData::$servers[$this->group][$this->node][$this->role][$host]["adapter"]);
 	}
 
-	protected function select($sql)
+	protected function select($sql, $connResource)
 	{
-		$result = $this->connectionAdapter->query($sql);
+		$result = $this->connectionAdapter->query($sql, $connResource);
 		if (empty($result))
 		{
 			return null;
@@ -128,11 +130,11 @@ class LtDbHandle
 		}
 	}
 
-	protected function insert($sql)
+	protected function insert($sql, $connResource)
 	{
-		if($result = $this->connectionAdapter->exec($sql))
+		if($result = $this->connectionAdapter->exec($sql, $connResource))
 		{
-			return $this->connectionAdapter->lastInsertId();
+			return $this->connectionAdapter->lastInsertId($connResource);
 		}
 		else
 		{
@@ -140,21 +142,21 @@ class LtDbHandle
 		}
 	}
 
-	protected function changeRows($sql)
+	protected function changeRows($sql, $connResource)
 	{
-		return $this->connectionAdapter->exec($sql);
+		return $this->connectionAdapter->exec($sql, $connResource);
 	}
 
 	/**
 	 * @todo 更新连接缓存
 	 */
-	protected function setSessionVar($sql)
+	protected function setSessionVar($sql, $connResource)
 	{
-		return false === $this->connectionAdapter->exec($sql) ? false : true;
+		return false === $this->connectionAdapter->exec($sql, $connResource) ? false : true;
 	}
 
-	protected function other($sql)
+	protected function other($sql, $connResource)
 	{
-		return false === $this->connectionAdapter->exec($sql) ? false : true;
+		return false === $this->connectionAdapter->exec($sql, $connResource) ? false : true;
 	}
 }

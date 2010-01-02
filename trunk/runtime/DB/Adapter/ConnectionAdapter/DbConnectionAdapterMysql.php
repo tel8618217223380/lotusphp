@@ -1,19 +1,19 @@
 <?php
-class LtDbConnectionAdapterMysql extends LtDbConnectionAdapter
+class LtDbConnectionAdapterMysql implements LtDbConnectionAdapter
 {
 	public function connect($connConf)
 	{
 		return mysql_connect($connConf["host"] . ":" . $connConf["port"], $connConf["username"], $connConf["password"]);
 	}
 
-	public function exec($sql)
+	public function exec($sql, $connResource)
 	{
-		return mysql_query($sql, $this->connResource) ? mysql_affected_rows($this->connResource) : false;
+		return mysql_query($sql, $connResource) ? mysql_affected_rows($connResource) : false;
 	}
 
-	public function query($sql)
+	public function query($sql, $connResource)
 	{
-		$result = mysql_query($sql, $this->connResource);
+		$result = mysql_query($sql, $connResource);
 		$rows = array();
 		while($row = mysql_fetch_assoc($result))
 		{
@@ -22,13 +22,13 @@ class LtDbConnectionAdapterMysql extends LtDbConnectionAdapter
 		return $rows;
 	}
 
-	public function lastInsertId()
+	public function lastInsertId($connResource)
 	{
-		return mysql_insert_id($this->connResource);
+		return mysql_insert_id($connResource);
 	}
 
-	public function escape($sql)
+	public function escape($sql, $connResource)
 	{
-		return mysql_real_escape_string($sql, $this->connResource);
+		return mysql_real_escape_string($sql, $connResource);
 	}
 }
