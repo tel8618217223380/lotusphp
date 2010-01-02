@@ -7,10 +7,18 @@ class LtDb
 	protected $dbh;
 	public $group;
 	public $node;
+	public $storeHandle;
+	public $namespace = "";
 
 	public function init()
 	{
+		if (!is_object($this->storeHandle))
+		{
+			$this->storeHandle = new LtDbStore;
+		}
 		$this->dbh = new LtDbHandle;
+		$this->dbh->storeHandle = $this->storeHandle;
+		$this->dbh->namespace = $this->namespace;
 		$this->dbh->group = $this->getGroup();
 		$this->dbh->node = $this->getNode();
 	}
@@ -47,17 +55,60 @@ class LtDb
 		{
 			return $this->group;
 		}
-		elseif (1 == count(LtDbStaticData::$servers))
+		elseif (1 == count($this->storeHandle->get("servers", $this->namespace)))
 		{
-			return key(LtDbStaticData::$servers);
+			return key($this->storeHandle->get("servers", $this->namespace));
 		}
 	}
 
 	protected function getNode()
 	{
-		if (1 == count(LtDbStaticData::$servers[$this->getGroup()]))
+		$servers = $this->storeHandle->get("servers", $this->namespace);
+		if (1 == count($servers[$this->getGroup()]))
 		{
-			return key(LtDbStaticData::$servers[$this->getGroup()]);
+			return key($servers[$this->getGroup()]);
 		}
+	}
+}
+
+class LtDbStore
+{
+	protected $stack;
+
+	public function add($key, $value, $ttl, $namespace)
+	{
+		$this->stack[$this->getRealKey($namespace, $key)] = $value;
+		return true;
+	}
+
+	public function del($key, $namespace)
+	{
+		$key = $this->getRealKey($namespace, $key);
+		if(isset($this->stack[$key]))
+		{
+			unset($this->stack[$key]);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public function get($key, $namespace)
+	{
+		$key = $this->getRealKey($namespace, $key);
+		return isset($this->stack[$key]) ? $this->stack[$key] : false;
+	}
+
+	public function update($key, $value, $ttl, $namespace)
+	{
+		$this->stack[$this->getRealKey($namespace, $key)] = $value;
+		return true;
+	}
+
+	protected function getRealKey($namespace, $key)
+	{
+		return sprintf("%u", crc32($namespace)) . $key;
 	}
 }

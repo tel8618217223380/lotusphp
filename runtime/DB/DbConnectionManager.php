@@ -10,6 +10,8 @@ class LtDbConnectionManager
 	 * 	"charset"     => char set / encoding
 	 * )
 	 */
+	public $storeHandle;
+	public $namespace;
 	protected $connectionAdapter;
 	protected $sqlAdapter;
 	static $connectionPool;
@@ -32,7 +34,8 @@ class LtDbConnectionManager
 
 	protected function getCachedConnection($group, $node, $role)
 	{
-		foreach(LtDbStaticData::$servers[$group][$node][$role] as $hostConfig)
+		$servers = $this->storeHandle->get("servers", $this->namespace);
+		foreach($servers[$group][$node][$role] as $hostConfig)
 		{
 			$key = $this->getConnectionKey($hostConfig);
 			if(isset(self::$connectionPool[$key]) && time() < self::$connectionPool[$key]['expire_time'])
@@ -40,7 +43,7 @@ class LtDbConnectionManager
 				$connectionInfo = self::$connectionPool[$key];
 				if ($connectionInfo["schema"] != $hostConfig["schema"] || $connectionInfo["charset"] != $hostConfig["charset"])
 				{//检查当前schema和charset与用户要操作的目标不一致
-					$hostConfig = LtDbStaticData::$servers[$group][$node][$role][$hostIndexArray[$hashNumber]];
+					$hostConfig = $servers[$group][$node][$role][$hostIndexArray[$hashNumber]];
 					$dbFactory = new LtDbFactory;
 					$this->connectionAdapter = $dbFactory->getConnectionAdapter($hostConfig["adapter"]);
 					$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["adapter"]);
@@ -62,12 +65,13 @@ class LtDbConnectionManager
 
 	protected function getNewConnection($group, $node, $role)
 	{
-		$hostTotal = count(LtDbStaticData::$servers[$group][$node][$role]);
-		$hostIndexArray = array_keys(LtDbStaticData::$servers[$group][$node][$role]);
+		$servers = $this->storeHandle->get("servers", $this->namespace);
+		$hostTotal = count($servers[$group][$node][$role]);
+		$hostIndexArray = array_keys($servers[$group][$node][$role]);
 		while ($hostTotal)
 		{
 			$hashNumber = substr(microtime(),7,1) % $hostTotal;
-			$hostConfig = LtDbStaticData::$servers[$group][$node][$role][$hostIndexArray[$hashNumber]];
+			$hostConfig = $servers[$group][$node][$role][$hostIndexArray[$hashNumber]];
 			$dbFactory = new LtDbFactory;
 			$this->connectionAdapter = $dbFactory->getConnectionAdapter($hostConfig["adapter"]);
 			$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["adapter"]);

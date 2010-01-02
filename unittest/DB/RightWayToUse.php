@@ -24,13 +24,15 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 */
 		$dcb = new LtDbConfigBuilder;
 		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
-		LtDbStaticData::$servers = $dcb->getServers();
 
 		/**
 		 * 实例化组件入口类
 		 */
 		$db = new LtDb;
+		$db->storeHandle = new LtDbStore;
+		$db->storeHandle->add("servers", $dcb->getServers(), 0, "");
 		$db->init();
+
 		/**
 		 * 用法 1： 直接操作数据库
 		 * 
@@ -96,12 +98,13 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			 */
 			$dcb = new LtDbConfigBuilder;
 			$dcb->addSingleHost($host);
-			LtDbStaticData::$servers = $dcb->getServers();
 
 			/**
 			 * 实例化组件入口类
 			 */
 			$db = new LtDb;
+			$db->storeHandle = new LtDbStore;
+			$db->storeHandle->add("servers", $dcb->getServers(), 0, "");
 			$db->init();
 
 			$dbh = $db->getDbHandle();
@@ -157,13 +160,13 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$dcb->addHost("user_group", "user_node_1", "master", array("password" => "123456", "dbname" => "member_1"));
 		$dcb->addHost("user_group", "user_node_2", "master", array("dbname" => "member_2"));
 
-		LtDbStaticData::$servers = $dcb->getServers();
-
 		/**
 		 * ========== LtDb的第一个实例，仅用于操作sys_group ==========
 		 */
 		$db1 = new LtDb;
 		$db1->group = "sys_group";
+		$db1->storeHandle = new LtDbStore;
+		$db1->storeHandle->add("servers", $dcb->getServers(), 0, "");
 		$db1->init();
 
 		//用DbHandle直接操作数据库
@@ -189,6 +192,8 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 */
 		$db2 = new LtDb;
 		$db2->group = "user_group";
+		$db2->storeHandle = new LtDbStore;
+		$db2->storeHandle->add("servers", $dcb->getServers(), 0, "");
 		$db2->init();
 
 		//设置要操作的节点

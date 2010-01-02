@@ -11,4 +11,4 @@ require_once './DB/common.inc.php';
 require_once './DB/RightWayToUse.php';
 $i = new RightWayToUseDb();
 
-$i->testMysql("DROP TABLE IF EXISTS test_user", null, true);
+$i->testMostUsedWay();
