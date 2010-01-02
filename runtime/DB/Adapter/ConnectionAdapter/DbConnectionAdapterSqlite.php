@@ -6,7 +6,7 @@
  * php5.3新增扩展sqlite3用来支持3.x版本。 
  * PDO则同时支持2.x和3.x版本。
  */
-class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
+class LtDbConnectionAdapterSqlite implements LtDbConnectionAdapter
 {
 	public function connect($connConf)
 	{
@@ -31,30 +31,30 @@ class LtDbConnectionAdapterSqlite extends LtDbConnectionAdapter
 		} 
 	} 
 
-	public function exec($sql)
+	public function exec($sql, $connResource)
 	{
-		sqlite_exec($this->connResource, $sql); 
+		sqlite_exec($connResource, $sql); 
 		// echo '<pre>';
 		// print_r(debug_backtrace());
 		// debug_print_backtrace();
 		// echo '</pre>';
 		// delete from table 结果为0，原因未知。
-		return sqlite_changes($this->connResource);
+		return sqlite_changes($connResource);
 	} 
 
-	public function query($sql)
+	public function query($sql, $connResource)
 	{
-		$result = sqlite_query($this->connResource, $sql, SQLITE_ASSOC);
+		$result = sqlite_query($connResource, $sql, SQLITE_ASSOC);
 		return sqlite_fetch_all($result, SQLITE_ASSOC);
 	} 
 
-	public function lastInsertId()
+	public function lastInsertId($connResource)
 	{
-		return sqlite_last_insert_rowid($this->connResource);
+		return sqlite_last_insert_rowid($connResource);
 	} 
 
-	public function escape($string)
+	public function escape($sql, $connResource)
 	{
-		return sqlite_escape_string($string);
+		return sqlite_escape_string($sql);
 	} 
 } 

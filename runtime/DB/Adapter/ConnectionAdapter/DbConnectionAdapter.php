@@ -1,11 +1,9 @@
 <?php
-abstract class LtDbConnectionAdapter
+interface LtDbConnectionAdapter
 {
-	public $connResource;
-
-	abstract public function connect($connConf);
-	abstract public function exec($sql);
-	abstract public function query($sql);
-	abstract public function lastInsertId();
-	abstract public function escape($sql);
+	public function connect($connConf);
+	public function exec($sql, $connResource);
+	public function query($sql, $connResource);
+	public function lastInsertId($connResource);
+	public function escape($sql, $connResource);
 }

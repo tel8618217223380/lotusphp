@@ -1,5 +1,5 @@
 <?php
-class LtDbConnectionAdapterPgsql extends LtDbConnectionAdapter
+class LtDbConnectionAdapterPgsql implements LtDbConnectionAdapter
 {
 	public function connect($connConf)
 	{
@@ -14,15 +14,15 @@ class LtDbConnectionAdapterPgsql extends LtDbConnectionAdapter
 		return $func("host={$connConf['host']} port={$connConf['port']} user={$connConf['username']} password={$connConf['password']}");
 	}
 
-	public function exec($sql)
+	public function exec($sql, $connResource)
 	{
-		$result = pg_query($this->connResource, $sql);
+		$result = pg_query($connResource, $sql);
 		return pg_affected_rows($result);
 	}
 
-	public function query($sql)
+	public function query($sql, $connResource)
 	{
-		$result = pg_query($this->connResource, $sql);
+		$result = pg_query($connResource, $sql);
 		return pg_fetch_all($result);
 	}
 
@@ -32,14 +32,14 @@ class LtDbConnectionAdapterPgsql extends LtDbConnectionAdapter
 	// CREATE FUNCTION last_insert_id() RETURNS bigint AS $$
 	// SELECT lastval();
 	// $$ LANGUAGE SQL VOLATILE;
-	public function lastInsertId()
+	public function lastInsertId($connResource)
 	{
-		$result = pg_query($this->connResource, "SELECT lastval()");
+		$result = pg_query($connResource, "SELECT lastval()");
 		$row = pg_fetch_array($result, 0, PGSQL_NUM);
 		return $row[0];
 	}
 
-	public function escape($sql)
+	public function escape($sql, $connResource)
 	{
 		return pg_escape_string($sql);
 	}

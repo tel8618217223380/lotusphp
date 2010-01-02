@@ -1,5 +1,5 @@
 <?php
-class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
+class LtDbConnectionAdapterPdo implements LtDbConnectionAdapter
 {
 	public function connect($connConf)
 	{
@@ -23,27 +23,27 @@ class LtDbConnectionAdapterPdo extends LtDbConnectionAdapter
 		return new PDO($dsn, $connConf['username'], $connConf['password'], $option);
 	}
 
-	public function exec($sql)
+	public function exec($sql, $connResource)
 	{
-		return $this->connResource->exec($sql);
+		return $connResource->exec($sql);
 	}
 
-	public function query($sql)
+	public function query($sql, $connResource)
 	{
-		return $this->connResource->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+		return $connResource->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 	}
 
 	/**
 	 * @todo pgsql support
 	 */
-	public function lastInsertId()
+	public function lastInsertId($connResource)
 	{
-		return $this->connResource->lastInsertId();
+		return $connResource->lastInsertId();
 	}
 
-	public function escape($sql)
+	public function escape($sql, $connResource)
 	{
 		// quote返回值带最前面和最后面的单引号, 这里去掉, DbHandler中加
-		return trim($this->connResource->quote($sql),"'");
+		return trim($connResource->quote($sql),"'");
 	}
 }
