@@ -1,5 +1,5 @@
 <?php
-Interface LtDbSqlAdapter
+interface LtDbSqlAdapter
 {
 	/**
 	 * Return SQL statements
