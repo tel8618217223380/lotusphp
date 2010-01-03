@@ -316,7 +316,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap = new LtAutoloaderProxy;
 		$ap->conf->skipDirNames = $dirBlackListArray;
 		$ap->scanDirs($dir);
-		$isSkip = $ap->storeHandle->get('hellolotus', $ap->namespace) ? false : true;
+		$isSkip = LtAutoloader::$storeHandle->get('hellolotus', $ap->namespace) ? false : true;
 		$this->assertEquals($expected, $isSkip);
 	}
 
@@ -350,7 +350,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap->scanDirs($path);
 		foreach($classORfunction as $key=>$value)
 		{
-			$this->assertEquals($pathFile[$key], $ap->storeHandle->get($classORfunction[$key], $ap->namespace));
+			$this->assertEquals($pathFile[$key], LtAutoloader::$storeHandle->get($classORfunction[$key], $ap->namespace));
 		}
 	}
 
