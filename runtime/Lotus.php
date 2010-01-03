@@ -70,7 +70,7 @@ class Lotus
 		$autoloader->autoloadPath = $autoloadDirs;
 		if (!$this->devMode)
 		{
-			$autoloader->storeHandle = LtObjectUtil::singleton("LtCache");
+			LtAutoloader::$storeHandle = LtObjectUtil::singleton("LtCache");
 		}
 		$autoloader->init();
 	}
@@ -80,7 +80,7 @@ class Lotus
 		$conf = LtObjectUtil::singleton("LtConfig");
 		if (!$this->devMode)
 		{
-			$conf->storeHandle = LtObjectUtil::singleton("LtCache");
+			LtConfig::$storeHandle = LtObjectUtil::singleton("LtCache");
 		}
 		if (isset($this->option["config_file"]))
 		{

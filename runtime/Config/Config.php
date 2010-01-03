@@ -1,8 +1,8 @@
 <?php
 class LtConfig
 {
-	public $storeHandle;
-	public $namespace;
+	static public $storeHandle;
+	static public $namespace;
 	public $configFile;
 
 	/**
@@ -16,18 +16,18 @@ class LtConfig
 		{
 			trigger_error("no config file specified or invalid config file");
 		}
-		if (!is_object($this->storeHandle))
+		if (!is_object(self::$storeHandle))
 		{
-			$this->storeHandle = new LtConfigStore;
+			self::$storeHandle = new LtConfigStore;
 		}
 		else
 		{
-			$this->namespace = md5($this->configFile);
-			$this->storeHandle->namespaceMapping[$this->namespace] = sprintf("%u", crc32($this->namespace));
+			self::$namespace = md5($this->configFile);
+			self::$storeHandle->namespaceMapping[self::$namespace] = sprintf("%u", crc32(self::$namespace));
 		}
-		if (0 == $this->storeHandle->get(".config_total", $this->namespace))
+		if (0 == self::$storeHandle->get(".config_total", self::$namespace))
 		{
-			$this->storeHandle->add(".config_total", 0, 0, $this->namespace);
+			self::$storeHandle->add(".config_total", 0, 0, self::$namespace);
 			$conf = include($this->configFile);
 			if (!is_array($conf))
 			{
@@ -42,7 +42,7 @@ class LtConfig
 
 	public function get($key)
 	{
-		$ret = $this->storeHandle->get($key, $this->namespace);
+		$ret = self::$storeHandle->get($key, self::$namespace);
 		if (false === $ret)
 		{
 			trigger_error("key not exists");
@@ -54,8 +54,8 @@ class LtConfig
 	{
 		foreach($configArray as $key => $value)
 		{
-			$this->storeHandle->add($key, $value, 0, $this->namespace);
-			$this->storeHandle->update(".config_total", $this->storeHandle->get(".config_total", $this->namespace) + 1, 0, $this->namespace);
+			self::$storeHandle->add($key, $value, 0, self::$namespace);
+			self::$storeHandle->update(".config_total", self::$storeHandle->get(".config_total", self::$namespace) + 1, 0, self::$namespace);
 		}
 	}
 }

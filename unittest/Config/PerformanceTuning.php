@@ -30,7 +30,7 @@ class PerformanceTuning4Config extends PHPUnit_Framework_TestCase
 		 * 这是为了证明：使用LtCache作为LtConfig的存储，功能是正常的
 		 */
 		$conf = new LtConfig;
-		$conf->storeHandle = $cacheHandle;
+		LtConfig::$storeHandle = $cacheHandle;
 		$conf->configFile = $config_file;
 		$conf->init();
 		$this->assertEquals("localhost", $conf->get("db.conn.host"));
@@ -44,7 +44,7 @@ class PerformanceTuning4Config extends PHPUnit_Framework_TestCase
 		for($i = 0; $i < $times; $i++)
 		{
 			$conf = new LtConfig;
-			$conf->storeHandle = $cacheHandle;
+			LtConfig::$storeHandle = $cacheHandle;
 			$conf->configFile = $config_file;
 			$conf->init();
 		}

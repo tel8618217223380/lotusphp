@@ -1,8 +1,8 @@
 <?php
 class LtAutoloader
 {
-	public $storeHandle;
-	public $namespace;
+	static public $storeHandle;
+	static public $namespace;
 	public $autoloadPath;
 	public $conf;
 
@@ -13,21 +13,21 @@ class LtAutoloader
 
 	public function init()
 	{
-		if (!is_object($this->storeHandle))
+		if (!is_object(self::$storeHandle))
 		{
-			$this->storeHandle = new LtAutoloaderStore;
+			self::$storeHandle = new LtAutoloaderStore;
 		}
 		else
 		{
-			$this->namespace = md5(serialize($this->autoloadPath));
-			$this->storeHandle->namespaceMapping[$this->namespace] = sprintf("%u", crc32($this->namespace));
+			self::$namespace = md5(serialize($this->autoloadPath));
+			self::$storeHandle->namespaceMapping[self::$namespace] = sprintf("%u", crc32(self::$namespace));
 		}
 		// Whether scanning directory
-		if (0 == $this->storeHandle->get(".class_total", $this->namespace) && 0 == $this->storeHandle->get(".function_total", $this->namespace))
+		if (0 == self::$storeHandle->get(".class_total", self::$namespace) && 0 == self::$storeHandle->get(".function_total", self::$namespace))
 		{
-			$this->storeHandle->add(".class_total", 0, 0, $this->namespace);
-			$this->storeHandle->add(".function_total", 0, 0, $this->namespace);
-			$this->storeHandle->add(".functions", array(), 0, $this->namespace);
+			self::$storeHandle->add(".class_total", 0, 0, self::$namespace);
+			self::$storeHandle->add(".function_total", 0, 0, self::$namespace);
+			self::$storeHandle->add(".functions", array(), 0, self::$namespace);
 			$autoloadPath = $this->var2array($this->autoloadPath);
 			$this->autoloadPath = $this->preparePath($autoloadPath);
 			$autoloadPath = $this->autoloadPath;
@@ -52,7 +52,7 @@ class LtAutoloader
 
 	public function loadFunction()
 	{
-		if ($functionFiles = $this->storeHandle->get(".functions", $this->namespace))
+		if ($functionFiles = self::$storeHandle->get(".functions", self::$namespace))
 		{
 			foreach ($functionFiles as $functionFile)
 			{
@@ -63,7 +63,7 @@ class LtAutoloader
 
 	public function loadClass($className)
 	{
-		if ($classFile = $this->storeHandle->get(strtolower($className), $this->namespace))
+		if ($classFile = self::$storeHandle->get(strtolower($className), self::$namespace))
 		{
 			include($classFile);
 		}
@@ -198,15 +198,15 @@ class LtAutoloader
 	protected function addClass($className, $file)
 	{
 		$key = strtolower($className);
-		if ($this->storeHandle->get($key, $this->namespace))
+		if (self::$storeHandle->get($key, self::$namespace))
 		{
 			trigger_error("dumplicate class name : $className");
 			return false;
 		}
 		else
 		{
-			$this->storeHandle->add($key, $file, 0, $this->namespace);
-			$this->storeHandle->update(".class_total", $this->storeHandle->get(".class_total", $this->namespace) + 1, 0, $this->namespace);
+			self::$storeHandle->add($key, $file, 0, self::$namespace);
+			self::$storeHandle->update(".class_total", self::$storeHandle->get(".class_total", self::$namespace) + 1, 0, self::$namespace);
 			return true;
 		}
 	}
@@ -214,7 +214,7 @@ class LtAutoloader
 	protected function addFunction($functionName, $file)
 	{
 		$functionName = strtolower($functionName);
-		$foundFunctions = $this->storeHandle->get(".functions", $this->namespace);
+		$foundFunctions = self::$storeHandle->get(".functions", self::$namespace);
 		if ($foundFunctions && array_key_exists($functionName, $foundFunctions))
 		{
 			trigger_error("dumplicate function name: $functionName");
@@ -223,8 +223,8 @@ class LtAutoloader
 		else
 		{
 			$foundFunctions[$functionName] = $file;
-			$this->storeHandle->update(".functions", $foundFunctions, 0, $this->namespace);
-			$this->storeHandle->update(".function_total", $this->storeHandle->get(".function_total", $this->namespace) + 1, 0, $this->namespace);
+			self::$storeHandle->update(".functions", $foundFunctions, 0, self::$namespace);
+			self::$storeHandle->update(".function_total", self::$storeHandle->get(".function_total", self::$namespace) + 1, 0, self::$namespace);
 			return true;
 		}
 	}
