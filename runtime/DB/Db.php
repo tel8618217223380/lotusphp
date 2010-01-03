@@ -1,7 +1,4 @@
 <?php
-/**
- * @todo mysql/firebird/mssql等初始化配置的时候，schema = dbname, dbname = ""
- */
 class LtDb
 {
 	static public $storeHandle;

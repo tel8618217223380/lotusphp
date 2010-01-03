@@ -1,6 +1,12 @@
 <?php
 class Lotus
 {
+	/**
+	 * Lotus Option array
+	 * @var array
+	 * array(
+	 * )
+	 */
 	public $option;
 	public $devMode = true;
 	protected $lotusRuntimeDir;
@@ -85,7 +91,7 @@ class Lotus
 		if (isset($this->option["config_file"]))
 		{
 			$conf->configFile = $this->option["config_file"];
-			$this->init();
+			$conf->init();
 		}
 	}
 

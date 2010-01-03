@@ -95,7 +95,7 @@ class LtDbConnectionManager
 		return false;
 	}
 
-	public function getAdapters($group, $node, $role = "master")
+	public function getConnection($group, $node, $role = "master")
 	{
 		if (($connection = $this->getNewConnection($group, $node, $role)) ||($connection = $this->getCachedConnection($group, $node, $role)))
 		{
