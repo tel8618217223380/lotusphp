@@ -1,7 +1,7 @@
 == Lotus ToDo List ==
-# 给Cache组件加Gateway模式，就像DB Table Gateway那样，主要针对memcached
-# Router和Url组件是一对，一个根据routr规则parse进来的url，一个根据route规则生成出去的url，共用同一个route rule
-# Lotus存储三剑客可进一步抽象：多条操作（DB，Search）和单条操作（DB，Cache）
-# ObjectUtil整合到lotus里面去，只有第一次singleton("LtCaptcha")时才初始化LtCaptcha组件
-# DB的master/slave, queryType做成类常量
-# DbHandle->query()增加queryType参数，lotus暂时parse不出来的queryType允许用户自己指定
+ # 给Cache组件加Gateway模式，就像DB Table Gateway那样，主要针对memcached
+ # Router和Url组件是一对，一个根据routr规则parse进来的url，一个根据route规则生成出去的url，共用同一个route rule
+ # Lotus存储三剑客可进一步抽象：多条操作（DB，Search）和单条操作（DB，Cache）
+ # ObjectUtil整合到lotus里面去，只有第一次singleton("LtCaptcha")时才初始化LtCaptcha组件
+ # DB的master/slave, queryType做成类常量
+ # DbHandle->query()增加queryType参数，lotus暂时parse不出来的queryType允许用户自己指定
