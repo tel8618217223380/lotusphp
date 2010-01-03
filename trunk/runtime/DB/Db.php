@@ -41,7 +41,7 @@ class LtDb
 		return $smc;
 	}
 
-	public function setNode($node)
+	public function changeNode($node)
 	{
 		$this->node = $node;
 		$this->dbh->node = $node;
@@ -61,6 +61,10 @@ class LtDb
 
 	protected function getNode()
 	{
+		if ($this->node)
+		{
+			return $this->node;
+		}
 		$servers = self::$storeHandle->get("servers", self::$namespace);
 		if (1 == count($servers[$this->getGroup()]))
 		{
