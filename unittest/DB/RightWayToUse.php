@@ -193,10 +193,8 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 */
 		$db2 = new LtDb;
 		$db2->group = "user_group";
+		$db2->node = "user_node_1";
 		$db2->init();
-
-		//设置要操作的节点
-		$db2->setNode("user_node_1");
 
 		//用DbHandle直接操作数据库
 		$dbh2 = $db2->getDbHandle();
@@ -216,7 +214,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * 重新设置要操作的节点
 		 * 重新设置节点后，DbHanlde和Table Gateway都会去操作新的节点
 		 */
-		$db2->setNode("user_node_2");
+		$db2->changeNode("user_node_2");
 
 		//用DbHandle直接操作数据库
 		$dbh2 = $db2->getDbHandle();
