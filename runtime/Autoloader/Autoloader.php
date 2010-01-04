@@ -176,18 +176,32 @@ class LtAutoloader
 		$tokens = token_get_all($src);
 		$tokenTotal = count($tokens);
 		$found = null;
+		$braceLevel = 0;
 		for ($i = 0; $i < $tokenTotal; $i ++)
 		{
-			if (isset($tokens[$i]) && is_array($tokens[$i]))
+			if (!isset($tokens[$i]))
 			{
-				if (in_array($tokens[$i][0], array(T_CLASS, T_INTERFACE, T_FUNCTION)))
+				break;
+			}
+			if (is_array($tokens[$i]))
+			{
+				if (0 == $braceLevel && in_array($tokens[$i][0], array(T_CLASS, T_INTERFACE, T_FUNCTION)))
 				{
 					$found = token_name($tokens[$i][0]);
 				}
 				else if ($found && T_STRING == $tokens[$i][0])
 				{
-					$libNames[strtolower(substr($found, 2))][] = $tokens[$i][1];
+					$libNames[strtolower(substr($found, 2))][] = $tokens[$i][1];					
+					$found = null;
 				}
+			}
+			else if ("{" == $tokens[$i])
+			{
+				$braceLevel += 1;
+			}
+			else if ("}" == $tokens[$i])
+			{
+				$braceLevel -= 1;
 			}
 		}
 		return $libNames;
