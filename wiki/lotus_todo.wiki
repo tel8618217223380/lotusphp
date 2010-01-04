@@ -5,3 +5,4 @@
  # ObjectUtil整合到lotus里面去，只有第一次singleton("LtCaptcha")时才初始化LtCaptcha组件
  # DB的master/slave, queryType做成类常量
  # DbHandle->query()增加queryType参数，lotus暂时parse不出来的queryType允许用户自己指定
+ # DbConnectionManager：在insert()和startTransaction()时将该缓存资源锁定，用完才释放，防止多线程操作产生脏数据
