@@ -172,25 +172,23 @@ class LtAutoloader
 
 	protected function parseLibNames($src)
 	{
-		$libNames = array("class" => array(), "function" => array());
-		$classes = $functions = array();
-		if (preg_match_all('~^\s*(?:abstract\s+|final\s+)?(?:class|interface)\s+(\w+).*~mi', $src, $classes) > 0)
+		$libNames = array();
+		$tokens = token_get_all($src);
+		$tokenTotal = count($tokens);
+		$found = null;
+		for ($i = 0; $i < $tokenTotal; $i ++)
 		{
-			foreach($classes[1] as $class)
+			if (isset($tokens[$i]) && is_array($tokens[$i]))
 			{
-				$libNames["class"][] = $class;
+				if (in_array($tokens[$i][0], array(T_CLASS, T_INTERFACE, T_FUNCTION)))
+				{
+					$found = token_name($tokens[$i][0]);
+				}
+				else if ($found && T_STRING == $tokens[$i][0])
+				{
+					$libNames[strtolower(substr($found, 2))][] = $tokens[$i][1];
+				}
 			}
-		}
-		else if (preg_match_all('~^\s*(?:function)\s+(\w+).*~mi', $src, $functions) > 0)
-		{
-			foreach($functions[1] as $function)
-			{
-				$libNames["function"][] = $function;
-			}
-		}
-		else
-		{ 
-			// No classes and No function ignore
 		}
 		return $libNames;
 	}
@@ -235,13 +233,26 @@ class LtAutoloader
 		{
 			$src = trim(file_get_contents($file));
 			$libNames = $this->parseLibNames($src);
-			foreach ($libNames["class"] as $class)
+			if (isset($libNames["class"]))
 			{
-				$this->addClass($class, $file);
+				foreach ($libNames["class"] as $class)
+				{
+					$this->addClass($class, $file);
+				}
 			}
-			foreach ($libNames["function"] as $function)
+			if (isset($libNames["interface"]))
 			{
-				$this->addFunction($function, $file);
+				foreach ($libNames["interface"] as $class)
+				{
+					$this->addClass($class, $file);
+				}
+			}
+			if (isset($libNames["function"]))
+			{
+				foreach ($libNames["function"] as $function)
+				{
+					$this->addFunction($function, $file);
+				}
 			}
 			return true;
 		}

@@ -133,22 +133,36 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		return array(
 			// 最常用的Class写法
 			array("<?php
-				class Src",
-				array("class" => array("Src"), "function" => array())
-				), 
-			// class关键字大写，class和类名间有多个空格或者tab
-			array("
-			  Class   	Source{}",
-				array("class" => array("Source"), "function" => array())
-				), 
+				class Src
+				{}",
+				array("class" => array("Src"))
+			), 
+			// class关键字大写，class和类名间有多个空格或者tab，带PHP闭合标签
+			array("<?php abstract Class   	Source{
+				public \$string = 'the source is: class ClassInString {}, haha';
+				}
+				/**
+				 * class ClassCommented {}
+				 * function function_commented() {}
+				 */
+				?>",
+				array("class" => array("Source"))
+			), 
 			// 接口，interface和接口名间有换行
-			array("Interface
-				Trade{}", array("class" => array("Trade"), "function" => array())
-				), 
+			array("<?php Interface
+				Trade{}", array("interface" => array("Trade"))
+			), 
 			// 函数
-			array("function
-				function1(){}", array("class" => array(), "function" => array("function1"))
-				),
+			array("<?php function
+				function1(){}", array("function" => array("function1"))
+			), 
+			// 综合 示例
+			array("<?php
+			class TestClass {}
+			abstract class TestAbstractClass {}
+			interface TestInterface {}
+			function test_function ()", array("class" => array("TestClass", "TestAbstractClass"), "interface" => array("TestInterface"), "function" => array("test_function"))
+			),
 			);
 	}
 
@@ -367,4 +381,4 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$this->assertTrue(class_exists($class));
 	}
 }
-
+?>
