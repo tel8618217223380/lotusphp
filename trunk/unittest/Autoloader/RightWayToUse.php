@@ -134,7 +134,11 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			// 最常用的Class写法
 			array("<?php
 				class Src
-				{}",
+				{
+					public function parseSrc()//this function should not be parsed
+					{
+					}
+				}",
 				array("class" => array("Src"))
 			), 
 			// class关键字大写，class和类名间有多个空格或者tab，带PHP闭合标签
@@ -147,11 +151,11 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 				 */
 				?>",
 				array("class" => array("Source"))
-			), 
+			),
 			// 接口，interface和接口名间有换行
 			array("<?php Interface
 				Trade{}", array("interface" => array("Trade"))
-			), 
+			),
 			// 函数
 			array("<?php function
 				function1(){}", array("function" => array("function1"))
