@@ -233,25 +233,12 @@ class LtAutoloader
 		{
 			$src = trim(file_get_contents($file));
 			$libNames = $this->parseLibNames($src);
-			if (isset($libNames["class"]))
+			foreach ($libNames as $libType => $libArray)
 			{
-				foreach ($libNames["class"] as $class)
+				$method = "function" == $libType ? "addFunction" : "addClass";
+				foreach ($libArray as $libName)
 				{
-					$this->addClass($class, $file);
-				}
-			}
-			if (isset($libNames["interface"]))
-			{
-				foreach ($libNames["interface"] as $class)
-				{
-					$this->addClass($class, $file);
-				}
-			}
-			if (isset($libNames["function"]))
-			{
-				foreach ($libNames["function"] as $function)
-				{
-					$this->addFunction($function, $file);
+					$this->$method($libName, $file);
 				}
 			}
 			return true;
