@@ -181,18 +181,17 @@ class LtAutoloader
 		{
 			if (!isset($tokens[$i]))
 			{
-				break;
+				trigger_error("invalid source");
 			}
-			if (is_array($tokens[$i]))
+			if (0 == $braceLevel && is_array($tokens[$i]))
 			{
-				if (0 == $braceLevel && in_array($tokens[$i][0], array(T_CLASS, T_INTERFACE, T_FUNCTION)))
+				if (in_array($tokens[$i][0], array(T_CLASS, T_INTERFACE, T_FUNCTION)))
 				{
 					$found = token_name($tokens[$i][0]);
 				}
 				else if ($found && T_STRING == $tokens[$i][0])
 				{
-					$libNames[strtolower(substr($found, 2))][] = $tokens[$i][1];					
-					$found = null;
+					$libNames[strtolower(substr($found, 2))][] = $tokens[$i][1];
 				}
 			}
 			else if ("{" == $tokens[$i])
