@@ -17,6 +17,7 @@ class LtRouter
 	{
 		$ret = array();
 		$url = "news/list/catid/4/page/10";
+		$url = explode('/', $url);
 		$routingTable['pattern'] = "{module}/{action}/{*}";
 //		$routingTable['config'] = array(
 //			'module' => '([a-z][a-z0-9]*)*',

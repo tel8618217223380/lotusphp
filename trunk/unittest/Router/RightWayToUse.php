@@ -6,12 +6,12 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 {
-	public function setUp()
+	public function testMostUsedWay()
 	{
-	} 
-	public function tearDown()
-	{
-	} 
+		$router = new LtRouter;
+		$ret = $router->matchingRoutingTable();
+		print_r($ret);
+	}
 	/**
 	 * 命令行模式
 	 */
@@ -22,7 +22,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$router->init();
 		$this->assertEquals('hello', $router->module);
 		$this->assertEquals('world', $router->action);
-	} 
+	}
 	public function testCLI2()
 	{
 		$_SERVER['argv'] = array('-m', 'hello', '-a', 'world',);
@@ -30,7 +30,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$router->init();
 		$this->assertEquals('hello', $router->module);
 		$this->assertEquals('world', $router->action);
-	} 
+	}
 	/**
 	 * index.php?module=hello&action=world
 	 */
@@ -43,7 +43,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$router->init();
 		$this->assertEquals('hello', $router->module);
 		$this->assertEquals('world', $router->action);
-	} 
+	}
 	/**
 	 * index.php/hello/world
 	 */
@@ -55,7 +55,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$router->init();
 		$this->assertEquals('hello', $router->module);
 		$this->assertEquals('world', $router->action);
-	} 
+	}
 	/**
 	 * index.php
 	 */
@@ -65,7 +65,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$router->init();
 		$this->assertEquals('Module', $router->module);
 		$this->assertEquals('Action', $router->action);
-	} 
+	}
 
 	/**
 	 * index.php
@@ -78,33 +78,33 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$router->init();
 		$this->assertEquals('hello', $router->module);
 		$this->assertEquals('world', $router->action);
-	} 
+	}
 
 	/**
+	 * 
 	 * @expectedException Exception
 	 */
 	public function testModuleErr()
 	{
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
-		$_REQUEST = array(
-			'module' => 'hel?lo',
+		$_REQUEST = array('module' => 'hel?lo',
 			'action' => 'world',
-		);
+			);
 		$router = new LtRouter;
 		$router->init();
 	}
 
 	/**
+	 * 
 	 * @expectedException Exception
 	 */
 	public function testActionErr()
 	{
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
-		$_REQUEST = array(
-			'module' => 'hello',
+		$_REQUEST = array('module' => 'hello',
 			'action' => 'wor/ld',
-		);
+			);
 		$router = new LtRouter;
 		$router->init();
 	}
-} 
+}
