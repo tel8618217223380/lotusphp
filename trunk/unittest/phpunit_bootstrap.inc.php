@@ -2,10 +2,11 @@
 /**
  * PHPUnit bootstrap
  */
-//°Ñ×Ô¶¨ÒåµÄËÑË÷Â·¾¶·ÅÄ¬ÈÏµÄËÑË÷Â·¾¶ºó±ß,ÓÅÏÈÊ¹ÓÃÔÚphp.iniÖÐÉèÖÃÂ·¾¶
+//ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½php.iniï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
 set_include_path(get_include_path() . PATH_SEPARATOR . "." . PATH_SEPARATOR ."D:/kiss/PHP/PEAR");
 require_once 'PHPUnit/Util/Filter.php';
 require_once 'PHPUnit/Extensions/PerformanceTestCase.php';
+require_once 'PHPUnit/Extensions/OutputTestCase.php';
 PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 require_once 'PHPUnit/TextUI/Command.php';
 define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
