@@ -6,9 +6,11 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 {
+
 	public function testMostUsedWay()
 	{
 		$router = new LtRouter;
+		$router->routingTable = $this->routingTable;
 		$router->matchingRoutingTable('news/list/catid/4/page/10');
 		$this->assertEquals(
 			array('module'=>'news','action'=>'list','catid'=>4,'page'=>10), 
@@ -17,6 +19,17 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 
 		$url = $router->url(array('module'=>'news','action'=>'list','catid'=>4,'page'=>10));
 		$this->assertEquals('news/list/catid/4/page/10', $url);
+
+	}
+	public function __construct()
+	{
+		parent::__construct();
+		$this->routingTable = array('pattern' => ":module/:action/*",
+		'default' => array('module' => 'default', 'action' => 'index'),
+		'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
+		'varprefix' => ':',
+		'delimiter' => '/'
+		);
 
 	}
 	/**
