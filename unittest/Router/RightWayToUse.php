@@ -9,8 +9,15 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	public function testMostUsedWay()
 	{
 		$router = new LtRouter;
-		$ret = $router->matchingRoutingTable();
-		print_r($ret);
+		$router->matchingRoutingTable('news/list/catid/4/page/10');
+		$this->assertEquals(
+			array('module'=>'news','action'=>'list','catid'=>4,'page'=>10), 
+			$router->params
+			);
+
+		$url = $router->url(array('module'=>'news','action'=>'list','catid'=>4,'page'=>10));
+		$this->assertEquals('news/list/catid/4/page/10', $url);
+
 	}
 	/**
 	 * 命令行模式
@@ -65,19 +72,6 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$router->init();
 		$this->assertEquals('Module', $router->module);
 		$this->assertEquals('Action', $router->action);
-	}
-
-	/**
-	 * index.php
-	 */
-	public function testCustom()
-	{
-		$router = new LtRouter;
-		$router->conf->module = 'hello';
-		$router->conf->action = 'world';
-		$router->init();
-		$this->assertEquals('hello', $router->module);
-		$this->assertEquals('world', $router->action);
 	}
 
 	/**

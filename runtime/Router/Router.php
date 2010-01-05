@@ -4,62 +4,97 @@
  */
 class LtRouter
 {
+	public $routingTable = array('pattern' => "{module}/{action}/{*}",
+		'default' => array('module' => 'default', 'action' => 'index'),
+		'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
+		'delimiter' => '/'
+		);
 	public $module;
 	public $action;
-	public $conf;
+	public $params;
 
 	public function __construct()
 	{
-		$this->conf = new LtRouterConfig;
 	}
-
-	public function matchingRoutingTable()
+	/**
+	 * $url = "news/list/catid/4/page/10";
+	 */
+	public function matchingRoutingTable($url)
 	{
-		$ret = array();
-		$url = "news/list/catid/4/page/10";
-		$url = explode('/', $url);
-		$routingTable['pattern'] = "{module}/{action}/{*}";
-//		$routingTable['config'] = array(
-//			'module' => '([a-z][a-z0-9]*)*',
-//			'action' => '[a-z][a-z0-9]*)*',
-//			);
-//		$routingTable['defaltVar'] = array(
-//			'module' => 'default',
-//			'action' => 'index',
-//			);
-		$pattern = $routingTable['pattern'];
+		$pattern = $this->routingTable['pattern'];
+		$default = $this->routingTable['default'];
+		$reqs = $this->routingTable['reqs'];
+		$delimiter = $this->routingTable['delimiter'];
 
+		$url = explode($delimiter, $url);
 		preg_match_all("/\{([a-z]+|\*)\}/", $pattern, $out);
 		foreach($out[1] as $k => $v)
 		{
 			if ('*' != $v)
 			{
 				if (isset($url[$k]))
-				{ 
-					// $regex = "/^{$routingTable['config'][$v]}\$/i";
-					// if (preg_match($regex, $url[$k]))
-					// {
-					$ret[$v] = $url[$k]; 
-					// }
+				{
+					$regex = "/^{$this->routingTable['reqs'][$v]}\$/i";
+					if (preg_match($regex, $url[$k]))
+					{
+						$ret[$v] = $url[$k];
+					}
 				}
 			}
 			else
 			{
-				while (isset($url[$k]))
+				while (isset($url[$k]) && isset($url[$k + 1]))
 				{
 					$ret[$url[$k ++]] = $url[$k];
 					$k++;
 				}
 			}
 		}
-		return $ret;
+		$this->params = $ret;
+	}
+
+	public function url($params)
+	{
+		$url = $params;
+		$pattern = $this->routingTable['pattern'];
+		$default = $this->routingTable['default'];
+		$reqs = $this->routingTable['reqs'];
+		$delimiter = $this->routingTable['delimiter'];
+		preg_match_all("/\{([a-z]+|\*)\}/", $pattern, $out);
+		foreach($out[1] as $k => $v)
+		{
+			if ('*' != $v)
+			{
+				if (array_key_exists($v, $url))
+				{
+					$regex = "/^{$this->routingTable['reqs'][$v]}\$/i";
+					if (preg_match($regex, $url[$v]))
+					{
+						$pattern = str_replace($out[0][$k], $url[$v], $pattern);
+						unset($url[$v]);
+					}
+				}
+			}
+			else
+			{
+				$tmp = '';
+				foreach($url as $key => $value)
+				{
+					$tmp .= $key . $delimiter . $value . $delimiter;
+				}
+				$tmp = rtrim($tmp, $delimiter);
+				$pattern = str_replace($out[0][$k], $tmp, $pattern);
+			}
+		}
+		return $pattern;
 	}
 
 	public function init()
 	{
 		$module = '';
-		$action = '';
-		if (isset($_SERVER['SERVER_PROTOCOL'])) // index.php?module=module&action=action
+		$action = ''; 
+		// index.php?module=module&action=action
+		if (isset($_SERVER['SERVER_PROTOCOL']))
 		{
 			if (isset($_REQUEST['module']))
 			{
@@ -75,8 +110,9 @@ class LtRouter
 				list($module, $action) = explode('/', trim($_SERVER['PATH_INFO'], '/'));
 			}
 		}
-		else // CLI模式
-		{
+		else
+		{ 
+			// CLI模式
 			$i = 0;
 			while ((empty($module) || empty($action)) && isset($_SERVER['argv'][$i]))
 			{
@@ -115,8 +151,7 @@ class LtRouter
 				throw new Exception("Action name is illegal: {$action}");
 			}
 		}
-		$this->module = $module ? $module : $this->conf->module;
-		$this->action = $action ? $action : $this->conf->action;
-		unset($this->conf);
+		$this->module = $module ? $module : 'Module';
+		$this->action = $action ? $action : 'Action';
 	}
 }
