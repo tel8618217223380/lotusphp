@@ -4,11 +4,14 @@
  */
 class LtRouter
 {
-	public $routingTable = array('pattern' => "{module}/{action}/{*}",
-		'default' => array('module' => 'default', 'action' => 'index'),
-		'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-		'delimiter' => '/'
-		);
+	// public $routingTable = array(
+	// 'pattern' => ":module/:action/*",
+	// 'default' => array('module' => 'default', 'action' => 'index'),
+	// 'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
+	// 'varprefix' => ':',
+	// 'delimiter' => '/'
+	// );
+	public $routingTable;
 	public $module;
 	public $action;
 	public $params;
@@ -21,72 +24,103 @@ class LtRouter
 	 */
 	public function matchingRoutingTable($url)
 	{
-		$pattern = $this->routingTable['pattern'];
-		$default = $this->routingTable['default'];
+		$ret = $this->routingTable['default']; //返回值
 		$reqs = $this->routingTable['reqs'];
 		$delimiter = $this->routingTable['delimiter'];
+		$varprefix = $this->routingTable['varprefix'];
+		$pattern = explode($delimiter, trim($this->routingTable['pattern'], $delimiter));
 
-		$url = explode($delimiter, $url);
-		preg_match_all("/\{([a-z]+|\*)\}/", $pattern, $out);
-		foreach($out[1] as $k => $v)
+		/**
+		 * 预处理url
+		 */
+		$url = explode($delimiter, trim($url, $delimiter));
+
+		foreach($pattern as $k => $v)
 		{
-			if ('*' != $v)
-			{
+			if ($v[0] == $varprefix)
+			{ 
+				// 变量
+				$varname = substr($v, 1); 
+				// 匹配变量
 				if (isset($url[$k]))
 				{
-					$regex = "/^{$this->routingTable['reqs'][$v]}\$/i";
-					if (preg_match($regex, $url[$k]))
+					if (isset($this->routingTable['reqs'][$varname]))
 					{
-						$ret[$v] = $url[$k];
+						$regex = "/^{$this->routingTable['reqs'][$varname]}\$/i";
+						if (preg_match($regex, $url[$k]))
+						{
+							$ret[$varname] = $url[$k];
+						}
 					}
 				}
 			}
-			else
-			{
-				while (isset($url[$k]) && isset($url[$k + 1]))
+			else if ($v[0] == '*')
+			{ 
+				// 通配符
+				$pos = $k;
+				while (isset($url[$pos]) && isset($url[$pos + 1]))
 				{
-					$ret[$url[$k ++]] = $url[$k];
-					$k++;
+					$ret[$url[$pos ++]] = $url[$pos];
+					$pos++;
 				}
 			}
+			else
+			{ 
+				// 静态
+			}
 		}
+
 		$this->params = $ret;
 	}
 
 	public function url($params)
 	{
 		$url = $params;
-		$pattern = $this->routingTable['pattern'];
+		$ret = $this->routingTable['pattern'];
 		$default = $this->routingTable['default'];
 		$reqs = $this->routingTable['reqs'];
 		$delimiter = $this->routingTable['delimiter'];
-		preg_match_all("/\{([a-z]+|\*)\}/", $pattern, $out);
-		foreach($out[1] as $k => $v)
+		$varprefix = $this->routingTable['varprefix'];
+
+		$pattern = explode($delimiter, trim($this->routingTable['pattern'], $delimiter));
+
+		foreach($pattern as $k => $v)
 		{
-			if ('*' != $v)
-			{
-				if (array_key_exists($v, $url))
+			if ($v[0] == $varprefix)
+			{ 
+				// 变量
+				$varname = substr($v, 1); 
+				// 匹配变量
+				if (array_key_exists($varname, $url))
 				{
-					$regex = "/^{$this->routingTable['reqs'][$v]}\$/i";
-					if (preg_match($regex, $url[$v]))
+					$regex = "/^{$this->routingTable['reqs'][$varname]}\$/i";
+					if (preg_match($regex, $url[$varname]))
 					{
-						$pattern = str_replace($out[0][$k], $url[$v], $pattern);
-						unset($url[$v]);
+						$ret = str_replace($v, $url[$varname], $ret);
+						unset($url[$varname]);
 					}
 				}
 			}
-			else
-			{
+			else if ($v[0] == '*')
+			{ 
+				// 通配符
 				$tmp = '';
 				foreach($url as $key => $value)
 				{
-					$tmp .= $key . $delimiter . $value . $delimiter;
+					if (!isset($default[$key]))
+					{
+						$tmp .= $key . $delimiter . $value . $delimiter;
+					}
 				}
 				$tmp = rtrim($tmp, $delimiter);
-				$pattern = str_replace($out[0][$k], $tmp, $pattern);
+				$ret = str_replace($v, $tmp, $ret);
+			}
+			else
+			{ 
+				// 静态
 			}
 		}
-		return $pattern;
+		return $ret;
 	}
 
 	public function init()
