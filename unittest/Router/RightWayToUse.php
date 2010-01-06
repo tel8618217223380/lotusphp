@@ -9,6 +9,24 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 
 	public function testMostUsedWay()
 	{
+		// 模拟浏览器访问
+		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
+		$_SERVER["PATH_INFO"] = '/news/list/catid/4/page/10';
+		// 初始化LtRouter
+		$router = new LtRouter;
+		$router->routingTable = $this->routingTable;
+		$router->init();
+		// 初始化结束
+		$this->assertEquals(
+			array('module'=>'news','action'=>'list','catid'=>4,'page'=>10), 
+			$router->params
+			);
+		$url = $router->url(array('module'=>'news','action'=>'list','catid'=>4,'page'=>10));
+		$this->assertEquals('news/list/catid/4/page/10', $url);
+	}
+
+	public function testmatch()
+	{
 		$router = new LtRouter;
 		$router->routingTable = $this->routingTable;
 		$router->matchingRoutingTable('news/list/catid/4/page/10');
@@ -21,6 +39,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$this->assertEquals('news/list/catid/4/page/10', $url);
 
 	}
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -57,8 +76,8 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	public function testNormal()
 	{
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
-		$_REQUEST['module'] = 'hello';
-		$_REQUEST['action'] = 'world';
+		$_GET['module'] = 'hello';
+		$_GET['action'] = 'world';
 		$router = new LtRouter;
 		$router->init();
 		$this->assertEquals('hello', $router->module);
@@ -81,37 +100,10 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	 */
 	public function testDefault()
 	{
-		$router = new LtRouter;
-		$router->init();
-		$this->assertEquals('Module', $router->module);
-		$this->assertEquals('Action', $router->action);
-	}
-
-	/**
-	 * 
-	 * @expectedException Exception
-	 */
-	public function testModuleErr()
-	{
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
-		$_REQUEST = array('module' => 'hel?lo',
-			'action' => 'world',
-			);
 		$router = new LtRouter;
 		$router->init();
-	}
-
-	/**
-	 * 
-	 * @expectedException Exception
-	 */
-	public function testActionErr()
-	{
-		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
-		$_REQUEST = array('module' => 'hello',
-			'action' => 'wor/ld',
-			);
-		$router = new LtRouter;
-		$router->init();
+		$this->assertEquals('default', $router->module);
+		$this->assertEquals('index', $router->action);
 	}
 }
