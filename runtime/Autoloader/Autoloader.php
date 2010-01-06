@@ -192,6 +192,7 @@ class LtAutoloader
 				else if ($found && T_STRING == $tokens[$i][0])
 				{
 					$libNames[strtolower(substr($found, 2))][] = $tokens[$i][1];
+					$found = null;
 				}
 			}
 			else if ("{" == $tokens[$i])
