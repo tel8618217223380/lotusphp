@@ -211,7 +211,7 @@ class LtAutoloader
 		$key = strtolower($className);
 		if (self::$storeHandle->get($key, self::$namespace))
 		{
-			trigger_error("dumplicate class name : $className");
+			trigger_error("duplicate class name : $className");
 			return false;
 		}
 		else
@@ -228,7 +228,7 @@ class LtAutoloader
 		$foundFunctions = self::$storeHandle->get(".functions", self::$namespace);
 		if ($foundFunctions && array_key_exists($functionName, $foundFunctions))
 		{
-			trigger_error("dumplicate function name: $functionName");
+			trigger_error("duplicate function name: $functionName");
 			return false;
 		}
 		else
