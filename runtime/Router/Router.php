@@ -9,7 +9,8 @@ class LtRouter
 		'default' => array('module' => 'default', 'action' => 'index'),
 		'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
 		'varprefix' => ':',
-		'delimiter' => '/'
+		'delimiter' => '/',
+		'postfix' => '.html',
 		);
 	public $module;
 	public $action;
@@ -22,12 +23,24 @@ class LtRouter
 	public function init()
 	{
 		$delimiter = $this->routingTable['delimiter']; 
+		$postfix = $this->routingTable['postfix'];
 		// http https
 		if (isset($_SERVER['SERVER_PROTOCOL']))
 		{
 			if (isset($_SERVER['PATH_INFO']))
 			{
-				$url = explode('/', trim($_SERVER['PATH_INFO'], '/'));
+				//忽略后缀
+				$url = rtrim($_SERVER['PATH_INFO'], "$postfix");
+				$url = explode($delimiter, trim($url, "/"));
+				$this->matchingRoutingTable($url);
+			}
+			else if(isset($_SERVER["REQUEST_URI"]) && isset($_SERVER["SCRIPT_NAME"]))
+			{
+				// @todo有问题,还没处理
+				$url = substr($_SERVER["REQUEST_URI"],strlen($_SERVER["SCRIPT_NAME"]));
+				//忽略后缀
+				$url = rtrim($url, "$postfix");
+				$url = explode($delimiter, trim($url, "/"));
 				$this->matchingRoutingTable($url);
 			}
 			else if (!empty($_GET))
@@ -76,6 +89,7 @@ class LtRouter
 		$reqs = $this->routingTable['reqs'];
 		$delimiter = $this->routingTable['delimiter'];
 		$varprefix = $this->routingTable['varprefix'];
+		$postfix = $this->routingTable['postfix'];
 		$pattern = explode($delimiter, trim($this->routingTable['pattern'], $delimiter));
 
 		/**
@@ -83,6 +97,7 @@ class LtRouter
 		 */
 		if (is_string($url))
 		{
+			$url = rtrim($url, $postfix); //忽略后缀
 			$url = explode($delimiter, trim($url, $delimiter));
 		}
 
@@ -136,6 +151,7 @@ class LtRouter
 		$reqs = $this->routingTable['reqs'];
 		$delimiter = $this->routingTable['delimiter'];
 		$varprefix = $this->routingTable['varprefix'];
+		$postfix = $this->routingTable['postfix'];
 
 		$pattern = explode($delimiter, trim($this->routingTable['pattern'], $delimiter));
 
@@ -179,6 +195,6 @@ class LtRouter
 				// 静态
 			}
 		}
-		return $ret;
+		return $ret . $postfix;
 	}
 }
