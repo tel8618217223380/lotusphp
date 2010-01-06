@@ -24,8 +24,8 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 * devMode等于false的时候（如生产环境，测试环境），性能会有提高
 		 * $lotus->devMode = false;
 		 */
-		$lotus->devMode = false;
-		$lotus->option["cache_adapter"] = "file";
+		$lotus->devMode = true;
+		//$lotus->option["cache_adapter"] = "file";
 		$lotus->init();
 		
 		/**
@@ -34,4 +34,3 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		$this->asserttrue(class_exists("LtCaptcha"));
 	}
 }
-
