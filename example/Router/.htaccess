@@ -1,0 +1,22 @@
+###################################################
+#RewriteEngine on
+#RewriteRule !\.(js|ico|gif|jpg|png|css)$ index.php
+
+
+###################################################
+RewriteEngine on
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]
+
+
+
+##################################################
+#Options +FollowSymLinks
+#IndexIgnore */*
+##  Turn on the RewriteEngine
+#RewriteEngine On
+##  Rules
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule . index.php
