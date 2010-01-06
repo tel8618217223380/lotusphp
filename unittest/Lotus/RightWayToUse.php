@@ -33,26 +33,5 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 */
 		$this->asserttrue(class_exists("LtCaptcha"));
 	}
-
-	public function testDevMode()
-	{
-		/**
-		 * 初始化Lotus类
-		 */
-		$lotus = new Lotus;
-		
-		/**
-		 * devMode的默认值是true，即默认处于开发模式
-		 * devMode等于false的时候（如生产环境，测试环境），性能会有提高
-		 * $lotus->devMode = false;
-		 */
-		//$lotus->devMode = false;
-		//$lotus->option["cache_adapter"] = "file";
-		$lotus->init();
-		
-		/**
-		 * 
-		 */
-		$this->asserttrue(class_exists("LtCaptcha"));
-	}
 }
+
