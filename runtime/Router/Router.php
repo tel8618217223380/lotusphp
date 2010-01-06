@@ -10,7 +10,7 @@ class LtRouter
 		'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
 		'varprefix' => ':',
 		'delimiter' => '/',
-		'postfix' => '.html',
+		'postfix' => '',
 		);
 	public $module;
 	public $action;
@@ -195,6 +195,7 @@ class LtRouter
 				// 静态
 			}
 		}
-		return rawurlencode($ret . $postfix);
+		// return rawurlencode($ret . $postfix);
+		return $ret . $postfix;
 	}
 }
