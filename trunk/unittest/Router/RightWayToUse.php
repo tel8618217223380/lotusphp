@@ -161,6 +161,15 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'delimiter' => '/',
 					'postfix' => '',
 					),),
+			array('default-index.htm',
+				array('module' => 'default', 'action' => 'index'),
+				array('pattern' => ":module-:action-*",
+					'default' => array('module' => 'default', 'action' => 'index'),
+					'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
+					'varprefix' => ':',
+					'delimiter' => '-',
+					'postfix' => '.htm',
+					),),
 			// ADD other
 			);
 	}
