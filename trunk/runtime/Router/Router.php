@@ -3,15 +3,14 @@
  * The Router class
  */
 class LtRouter
-{
-	// public $routingTable = array(
-	// 'pattern' => ":module/:action/*",
-	// 'default' => array('module' => 'default', 'action' => 'index'),
-	// 'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-	// 'varprefix' => ':',
-	// 'delimiter' => '/'
-	// );
-	public $routingTable;
+{ 
+	// 提供默认的路由表, 允许不初始化路由表
+	public $routingTable = array('pattern' => ":module/:action/*",
+		'default' => array('module' => 'default', 'action' => 'index'),
+		'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
+		'varprefix' => ':',
+		'delimiter' => '/'
+		);
 	public $module;
 	public $action;
 	public $params;
@@ -19,12 +18,61 @@ class LtRouter
 	public function __construct()
 	{
 	}
+
+	public function init()
+	{
+		$delimiter = $this->routingTable['delimiter']; 
+		// http https
+		if (isset($_SERVER['SERVER_PROTOCOL']))
+		{
+			if (isset($_SERVER['PATH_INFO']))
+			{
+				$url = explode('/', trim($_SERVER['PATH_INFO'], '/'));
+				$this->matchingRoutingTable($url);
+			}
+			else if (!empty($_GET))
+			{
+				$this->params = $_GET;
+			}
+			else
+			{
+				$this->params['module'] = 'default';
+				$this->params['action'] = 'index';
+			}
+		}
+		else
+		{ 
+			// CLI
+			// CLI模式
+			$i = 0;
+			while ((empty($module) || empty($action)) && isset($_SERVER['argv'][$i]))
+			{
+				if (("-m" == $_SERVER['argv'][$i] || "--module" == $_SERVER['argv'][$i]) && isset($_SERVER['argv'][$i + 1]))
+				{
+					$module = $_SERVER['argv'][$i + 1];
+				}
+				else if (("-a" == $_SERVER['argv'][$i] || "--action" == $_SERVER['argv'][$i]) && isset($_SERVER['argv'][$i + 1]))
+				{
+					$action = $_SERVER['argv'][$i + 1];
+				}
+				$i ++;
+			}
+			$this->params['module'] = $module;
+			$this->params['action'] = $action;
+		}
+		$this->module = $this->params['module'];
+		$this->action = $this->params['action'];
+	}
+
 	/**
-	 * $url = "news/list/catid/4/page/10";
+	 * url 匹配路由表, 结果存$this->params
+	 * 
+	 * @param [string|array] $url
+	 * @return 
 	 */
 	public function matchingRoutingTable($url)
 	{
-		$ret = $this->routingTable['default']; //返回值
+		$ret = $this->routingTable['default']; //初始化返回值为路由默认值
 		$reqs = $this->routingTable['reqs'];
 		$delimiter = $this->routingTable['delimiter'];
 		$varprefix = $this->routingTable['varprefix'];
@@ -33,7 +81,10 @@ class LtRouter
 		/**
 		 * 预处理url
 		 */
-		$url = explode($delimiter, trim($url, $delimiter));
+		if (is_string($url))
+		{
+			$url = explode($delimiter, trim($url, $delimiter));
+		}
 
 		foreach($pattern as $k => $v)
 		{
@@ -69,10 +120,14 @@ class LtRouter
 				// 静态
 			}
 		}
-
 		$this->params = $ret;
 	}
-
+	/**
+	 * 将变量反向匹配路由表, 返回匹配后的url
+	 * 
+	 * @param array $params 
+	 * @return string 
+	 */
 	public function url($params)
 	{
 		$url = $params;
@@ -91,7 +146,7 @@ class LtRouter
 				// 变量
 				$varname = substr($v, 1); 
 				// 匹配变量
-				if (array_key_exists($varname, $url))
+				if (isset($url[$varname]))
 				{
 					$regex = "/^{$this->routingTable['reqs'][$varname]}\$/i";
 					if (preg_match($regex, $url[$varname]))
@@ -99,6 +154,10 @@ class LtRouter
 						$ret = str_replace($v, $url[$varname], $ret);
 						unset($url[$varname]);
 					}
+				}
+				else if (isset($default[$varname]))
+				{
+					$ret = str_replace($v, $default[$varname], $ret);
 				}
 			}
 			else if ($v[0] == '*')
@@ -121,71 +180,5 @@ class LtRouter
 			}
 		}
 		return $ret;
-	}
-
-	public function init()
-	{
-		$module = '';
-		$action = ''; 
-		// index.php?module=module&action=action
-		if (isset($_SERVER['SERVER_PROTOCOL']))
-		{
-			if (isset($_REQUEST['module']))
-			{
-				$module = $_REQUEST['module'];
-			}
-			if (isset($_REQUEST['action']))
-			{
-				$action = $_REQUEST['action'];
-			} 
-			// index.php/module/action/
-			if (empty($module) && empty($action) && isset($_SERVER['PATH_INFO']))
-			{
-				list($module, $action) = explode('/', trim($_SERVER['PATH_INFO'], '/'));
-			}
-		}
-		else
-		{ 
-			// CLI模式
-			$i = 0;
-			while ((empty($module) || empty($action)) && isset($_SERVER['argv'][$i]))
-			{
-				if (("-m" == $_SERVER['argv'][$i] || "--module" == $_SERVER['argv'][$i]) && isset($_SERVER['argv'][$i + 1]))
-				{
-					$module = $_SERVER['argv'][$i + 1];
-				}
-				else if (("-a" == $_SERVER['argv'][$i] || "--action" == $_SERVER['argv'][$i]) && isset($_SERVER['argv'][$i + 1]))
-				{
-					$action = $_SERVER['argv'][$i + 1];
-				}
-				$i ++;
-			}
-		} 
-		// module名字只能大小写字母 数字 . - _
-		if (!empty($module) && !preg_match('/^[a-zA-Z0-9\.\-_]+$/', $module))
-		{
-			if (function_exists('onModuleNameIllegal'))
-			{
-				call_user_func('onModuleNameIllegal', $module);
-			}
-			else
-			{
-				throw new Exception("Module name is illegal: {$module}");
-			}
-		} 
-		// action 名字只能大小写字母 数字 . - _
-		if (!empty($action) && !preg_match('/^[a-zA-Z0-9\.\-_]+$/', $action))
-		{
-			if (function_exists('onaActionNameIllegal'))
-			{
-				call_user_func('onaActionNameIllegal', $action);
-			}
-			else
-			{
-				throw new Exception("Action name is illegal: {$action}");
-			}
-		}
-		$this->module = $module ? $module : 'Module';
-		$this->action = $action ? $action : 'Action';
 	}
 }
