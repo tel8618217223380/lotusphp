@@ -167,6 +167,8 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			interface TestInterface {}
 			function test_function ()", array("class" => array("TestClass", "TestAbstractClass"), "interface" => array("TestInterface"), "function" => array("test_function"))
 			),
+			array(file_get_contents('../../runtime/Autoloader/Autoloader.php'), array("class" => array("LtAutoloader", "LtAutoloaderStore"))),
+			array(file_get_contents('../../runtime/Cache/Adapter/CacheAdapterPhps.php'), array("class" => array("LtCacheAdapterPhps"))),
 			);
 	}
 
