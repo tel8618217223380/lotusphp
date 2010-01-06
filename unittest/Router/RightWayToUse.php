@@ -91,19 +91,21 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	/**
 	 * 准备路由表供测试
 	 */
-// @todo
-// 单元测试似乎有bug, 只要使用此构造函数就会 Missing argument 1
-//	public function __construct()
-//	{
-//		parent::__construct();
-//		$this->routingTable = array('pattern' => ":module/:action/*",
-//			'default' => array('module' => 'default', 'action' => 'index'),
-//			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-//			'varprefix' => ':',
-//			'delimiter' => '/',
-//			'postfix' => '',
-//			);
-//	}
+	// @todo 
+	// 单元测试似乎有bug 
+	// 只要使用构造函数同时使用@dataProvider
+	// 就会 Missing argument 1 错误
+	// public function __construct()
+	// {
+	// parent::__construct();
+	// $this->routingTable = array('pattern' => ":module/:action/*",
+	// 'default' => array('module' => 'default', 'action' => 'index'),
+	// 'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
+	// 'varprefix' => ':',
+	// 'delimiter' => '/',
+	// 'postfix' => '',
+	// );
+	// }
 	/**
 	 * ============================================================
 	 * 下面是内部接口的测试用例,是给开发者保证质量用的,使用者可以不往下看
@@ -115,8 +117,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	public static function matchDataProvider()
 	{
 		return array(
-			array(
-				'news/list/catid/4/page/10',
+			array('news/list/catid/4/page/10',
 				array('module' => 'news', 'action' => 'list', 'catid' => 4, 'page' => 10),
 				array('pattern' => ":module/:action/*",
 					'default' => array('module' => 'default', 'action' => 'index'),
@@ -125,8 +126,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'delimiter' => '/',
 					'postfix' => '',
 					),),
-			array(
-				'news-list-catid-5-page-11.html',
+			array('news-list-catid-5-page-11.html',
 				array('module' => 'news', 'action' => 'list', 'catid' => 5, 'page' => 11),
 				array('pattern' => ":module-:action-*",
 					'default' => array('module' => 'default', 'action' => 'index'),
@@ -138,6 +138,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 			);
 	}
 	/**
+	 * 正向解析url
 	 * 
 	 * @dataProvider matchDataProvider
 	 */
@@ -146,10 +147,11 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$router = new LtRouter;
 		$router->routingTable = $routingTable;
 		$router->matchingRoutingTable($userParameter);
-		$this->assertEquals($expected, $router->params); 
+		$this->assertEquals($expected, $router->params);
 	}
 
 	/**
+	 * 路由反向解析出url
 	 * 
 	 * @dataProvider matchDataProvider
 	 */
