@@ -16,7 +16,13 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$_SERVER["PATH_INFO"] = '/news/list/catid/4/page/10'; 
 		// 初始化LtRouter
 		$router = new LtRouter;
-		$router->routingTable = $this->routingTable;
+		$router->routingTable = array('pattern' => ":module/:action/*",
+			'default' => array('module' => 'default', 'action' => 'index'),
+			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
+			'varprefix' => ':',
+			'delimiter' => '/',
+			'postfix' => '',
+			);
 		$router->init(); 
 		// 初始化结束
 		$this->assertEquals(
@@ -85,26 +91,28 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	/**
 	 * 准备路由表供测试
 	 */
-	public function __construct()
-	{
-		parent::__construct();
-		$this->routingTable = array('pattern' => ":module/:action/*",
-			'default' => array('module' => 'default', 'action' => 'index'),
-			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-			'varprefix' => ':',
-			'delimiter' => '/',
-			'postfix' => '',
-			);
-	}
+// @todo
+// 单元测试似乎有bug, 只要使用此构造函数就会 Missing argument 1
+//	public function __construct()
+//	{
+//		parent::__construct();
+//		$this->routingTable = array('pattern' => ":module/:action/*",
+//			'default' => array('module' => 'default', 'action' => 'index'),
+//			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
+//			'varprefix' => ':',
+//			'delimiter' => '/',
+//			'postfix' => '',
+//			);
+//	}
 	/**
 	 * ============================================================
 	 * 下面是内部接口的测试用例,是给开发者保证质量用的,使用者可以不往下看
 	 * ============================================================
 	 */
 	/**
-	 * 测试路由正向解析出变量
+	 * 测试路由正向反向解析
 	 */
-	public function matchDataProvider()
+	public static function matchDataProvider()
 	{
 		return array(
 			array(
@@ -118,14 +126,14 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'postfix' => '',
 					),),
 			array(
-				'news/list/catid/5/page/11',
+				'news-list-catid-5-page-11.html',
 				array('module' => 'news', 'action' => 'list', 'catid' => 5, 'page' => 11),
-				array('pattern' => ":module/:action/*",
+				array('pattern' => ":module-:action-*",
 					'default' => array('module' => 'default', 'action' => 'index'),
 					'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
 					'varprefix' => ':',
-					'delimiter' => '/',
-					'postfix' => '',
+					'delimiter' => '-',
+					'postfix' => '.html',
 					),),
 			);
 	}
@@ -133,13 +141,22 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	 * 
 	 * @dataProvider matchDataProvider
 	 */
-	public function testmatch($userParameter, $expected, $routingTable)
+	public function testMatch($userParameter, $expected, $routingTable)
 	{
 		$router = new LtRouter;
 		$router->routingTable = $routingTable;
 		$router->matchingRoutingTable($userParameter);
 		$this->assertEquals($expected, $router->params); 
-		// $url = $router->url(array('module'=>'news','action'=>'list','catid'=>4,'page'=>10));
-		// $this->assertEquals('news/list/catid/4/page/10', $url);
+	}
+
+	/**
+	 * 
+	 * @dataProvider matchDataProvider
+	 */
+	public function testReverseMatch($userParameter, $expected, $routingTable)
+	{
+		$router = new LtRouter;
+		$router->routingTable = $routingTable;
+		$this->assertEquals($userParameter, $router->url($expected));
 	}
 }

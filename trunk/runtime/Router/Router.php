@@ -183,7 +183,7 @@ class LtRouter
 				{
 					if (!isset($default[$key]))
 					{
-						$tmp .= $key . $delimiter . $value . $delimiter;
+						$tmp .= $key . $delimiter . rawurlencode($value) . $delimiter;
 					}
 				}
 				$tmp = rtrim($tmp, $delimiter);
@@ -195,7 +195,6 @@ class LtRouter
 				// 静态
 			}
 		}
-		// return rawurlencode($ret . $postfix);
 		return $ret . $postfix;
 	}
 }
