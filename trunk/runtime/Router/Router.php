@@ -36,8 +36,7 @@ class LtRouter
 			}
 			else if(isset($_SERVER["REQUEST_URI"]) && isset($_SERVER["SCRIPT_NAME"]))
 			{
-				// @todo有问题,还没处理
-				$url = substr($_SERVER["REQUEST_URI"],strlen($_SERVER["SCRIPT_NAME"]));
+				$url = str_replace($_SERVER["SCRIPT_NAME"], '', $_SERVER['PHP_SELF']);
 				//忽略后缀
 				$url = rtrim($url, "$postfix");
 				$url = explode($delimiter, trim($url, "/"));
@@ -126,7 +125,7 @@ class LtRouter
 				$pos = $k;
 				while (isset($url[$pos]) && isset($url[$pos + 1]))
 				{
-					$ret[$url[$pos ++]] = $url[$pos];
+					$ret[$url[$pos ++]] = urldecode($url[$pos]);
 					$pos++;
 				}
 			}
@@ -189,12 +188,13 @@ class LtRouter
 				}
 				$tmp = rtrim($tmp, $delimiter);
 				$ret = str_replace($v, $tmp, $ret);
+				$ret = rtrim($ret, $delimiter);
 			}
 			else
 			{ 
 				// 静态
 			}
 		}
-		return $ret . $postfix;
+		return rawurlencode($ret . $postfix);
 	}
 }
