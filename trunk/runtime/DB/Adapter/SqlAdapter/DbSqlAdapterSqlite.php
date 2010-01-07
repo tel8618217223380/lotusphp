@@ -4,10 +4,11 @@ class LtDbSqlAdapterSqlite implements LtDbSqlAdapter
 	public function setCharset($charset)
 	{
 		// return 'PRAGMA encoding = "' . $charset . '"';
+		return '';
 	}
 	public function setSchema($schema)
 	{
-		//return "USE $schema";
+		return '';
 	}
 
 	public function beginTransaction()
@@ -28,6 +29,7 @@ class LtDbSqlAdapterSqlite implements LtDbSqlAdapter
 	public function showSchemas($database)
 	{
 		//return "SHOW DATABASES";
+		return '';
 	}
 	public function showTables($schema)
 	{
