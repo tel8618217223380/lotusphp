@@ -234,7 +234,7 @@ class LtAutoloader
 		if (isset($this->functionFileMapping[$functionName]))
 		{
 			$existedFunctionFile = $this->functionFileMapping[$functionName];
-			trigger_error("duplicate function [$functionName] found in: $existedFunctionFile, $file");
+			trigger_error("duplicate function [$functionName] found in:\n$existedFunctionFile\n$file\n");
 			return false;
 		}
 		else
