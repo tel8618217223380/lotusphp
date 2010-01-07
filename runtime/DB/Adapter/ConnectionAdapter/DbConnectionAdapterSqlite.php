@@ -18,7 +18,7 @@ class LtDbConnectionAdapterSqlite implements LtDbConnectionAdapter
 		{
 			$func = 'sqlite_open';
 		} 
-		$connConf["host"] = '\\' == substr($connConf["host"], -1) || '/' == substr($connConf["host"], -1) ? $connConf["host"] : $connConf["host"] . DIRECTORY_SEPARATOR;
+		$connConf["host"] = rtrim($connConf["host"], '\\/') . DIRECTORY_SEPARATOR;
 		$error = '';
 		$connResource = $func($connConf["host"] . $connConf["dbname"], 0666, $error);
 		if (!$connResource)
@@ -33,12 +33,17 @@ class LtDbConnectionAdapterSqlite implements LtDbConnectionAdapter
 
 	public function exec($sql, $connResource)
 	{
+		if(empty($sql))
+		{
+			return 0;
+		}
 		sqlite_exec($connResource, $sql); 
 		// echo '<pre>';
 		// print_r(debug_backtrace());
 		// debug_print_backtrace();
 		// echo '</pre>';
 		// delete from table 结果为0，原因未知。
+		// 使用 delete from table where 1 能返回正确结果
 		return sqlite_changes($connResource);
 	} 
 
