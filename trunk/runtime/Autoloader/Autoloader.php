@@ -214,9 +214,9 @@ class LtAutoloader
 	protected function addClass($className, $file)
 	{
 		$key = strtolower($className);
-		if (self::$storeHandle->get($key, self::$namespace))
+		if ($existsClassFile = self::$storeHandle->get($key, self::$namespace))
 		{
-			trigger_error("duplicate class name : $className");
+			trigger_error("duplicate class [$className] found in: $existsClassFile, $file");
 			return false;
 		}
 		else
