@@ -217,7 +217,7 @@ class LtAutoloader
 		$key = strtolower($className);
 		if ($existedClassFile = self::$storeHandle->get($key, self::$namespace))
 		{
-			trigger_error("duplicate class [$className] found in: $existsClassFile, $file");
+			trigger_error("duplicate class [$className] found in:\n$existedClassFile\n$file\n");
 			return false;
 		}
 		else
@@ -231,8 +231,9 @@ class LtAutoloader
 	protected function addFunction($functionName, $file)
 	{
 		$functionName = strtolower($functionName);
-		if ($existedFunctionFile = $this->functionFileMapping[$functionName])
+		if (isset($this->functionFileMapping[$functionName]))
 		{
+			$existedFunctionFile = $this->functionFileMapping[$functionName];
 			trigger_error("duplicate function [$functionName] found in: $existedFunctionFile, $file");
 			return false;
 		}
