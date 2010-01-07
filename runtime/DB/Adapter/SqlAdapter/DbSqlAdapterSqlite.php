@@ -52,15 +52,50 @@ class LtDbSqlAdapterSqlite implements LtDbSqlAdapter
 	}
 	public function getTables($queryResult)
 	{
-		
+		return $queryResult;
 	}
 	public function getFields($queryResult)
 	{
-		
+		$fields = array();
+		foreach ($queryResult as $key => $value)
+		{
+			// 字段名
+			$fields[$value['name']]['name'] = $value['name'];
+			// 字段类型
+			$fulltype = $value['type'];
+			$size = null;
+			$precision = null;
+			$scale = null;
+
+			if (preg_match('/^([^\(]+)\(\s*(\d+)\s*,\s*(\d+)\s*\)$/',$fulltype, $matches))
+			{
+				$type = $matches[1];
+				$precision = $matches[2];
+				$scale = $matches[3]; // aka precision
+			}
+			elseif (preg_match('/^([^\(]+)\(\s*(\d+)\s*\)$/',$fulltype, $matches))
+			{
+				$type = $matches[1];
+				$size = $matches[2];
+			}
+			else
+			{
+				$type = $fulltype;
+			}
+
+			$fields[$value['name']]['type'] = $type;
+			/**
+			* not null is 99, null is 0
+			*/
+			$fields[$value['name']]['notnull'] = (bool) ($value['notnull'] != 0);
+			$fields[$value['name']]['default'] = $value['dflt_value'];
+			$fields[$value['name']]['primary'] = (bool) ($value['pk'] == 1 && strtoupper($fulltype) == 'INTEGER');
+		}
+		return $fields;
 	}
 	public function detectQueryType($sql)
 	{
-		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))
+		if (preg_match("/^\s*SELECT|^\s*PRAGMA/i", $sql))
 		{
 			$ret = 'SELECT';
 		}
