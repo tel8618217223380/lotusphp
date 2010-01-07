@@ -60,6 +60,26 @@ class LtDbSqlAdapterSqlite implements LtDbSqlAdapter
 	}
 	public function detectQueryType($sql)
 	{
-		
+		if (preg_match("/^\s*SELECT|^\s*EXPLAIN|^\s*SHOW|^\s*DESCRIBE/i", $sql))
+		{
+			$ret = 'SELECT';
+		}
+		else if (preg_match("/^\s*INSERT/i", $sql))
+		{
+			$ret = 'INSERT';
+		}
+		else if (preg_match("/^\s*UPDATE|^\s*DELETE|^\s*REPLACE/i", $sql))
+		{
+			$ret = 'CHANGE_ROWS';
+		}
+		else if (preg_match("/^\s*USE|^\s*SET/i", $sql))
+		{
+			$ret = 'SET_SESSION_VAR';
+		}
+		else
+		{
+			$ret = 'OTHER';
+		}
+		return $ret;
 	}
 }
