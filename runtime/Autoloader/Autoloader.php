@@ -5,6 +5,7 @@ class LtAutoloader
 	static public $namespace;
 	public $autoloadPath;
 	public $conf;
+	protected $functionFileMapping;
 
 	public function __construct()
 	{
@@ -214,7 +215,7 @@ class LtAutoloader
 	protected function addClass($className, $file)
 	{
 		$key = strtolower($className);
-		if ($existsClassFile = self::$storeHandle->get($key, self::$namespace))
+		if ($existedClassFile = self::$storeHandle->get($key, self::$namespace))
 		{
 			trigger_error("duplicate class [$className] found in: $existsClassFile, $file");
 			return false;
@@ -230,17 +231,16 @@ class LtAutoloader
 	protected function addFunction($functionName, $file)
 	{
 		$functionName = strtolower($functionName);
-		$foundFunctions = self::$storeHandle->get(".functions", self::$namespace);
-		if ($foundFunctions && array_key_exists($functionName, $foundFunctions))
+		if ($existedFunctionFile = $this->functionFileMapping[$functionName])
 		{
-			trigger_error("duplicate function name: $functionName");
+			trigger_error("duplicate function [$functionName] found in: $existedFunctionFile, $file");
 			return false;
 		}
 		else
 		{
-			$foundFunctions[$functionName] = $file;
-			self::$storeHandle->update(".functions", $foundFunctions, 0, self::$namespace);
-			self::$storeHandle->update(".function_total", self::$storeHandle->get(".function_total", self::$namespace) + 1, 0, self::$namespace);
+			$this->functionFileMapping[$functionName] = $file;
+			self::$storeHandle->update(".functions", array_unique(array_values($this->functionFileMapping)), 0, self::$namespace);
+			self::$storeHandle->update(".function_total", count($this->functionFileMapping), 0, self::$namespace);
 			return true;
 		}
 	}
