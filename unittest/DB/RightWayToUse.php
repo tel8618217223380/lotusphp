@@ -83,7 +83,45 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 */
 		$smc = $db->getSqlMapClient();
 		$this->assertEquals(array(0 => array("age_total" => 1)), $smc->execute("getAgeTotal"));
+
+		// ====================为下面的测试准备数据====================
+		$dbh->query("DROP TABLE IF EXISTS test_user");
+		$dbh->query("
+			CREATE TABLE test_user (
+			id INT NOT NULL AUTO_INCREMENT,
+			name VARCHAR( 20 ) NOT NULL ,
+			age INT NOT NULL ,
+			PRIMARY KEY ( id ) 
+		)");
+		$tg = $db->getTableGateway("test_user");
+		$tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4));
+		// ======================数据准备完成==========================
 	}
+
+	/**
+	 * 经过上面的测试,表test_user中有数据
+	 * array("id" => 2, "name" => "kiwiphp", "age" => 4)
+	 * 下边尝试直接读取这个数据
+	 */
+	public function testFirstFetch()
+	{
+		/**
+		 * 配置数据库连接信息
+		 */
+		$dcb = new LtDbConfigBuilder;
+		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
+		LtDb::$storeHandle = new LtDbStore;
+		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
+
+		/**
+		 * 实例化组件入口类
+		 */
+		$db = new LtDb;
+		$db->init();
+		$tg = $db->getTableGateway("test_user");
+		$tg->fetch(1); // ===========第一次是fetch操作出错=================
+	}
+
 	/**
 	 * 测试Mysql
 	 */
