@@ -3,8 +3,8 @@ class Lotus
 {
 	/**
 	 * Lotus Option array
-	 * @var array
-	 * array(
+	 * 
+	 * @var array array(
 	 * )
 	 */
 	public $option;
@@ -54,7 +54,7 @@ class Lotus
 		 * Init Cache component to sotre LtAutoloader, LtConfig data
 		 */
 		$cache = LtObjectUtil::singleton("LtCache");
-		if(isset($this->option["cache_adapter"]))
+		if (isset($this->option["cache_adapter"]))
 		{
 			$cache->conf->adapter = $this->option["cache_adapter"];
 		}
@@ -95,12 +95,23 @@ class Lotus
 		}
 	}
 
+	protected function initMVC()
+	{ 
+		// router
+		$router = LtObjectUtil::singleton('LtRouter');
+		$router->init();
+		// mvc
+		$dispatcher = new LtDispatcher;
+		$dispatcher->viewDir = $this->option["view_dir"];
+		$dispatcher->dispatchAction($router->module, $router->action);
+	}
+
 	protected function initDb()
 	{
-		if(isset(LtObjectUtil::singleton("LtConfig")->app["DB"]))
+		if (isset(LtObjectUtil::singleton("LtConfig")->app["DB"]))
 		{
 			LtDbStaticData::$servers = LtObjectUtil::singleton("LtConfig")->app["DB"]["servers"];
-			if(isset(LtObjectUtil::singleton("LtConfig")->app["DB"]["tables"]))
+			if (isset(LtObjectUtil::singleton("LtConfig")->app["DB"]["tables"]))
 			{
 				LtDbStaticData::$tables = LtObjectUtil::singleton("LtConfig")->app["DB"]["tables"];
 			}
