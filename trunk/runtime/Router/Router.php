@@ -35,9 +35,9 @@ class LtRouter
 				$url = explode($delimiter, trim($url, "/"));
 				$this->matchingRoutingTable($url);
 			}
-			else if (isset($_SERVER["REQUEST_URI"]) && isset($_SERVER["SCRIPT_NAME"]))
+			else if (isset($_SERVER["PHP_SELF"]) && isset($_SERVER["SCRIPT_NAME"]))
 			{
-				$url = str_replace($_SERVER["SCRIPT_NAME"], '', $_SERVER['REQUEST_URI']); 
+				$url = str_replace($_SERVER["SCRIPT_NAME"], '', $_SERVER['PHP_SELF']); 
 				// 忽略后缀
 				$url = rtrim($url, "$postfix");
 				$url = explode($delimiter, trim($url, "/"));
