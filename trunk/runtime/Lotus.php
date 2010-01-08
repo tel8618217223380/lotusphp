@@ -9,6 +9,7 @@ class Lotus
 	 */
 	public $option;
 	public $devMode = true;
+	public $mvcMode = false;
 	protected $lotusRuntimeDir;
 
 	public function __construct()
@@ -20,7 +21,7 @@ class Lotus
 	{
 		$this->prepareAutoloader();
 		$this->prepareConfig();
-
+		$this->mvcMode && $this->runMVC();
 		/**
 		 * Initial other components
 		 */
@@ -95,7 +96,7 @@ class Lotus
 		}
 	}
 
-	protected function initMVC()
+	protected function runMVC()
 	{ 
 		// router
 		$router = LtObjectUtil::singleton('LtRouter');
