@@ -27,7 +27,6 @@ class LtConfig
 		}
 		if (0 == self::$storeHandle->get(".config_total", self::$namespace))
 		{
-			self::$storeHandle->add(".config_total", 0, 0, self::$namespace);
 			$conf = include($this->configFile);
 			if (!is_array($conf))
 			{
@@ -35,6 +34,8 @@ class LtConfig
 			}
 			if (!empty($conf))
 			{
+				// 放这里是防止返回一个空数组时发生冲突, 另可考虑update方法
+				self::$storeHandle->add(".config_total", 0, 0, self::$namespace);
 				$this->storeConfigArray($conf);
 			}
 		}
