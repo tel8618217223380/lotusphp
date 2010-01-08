@@ -17,13 +17,6 @@ class LtCacheAdapterFile implements LtCacheAdapter
 		$token = md5($key);
 		$cachePath = rtrim($this->options["cache_file_root"], '\\/') . DIRECTORY_SEPARATOR
 		. substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2);
-		if(!is_dir($cachePath))
-		{
-			if(!@mkdir($cachePath, 0777, true))
-			{
-				trigger_error("Can not create $cachePath");
-			}
-		}
 		$cacheFile = $cachePath . DIRECTORY_SEPARATOR . 'file-' . $token. '.php';
 		return $cacheFile;
 	}
@@ -36,6 +29,14 @@ class LtCacheAdapterFile implements LtCacheAdapter
 			return false;
 		}
 		$cacheFile = $this->getCacheFile($key);
+		$cachePath = pathinfo($cacheFile,PATHINFO_DIRNAME);
+		if(!is_dir($cachePath))
+		{
+			if(!@mkdir($cachePath, 0777, true))
+			{
+				trigger_error("Can not create $cachePath");
+			}
+		}
 		$data['ttl'] = (0 >= $ttl) ? 0 : (time()+intval($ttl));
 		if(is_object($value) || is_resource($value))
 		{

@@ -13,5 +13,5 @@ define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
 /**
  * Lotus Error Handle
  */
-$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
-include $lotusHome . "/error_handler/ErrorHandler.php";
+//$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
+//include $lotusHome . "/error_handler/ErrorHandler.php";
