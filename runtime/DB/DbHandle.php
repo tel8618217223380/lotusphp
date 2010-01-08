@@ -50,7 +50,9 @@ class LtDbHandle
 	{
 		if(empty($sql))
 		{
-			trigger_error('Empty the SQL statement');
+			$this->sqlAdapter = $this->getCurrentSqlAdapter();
+			return;
+			//trigger_error('Empty the SQL statement');
 		}
 		$this->sqlAdapter = $this->getCurrentSqlAdapter();
 		$queryType = $this->sqlAdapter->detectQueryType($sql);

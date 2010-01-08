@@ -51,6 +51,7 @@ class LtDbTable
 	{
 		if (!$this->fields)
 		{
+			$this->dbh->query(''); //set sqlAdapter
 			$this->fields = $this->dbh->sqlAdapter->getFields($this->dbh->query($this->dbh->sqlAdapter->showFields($this->tableName)));
 		}
 		if (!$this->primaryKey) 
