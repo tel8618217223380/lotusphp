@@ -11,6 +11,7 @@ class LtRouter
 		'varprefix' => ':',
 		'delimiter' => '/',
 		'postfix' => '',
+		'protocol' => 'PATH_INFO', // REWRITE STANDARD
 		);
 	public $module;
 	public $action;
@@ -22,22 +23,22 @@ class LtRouter
 
 	public function init()
 	{
-		$delimiter = $this->routingTable['delimiter']; 
-		$postfix = $this->routingTable['postfix'];
+		$delimiter = $this->routingTable['delimiter'];
+		$postfix = $this->routingTable['postfix']; 
 		// http https
 		if (isset($_SERVER['SERVER_PROTOCOL']))
 		{
 			if (isset($_SERVER['PATH_INFO']))
-			{
-				//忽略后缀
+			{ 
+				// 忽略后缀
 				$url = rtrim($_SERVER['PATH_INFO'], "$postfix");
 				$url = explode($delimiter, trim($url, "/"));
 				$this->matchingRoutingTable($url);
 			}
-			else if(isset($_SERVER["REQUEST_URI"]) && isset($_SERVER["SCRIPT_NAME"]))
+			else if (isset($_SERVER["REQUEST_URI"]) && isset($_SERVER["SCRIPT_NAME"]))
 			{
-				$url = str_replace($_SERVER["SCRIPT_NAME"], '', $_SERVER['PHP_SELF']);
-				//忽略后缀
+				$url = str_replace($_SERVER["SCRIPT_NAME"], '', $_SERVER['REQUEST_URI']); 
+				// 忽略后缀
 				$url = rtrim($url, "$postfix");
 				$url = explode($delimiter, trim($url, "/"));
 				$this->matchingRoutingTable($url);
@@ -79,7 +80,7 @@ class LtRouter
 	/**
 	 * url 匹配路由表, 结果存$this->params
 	 * 
-	 * @param [string|array] $url
+	 * @param  $ [string|array] $url
 	 * @return 
 	 */
 	public function matchingRoutingTable($url)
@@ -195,6 +196,19 @@ class LtRouter
 				// 静态
 			}
 		}
-		return $ret . $postfix;
+		$protocol = strtoupper($this->routingTable['protocol']);
+		if ('REWRITE' == $protocol)
+		{
+			$ret = $ret . $postfix;
+		}
+		else if ('PATH_INFO' == $protocol)
+		{
+			$ret = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_BASENAME) . '/' . $ret . $postfix;
+		}
+		else
+		{ 
+			$ret = $ret . $postfix;
+		}
+		return $ret;
 	}
 }

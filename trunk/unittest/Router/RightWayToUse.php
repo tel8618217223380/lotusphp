@@ -13,7 +13,8 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	 * $routingTable['reqs'] = 默认值的正则匹配 
 	 * $routingTable['varprefix'] = 识别变量的前缀 
 	 * $routingTable['delimiter'] = 分隔符 
-	 * $routingTable['postfix'] = url后缀 
+	 * $routingTable['postfix'] = url后缀
+	 * $routingTable['protocol'] = STANDARD REWRITE PATH_INFO
 	 */
 	public function testMostUsedWay()
 	{ 
@@ -29,6 +30,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 			'varprefix' => ':',
 			'delimiter' => '/',
 			'postfix' => '',
+			'protocol' => '',
 			);
 		$router->init(); 
 		// 初始化结束
@@ -142,6 +144,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'varprefix' => ':',
 					'delimiter' => '/',
 					'postfix' => '',
+					'protocol' => '',
 					),),
 			array('news-list-catid-5-page-11.html',
 				array('module' => 'news', 'action' => 'list', 'catid' => 5, 'page' => 11),
@@ -151,6 +154,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'varprefix' => ':',
 					'delimiter' => '-',
 					'postfix' => '.html',
+					'protocol' => '',
 					),),
 			array('default/index',
 				array('module' => 'default', 'action' => 'index'),
@@ -160,6 +164,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'varprefix' => ':',
 					'delimiter' => '/',
 					'postfix' => '',
+					'protocol' => '',
 					),),
 			array('default-index.htm',
 				array('module' => 'default', 'action' => 'index'),
@@ -169,6 +174,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'varprefix' => ':',
 					'delimiter' => '-',
 					'postfix' => '.htm',
+					'protocol' => '',
 					),),
 			// ADD other
 			);

@@ -21,7 +21,8 @@ $router->routingTable = array('pattern' => ":module-:action-*",
 	'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
 	'varprefix' => ':',
 	'delimiter' => '-',
-	'postfix' => '.html'
+	'postfix' => '.html',
+	'protocol' => 'PATH_INFO', // REWRITE STANDARD
 	);
 $router->init();
 
