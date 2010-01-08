@@ -203,7 +203,7 @@ class LtRouter
 		}
 		else if ('PATH_INFO' == $protocol)
 		{
-			$ret = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_BASENAME) . '/' . $ret . $postfix;
+			$ret = $_SERVER['SCRIPT_NAME'] . '/' . $ret . $postfix;
 		}
 		else
 		{ 
