@@ -5,7 +5,7 @@
 $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example"));
 include $lotusHome . "/runtime/Router/Router.php";
 
-// unset($_SERVER["PATH_INFO"]);
+unset($_SERVER["PATH_INFO"]);
 // echo "\$_SERVER['QUERY_STRING']={$_SERVER['QUERY_STRING']}";
 // echo "<br />";
 // echo "\$_SERVER['REQUEST_URI']={$_SERVER['REQUEST_URI']}";
