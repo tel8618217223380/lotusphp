@@ -37,11 +37,23 @@ class LtRouter
 			}
 			else if (isset($_SERVER["PHP_SELF"]) && isset($_SERVER["SCRIPT_NAME"]))
 			{
-				$url = str_replace($_SERVER["SCRIPT_NAME"], '', $_SERVER['PHP_SELF']); 
-				// 忽略后缀
-				$url = rtrim($url, "$postfix");
-				$url = explode($delimiter, trim($url, "/"));
-				$this->matchingRoutingTable($url);
+				$url = str_replace($_SERVER["SCRIPT_NAME"], '', $_SERVER['PHP_SELF']);
+				if (!empty($url))
+				{ 
+					// 忽略后缀
+					$url = rtrim($url, "$postfix");
+					$url = explode($delimiter, trim($url, "/"));
+					$this->matchingRoutingTable($url);
+				}
+				else if (!empty($_GET))
+				{
+					$this->params = $_GET;
+				}
+				else
+				{
+					$this->params['module'] = 'default';
+					$this->params['action'] = 'index';
+				}
 			}
 			else if (!empty($_GET))
 			{
@@ -206,7 +218,7 @@ class LtRouter
 			$ret = $_SERVER['SCRIPT_NAME'] . '/' . $ret . $postfix;
 		}
 		else
-		{ 
+		{
 			$ret = $ret . $postfix;
 		}
 		return $ret;
