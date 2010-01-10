@@ -8,13 +8,18 @@ class LtCookie
 		$this->conf = new LtCookieConfig;
 	}
 
+	public function init()
+	{
+		//don't remove me, I am the placeholder
+	}
+
 	/**
 	 * Decrypt the encrypted cookie
 	 *
 	 * @param string $encryptedText
 	 * @return string
 	 */
-	protected function _decrypt($encryptedText)
+	protected function decrypt($encryptedText)
 	{
 		$key = $this->conf->secretKey;
 		$cryptText = base64_decode($encryptedText);
@@ -30,7 +35,7 @@ class LtCookie
 	 * @param string $plainText
 	 * @return string
 	 */
-	protected function _encrypt($plainText)
+	protected function encrypt($plainText)
 	{
 		$key = $this->conf->secretKey;
 		$ivSize = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
@@ -60,7 +65,7 @@ class LtCookie
 	 */
 	public function getCookie($name)
 	{
-		return isset($_COOKIE[$name]) ? self::_decrypt($_COOKIE[$name]) : null;
+		return isset($_COOKIE[$name]) ? $this->decrypt($_COOKIE[$name]) : null;
 	}
 
 	/**
@@ -72,7 +77,7 @@ class LtCookie
 	public function setCookie($args)
 	{
 		$name = $args['name'];
-		$value = self::_encrypt($args['value']);
+		$value = $this->encrypt($args['value']);
 		$expire = isset($args['expire']) ? $args['expire'] : null;
 		$path = isset($args['path']) ? $args['path'] : '/';
 		$domain = isset($args['domain']) ? $args['domain'] : null;
