@@ -10,14 +10,14 @@ class RightWayToUseCookie extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐） 
 	 * -------------------------------------------------------------------
 	 * LtCookie要求： 
-	 *  # 调用getImageResource()时传入唯一的seed，不能是常量
+	 *  # 使用LtCookie必须设置密钥（LtCookie->conf->secretKey）
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCookie建议（不强求）：
-	 *  # 使用md5(uniqid())得到随机不冲突的seed
+	 *  # 使用杂乱无章的字符串作为密钥（LtCookie->conf->secretKey）
 	 * 
 	 * 本测试用例期望效果：
-	 * 无法对图片进行单元测试，实际使用方法和效果参见example/Cookie/simplest.php
+	 * 无法对HTTP Cookie头进行单元测试，实际使用方法和效果参见example/Cookie/simplest.php
 	 */
 	public function testMostUsedWay()
 	{
@@ -25,16 +25,16 @@ class RightWayToUseCookie extends PHPUnit_Framework_TestCase
 		 * Lotus组件初始化三步曲
 		 */
 		// 1. 实例化
-		$Cookie = new LtCookie;
+		$cookie = new LtCookie;
 		// 2. 设置属性
-		$Cookie->conf->secretKey = "open_the_d00r";
+		$cookie->conf->secretKey = "VHfgk!@c=_";
 		// 3. 调init()方法
-		$Cookie->init();
+		$cookie->init();
 
 		/**
 		 * 初始化完毕，测试其效果
 		 */
-		
+		//$cookie->setCookie(array("name" => "username", "value" => "talkativedoggy"));
 	}
 
 	/**
@@ -43,7 +43,7 @@ class RightWayToUseCookie extends PHPUnit_Framework_TestCase
 	public function testEncrypt()
 	{
 		$cp = new CookieProxy;
-		$cp->conf->secretKey = "open_the_d00r";
+		$cp->conf->secretKey = "KDHiUS(*^*";
 		$cp->init();
 		$encrypted = $cp->encrypt("lotusphp");
 		$this->assertEquals("lotusphp", $cp->decrypt($encrypted));
