@@ -159,9 +159,11 @@ class LtDbTable
 		$sql = sprintf($selectTemplate, $fields, $this->tableName, $join . $where . $groupby . $orderby);
 		if (isset($args['limit']))
 		{
+			$this->dbh->query(''); //set sqlAdapter
 			$offset = isset($args['offset']) ? $args['offset'] : 0;
-			$sql = $this->dbh->sqlAdapter->limit($sql, $args['limit'], $offset);
+			$limit = $this->dbh->sqlAdapter->limit($args['limit'], $offset);
 		}
+		$sql = $sql . $limit;
 		return $this->dbh->query($sql, $bind);
 	}
 
