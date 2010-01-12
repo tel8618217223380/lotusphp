@@ -62,6 +62,8 @@ abstract class LtAction
 
 	protected $view;
 
+	protected $layout;
+
 	/**
 	 * Validate the data from client
 	 * @return array
