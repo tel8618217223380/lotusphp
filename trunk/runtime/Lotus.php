@@ -21,7 +21,6 @@ class Lotus
 	{
 		$this->prepareAutoloader();
 		$this->prepareConfig();
-		$this->mvcMode && $this->runMVC();
 		/**
 		 * Initial other components
 		 */
@@ -32,6 +31,8 @@ class Lotus
 				$this->$method();
 			}
 		}
+		// is MVC
+		$this->mvcMode && $this->runMVC();
 	}
 
 	protected function prepareAutoloader()
@@ -100,7 +101,7 @@ class Lotus
 	{ 
 		// router
 		$router = LtObjectUtil::singleton('LtRouter');
-		$router->init();
+		$router->init(); 
 		// mvc
 		$dispatcher = new LtDispatcher;
 		$dispatcher->viewDir = $this->option["view_dir"];
@@ -109,13 +110,15 @@ class Lotus
 
 	protected function initDb()
 	{
-		if (isset(LtObjectUtil::singleton("LtConfig")->app["DB"]))
+		$conf = LtObjectUtil::singleton("LtConfig");
+		if ($singleHost = $conf->get('singleHost'))
 		{
-			LtDbStaticData::$servers = LtObjectUtil::singleton("LtConfig")->app["DB"]["servers"];
-			if (isset(LtObjectUtil::singleton("LtConfig")->app["DB"]["tables"]))
-			{
-				LtDbStaticData::$tables = LtObjectUtil::singleton("LtConfig")->app["DB"]["tables"];
-			}
+			$dcb = new LtDbConfigBuilder;
+			$dcb->addSingleHost($singleHost);
+			LtDb::$storeHandle = new LtDbStore;
+			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
+			$db = LtObjectUtil::singleton('LtDb');
+			$db->init();
 		}
 	}
 }
