@@ -9,15 +9,15 @@ class LtCookie
 	}
 
 	public function init()
-	{
-		//don't remove me, I am the placeholder
+	{ 
+		// don't remove me, I am the placeholder
 	}
 
 	/**
 	 * Decrypt the encrypted cookie
-	 *
-	 * @param string $encryptedText
-	 * @return string
+	 * 
+	 * @param string $encryptedText 
+	 * @return string 
 	 */
 	protected function decrypt($encryptedText)
 	{
@@ -31,9 +31,9 @@ class LtCookie
 
 	/**
 	 * Encrypt the cookie
-	 *
-	 * @param string $plainText
-	 * @return string
+	 * 
+	 * @param string $plainText 
+	 * @return string 
 	 */
 	protected function encrypt($plainText)
 	{
@@ -46,42 +46,77 @@ class LtCookie
 
 	/**
 	 * Set cookie value to deleted with $name
-	 *
-	 * @param array $args
-	 * @return boolean
+	 * 
+	 * @param array $args 
+	 * @return boolean 
 	 */
-	public function delCookie($args)
+	public function delCookie($name, $path = '/', $domain = null)
 	{
-		$name = $args['name'];
-		$domain = isset($args['domain']) ? $args['domain'] : null;
-		return isset($_COOKIE[$name]) ? setcookie($name, '', time() - 86400, '/', $domain) : true;
+		if (isset($_COOKIE[$name]))
+		{
+			if (is_array($_COOKIE[$name]))
+			{
+				foreach($_COOKIE[$name] as $k => $v)
+				{
+					setcookie($name . '[' . $k . ']', '', time() - 86400, $path, $domain);
+				}
+			}
+			else
+			{
+				setcookie($name, '', time() - 86400, $path, $domain);
+			}
+		}
 	}
 
 	/**
 	 * Get cookie value with $name
-	 *
-	 * @param string $name
-	 * @return mixed
+	 * 
+	 * @param string $name 
+	 * @return mixed 
 	 */
 	public function getCookie($name)
 	{
-		return isset($_COOKIE[$name]) ? $this->decrypt($_COOKIE[$name]) : null;
+		$ret = null;
+		if (isset($_COOKIE[$name]))
+		{
+			if (is_array($_COOKIE[$name]))
+			{
+				$ret = array();
+				foreach($_COOKIE[$name] as $k => $v)
+				{
+					$v = $this->decrypt($v);
+					$ret[$k] = $v;
+				}
+			}
+			else
+			{
+				$ret = '';
+				$ret = $this->decrypt($_COOKIE[$name]);
+			}
+		}
+		return $ret;
 	}
 
 	/**
 	 * Set cookie
-	 *
-	 * @param array $args
-	 * @return boolean
+	 * 
+	 * @param array $args 
+	 * @return boolean 
 	 */
-	public function setCookie($args)
+	public function setCookie($name, $value = '', $expire = null, $path = '/', $domain = null, $secure = 0)
 	{
-		$name = $args['name'];
-		$value = $this->encrypt($args['value']);
-		$expire = isset($args['expire']) ? $args['expire'] : null;
-		$path = isset($args['path']) ? $args['path'] : '/';
-		$domain = isset($args['domain']) ? $args['domain'] : null;
-		$secure = isset($args['secure']) ? $args['secure'] : 0;
-		return setcookie($name, $value, $expire, $path, $domain, $secure);
+		if (is_array($value))
+		{
+			foreach($value as $k => $v)
+			{
+				$v = $this->encrypt($v);
+				setcookie($name . '[' . $k . ']', $v, $expire, $path, $domain, $secure);
+			}
+		}
+		else
+		{
+			$value = $this->encrypt($value);
+			setcookie($name, $value, $expire, $path, $domain, $secure);
+		}
 	}
 }
