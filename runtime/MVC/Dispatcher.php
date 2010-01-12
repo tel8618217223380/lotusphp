@@ -16,7 +16,8 @@ class LtDispatcher
 		$actionClassName = $module . $action . $classType;
 		if (!class_exists($actionClassName))
 		{
-			DebugHelper::debug("{$classType}_CLASS_NOT_FOUND", array(strtolower($classType) => $action));
+			//DebugHelper::debug("{$classType}_CLASS_NOT_FOUND", array(strtolower($classType) => $action));
+			trigger_error("{$actionClassName} CLASS NOT FOUND! module={$module} action={$action} classType={$classType}");
 		}
 		else
 		{

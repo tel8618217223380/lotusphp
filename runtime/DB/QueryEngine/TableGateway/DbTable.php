@@ -161,9 +161,8 @@ class LtDbTable
 		{
 			$this->dbh->query(''); //set sqlAdapter
 			$offset = isset($args['offset']) ? $args['offset'] : 0;
-			$limit = $this->dbh->sqlAdapter->limit($args['limit'], $offset);
+			$sql = $sql . ' '. $this->dbh->sqlAdapter->limit($args['limit'], $offset);
 		}
-		$sql = $sql . $limit;
 		return $this->dbh->query($sql, $bind);
 	}
 
