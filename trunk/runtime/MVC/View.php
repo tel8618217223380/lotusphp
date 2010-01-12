@@ -14,7 +14,7 @@ class LtView
 
 	public function render()
 	{
-		if (isset($this->layout) && strlen($this->layout))
+		if (!empty($this->layout))
 		{
 			include($this->layoutDir . $this->layout . '.php');
 		}

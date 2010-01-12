@@ -114,6 +114,7 @@ abstract class LtAction
 				$this->view->message = $this->message;
 				$this->view->data = $this->data;
 				$this->view->layoutDir = $this->viewDir . "layout/";
+				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
 				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["action"];
 				$this->view->render();
