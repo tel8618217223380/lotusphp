@@ -76,6 +76,11 @@ class Lotus
 		}
 		$autoloader = new LtAutoloader;
 		$autoloader->autoloadPath = $autoloadDirs;
+
+		if(!empty($this->option["autoload_cache_dir"]))
+		{
+			$autoloader->conf->mappingFileRoot = $this->option["autoload_cache_dir"];
+		}
 		if (!$this->devMode)
 		{
 			LtAutoloader::$storeHandle = LtObjectUtil::singleton("LtCache");
