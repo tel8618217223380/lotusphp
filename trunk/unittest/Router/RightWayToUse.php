@@ -38,7 +38,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 			array('module' => 'news', 'action' => 'list', 'catid' => 4, 'page' => 10),
 			$router->params
 			);
-		$url = $router->url(array('module' => 'news', 'action' => 'list', 'catid' => 4, 'page' => 10));
+		$url = $router->url('news', 'list', array('catid' => 4, 'page' => 10));
 		$this->assertEquals('news/list/catid/4/page/10', $url);
 	}
 	/**
@@ -201,6 +201,6 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	{
 		$router = new LtRouter;
 		$router->routingTable = $routingTable;
-		$this->assertEquals($userParameter, $router->url($expected));
+		$this->assertEquals($userParameter, $router->reverseMatchingRoutingTable($expected));
 	}
 }

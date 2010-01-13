@@ -155,7 +155,7 @@ class LtRouter
 	 * @param array $params 
 	 * @return string 
 	 */
-	public function url($params)
+	public function reverseMatchingRoutingTable($params)
 	{
 		$url = $params;
 		$ret = $this->routingTable['pattern'];
@@ -222,5 +222,12 @@ class LtRouter
 			$ret = $ret . $postfix;
 		}
 		return $ret;
+	}
+
+	public function url($module, $action, $args)
+	{
+		$args['module'] = $module;
+		$args['action'] = $action;
+		return $this->reverseMatchingRoutingTable($args);
 	}
 }
