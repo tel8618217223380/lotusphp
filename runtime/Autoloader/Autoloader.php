@@ -42,7 +42,7 @@ class LtAutoloader
 			}
 			$this->scanDirs($autoloadPath);
 			unset($autoloadPath);
-		} 
+		}
 		// Whether loading function files
 		if($this->conf->isLoadFunction)
 		{
@@ -72,7 +72,7 @@ class LtAutoloader
 
 	/**
 	 * The string or an Multidimensional array into a one-dimensional array
-	 * 
+	 *
 	 * @param array or string $var
 	 * @return array one-dimensional array
 	 */
@@ -125,7 +125,7 @@ class LtAutoloader
 			$path = rtrim(realpath($path), '\/');
 			if (preg_match("/\s/i", $path))
 			{
-				trigger_error("Directory is invalid: {$dir}");
+				trigger_error("Directory is invalid: {$path}");
 			}
 		}
 		return $path;
@@ -134,9 +134,9 @@ class LtAutoloader
 	/**
 	 * Using iterative algorithm scanning subdirectories
 	 * save autoloader filemap
-	 * 
+	 *
 	 * @param array $dirs one-dimensional
-	 * @return 
+	 * @return
 	 */
 	protected function scanDirs($dirs)
 	{
@@ -157,7 +157,7 @@ class LtAutoloader
 					$this->addFileMap($currentFile);
 				}
 				else if (is_dir($currentFile))
-				{ 
+				{
 					// if $currentFile is a directory, pass through the next loop.
 					$dirs[] = $currentFile;
 				}
@@ -223,47 +223,6 @@ class LtAutoloader
 		return $libNames;
 	}
 
-//	protected function parseLibNames($src)
-//	{
-//		$libNames = array();
-//		$tokens = token_get_all($src);
-//		$tokenTotal = count($tokens);
-//		$found = null;
-//		$braceLevel = 0;
-//		for ($i = 0; $i < $tokenTotal; $i ++)
-//		{
-//			if (!isset($tokens[$i]))
-//			{
-//				trigger_error("invalid source");
-//			}
-//			if (is_array($tokens[$i]))
-//			{
-//				if (0 == $braceLevel && in_array($tokens[$i][0], array(T_CLASS, T_INTERFACE, T_FUNCTION)))
-//				{
-//					$found = token_name($tokens[$i][0]);
-//				}
-//				else if (0 == $braceLevel && $found && T_STRING == $tokens[$i][0])
-//				{
-//					$libNames[strtolower(substr($found, 2))][] = $tokens[$i][1];
-//					$found = null;
-//				}
-//				else if (in_array($tokens[$i][0], array(T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES)))
-//				{
-//					$braceLevel += 1;
-//				}
-//			}
-//			else if ("{" == $tokens[$i])
-//			{
-//				$braceLevel += 1;
-//			}
-//			else if ("}" == $tokens[$i])
-//			{
-//				$braceLevel -= 1;
-//			}
-//		}
-//		return $libNames;
-//	}
-
 	protected function addClass($className, $file)
 	{
 		$key = strtolower($className);
@@ -302,8 +261,24 @@ class LtAutoloader
 	{
 		if (in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension))
 		{
-			$src = trim(file_get_contents($file));
-			$libNames = $this->parseLibNames($src);
+			$cacheFile = rtrim($this->conf->mappingFileRoot, '\\/') . DIRECTORY_SEPARATOR . md5($file);
+			if (file_exists($cacheFile) && filemtime($cacheFile) > filemtime($file))
+			{
+				$libNames = unserialize(file_get_contents($cacheFile,false,null,13));
+			}
+			else
+			{
+				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
+				$cachePath = pathinfo($cacheFile,PATHINFO_DIRNAME);
+				if(!is_dir($cachePath))
+				{
+					if(!@mkdir($cachePath, 0777, true))
+					{
+						trigger_error("Can not create $cachePath");
+					}
+				}
+				file_put_contents($cacheFile, '<?php exit;?>' . serialize($libNames));
+			}
 			foreach ($libNames as $libType => $libArray)
 			{
 				$method = "function" == $libType ? "addFunction" : "addClass";

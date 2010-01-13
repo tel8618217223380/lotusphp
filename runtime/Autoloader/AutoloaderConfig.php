@@ -26,4 +26,11 @@ class LtAutoloaderConfig
 	 * @var array
 	 */
 	public $skipDirNames = array('.svn');
+
+	/**
+	 * 存放临时文件的地址
+	 * 
+	 * @var string
+	 */
+	public $mappingFileRoot = "/tmp/LtAutoloader/";
 }
