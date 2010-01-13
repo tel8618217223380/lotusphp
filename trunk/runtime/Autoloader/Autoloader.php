@@ -250,8 +250,7 @@ class LtAutoloader
 	{
 		if (in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension))
 		{
-			$keyPrefix = sprintf("%u", crc32(serialize($this->autoloadPath)));
-			$cacheFile = rtrim($this->conf->mappingFileRoot, '\\/') . DIRECTORY_SEPARATOR . $keyPrefix . DIRECTORY_SEPARATOR . md5($file) . '.php';
+			$cacheFile = rtrim($this->conf->mappingFileRoot, '\\/') . DIRECTORY_SEPARATOR . md5($file) . '.php';
 			if (is_file($cacheFile) && filemtime($cacheFile) > filemtime($file))
 			{
 				$libNames = unserialize(file_get_contents($cacheFile, false, null, 13));
