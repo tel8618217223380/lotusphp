@@ -132,7 +132,6 @@ class LtAutoloader
 			{
 				trigger_error("Directory is invalid: {$dir}");
 			} 
-			// $dir = $this->preparePath($dirs[$i]);
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
