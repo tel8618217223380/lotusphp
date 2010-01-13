@@ -22,17 +22,16 @@ class LtAutoloader
 		{
 			self::$namespace = md5(serialize($this->autoloadPath));
 			self::$storeHandle->namespaceMapping[self::$namespace] = sprintf("%u", crc32(self::$namespace));
-		}
+		} 
 		// Whether scanning directory
 		if (0 == self::$storeHandle->get(".class_total", self::$namespace) && 0 == self::$storeHandle->get(".function_total", self::$namespace))
 		{
 			self::$storeHandle->add(".class_total", 0, 0, self::$namespace);
 			self::$storeHandle->add(".function_total", 0, 0, self::$namespace);
 			self::$storeHandle->add(".functions", array(), 0, self::$namespace);
-			$autoloadPath = $this->var2array($this->autoloadPath);
-			$this->autoloadPath = $this->preparePath($autoloadPath);
+			$this->autoloadPath = $this->preparePath($this->autoloadPath);
 			$autoloadPath = $this->autoloadPath;
-			foreach($autoloadPath as $key=>$path)
+			foreach($autoloadPath as $key => $path)
 			{
 				if (is_file($path))
 				{
@@ -42,9 +41,9 @@ class LtAutoloader
 			}
 			$this->scanDirs($autoloadPath);
 			unset($autoloadPath);
-		}
+		} 
 		// Whether loading function files
-		if($this->conf->isLoadFunction)
+		if ($this->conf->isLoadFunction)
 		{
 			$this->loadFunction();
 		}
@@ -72,16 +71,21 @@ class LtAutoloader
 
 	/**
 	 * The string or an Multidimensional array into a one-dimensional array
-	 *
-	 * @param array or string $var
+	 * 
+	 * @param array $ or string $var
 	 * @return array one-dimensional array
 	 */
-	protected function var2array($var)
+	protected function preparePath($var)
 	{
 		$ret = array();
 		if (!is_array($var))
 		{
-			$ret = array($var);
+			$path = rtrim(realpath($var), '\\/');
+			if (preg_match("/\s/i", $path))
+			{
+				trigger_error("Directory is invalid: {$path}");
+			}
+			$ret = array($path);
 		}
 		else
 		{
@@ -90,7 +94,12 @@ class LtAutoloader
 			{
 				if (!is_array($var[$i]))
 				{
-					$ret[] = $var[$i];
+					$path = rtrim(realpath($var[$i]), '\\/');
+					if (preg_match("/\s/i", $path))
+					{
+						trigger_error("Directory is invalid: {$path}");
+					}
+					$ret[] = $path;
 				}
 				else
 				{
@@ -106,44 +115,24 @@ class LtAutoloader
 		return $ret;
 	}
 
-	protected function preparePath($path)
-	{
-		if (is_array($path))
-		{
-			foreach($path as $key => $dir)
-			{
-				$dir = rtrim(realpath($dir), '\/');
-				if (preg_match("/\s/i", $dir))
-				{
-					trigger_error("Directory is invalid: {$dir}");
-				}
-				$path[$key] = $dir;
-			}
-		}
-		else
-		{
-			$path = rtrim(realpath($path), '\/');
-			if (preg_match("/\s/i", $path))
-			{
-				trigger_error("Directory is invalid: {$path}");
-			}
-		}
-		return $path;
-	}
-
 	/**
 	 * Using iterative algorithm scanning subdirectories
 	 * save autoloader filemap
-	 *
+	 * 
 	 * @param array $dirs one-dimensional
-	 * @return
+	 * @return 
 	 */
 	protected function scanDirs($dirs)
 	{
 		$i = 0;
 		while (isset($dirs[$i]))
 		{
-			$dir = $this->preparePath($dirs[$i]);
+			$dir = rtrim(realpath($dirs[$i]), '\\/');
+			if (preg_match("/\s/i", $dir))
+			{
+				trigger_error("Directory is invalid: {$dir}");
+			} 
+			// $dir = $this->preparePath($dirs[$i]);
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
@@ -157,7 +146,7 @@ class LtAutoloader
 					$this->addFileMap($currentFile);
 				}
 				else if (is_dir($currentFile))
-				{
+				{ 
 					// if $currentFile is a directory, pass through the next loop.
 					$dirs[] = $currentFile;
 				}
@@ -261,18 +250,18 @@ class LtAutoloader
 	{
 		if (in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension))
 		{
-			$cacheFile = rtrim($this->conf->mappingFileRoot, '\\/') . DIRECTORY_SEPARATOR . md5($file);
-			if (file_exists($cacheFile) && filemtime($cacheFile) > filemtime($file))
+			$cacheFile = rtrim($this->conf->mappingFileRoot, '\\/') . DIRECTORY_SEPARATOR . md5($file) . '.php';
+			if (is_file($cacheFile) && filemtime($cacheFile) > filemtime($file))
 			{
-				$libNames = unserialize(file_get_contents($cacheFile,false,null,13));
+				$libNames = unserialize(file_get_contents($cacheFile, false, null, 13));
 			}
 			else
 			{
 				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
-				$cachePath = pathinfo($cacheFile,PATHINFO_DIRNAME);
-				if(!is_dir($cachePath))
+				$cachePath = pathinfo($cacheFile, PATHINFO_DIRNAME);
+				if (!is_dir($cachePath))
 				{
-					if(!@mkdir($cachePath, 0777, true))
+					if (!@mkdir($cachePath, 0777, true))
 					{
 						trigger_error("Can not create $cachePath");
 					}
@@ -306,7 +295,7 @@ class LtAutoloaderStore
 	public function del($key, $namespace)
 	{
 		$key = $this->getRealKey($namespace, $key);
-		if(isset($this->stack[$key]))
+		if (isset($this->stack[$key]))
 		{
 			unset($this->stack[$key]);
 			return true;
