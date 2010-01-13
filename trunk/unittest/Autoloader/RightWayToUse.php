@@ -23,12 +23,13 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * -------------------------------------------------------------------
 	 * LtAutoloader不支持（出错演示和不支持的原因参见WrongWayToUse.php）：
 	 *  # 传入的参数不是真实存在的目录（如http://some_dir这样的） 
-	 *  # 目录名或者文件名带空格（如Zend Framework） 
+	 *  # 目录名或者文件名带空格（如"Zend Framework"这样的目录名） 
 	 *  # 类或接口重名，函数和函数重名
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtAutoloader建议（不强求）：
-	 *  # autoloadPath使用绝对路径
+	 *  # 传入autoloadPath时使用绝对路径
+	 *  # 目录名和文件名只由字母、数字、下划线、中横线、小数点组成
 	 *  # 使用class而不是function来封装你的逻辑
 	 *  # 每个class都放在单独的一个文件中，且不要在已经定义了类的文件里再定义函数
 	 *  # class/function里不要使用__FILE__魔术变量
