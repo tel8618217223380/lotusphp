@@ -224,7 +224,7 @@ class LtRouter
 		return $ret;
 	}
 
-	public function url($module, $action, $args)
+	public function url($module, $action, $args = array())
 	{
 		$args['module'] = $module;
 		$args['action'] = $action;
