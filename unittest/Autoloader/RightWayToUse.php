@@ -295,8 +295,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testPreparePath($userParameter, $expected)
 	{
 		$ap = new LtAutoloaderProxy;
-		$path = $ap->var2array($userParameter);
-		$path = $ap->preparePath($path);
+		$path = $ap->preparePath($userParameter);
 		$this->assertEquals($expected, $path);
 	}
 
