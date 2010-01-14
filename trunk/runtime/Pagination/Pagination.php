@@ -19,7 +19,7 @@ class LtPagination
 		$count = $this->conf->total_rows; //总数
 		$page = $this->conf->cur_page; //当前页
 		$pagesize = $this->conf->page_size; //每页显示数
-		$baseurl = $this->conf->base_url;
+		$baseurl = urldecode($this->conf->base_url);
 		$max = 0; //最大分页数,0表示不限制
 		
 		
