@@ -21,6 +21,7 @@ class LtSession
 			$this->sessionHandle->options = $this->conf->options;
 		}
 		$this->sessionHandle->init();
+		session_start();
+		header("Cache-control: private"); // to overcome/fix a bug in IE 6.x
 	}
-
 }
