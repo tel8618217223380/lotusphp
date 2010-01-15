@@ -38,17 +38,26 @@ class LtSessionAdapterMysql implements LtSessionAdapter
 		}
 		$this->dbHandle = $dbHandle;
 
+		$sql = "SELECT `TABLE_NAME` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA`='test' AND `TABLE_NAME`='" . $this->table . "'";
+		$res = mysql_query($sql, $this->dbHandle);
+		$row = mysql_fetch_assoc($res);
+		if (empty($row))
+		{
+			$this->runOnce();
+		}
+
 		session_set_save_handler(array(&$this, 'open'), array(&$this, 'close'), array(&$this, 'read'), array(&$this, 'write'), array(&$this, 'destroy'), array(&$this, 'gc'));
 	}
 
 	public function runOnce()
 	{
-		$sql = "CREATE TABLE `lotus_sessions` (
- `session_id` VARCHAR(255) BINARY NOT NULL DEFAULT '',
- `session_expires` INT(10) UNSIGNED NOT NULL DEFAULT '0',
- `session_data` TEXT,
- PRIMARY KEY  (`session_id`)
- );";
+		$sql = "CREATE TABLE IF NOT EXISTS `".$this->table."` (
+				`session_id` VARCHAR(255) BINARY NOT NULL DEFAULT '',
+				`session_expires` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+				`session_data` TEXT,
+				PRIMARY KEY  (`session_id`)
+				);";
+		mysql_query($sql, $this->dbHandle);
 	}
 
 	function open($savePath, $sessName)

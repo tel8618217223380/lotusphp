@@ -6,15 +6,24 @@ class LtSessionConfig
 	 * 
 	 * @var string 
 	 */
-	public $adapter = "sqlite";
+	public $adapter = "mysql";
 	/**
 	 * 用到的配置, 如不需要可忽略.
 	 * 
 	 * @var array('option'=>'value', ...)
 	 */
-	// public $options = array("session_save_path" => "/tmp/LtSession","host"=>"localhost","user"=>"root","password"=>"123456","table"=>"lotus_sessions","dbname"=>"test");
-
-
-	public $options = array("host"=>"/tmp/Ltsession/","table"=>"lotus_sessions","dbname"=>"test.db");
+	 //file
+	 //public $options = array("session_save_path" => "/tmp/LtSession");
+	 
+	 //mysql
+	 public $options = array(
+		 "host"=>"localhost",
+		 "user"=>"root",
+		 "password"=>"123456",
+		 "table"=>"lotus_sessions",
+		 "dbname"=>"test"
+	 );
+	//sqlite
+	//public $options = array("host"=>"/tmp/Ltsession/","table"=>"lotus_sessions","dbname"=>"test.db");
 
 }

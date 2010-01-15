@@ -25,6 +25,7 @@ class LtSessionAdapterSqlite implements LtSessionAdapter
 		$this->table = $this->options['table'];
 
 		$host = $this->options['host'];
+		$host = rtrim($host,'\\/').DIRECTORY_SEPARATOR;
 		$dbname = $this->options['dbname'];
 		$dbHandle = sqlite_open($host . $dbname, 0666);
 
