@@ -10,18 +10,18 @@ class LtSession
 	}
 
 	public function init()
-	{
+	{ 
 		if (!is_object(self::$saveHandle))
 		{
 			ini_set('session.save_handler', 'files');
-			if (!is_dir($this->conf['session_save_path']))
+			if (!is_dir($this->conf->session_save_path))
 			{
-				if (!@mkdir($this->conf['session_save_path'], 0777, true))
+				if (!@mkdir($this->conf->session_save_path, 0777, true))
 				{
 					trigger_error("Can not create $cachePath");
 				}
 			}
-			session_save_path($this->conf['session_save_path']);
+			session_save_path($this->conf->session_save_path);
 		}
 		else
 		{
