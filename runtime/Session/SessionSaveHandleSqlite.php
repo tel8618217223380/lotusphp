@@ -1,6 +1,10 @@
 <?php
-
-class LtSessionSqlite
+/**
+$ls = new LtSession;
+LtSession::$saveHandle = new LtSessionSaveHandleSqlite;
+$ls->init();
+*/
+class LtSessionSaveHandleSqlite
 {
 	public $lifeTime;
 	private $dbHandle;
