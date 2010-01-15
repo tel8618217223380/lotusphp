@@ -34,7 +34,7 @@ class LtSession
 				array(&self::$saveHandle, 'gc')
 				);
 		}
-		session_start();
-		header("Cache-control: private"); // to overcome/fix a bug in IE 6.x
+		//session_start();
+		//header("Cache-control: private"); // to overcome/fix a bug in IE 6.x
 	}
 }
