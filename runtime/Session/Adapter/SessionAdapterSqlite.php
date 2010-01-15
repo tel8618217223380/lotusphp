@@ -1,58 +1,131 @@
 <?php
+
 class LtSessionAdapterSqlite implements LtSessionAdapter
 {
 	public $options;
-	public $lifetime = 1800; //Session 生命周期（秒）
-	private $db;
+	public $lifeTime;
+	private $dbHandle;
 	private $table;
 
 	public function __construct()
-	{ 
-		if (isset($this->options['lifetime']))
-		{
-			$this->lifetime = $this->options['lifetime'];
-		}
-		$this->db = Database::getInstance();
-		$this->table = DB_PRE . 'session';
-		session_set_save_handler(array(&$this, 'open'), array(&$this, 'close'), array(&$this, 'read'), array(&$this, 'write'), array(&$this, 'destroy'), array(&$this, 'gc'));
+	{
 	}
 
 	public function init()
 	{
-		$this->__construct();
+		if (isset($this->options['life_time']))
+		{
+			$this->lifeTime = $this->options['life_time'];
+		}
+		else
+		{
+			$this->lifeTime = get_cfg_var("session.gc_maxlifetime");
+		}
+
+		$this->table = $this->options['table'];
+
+		$host = $this->options['host'];
+		$dbname = $this->options['dbname'];
+		$dbHandle = sqlite_open($host . $dbname, 0666);
+
+		if (!$dbHandle)
+		{
+			return false;
+		}
+		$this->dbHandle = $dbHandle;
+		$sql = "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' AND name='" . $this->table."'";
+		$res = sqlite_query($sql, $this->dbHandle);
+		$row = sqlite_fetch_array($res, SQLITE_ASSOC);
+		if (empty($row))
+		{
+			$this->runOnce();
+		}
+		session_set_save_handler(array(&$this, 'open'), array(&$this, 'close'), array(&$this, 'read'), array(&$this, 'write'), array(&$this, 'destroy'), array(&$this, 'gc'));
 	}
 
-	public function open($save_path, $session_name)
+	public function runOnce()
+	{
+		$sql = "CREATE TABLE $this->table (
+[session_id] VARCHAR(255)  NOT NULL PRIMARY KEY,
+[session_expires] INTEGER DEFAULT '0' NOT NULL,
+[session_data] TEXT  NULL
+)";
+		return sqlite_exec($sql, $this->dbHandle);
+	}
+
+	function open($savePath, $sessName)
 	{
 		return true;
 	}
 
-	public function close()
+	function close()
 	{
-		return $this->gc($this->lifetime);
+		$this->gc(ini_get('session.gc_maxlifetime'));
+		return @sqlite_close($this->dbHandle);
 	}
 
-	public function read($id)
-	{ 
-		$r = $this->db->get_one("SELECT data FROM $this->table WHERE sessionid='$id'");
-		return $r['data'];
+	function read($sessID)
+	{
+		$res = sqlite_query("SELECT session_data AS d FROM $this->table
+                           WHERE session_id = '$sessID'
+                           AND session_expires > " . time(), $this->dbHandle);
+		if ($row = sqlite_fetch_array($res, SQLITE_ASSOC))
+		{
+			return $row['d'];
+		}
+		else
+		{
+			return "";
+		}
 	}
 
-	public function write($id, $data)
+	function write($sessID, $sessData)
 	{
-	// SQLITE 中 REPLACE 是 INSERT 的别名.
-		$this->db->query("DELETE FROM $this->table WHERE sessionid='$id'");
-		return $this->db->query("INSERT INTO $this->table (sessionid, data) VALUES('$id', '" . $data . "')");
+		$newExp = time() + $this->lifeTime;
+		$res = sqlite_query("SELECT * FROM $this->table
+                           WHERE session_id = '$sessID'", $this->dbHandle);
+		if (sqlite_num_rows($res))
+		{
+			sqlite_exec("UPDATE $this->table
+                        SET session_expires = '$newExp',
+                        session_data = '$sessData'
+                        WHERE session_id = '$sessID'", $this->dbHandle);
+			if (sqlite_changes($this->dbHandle))
+			{
+				return true;
+			}
+		}
+		else
+		{
+			sqlite_exec("INSERT INTO $this->table (
+                        session_id,
+                        session_expires,
+                        session_data)
+                        VALUES(
+                        '$sessID',
+                        '$newExp',
+                        '$sessData')", $this->dbHandle);
+			if (sqlite_changes($this->dbHandle))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
-	public function destroy($id)
+	function destroy($sessID)
 	{
-		return $this->db->query("DELETE FROM $this->table WHERE sessionid='$id'");
+		sqlite_exec("DELETE FROM $this->table WHERE session_id = '$sessID'", $this->dbHandle);
+		if (sqlite_changes($this->dbHandle))
+		{
+			return true;
+		}
+		return false;
 	}
 
-	public function gc($maxlifetime)
+	function gc($sessMaxLifeTime)
 	{
-		$expiretime = REQUEST_TIME - $maxlifetime;
-		return $this->db->query("DELETE FROM $this->table WHERE lastvisit < $expiretime");
+		sqlite_exec("DELETE FROM $this->table WHERE session_expires < " . time(), $this->dbHandle);
+		return sqlite_changes($this->dbHandle);
 	}
 }
