@@ -13,7 +13,7 @@ class LtSession
 		$adapterClassName = "LtSessionAdapter" . ucfirst($this->conf->adapter);
 		if(!class_exists($adapterClassName))
 		{
-			trigger_error('Invalid adapter');
+			trigger_error('Invalid adapter: ' . $adapterClassName);
 		}
 		$this->sessionHandle = new $adapterClassName;
 		if (property_exists($this->sessionHandle, "options"))
