@@ -1,6 +1,7 @@
 <?php
 class LtSession
 {
+	static public $saveHandle;
 	public $conf;
 
 	public function __construct()
@@ -10,17 +11,29 @@ class LtSession
 
 	public function init()
 	{
-		$adapterClassName = "LtSessionAdapter" . ucfirst($this->conf->adapter);
-		if(!class_exists($adapterClassName))
+		if (!is_object(self::$saveHandle))
 		{
-			trigger_error('Invalid adapter: ' . $adapterClassName);
+			ini_set('session.save_handler', 'files');
+			if (!is_dir($this->conf['session_save_path']))
+			{
+				if (!@mkdir($this->conf['session_save_path'], 0777, true))
+				{
+					trigger_error("Can not create $cachePath");
+				}
+			}
+			session_save_path($this->conf['session_save_path']);
 		}
-		$this->sessionHandle = new $adapterClassName;
-		if (property_exists($this->sessionHandle, "options"))
+		else
 		{
-			$this->sessionHandle->options = $this->conf->options;
+			session_set_save_handler(
+				array(&self::$saveHandle, 'open'), 
+				array(&self::$saveHandle, 'close'),
+				array(&self::$saveHandle, 'read'), 
+				array(&self::$saveHandle, 'write'), 
+				array(&self::$saveHandle, 'destroy'), 
+				array(&self::$saveHandle, 'gc')
+				);
 		}
-		$this->sessionHandle->init();
 		session_start();
 		header("Cache-control: private"); // to overcome/fix a bug in IE 6.x
 	}

@@ -1,6 +1,6 @@
 <?php
 
-class LtSessionAdapterSqlite implements LtSessionAdapter
+class LtSessionMysql
 {
 	public $options;
 	public $lifeTime;
@@ -25,33 +25,39 @@ class LtSessionAdapterSqlite implements LtSessionAdapter
 		$this->table = $this->options['table'];
 
 		$host = $this->options['host'];
-		$host = rtrim($host,'\\/').DIRECTORY_SEPARATOR;
+		$user = $this->options['user'];
+		$password = $this->options['password'];
 		$dbname = $this->options['dbname'];
-		$dbHandle = sqlite_open($host . $dbname, 0666);
 
-		if (!$dbHandle)
+		$dbHandle = @mysql_connect($host, $user, $password);
+		$dbSel = @mysql_select_db($dbname, $dbHandle);
+
+		if (!$dbHandle || !$dbSel)
 		{
 			return false;
 		}
 		$this->dbHandle = $dbHandle;
-		$sql = "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' AND name='" . $this->table."'";
-		$res = sqlite_query($sql, $this->dbHandle);
-		$row = sqlite_fetch_array($res, SQLITE_ASSOC);
+
+		$sql = "SELECT `TABLE_NAME` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA`='test' AND `TABLE_NAME`='" . $this->table . "'";
+		$res = mysql_query($sql, $this->dbHandle);
+		$row = mysql_fetch_assoc($res);
 		if (empty($row))
 		{
 			$this->runOnce();
 		}
+
 		session_set_save_handler(array(&$this, 'open'), array(&$this, 'close'), array(&$this, 'read'), array(&$this, 'write'), array(&$this, 'destroy'), array(&$this, 'gc'));
 	}
 
 	public function runOnce()
 	{
-		$sql = "CREATE TABLE $this->table (
-[session_id] VARCHAR(255)  NOT NULL PRIMARY KEY,
-[session_expires] INTEGER DEFAULT '0' NOT NULL,
-[session_data] TEXT  NULL
-)";
-		return sqlite_exec($sql, $this->dbHandle);
+		$sql = "CREATE TABLE IF NOT EXISTS `".$this->table."` (
+				`session_id` VARCHAR(255) BINARY NOT NULL DEFAULT '',
+				`session_expires` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+				`session_data` TEXT,
+				PRIMARY KEY  (`session_id`)
+				);";
+		mysql_query($sql, $this->dbHandle);
 	}
 
 	function open($savePath, $sessName)
@@ -62,15 +68,15 @@ class LtSessionAdapterSqlite implements LtSessionAdapter
 	function close()
 	{
 		$this->gc(ini_get('session.gc_maxlifetime'));
-		return @sqlite_close($this->dbHandle);
+		return @mysql_close($this->dbHandle);
 	}
 
 	function read($sessID)
 	{
-		$res = sqlite_query("SELECT session_data AS d FROM $this->table
+		$res = mysql_query("SELECT session_data AS d FROM $this->table
                            WHERE session_id = '$sessID'
                            AND session_expires > " . time(), $this->dbHandle);
-		if ($row = sqlite_fetch_array($res, SQLITE_ASSOC))
+		if ($row = mysql_fetch_assoc($res))
 		{
 			return $row['d'];
 		}
@@ -83,22 +89,22 @@ class LtSessionAdapterSqlite implements LtSessionAdapter
 	function write($sessID, $sessData)
 	{
 		$newExp = time() + $this->lifeTime;
-		$res = sqlite_query("SELECT * FROM $this->table
+		$res = mysql_query("SELECT * FROM $this->table
                            WHERE session_id = '$sessID'", $this->dbHandle);
-		if (sqlite_num_rows($res))
+		if (mysql_num_rows($res))
 		{
-			sqlite_exec("UPDATE $this->table
+			mysql_query("UPDATE $this->table
                         SET session_expires = '$newExp',
                         session_data = '$sessData'
                         WHERE session_id = '$sessID'", $this->dbHandle);
-			if (sqlite_changes($this->dbHandle))
+			if (mysql_affected_rows($this->dbHandle))
 			{
 				return true;
 			}
 		}
 		else
 		{
-			sqlite_exec("INSERT INTO $this->table (
+			mysql_query("INSERT INTO $this->table (
                         session_id,
                         session_expires,
                         session_data)
@@ -106,7 +112,7 @@ class LtSessionAdapterSqlite implements LtSessionAdapter
                         '$sessID',
                         '$newExp',
                         '$sessData')", $this->dbHandle);
-			if (sqlite_changes($this->dbHandle))
+			if (mysql_affected_rows($this->dbHandle))
 			{
 				return true;
 			}
@@ -116,8 +122,8 @@ class LtSessionAdapterSqlite implements LtSessionAdapter
 
 	function destroy($sessID)
 	{
-		sqlite_exec("DELETE FROM $this->table WHERE session_id = '$sessID'", $this->dbHandle);
-		if (sqlite_changes($this->dbHandle))
+		mysql_query("DELETE FROM $this->table WHERE session_id = '$sessID'", $this->dbHandle);
+		if (mysql_affected_rows($this->dbHandle))
 		{
 			return true;
 		}
@@ -126,7 +132,7 @@ class LtSessionAdapterSqlite implements LtSessionAdapter
 
 	function gc($sessMaxLifeTime)
 	{
-		sqlite_exec("DELETE FROM $this->table WHERE session_expires < " . time(), $this->dbHandle);
-		return sqlite_changes($this->dbHandle);
+		mysql_query("DELETE FROM $this->table WHERE session_expires < " . time(), $this->dbHandle);
+		return mysql_affected_rows($this->dbHandle);
 	}
 }
