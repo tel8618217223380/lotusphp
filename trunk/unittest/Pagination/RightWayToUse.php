@@ -4,6 +4,9 @@
  * 按本文档操作一定会得到正确的结果
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
+/**
+ * @todo 应该将计算分页和输出html分开，允许用户指定展现层handle，可以提供默认handle
+ */
 class RightWayToUseCache extends PHPUnit_Extensions_OutputTestCase
 {
 	/**
