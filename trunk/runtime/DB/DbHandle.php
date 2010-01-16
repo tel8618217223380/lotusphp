@@ -122,7 +122,7 @@ class LtDbHandle
 
 	protected function getCurrentSqlAdapter()
 	{
-		$factory = new LtDbFactory;
+		$factory = new LtDbAdapterFactory;
 		$servers = LtDb::$storeHandle->get("servers", LtDb::$namespace);
 		$host = key($servers[$this->group][$this->node][$this->role]);
 		return $factory->getSqlAdapter($servers[$this->group][$this->node][$this->role][$host]["adapter"]);

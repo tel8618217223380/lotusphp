@@ -1,5 +1,5 @@
 <?php
-class LtDbFactory
+class LtDbAdapterFactory
 {
 	public function getConnectionAdapter($extension)
 	{

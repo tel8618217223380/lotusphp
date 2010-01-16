@@ -42,7 +42,7 @@ class LtDbConnectionManager
 				if ($connectionInfo["schema"] != $hostConfig["schema"] || $connectionInfo["charset"] != $hostConfig["charset"])
 				{//检查当前schema和charset与用户要操作的目标不一致
 					$hostConfig = $servers[$group][$node][$role][$hostIndexArray[$hashNumber]];
-					$dbFactory = new LtDbFactory;
+					$dbFactory = new LtDbAdapterFactory;
 					$this->connectionAdapter = $dbFactory->getConnectionAdapter($hostConfig["adapter"]);
 					$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["adapter"]);
 					if ($connectionInfo["schema"] != $hostConfig["schema"])
@@ -70,7 +70,7 @@ class LtDbConnectionManager
 		{
 			$hashNumber = substr(microtime(),7,1) % $hostTotal;
 			$hostConfig = $servers[$group][$node][$role][$hostIndexArray[$hashNumber]];
-			$dbFactory = new LtDbFactory;
+			$dbFactory = new LtDbAdapterFactory;
 			$this->connectionAdapter = $dbFactory->getConnectionAdapter($hostConfig["adapter"]);
 			$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["adapter"]);
 			if ($connection = $this->connectionAdapter->connect($hostConfig))
