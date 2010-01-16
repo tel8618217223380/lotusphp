@@ -4,7 +4,7 @@ require_once $lotusHome . "runtime/DB/Db.php";
 require_once $lotusHome . "runtime/DB/DbHandle.php";
 require_once $lotusHome . "runtime/DB/DbConfigBuilder.php";
 require_once $lotusHome . "runtime/DB/DbConnectionManager.php";
-require_once $lotusHome . "runtime/DB/DbFactory.php";
+require_once $lotusHome . "runtime/DB/DbAdapterFactory.php";
 require_once $lotusHome . "runtime/DB/DbSqlExpression.php";
 require_once $lotusHome . "runtime/DB/Adapter/ConnectionAdapter/DbConnectionAdapter.php";
 require_once $lotusHome . "runtime/DB/Adapter/ConnectionAdapter/DbConnectionAdapterMysql.php";
