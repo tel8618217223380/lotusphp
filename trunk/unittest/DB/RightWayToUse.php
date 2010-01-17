@@ -187,7 +187,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * 配置系统数据组
 		 * 一个节点， 一主零从
 		 */
-		$dcb->addHost("sys_group", "sys_node_1", "master", array("password" => "123456", "dbname" => "sys_data"));
+		$dcb->addHost("sys_group", "sys_node_1", "master", array("password" => "123456", "dbname" => "sys_data", "adapter" => "mysql"));
 
 		/**
 		 * 配置用户数据组
@@ -195,7 +195,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * 每个节点一主零从
 		 * 都在同一台机器上，不同节点数据库名不同
 		 */
-		$dcb->addHost("user_group", "user_node_1", "master", array("password" => "123456", "dbname" => "member_1"));
+		$dcb->addHost("user_group", "user_node_1", "master", array("password" => "123456", "dbname" => "member_1", "adapter" => "mysql"));
 		$dcb->addHost("user_group", "user_node_2", "master", array("dbname" => "member_2"));
 
 		LtDb::$storeHandle = new LtDbStore;
@@ -277,6 +277,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$singleHost1 = array(
 			"password"       => "123456",
 			"dbname"         => "test",
+			"adapter"        => "mysql",
 		);
 		$expected1["group_0"]["node_0"]["master"][] = array(
 			"host"           => "localhost",
@@ -289,11 +290,13 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			"connection_ttl" => 30,
 			"dbname"         => null,
 			"schema"         => "test",
+			"connection_adapter" => "mysql",
+		  "sql_adapter"        => "mysql",
 		);
 		$singleHost2 = array(
 			"password"       => "123456",
 			"dbname"         => "test",
-			"adapter"        => "mssql",
+			"adapter"        => "pdo_dblib",
 			"port"           => 1433,
 		);
 		$expected2["group_0"]["node_0"]["master"][] = array(
@@ -301,18 +304,20 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			"port"           => 1433,
 			"username"       => "root",
 			"password"       => "123456",
-			"adapter"        => "mssql",
+			"adapter"        => "pdo_dblib",
 			"charset"        => "UTF-8",
-			"pconnect"       => false,
-			"connection_ttl" => 30,
+			"pconnect"       => true,
+			"connection_ttl" => 3600,
 			"dbname"         => null,
 			"schema"         => "test",
+			"connection_adapter" => "pdo",
+		  "sql_adapter"        => "mssql",
 		);
 		$singleHost3 = array(
 			"password"       => "123456",
 			"dbname"         => "test",
 			"schema"         => "sys_data",
-			"adapter"        => "pgsql",
+			"adapter"        => "pdo_pgsql",
 			"port"           => 5432,
 		);
 		$expected3["group_0"]["node_0"]["master"][] = array(
@@ -320,12 +325,14 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			"port"           => 5432,
 			"username"       => "root",
 			"password"       => "123456",
-			"adapter"        => "pgsql",
+			"adapter"        => "pdo_pgsql",
 			"charset"        => "UTF-8",
-			"pconnect"       => false,
-			"connection_ttl" => 30,
+			"pconnect"       => true,
+			"connection_ttl" => 3600,
 			"dbname"         => "test",
 			"schema"         => "sys_data",
+			"connection_adapter" => "pdo",
+		  "sql_adapter"        => "pgsql",
 		);
 		return array(
 			array($singleHost1, $expected1),
@@ -354,7 +361,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * 配置系统数据组
 		 * 一个节点， 一主两从，分布在三台不同的机器上
 		 */
-		$dcb->addHost("sys_group", "sys_node_1", "master", array("host" => "10.0.0.1", "port" => 5432, "password" => "123456", "dbname" => "sys_data", "schema" => "public", "adapter" => "pgsql", "pconnect" => true));
+		$dcb->addHost("sys_group", "sys_node_1", "master", array("host" => "10.0.0.1", "password" => "123456", "dbname" => "sys_data", "schema" => "public", "adapter" => "pgsql"));
 		$dcb->addHost("sys_group", "sys_node_1", "slave", array("host" => "10.0.0.2", "adapter" => "pdo_pgsql"));
 		$dcb->addHost("sys_group", "sys_node_1", "slave", array("host" => "10.0.0.3"));
 		
@@ -394,9 +401,11 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 									"adapter"        => "pgsql",
 									"charset"        => "UTF-8",
 									"pconnect"       => true,
-									"connection_ttl" => 30,
+									"connection_ttl" => 3600,
 									"dbname"         => "sys_data",
 									"schema"         => "public",
+									"connection_adapter" => "pgsql",
+								  "sql_adapter"        => "pgsql",
 						),
 					),
 					"slave" => array(
@@ -408,9 +417,11 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 									"adapter"        => "pdo_pgsql",
 									"charset"        => "UTF-8",
 									"pconnect"       => true,
-									"connection_ttl" => 30,
+									"connection_ttl" => 3600,
 									"dbname"         => "sys_data",
 									"schema"         => "public",
+									"connection_adapter" => "pdo",
+								  "sql_adapter"        => "pgsql",
 						),
 						array(
 									"host"           => "10.0.0.3",
@@ -420,9 +431,11 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 									"adapter"        => "pdo_pgsql",
 									"charset"        => "UTF-8",
 									"pconnect"       => true,
-									"connection_ttl" => 30,
+									"connection_ttl" => 3600,
 									"dbname"         => "sys_data",
 									"schema"         => "public",
+									"connection_adapter" => "pdo",
+								  "sql_adapter"        => "pgsql",
 						),
 					),
 				),
@@ -441,6 +454,8 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 									"connection_ttl" => 30,
 									"dbname"         => null,
 									"schema"         => "member_1",
+									"connection_adapter" => "mysqli",
+								  "sql_adapter"        => "mysql",
 						),
 					),
 					"slave" => array(
@@ -455,6 +470,8 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 									"connection_ttl" => 30,
 									"dbname"         => null,
 									"schema"         => "member_1",
+									"connection_adapter" => "mysqli",
+								  "sql_adapter"        => "mysql",
 						),
 					),
 				),
@@ -471,6 +488,8 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 									"connection_ttl" => 30,
 									"dbname"         => null,
 									"schema"         => "member_2",
+									"connection_adapter" => "mysqli",
+								  "sql_adapter"        => "mysql",
 						),
 					),
 					"slave" => array(
@@ -485,6 +504,8 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 									"connection_ttl" => 30,
 									"dbname"         => null,
 									"schema"         => "member_2",
+									"connection_adapter" => "mysqli",
+								  "sql_adapter"        => "mysql",
 						),
 					),
 				),
@@ -494,27 +515,31 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 					"master" => array(
 						array(
 									"host"           => "10.0.2.1",
-									"port"           => 3306,
+									"port"           => 1521,
 									"username"       => "root",
 									"password"       => "123456",
 									"adapter"        => "oci",
 									"charset"        => "UTF-8",
-									"pconnect"       => false,
-									"connection_ttl" => 30,
+									"pconnect"       => true,
+									"connection_ttl" => 3600,
 									"dbname"         => "finance",
 									"schema"         => "trade",
+									"connection_adapter" => "oci",
+								  "sql_adapter"        => "oracle",
 						),
 						array(
 									"host"           => "10.0.2.2",
-									"port"           => 3306,
+									"port"           => 1521,
 									"username"       => "root",
 									"password"       => "123456",
 									"adapter"        => "oci",
 									"charset"        => "UTF-8",
-									"pconnect"       => false,
-									"connection_ttl" => 30,
+									"pconnect"       => true,
+									"connection_ttl" => 3600,
 									"dbname"         => "finance",
 									"schema"         => "trade",
+									"connection_adapter" => "oci",
+								  "sql_adapter"        => "oracle",
 						),
 					),
 				),
@@ -522,27 +547,31 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 					"master" => array(
 						array(
 									"host"           => "10.0.2.3",
-									"port"           => 3306,
+									"port"           => 1521,
 									"username"       => "root",
 									"password"       => "123456",
 									"adapter"        => "oci",
 									"charset"        => "UTF-8",
-									"pconnect"       => false,
-									"connection_ttl" => 30,
+									"pconnect"       => true,
+									"connection_ttl" => 3600,
 									"dbname"         => "finance",
 									"schema"         => "trade",
+									"connection_adapter" => "oci",
+								  "sql_adapter"        => "oracle",
 						),
 						array(
 									"host"           => "10.0.2.4",
-									"port"           => 3306,
+									"port"           => 1521,
 									"username"       => "root",
 									"password"       => "123456",
 									"adapter"        => "oci",
 									"charset"        => "UTF-8",
-									"pconnect"       => false,
-									"connection_ttl" => 30,
+									"pconnect"       => true,
+									"connection_ttl" => 3600,
 									"dbname"         => "finance",
 									"schema"         => "trade",
+									"connection_adapter" => "oci",
+								  "sql_adapter"        => "oracle",
 						),
 					),
 				),
@@ -550,27 +579,31 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 					"master" => array(
 						array(
 									"host"           => "10.0.2.5",
-									"port"           => 3306,
+									"port"           => 1521,
 									"username"       => "root",
 									"password"       => "123456",
 									"adapter"        => "oci",
 									"charset"        => "UTF-8",
-									"pconnect"       => false,
-									"connection_ttl" => 30,
+									"pconnect"       => true,
+									"connection_ttl" => 3600,
 									"dbname"         => "finance",
 									"schema"         => "trade",
+									"connection_adapter" => "oci",
+								  "sql_adapter"        => "oracle",
 						),
 						array(
 									"host"           => "10.0.2.6",
-									"port"           => 3306,
+									"port"           => 1521,
 									"username"       => "root",
 									"password"       => "123456",
 									"adapter"        => "oci",
 									"charset"        => "UTF-8",
-									"pconnect"       => false,
-									"connection_ttl" => 30,
+									"pconnect"       => true,
+									"connection_ttl" => 3600,
 									"dbname"         => "finance",
 									"schema"         => "trade",
+									"connection_adapter" => "oci",
+								  "sql_adapter"        => "oracle",
 						),
 					),
 				),

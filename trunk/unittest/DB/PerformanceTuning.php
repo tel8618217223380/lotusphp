@@ -18,25 +18,5 @@ class PerformanceTuning4Db extends PHPUnit_Framework_TestCase
 		/**
 		 * 初始化LtCache，LtDb用LtCache作存储层的时候性能才会提高
 		 */
-		$cacheHandle = new LtCache;
-		$cacheHandle->conf->adapter = 'phps';
-		$cacheHandle->init();
-		
-		//准备DbConf
-		/**
-		 * 运行Db成功加操作一次数据表
-		 * 这是为了证明：使用LtCache作为LtDb的存储，功能是正常的
-		 */
-		
-		/**
-		 * 运行5000次，要求在1秒内运行完
-		 */
-		$startTime = microtime(true);
-		for($i = 0; $i < 5000; $i++)
-		{
-			
-		}
-		$endTime = microtime(true);
-		$this->assertTrue(1 > $endTime-$startTime);
 	}
 }
