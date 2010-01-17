@@ -83,9 +83,9 @@ class LtDbHandle
 				$queryMethod = "other";
 				break;
 		}
-		$adapters = $this->connectionManager->getConnection($this->group, $this->node, $this->role);
-		$this->connectionAdapter = $adapters["connectionAdapter"];
-		$this->connectionResource = $adapters["connectionResource"];
+		$connectionInfo = $this->connectionManager->getConnection($this->group, $this->node, $this->role);
+		$this->connectionAdapter = $connectionInfo["connectionAdapter"];
+		$this->connectionResource = $connectionInfo["connectionResource"];
 		if (is_array($bind) && 0 < count($bind))
 		{
 			$sql = $this->bindParameter($sql, $bind);
