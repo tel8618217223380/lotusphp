@@ -1,34 +1,15 @@
 <?php
 class LtDbAdapterFactory
 {
-	public function getConnectionAdapter($extension)
+	public function getConnectionAdapter($connectionAdapterType)
 	{
-		if (preg_match("/^pdo_/i", $extension))
-		{
-			$LtDbConnectionAdapter = "LtDbConnectionAdapterPdo";
-		}
-		else
-		{
-			$LtDbConnectionAdapter = "LtDbConnectionAdapter" . ucfirst($extension);
-		}
+		$LtDbConnectionAdapter = "LtDbConnectionAdapter" . ucfirst($connectionAdapterType);
 		return new $LtDbConnectionAdapter;
 	}
 
-	public function getSqlAdapter($extension)
+	public function getSqlAdapter($sqlAdapterType)
 	{
-		if (preg_match("/^pdo_/i", $extension))
-		{
-			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst(substr($extension, 4));
-		}
-		else
-		{
-			$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst($extension);
-		}
-		//Mysqli use mysql syntax
-		if ("mysqli" == $extension)
-		{
-			$LtDbSqlAdapter = "LtDbSqlAdapterMysql";
-		}
+		$LtDbSqlAdapter = "LtDbSqlAdapter" . ucfirst($sqlAdapterType);
 		return new $LtDbSqlAdapter;
 	}
 }

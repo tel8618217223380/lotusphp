@@ -125,7 +125,7 @@ class LtDbHandle
 		$factory = new LtDbAdapterFactory;
 		$servers = LtDb::$storeHandle->get("servers", LtDb::$namespace);
 		$host = key($servers[$this->group][$this->node][$this->role]);
-		return $factory->getSqlAdapter($servers[$this->group][$this->node][$this->role][$host]["adapter"]);
+		return $factory->getSqlAdapter($servers[$this->group][$this->node][$this->role][$host]["sql_adapter"]);
 	}
 
 	protected function select($sql, $connResource)

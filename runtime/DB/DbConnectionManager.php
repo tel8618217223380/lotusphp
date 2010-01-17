@@ -43,8 +43,8 @@ class LtDbConnectionManager
 				{//检查当前schema和charset与用户要操作的目标不一致
 					$hostConfig = $servers[$group][$node][$role][$hostIndexArray[$hashNumber]];
 					$dbFactory = new LtDbAdapterFactory;
-					$this->connectionAdapter = $dbFactory->getConnectionAdapter($hostConfig["adapter"]);
-					$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["adapter"]);
+					$this->connectionAdapter = $dbFactory->getConnectionAdapter($hostConfig["connection_adapter"]);
+					$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["sql_adapter"]);
 					if ($connectionInfo["schema"] != $hostConfig["schema"])
 					{
 						$this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]), $connectionInfo["connection"]);
@@ -71,8 +71,8 @@ class LtDbConnectionManager
 			$hashNumber = substr(microtime(),7,1) % $hostTotal;
 			$hostConfig = $servers[$group][$node][$role][$hostIndexArray[$hashNumber]];
 			$dbFactory = new LtDbAdapterFactory;
-			$this->connectionAdapter = $dbFactory->getConnectionAdapter($hostConfig["adapter"]);
-			$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["adapter"]);
+			$this->connectionAdapter = $dbFactory->getConnectionAdapter($hostConfig["connection_adapter"]);
+			$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["sql_adapter"]);
 			if ($connection = $this->connectionAdapter->connect($hostConfig))
 			{
 				$this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]), $connection);
