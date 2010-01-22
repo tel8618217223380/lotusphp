@@ -91,8 +91,19 @@ class LtDbHandle
 			$sql = $this->bindParameter($sql, $bind);
 		}
 		return $this->$queryMethod($sql, $this->connectionResource);
-	}
-
+    }
+    /**
+     * function posted by renlu 
+     * */
+    public function escape($str){
+       return $this->connectionAdapter->escape($str,$this->connectionResource); 
+    }
+    /**
+     * function posted by renlu
+     * */
+    public function insertid(){
+			return $this->connectionAdapter->lastInsertId($this->connectionResource);
+    }
 	/**
 	 * Generate complete sql from sql template (with placeholder) and parameter
 	 * @param $sql
@@ -157,7 +168,7 @@ class LtDbHandle
 	{
 		return $this->connectionAdapter->exec($sql, $connResource);
 	}
-
+    
 	/**
 	 * @todo 更新连接缓存
 	 */
