@@ -4,21 +4,16 @@
  */
 class LtRouter
 { 
-	// 提供默认的路由表, 允许不初始化路由表
-	public $routingTable = array('pattern' => ":module/:action/*",
-		'default' => array('module' => 'default', 'action' => 'index'),
-		'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-		'varprefix' => ':',
-		'delimiter' => '/',
-		'postfix' => '',
-		'protocol' => 'PATH_INFO', // REWRITE STANDARD
-		);
+	public $conf;
+	public $routingTable;
 	public $module;
 	public $action;
-	public $params;
 
 	public function __construct()
 	{
+		$this->conf = new LtRouterConfig;
+		$this->routingTable = $this->conf->routingTable;
+		// unset($this->conf);
 	}
 
 	public function init()
@@ -28,7 +23,7 @@ class LtRouter
 		$module = '';
 		$action = '';
 		$params = array(); 
-		// http https
+		// HTTP HTTPS
 		if (isset($_SERVER['SERVER_PROTOCOL']))
 		{
 			if (isset($_SERVER['PATH_INFO']))
@@ -52,7 +47,6 @@ class LtRouter
 		else
 		{ 
 			// CLI
-			// CLI模式
 			$i = 0;
 			while (isset($_SERVER['argv'][$i]) && isset($_SERVER['argv'][$i + 1]))
 			{
@@ -72,13 +66,17 @@ class LtRouter
 				$i = $i + 2;
 			}
 		}
+		// 如果$_GET中不存在配置的变量则添加 
+		foreach($params as $k=>$v)
+		{
+			!isset($_GET[$k]) && $_GET[$k] = $v;
+		}
 		$this->module = $module;
 		$this->action = $action;
-		$this->params = $params;
 	}
 
 	/**
-	 * url 匹配路由表, 结果存$this->params
+	 * url 匹配路由表
 	 * 
 	 * @param  $ [string|array] $url
 	 * @return 

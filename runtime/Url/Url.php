@@ -2,69 +2,97 @@
 class LtUrl
 {
 	public $conf;
+	public $routingTable;
 
 	public function __construct()
 	{
 		$this->conf = new LtUrlConfig;
+		$this->routingTable = $this->conf->routingTable;
+		// unset($this->conf);
+	}
+	public function init()
+	{
+		//
 	}
 
-	public function link($string)
+	public function generate($module, $action, $args = array())
 	{
-		echo "\tline " . $string . "\n";
-		print_r($this->conf);
+		$args['module'] = $module;
+		$args['action'] = $action;
+		return $this->reverseMatchingRoutingTable($args);
 	}
 
-	public function generate($module, $action, $args = null, $options = null)
+	/**
+	 * 将变量反向匹配路由表, 返回匹配后的url
+	 * 
+	 * @param array $params 
+	 * @return string 
+	 */
+	public function reverseMatchingRoutingTable($args)
 	{
-		$pattern = isset($options['pattern']) ? $options['pattern'] : $this->conf->patern;
-		switch ($pattern)
+		$ret = $this->routingTable['pattern'];
+		$default = $this->routingTable['default'];
+		$reqs = $this->routingTable['reqs'];
+		$delimiter = $this->routingTable['delimiter'];
+		$varprefix = $this->routingTable['varprefix'];
+		$postfix = $this->routingTable['postfix'];
+
+		$pattern = explode($delimiter, trim($this->routingTable['pattern'], $delimiter));
+
+		foreach($pattern as $k => $v)
 		{
-			case 'standard':
-			default:// URL format: ?module=module_name&action=action_name&key=value
-				$url = $this->conf->bootstrapFile . "?module=$module&action=$action";
-				if ($args)
+			if ($v[0] == $varprefix)
+			{ 
+				// 变量
+				$varname = substr($v, 1); 
+				// 匹配变量
+				if (isset($args[$varname]))
 				{
-					foreach($args as $key => $value)
+					$regex = "/^{$this->routingTable['reqs'][$varname]}\$/i";
+					if (preg_match($regex, $args[$varname]))
 					{
-						if (isset($options['encoded']) && true == $options['encoded'])
-						{
-							$value = urlencode($value);
-						}
-						$url .= "&$key=$value";
+						$ret = str_replace($v, $args[$varname], $ret);
+						unset($args[$varname]);
 					}
 				}
-				break;
-			case 'rewrite':// URL formar: module_name/action_name?key=value
-				$url = "$module/$action";
-				if ($args)
+				else if (isset($default[$varname]))
 				{
-					$queryString = '';
-					foreach($args as $key => $value)
-					{
-						if (isset($options['encoded']) && true == $options['encoded'])
-						{
-							$value = urlencode($value);
-						}
-						$queryString .= "&$key=$value";
-					}
-					$url .= '?' . substr($queryString, 1);
+					$ret = str_replace($v, $default[$varname], $ret);
 				}
-				break;
-			case 'path_info':// URL formar: module_name/action_name/key/value
-				$url = $this->conf->bootstrapFile . "/$module/$action";
-				if ($args)
+			}
+			else if ($v[0] == '*')
+			{ 
+				// 通配符
+				$tmp = '';
+				foreach($args as $key => $value)
 				{
-					foreach($args as $key => $value)
+					if (!isset($default[$key]))
 					{
-						if (isset($options['encoded']) && true == $options['encoded'])
-						{
-							$value = urlencode($value);
-						}
-						$url .= "/$key/$value";
+						$tmp .= $key . $delimiter . rawurlencode($value) . $delimiter;
 					}
 				}
-				break;
+				$tmp = rtrim($tmp, $delimiter);
+				$ret = str_replace($v, $tmp, $ret);
+				$ret = rtrim($ret, $delimiter);
+			}
+			else
+			{ 
+				// 静态
+			}
 		}
-		return $this->conf->prefix . $url;
+		$protocol = strtoupper($this->routingTable['protocol']);
+		if ('REWRITE' == $protocol)
+		{
+			$ret = $ret . $postfix;
+		}
+		else if ('PATH_INFO' == $protocol)
+		{
+			$ret = $_SERVER['SCRIPT_NAME'] . '/' . $ret . $postfix;
+		}
+		else
+		{
+			$ret = $ret . $postfix;
+		}
+		return $ret;
 	}
 }

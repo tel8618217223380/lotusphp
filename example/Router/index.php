@@ -4,8 +4,7 @@
  */
 $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example"));
 include $lotusHome . "/runtime/Router/Router.php";
-
-//unset($_SERVER["PATH_INFO"]);
+include $lotusHome . "/runtime/Router/RouterConfig.php";
 
 $router = new LtRouter;
 $router->routingTable = array('pattern' => ":module-:action-*",
@@ -19,8 +18,9 @@ $router->routingTable = array('pattern' => ":module-:action-*",
 $router->init();
 
 echo "<pre>\n";
-echo "输入测试url例如 m-a-id-123.html\n";
+echo "输入测试url例如 index.php/m-a-id-123.html\n";
 print_r($router);
+print_r($_GET);
 echo $router->url('news','list',array('catid'=>20,'page'=>10)) . "\n";
-echo http_build_query($router->params) . "\n";
+echo http_build_query($_GET) . "\n";
 echo "\n</pre>\n";
