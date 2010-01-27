@@ -33,7 +33,7 @@ class LtRouter
 				// 忽略后缀
 				$url = rtrim($_SERVER['PATH_INFO'], "$postfix");
 				$url = explode($delimiter, trim($url, "/"));
-				$this->matchingRoutingTable($url);
+				$this->params = $this->matchingRoutingTable($url);
 			}
 			else if (isset($_SERVER["PHP_SELF"]) && isset($_SERVER["SCRIPT_NAME"]))
 			{
@@ -43,7 +43,7 @@ class LtRouter
 					// 忽略后缀
 					$url = rtrim($url, "$postfix");
 					$url = explode($delimiter, trim($url, "/"));
-					$this->matchingRoutingTable($url);
+					$this->params = $this->matchingRoutingTable($url);
 				}
 				else if (!empty($_GET))
 				{
@@ -147,7 +147,7 @@ class LtRouter
 				// 静态
 			}
 		}
-		$this->params = $ret;
+		return $ret;
 	}
 	/**
 	 * 将变量反向匹配路由表, 返回匹配后的url
