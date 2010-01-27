@@ -30,9 +30,4 @@ class LtTemplateViewProxy extends LtTemplateView
 	{
 		return parent::parse($str);
 	}
-
-	public function addquote($var)
-	{
-		return parent::addquote($var);
-	}
 }
