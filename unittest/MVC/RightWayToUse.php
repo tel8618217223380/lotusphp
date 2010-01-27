@@ -39,6 +39,64 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 	public static function parseDataProvider()
 	{
 		return array(
+			// if elseif
+			array('<?php if($a="123") { ?>',
+				'{if $a="123"}',
+				), 
+			array("<?php } else { ?>",
+				'{else}',
+				), 
+			array('<?php } elseif ($b=\'456\') { ?>',
+				'{elseif $b=\'456\'}',
+				), 
+			array("<?php } ?>",
+				'{/if}',
+				), 
+			// loop
+			array('<?php if(is_array($data)) foreach($data as $v) { ?>',
+				'{loop $data $v}',
+				), 
+			array('<?php if(is_array($data)) foreach($data as $k=>$v) { ?>',
+				'{loop $data $k $v}',
+				), 
+			array("<?php } ?>",
+				'{/loop}',
+				), 
+			// 任意函数
+			array('<?php echo date("H:i:s");?>',
+				'{date("H:i:s")}',
+				), 
+			// 任意函数
+			array('<?php echo $varfunc("test");?>',
+				'{$varfunc("test")}',
+				), 
+			//常量
+			array('<?php echo DIRECTORY_SEPARATOR;?>',
+				'{DIRECTORY_SEPARATOR}',
+				),
+			// 变量
+			array('<?php echo $var[\'key\'];?>',
+				'{$var.key}',
+				),
+			array('<?php echo $var[\'key\'];?>',
+				'{$var[key]}',
+				),
+			array('<?php echo $var[\'key\'];?>',
+				'{$var[\'key\']}',
+				),
+			array('<?php echo $var;?>',
+				'{$var}',
+				),
+			// 类->属性  类->方法
+			array('<?php echo $classname->property;?>',
+				'{$classname->property}',
+				),
+			array('<?php echo $classname->method();?>',
+				'{$classname->method()}',
+				),
+			array('<?php echo $classname->method("a",\'b\');?>',
+				'{$classname->method("a",\'b\')}',
+				),
 			// url生成测试
 			array("<?php echo C('LtUrl')->generate('Admin', 'DoLogout');?>",
 				"{url('Admin', 'DoLogout')}",
@@ -54,7 +112,7 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 	 * 
 	 * @dataProvider parseDataProvider
 	 */
-	public function testTemplateView($expected, $userParameter)
+	public function testTemplateParse($expected, $userParameter)
 	{
 		$tpl = new LtTemplateViewProxy;
 		$str = $tpl->parse($userParameter);
