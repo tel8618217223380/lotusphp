@@ -24,7 +24,10 @@ class LtRouter
 	public function init()
 	{
 		$delimiter = $this->routingTable['delimiter'];
-		$postfix = $this->routingTable['postfix']; 
+		$postfix = $this->routingTable['postfix'];
+		$module = '';
+		$action = '';
+		$params = array(); 
 		// http https
 		if (isset($_SERVER['SERVER_PROTOCOL']))
 		{
@@ -33,60 +36,45 @@ class LtRouter
 				// 忽略后缀
 				$url = rtrim($_SERVER['PATH_INFO'], "$postfix");
 				$url = explode($delimiter, trim($url, "/"));
-				$this->params = $this->matchingRoutingTable($url);
-			}
-			else if (isset($_SERVER["PHP_SELF"]) && isset($_SERVER["SCRIPT_NAME"]))
-			{
-				$url = str_replace($_SERVER["SCRIPT_NAME"], '', $_SERVER['PHP_SELF']);
-				if (!empty($url))
-				{ 
-					// 忽略后缀
-					$url = rtrim($url, "$postfix");
-					$url = explode($delimiter, trim($url, "/"));
-					$this->params = $this->matchingRoutingTable($url);
-				}
-				else if (!empty($_GET))
-				{
-					$this->params = $_GET;
-				}
-				else
-				{
-					$this->params['module'] = 'default';
-					$this->params['action'] = 'index';
-				}
-			}
-			else if (!empty($_GET))
-			{
-				$this->params = $_GET;
 			}
 			else
 			{
-				$this->params['module'] = 'default';
-				$this->params['action'] = 'index';
+				$url = array();
+				foreach($_GET as $v)
+				{
+					$url[]=$v;
+				}
 			}
+			$params = $this->matchingRoutingTable($url);
+			$module = $params['module'];
+			$action = $params['action'];
 		}
 		else
 		{ 
 			// CLI
 			// CLI模式
 			$i = 0;
-			while ((empty($module) || empty($action)) && isset($_SERVER['argv'][$i]))
+			while (isset($_SERVER['argv'][$i]) && isset($_SERVER['argv'][$i + 1]))
 			{
-				if (("-m" == $_SERVER['argv'][$i] || "--module" == $_SERVER['argv'][$i]) && isset($_SERVER['argv'][$i + 1]))
+				if (("-m" == $_SERVER['argv'][$i] || "--module" == $_SERVER['argv'][$i]))
 				{
 					$module = $_SERVER['argv'][$i + 1];
 				}
-				else if (("-a" == $_SERVER['argv'][$i] || "--action" == $_SERVER['argv'][$i]) && isset($_SERVER['argv'][$i + 1]))
+				else if (("-a" == $_SERVER['argv'][$i] || "--action" == $_SERVER['argv'][$i]))
 				{
 					$action = $_SERVER['argv'][$i + 1];
 				}
-				$i ++;
+				else
+				{
+					$key = $_SERVER['argv'][$i];
+					$params[$key] = $_SERVER['argv'][$i + 1];
+				}
+				$i = $i + 2;
 			}
-			$this->params['module'] = $module;
-			$this->params['action'] = $action;
 		}
-		$this->module = $this->params['module'];
-		$this->action = $this->params['action'];
+		$this->module = $module;
+		$this->action = $action;
+		$this->params = $params;
 	}
 
 	/**
