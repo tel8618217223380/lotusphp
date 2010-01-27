@@ -13,6 +13,11 @@ class LtTemplateView
 
 	public $compiled;
 
+	public function __construct()
+	{
+		//
+	}
+
 	public function render()
 	{
 		if (isset($this -> layout) && strlen($this -> layout))
@@ -48,7 +53,13 @@ class LtTemplateView
 		} 
 		if ($iscompile)
 		{
-			$this -> _parse($tplfile, $objfile);
+			$str = file_get_contents($tplfile);
+			if (!$str)
+			{
+				trigger_error('Template file Not found or have no access!', E_USER_ERROR);
+			} 
+			$str = $this -> parse($str);
+			file_put_contents($objfile, $str);
 		} 
 		return $objfile;
 	} 
@@ -61,18 +72,9 @@ class LtTemplateView
 	 * @param string $objfile ：编译后的文件名
 	 * @return 
 	 */
-	private function _parse($tplfile, $objfile, $str = '')
+	protected function parse($str)
 	{ 
-		// read
-		if (empty($str))
-		{
-			$str = file_get_contents($tplfile);
-			if (!$str)
-			{
-				trigger_error('Template file Not found or have no access!', E_USER_ERROR);
-			} 
-		} 
-		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
+ 		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
 		// 删除行首尾空白
 		$str = preg_replace("/([\r\n]+)[\t ]+/s", "\\1", $str);
 		$str = preg_replace("/[\t ]+([\r\n]+)/s", "\\1", $str); 
@@ -97,8 +99,8 @@ class LtTemplateView
 		$str = preg_replace("/\{loop\s+(\S+)\s+(\S+)\}/", "<?php if(is_array(\\1)) foreach(\\1 AS \\2) { ?>", $str);
 		$str = preg_replace("/\{loop\s+(\S+)\s+(\S+)\s+(\S+)\}/", "<?php if(is_array(\\1)) foreach(\\1 AS \\2 => \\3) { ?>", $str);
 		$str = preg_replace("/\{\/loop\}/", "<?php } ?>", $str); 
-		// 标签
-		$str = preg_replace("/\{label:([^}]+)\}/", "<?php echo label('\\1');?>", $str); 
+		// url生成
+		$str = preg_replace("/\{url\(([^}]+)\)\}/", "<?php echo C('LtUrl')->generate(\\1);?>", $str); 
 		// 函数
 		$str = preg_replace("/\{([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\s*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{\\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str); 
@@ -118,12 +120,12 @@ class LtTemplateView
 		$str = preg_replace("/^[\r\n]+/", "", $str); 
 		// write
 		$str = trim($str);
-		file_put_contents($objfile, $str);
+		return $str;
 	} 
 	/**
 	 * 变量加上单引号
 	 */
-	function addquote($var)
+	protected function addquote($var)
 	{
 		return str_replace("\\\"", "\"", preg_replace("/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\]/s", "['\\1']", $var));
 	} 
