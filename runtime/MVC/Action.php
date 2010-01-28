@@ -6,48 +6,50 @@ abstract class LtAction
 {
 	/**
 	 * The dtd config for validator
-	 *
-	 * @var array
+	 * 
+	 * @var array 
 	 */
 	protected $dtds = array();
 
 	/**
 	 * The Access Control List
-	 * @var array
+	 * 
+	 * @var array 
 	 */
 	protected $acl;
 
 	/**
 	 * The current user's roles
-	 *
-	 * @var array
+	 * 
+	 * @var array 
 	 */
 	protected $roles = array();
 
 	/**
 	 * A flag to indicate if subclass call LtAction::__construct()
-	 * @var boolean
+	 * 
+	 * @var boolean 
 	 */
 	protected $constructed = false;
 
 	/**
 	 * The response type
-	 *
-	 * @var string
+	 * 
+	 * @var string 
 	 */
 	protected $responseType = "html";
 
 	/**
 	 * The context object
-	 *
-	 * @var object
+	 * 
+	 * @var object 
 	 */
 	public $context;
 
 	/**
 	 * The context object
-	 *
-	 * @var object
+	 * 
+	 * @var object 
 	 */
 	public $viewDir;
 
@@ -66,22 +68,43 @@ abstract class LtAction
 
 	/**
 	 * Validate the data from client
-	 * @return array
+	 * 
+	 * @return array 
 	 * @todo Validator calling
 	 */
 	protected function validateInput()
 	{
 		$validateResult = array("error_total" => 0, "error_messages" => array());
-		if (0 < count($this->dtds))
+		if (!empty($this->dtds) && class_exists('LtValidator'))
 		{
-			
+			$validator = new LtValidator;
+			foreach ($this->dtds as $variable => $dtd)
+			{
+				$from = isset($dtd->from) ? $dtd->from : 'request';
+
+				foreach ($dtd->rules as $ruleKey => $ruleValue)
+				{
+					if ($ruleValue instanceof ConfigExpression)
+					{
+						eval('$_ruleValue = ' . $ruleValue->__toString());
+						$dtd->rules[$ruleKey] = $_ruleValue;
+					}
+				}
+				$error_messages = $validator->validate($this->context->$from($variable), $dtd);
+				if (!empty($error_messages))
+				{
+					$validateResult['error_total'] ++;
+					$validateResult['error_messages'][] = $error_messages;
+				}
+			}
 		}
 		return $validateResult;
 	}
 
 	/**
 	 * Check if current user have privilege to do this
-	 * @return boolen
+	 * 
+	 * @return boolen 
 	 */
 	protected function checkPrivilege()
 	{
@@ -90,6 +113,7 @@ abstract class LtAction
 		$action = $this->context->uri["action"];
 		$roles = array_merge(array("*"), $this->roles);
 		/**
+		 * 
 		 * @todo RBAC calling
 		 */
 		return $allow;
@@ -97,7 +121,6 @@ abstract class LtAction
 
 	protected function execute()
 	{
-
 	}
 
 	protected function writeResponse()
@@ -122,11 +145,10 @@ abstract class LtAction
 				$this->view->render();
 				break;
 			case "json":
-				echo json_encode(array(
-					"code" => $this->code,
-					"message" => $this->message,
-					"data" => $this->data
-				));
+				echo json_encode(array("code" => $this->code,
+						"message" => $this->message,
+						"data" => $this->data
+						));
 				break;
 		}
 	}
@@ -163,7 +185,7 @@ abstract class LtAction
 		$validateResult = $this->validateInput();
 		if (0 == $validateResult["error_total"])
 		{
-			if($this->checkPrivilege())
+			if ($this->checkPrivilege())
 			{
 				$this->beforeExecute();
 				$this->execute();
