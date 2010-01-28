@@ -8,8 +8,8 @@ class RouterAllTest
     {
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit_Framework');
 
-        $suite->addTestSuite('RightWayToUseUrl');
-        $suite->addTestSuite('WrongWayToUseUrl');
+        $suite->addTestSuite('RightWayToUseRBAC');
+        $suite->addTestSuite('WrongWayToUseRBAC');
 
         return $suite;
     }
