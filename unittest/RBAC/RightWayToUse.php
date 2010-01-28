@@ -10,6 +10,9 @@ class RightWayToUseRBAC extends PHPUnit_Framework_TestCase
 	{ 
 		// 角色 可以是多个
 		$roles = array('Administrators', 'Users'); 
+		$roles = array_merge(array("*"), $roles);
+
+
 		// 访问控制列表 deny优先
 		$acl['allow']['*'][] = 'Index/Index';
 		$acl['deny']['*'][] = '';
