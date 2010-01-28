@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>Lotusphp MVC simplest</title>
-<meta name="generator" content="lutusphp" />
+<meta name="generator" content="lotusphp" />
 </head>
 <body>
 
@@ -16,7 +16,9 @@ if(isset($this->data['username']))
 ?>" />
 </form>
 
-<pre><?php print_r($this->data);?></pre>
+<pre>
+<?php print_r($this->data);?>
+</pre>
 
 </body>
 </html>
