@@ -5,6 +5,20 @@
 abstract class LtAction
 {
 	/**
+	 * The context object
+	 * 
+	 * @var object 
+	 */
+	public $context;
+
+	/**
+	 * The context object
+	 * 
+	 * @var object 
+	 */
+	public $viewDir;
+
+	/**
 	 * The dtd config for validator
 	 * 
 	 * @var array 
@@ -40,20 +54,6 @@ abstract class LtAction
 	protected $responseType = "html";
 
 	/**
-	 * The context object
-	 * 
-	 * @var object 
-	 */
-	public $context;
-
-	/**
-	 * The context object
-	 * 
-	 * @var object 
-	 */
-	public $viewDir;
-
-	/**
 	 * Result properties
 	 */
 	protected $code;
@@ -66,6 +66,50 @@ abstract class LtAction
 
 	protected $layout;
 
+	/**
+	 * The constructor function, initialize the URI property
+	 */
+	public function __construct()
+	{
+		$this->constructed = true;
+	}
+
+	public function executeChain()
+	{
+		if (!$this->constructed)
+		{
+			DebugHelper::debug('SUBCLASS_NOT_CALL_PARENT_CONSTRUCTOR', array('class' => $actionClassName));
+		}
+		$this->afterConstruct();
+		$validateResult = $this->validateInput();
+		if (0 == $validateResult["error_total"])
+		{
+			if ($this->checkPrivilege())
+			{
+				$this->beforeExecute();
+				$this->execute();
+			}
+			else
+			{
+				$this->code = 403;
+				$this->message = "Access denied";
+			}
+		}
+		else
+		{
+			$this->code = 407;
+			$this->message = "Invalid input";
+			$this->data = $validateResult["error_messages"];
+		}
+		$this->writeResponse();
+	}
+
+	/**
+	 * Do something after subClass::__construct().
+	 */
+	protected function afterConstruct()
+	{
+	}
 	/**
 	 * Validate the data from client
 	 * 
@@ -119,6 +163,13 @@ abstract class LtAction
 		return $allow;
 	}
 
+	/**
+	 * Do something before subClass::execute().
+	 */
+	protected function beforeExecute()
+	{
+	}
+
 	protected function execute()
 	{
 	}
@@ -151,57 +202,5 @@ abstract class LtAction
 						));
 				break;
 		}
-	}
-
-	/**
-	 * Do something before subClass::execute().
-	 */
-	protected function beforeExecute()
-	{
-	}
-
-	/**
-	 * Do something after subClass::__construct().
-	 */
-	protected function afterConstruct()
-	{
-	}
-
-	/**
-	 * The constructor function, initialize the URI property
-	 */
-	public function __construct()
-	{
-		$this->constructed = true;
-	}
-
-	public function executeChain()
-	{
-		if (!$this->constructed)
-		{
-			DebugHelper::debug('SUBCLASS_NOT_CALL_PARENT_CONSTRUCTOR', array('class' => $actionClassName));
-		}
-		$this->afterConstruct();
-		$validateResult = $this->validateInput();
-		if (0 == $validateResult["error_total"])
-		{
-			if ($this->checkPrivilege())
-			{
-				$this->beforeExecute();
-				$this->execute();
-			}
-			else
-			{
-				$this->code = 403;
-				$this->message = "Access denied";
-			}
-		}
-		else
-		{
-			$this->code = 407;
-			$this->message = "Invalid input";
-			$this->data = $validateResult["error_messages"];
-		}
-		$this->writeResponse();
 	}
 }
