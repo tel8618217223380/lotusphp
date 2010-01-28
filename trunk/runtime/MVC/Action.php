@@ -110,11 +110,11 @@ abstract class LtAction
 	protected function afterConstruct()
 	{
 	}
+
 	/**
 	 * Validate the data from client
 	 * 
 	 * @return array 
-	 * @todo Validator calling
 	 */
 	protected function validateInput()
 	{
@@ -156,10 +156,12 @@ abstract class LtAction
 		$module = $this->context->uri["module"];
 		$action = $this->context->uri["action"];
 		$roles = array_merge(array("*"), $this->roles);
-		/**
-		 * 
-		 * @todo RBAC calling
-		 */
+		if (!empty($this->acl) && class_exists('LtRbac'))
+		{
+			$rbac = new LtRbac();
+			$rbac->acl = $this->acl;
+			$allow = $rbac->checkAcl($roles, "$module/$action");
+		}
 		return $allow;
 	}
 
