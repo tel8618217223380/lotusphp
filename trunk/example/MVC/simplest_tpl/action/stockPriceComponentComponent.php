@@ -1,6 +1,11 @@
 <?php
 class stockPriceComponent extends LtComponent
 {
+	public function __construct()
+	{
+		parent::__construct();
+		$this->responseType = 'tpl'; // 使用模板引擎
+	}
 	public function execute()
 	{
 		$stockInfo = array(
