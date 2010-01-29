@@ -20,10 +20,19 @@ include $lotusHome . "/runtime/Validator/ValidatorDtd.php";
  */
 $appDir = "./simplest_tpl/";
 include $appDir . "action/UserSigninAction.php";
-
-/*
+include $appDir . "action/IndexIndexAction.php";
+include $appDir . "action/testUsingComponentAction.php";
+include $appDir . "action/stockPriceComponentComponent.php";
+include $appDir . "action/testUsingBlankLayoutAction.php";
+include $appDir . "action/testPassDataAction.php";
+include $appDir . "action/testUsingTitleAction.php";
+/**
  * 实例化
  */
 $dispatcher = new LtDispatcher;
 $dispatcher->viewDir = "./simplest_tpl/view/";
-$dispatcher->dispatchAction("User", "Signin");
+// $dispatcher->dispatchAction("User", "Signin");
+
+$module = isset($_GET['module']) ? $_GET['module'] : 'Index';
+$action = isset($_GET['action']) ? $_GET['action'] : 'Index';
+$dispatcher->dispatchAction($module, $action);

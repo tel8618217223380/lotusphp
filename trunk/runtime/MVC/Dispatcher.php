@@ -21,7 +21,7 @@ class LtDispatcher
 		}
 		else
 		{
-			if (!($context instanceof Context))
+			if (!($context instanceof LtContext))
 			{
 				$newContext = new LtContext;
 			}

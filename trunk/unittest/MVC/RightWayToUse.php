@@ -35,6 +35,10 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 	 * ==================================================================
 	 * 添加新的测试条请增加一个数组 
 	 * array(解析结果, 模板语法)
+	 * 注意: 如果视图中包括css定义{}内要留有空格防止冲突
+	 * 例如: 
+	 * 正确: { margin:0 auto; } 不会被解析
+	 * 错误: {margin:0 auto} 会解析并出错
 	 */
 	public static function parseDataProvider()
 	{
@@ -90,6 +94,15 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 			// 类->属性  类->方法
 			array('<?php echo $classname->property;?>',
 				'{$classname->property}',
+				),
+			array('<?php echo $classname->property[\'abc\'];?>',
+				'{$classname->property[abc]}',
+				),
+			array('<?php echo $classname->property[\'abc\'];?>',
+				'{$classname->property[\'abc\']}',
+				),
+			array('<?php echo $classname->property["abc"];?>',
+				'{$classname->property["abc"]}',
 				),
 			array('<?php echo $classname->method();?>',
 				'{$classname->method()}',

@@ -198,6 +198,7 @@ abstract class LtAction
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
+				$this->view->compiledDir = $this->viewDir . "tpl_obj/";
 				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["action"];
 				$this->view->render();
 				break;
