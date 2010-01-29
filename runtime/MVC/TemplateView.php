@@ -11,9 +11,17 @@ class LtTemplateView
 
 	public $template;
 
+	public $autoCompile;
+
+	private $tmp;
+
 	public function __construct()
-	{ 
-		
+	{
+		/**
+		 * 自动编译通过对比文件修改时间确定是否编译,
+		 * 当禁止自动编译时, 需要手工删除编译后的文件来重新编译.
+		 */
+		$this->autoCompile = true;
 	}
 
 	public function render()
@@ -30,11 +38,10 @@ class LtTemplateView
 
 	public function template($islayout = false)
 	{
-		$this->compiledDir = empty($this->compileDir) ? $this->templateDir . "tpl_obj/" : $this->compiledDir;
 		if ($islayout)
 		{
 			$tplfile = $this->layoutDir . $this->layout . '.php';
-			$objfile = $this->compiledDir . 'layout/' . $this->layout . '.php';
+			$objfile = $this->compiledDir . 'layout/' . $this->layout . '-' . $this->template . '.php';
 		}
 		else
 		{
@@ -45,18 +52,26 @@ class LtTemplateView
 		// if (file_exists($objfile)) //性能
 		if (is_file($objfile))
 		{
-			if (@filemtime($tplfile) <= @filemtime($objfile))
+			if ($this->autoCompile)
+			{
+				if (@filemtime($tplfile) <= @filemtime($objfile))
+				{
+					$iscompile = false;
+				}
+			}
+			else
 			{
 				$iscompile = false;
 			}
 		}
 		if ($iscompile)
 		{
-			if (!is_dir($this->compiledDir))
+			$dir = pathinfo($objfile, PATHINFO_DIRNAME);
+			if (!is_dir($dir))
 			{
-				if (!@mkdir($this->compiledDir, 0777, true))
+				if (!@mkdir($dir, 0777, true))
 				{
-					trigger_error("Can not create $this->compiledDir");
+					trigger_error("Can not create $dir");
 				}
 			}
 			$str = file_get_contents($tplfile);
@@ -90,11 +105,10 @@ class LtTemplateView
 		// 删除 javascript 单行注释//
 		$str = preg_replace("/\/\/[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\r\n]/", "", $str); 
 		// 删除 javascript 和 css 多行注释 /*有问题啊*/
-		$str = preg_replace("/\/\*[^\/]*\*\//s", "", $str); 
+		$str = preg_replace("/\/\*[^\/]*\*\//s", "", $str);
+
+		$str = $this->parseSubTpl($str); 
 		// --
-		$str = preg_replace("/\{template\s+([a-z0-9_]+)\}/is", "<?php include template('\\1'); ?>", $str);
-		$str = preg_replace("/\{template\s+(.+)\}/", "<?php include template(\\1); ?>", $str);
-		$str = preg_replace("/\{include\s+(.+)\}/", "<?php include \\1; ?>", $str);
 		$str = preg_replace("/\{php\s+(.+)\}/", "<?php \\1?>", $str); 
 		// --
 		$str = preg_replace("/\{if\s+(.+?)\}/", "<?php if(\\1) { ?>", $str);
@@ -115,7 +129,7 @@ class LtTemplateView
 		$str = preg_replace("/\{(\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{(\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\}/es", "\$this->addquote('<?php echo \\1;?>')", $str); 
 		// 类->属性  类->方法
-		$str = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+\-\>[a-zA-Z_\x7f-\xff][\$\'\"\,\[\]\(\)a-zA-Z0-9_\x7f-\xff]+)\}/", "<?php echo \\1;?>", $str); 
+		$str = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+\-\>[a-zA-Z_\x7f-\xff][\$\'\"\,\[\]\(\)a-zA-Z0-9_\x7f-\xff]+)\}/es", "\$this->addquote('<?php echo \\1;?>')", $str); 
 		// 常量
 		$str = preg_replace("/\{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)\}/s", "<?php echo \\1;?>", $str); 
 		// 合并相邻php标记
@@ -134,5 +148,41 @@ class LtTemplateView
 	protected function addquote($var)
 	{
 		return str_replace("\\\"", "\"", preg_replace("/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\]/s", "['\\1']", $var));
+	}
+
+	protected function parseSubTpl($str)
+	{
+		$this->tmp = $str;
+		if (preg_match("/\{include\s+(.+)\}/", $this->tmp))
+		{
+			while ($this->count_subtemplates() > 0)
+			{
+				preg_match_all("/\{include\s+(.+)\}/", $this->tmp, $tvar);
+				foreach($tvar[1] as $k => $subfile)
+				{
+					eval("\$subfile = $subfile;");
+
+					if (file_exists($subfile))
+					{
+						$subst = file_get_contents($subfile);
+					}
+					else
+					{
+						$subst = 'SubTemplate not found:' . $subfile;
+					}
+					$this->tmp = str_replace($tvar[0][$k], $subst, $this->tmp);
+				}
+			}
+		}
+		$str = $this->tmp;
+		return $str;
+	}
+
+	protected function count_subtemplates()
+	{
+		preg_match_all("/\{include\s+(.+)\}/", $this->tmp, $tvar);
+		$count_subtemplates = count($tvar[1]);
+		$ret = intval($count_subtemplates);
+		return $ret;
 	}
 }
