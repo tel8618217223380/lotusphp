@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title><!--{if isset($this->data['title'])}-->{$this->data['title']}<!--{/if}-->Using View</title>
+	<title>{$data.title}Using View</title>
 	<style type="text/css">
 	* {
 		font-size: 96%;
@@ -11,6 +11,7 @@
 <body>
 <hr />
 Navigator:
+<a href="simplest_tpl.php?module=User&action=Signin">User Signin</a>
 <a href="simplest_tpl.php?module=test&action=UsingComponent">Using Component</a>
 <a href="simplest_tpl.php?module=test&action=UsingBlankLayout">Using Blank Layout</a>
 <a href="simplest_tpl.php?module=test&action=PassData">Pass Data from Action</a>
