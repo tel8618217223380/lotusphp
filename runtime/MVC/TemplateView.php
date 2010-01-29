@@ -93,18 +93,7 @@ class LtTemplateView
 	 */
 	protected function parse($str)
 	{
-		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
-		// 删除行首尾空白
-		$str = preg_replace("/([\r\n]+)[\t ]+/s", "\\1", $str);
-		$str = preg_replace("/[\t ]+([\r\n]+)/s", "\\1", $str); 
-		// 删除 html 注释 <!--  -->
-		$str = preg_replace("/\<\!\-\-\s*\{(.+?)\}\s*\-\-\>/s", "{\\1}", $str);
-		$str = preg_replace("/\<\!\-\-\s*\-\-\>/s", "", $str); 
-		// 删除 javascript 单行注释//
-		$str = preg_replace("/\/\/[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\r\n]/", "", $str); 
-		// 删除 javascript 和 css 多行注释 /*有问题啊*/
-		$str = preg_replace("/\/\*[^\/]*\*\//s", "", $str);
-
+		$str = $this->removeComments($str);
 		$str = $this->parseSubTpl($str); 
 		// --
 		$str = preg_replace("/\{php\s+(.+)\}/", "<?php \\1?>", $str); 
@@ -147,6 +136,7 @@ class LtTemplateView
 	{
 		return str_replace("\\\"", "\"", preg_replace("/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\]/s", "['\\1']", $var));
 	}
+
 	/**
 	 * 解析多个{include path/file}合并成一个文件
 	 * 
@@ -172,6 +162,26 @@ class LtTemplateView
 			}
 			$countSubTpl = preg_match_all("/\{include\s+(.+)\}/", $str, $tvar);
 		}
+		$str = $this->removeComments($str);
+		return $str;
+	}
+	/**
+	 * 模板中第一行可以写exit函数防止浏览
+	 * 删除行首尾空白, html javascript css注释
+	 */
+	protected function removeComments($str)
+	{
+		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
+		// 删除行首尾空白
+		$str = preg_replace("/([\r\n]+)[\t ]+/s", "\\1", $str);
+		$str = preg_replace("/[\t ]+([\r\n]+)/s", "\\1", $str); 
+		// 删除 html 注释 <!--  -->
+		$str = preg_replace("/\<\!\-\-\s*\{(.+?)\}\s*\-\-\>/s", "{\\1}", $str);
+		$str = preg_replace("/\<\!\-\-\s*\-\-\>/s", "", $str); 
+		// 删除 javascript 单行注释//
+		$str = preg_replace("/\/\/[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\r\n]/", "", $str); 
+		// 删除 javascript 和 css 多行注释 /*有问题啊*/
+		$str = preg_replace("/\/\*[^\/]*\*\//s", "", $str);
 		return $str;
 	}
 }
