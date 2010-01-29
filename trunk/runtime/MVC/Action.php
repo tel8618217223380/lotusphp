@@ -180,8 +180,30 @@ abstract class LtAction
 	{
 		switch ($this->responseType)
 		{
-			case "html":
-			case "wml":
+			case 'json':
+				echo json_encode(array("code" => $this->code,
+						"message" => $this->message,
+						"data" => $this->data
+						));
+				break;
+			case 'tpl':
+				if (null === $this->view)
+				{
+					$this->view = new LtTemplateView;
+				}
+				$this->view->context = $this->context;
+				$this->view->code = $this->code;
+				$this->view->message = $this->message;
+				$this->view->data = $this->data;
+				$this->view->layoutDir = $this->viewDir . "layout/";
+				$this->view->layout = $this->layout;
+				$this->view->templateDir = $this->viewDir;
+				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["action"];
+				$this->view->render();
+				break;
+
+			case 'html':
+			case 'wml':
 			default:
 				if (null === $this->view)
 				{
@@ -196,12 +218,6 @@ abstract class LtAction
 				$this->view->templateDir = $this->viewDir;
 				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["action"];
 				$this->view->render();
-				break;
-			case "json":
-				echo json_encode(array("code" => $this->code,
-						"message" => $this->message,
-						"data" => $this->data
-						));
 				break;
 		}
 	}

@@ -11,37 +11,36 @@ class LtTemplateView
 
 	public $template;
 
-	public $compiled;
-
 	public function __construct()
-	{
-		//
+	{ 
+		
 	}
 
 	public function render()
 	{
-		if (isset($this -> layout) && strlen($this -> layout))
+		if (isset($this->layout) && strlen($this->layout))
 		{
-			include $this -> template(true);
-		} 
+			include $this->template(true);
+		}
 		else
 		{
-			include $this -> template();
-		} 
-	} 
+			include $this->template();
+		}
+	}
 
 	public function template($islayout = false)
 	{
+		$this->compiledDir = empty($this->compileDir) ? $this->templateDir . "tpl_obj/" : $this->compiledDir;
 		if ($islayout)
 		{
-			$tplfile = $this -> layoutDir . $this -> layout . '.php';
-			$objfile = $this -> compiledDir . '/layout/' . $this -> layout . '.php';
-		} 
+			$tplfile = $this->layoutDir . $this->layout . '.php';
+			$objfile = $this->compiledDir . 'layout/' . $this->layout . '.php';
+		}
 		else
 		{
-			$tplfile = $this -> templateDir . $this -> template . '.php';
-			$objfile = $this -> compiledDir . $this -> template . '.php';
-		} 
+			$tplfile = $this->templateDir . $this->template . '.php';
+			$objfile = $this->compiledDir . $this->template . '.php';
+		}
 		$iscompile = true; 
 		// if (file_exists($objfile)) //性能
 		if (is_file($objfile))
@@ -49,20 +48,27 @@ class LtTemplateView
 			if (@filemtime($tplfile) <= @filemtime($objfile))
 			{
 				$iscompile = false;
-			} 
-		} 
+			}
+		}
 		if ($iscompile)
 		{
+			if (!is_dir($this->compiledDir))
+			{
+				if (!@mkdir($this->compiledDir, 0777, true))
+				{
+					trigger_error("Can not create $this->compiledDir");
+				}
+			}
 			$str = file_get_contents($tplfile);
 			if (!$str)
 			{
 				trigger_error('Template file Not found or have no access!', E_USER_ERROR);
-			} 
-			$str = $this -> parse($str);
+			}
+			$str = $this->parse($str);
 			file_put_contents($objfile, $str);
-		} 
+		}
 		return $objfile;
-	} 
+	}
 
 	/**
 	 * 读模板进行替换后写入编译目录
@@ -73,8 +79,8 @@ class LtTemplateView
 	 * @return 
 	 */
 	protected function parse($str)
-	{ 
- 		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
+	{
+		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
 		// 删除行首尾空白
 		$str = preg_replace("/([\r\n]+)[\t ]+/s", "\\1", $str);
 		$str = preg_replace("/[\t ]+([\r\n]+)/s", "\\1", $str); 
@@ -121,12 +127,12 @@ class LtTemplateView
 		// write
 		$str = trim($str);
 		return $str;
-	} 
+	}
 	/**
 	 * 变量加上单引号
 	 */
 	protected function addquote($var)
 	{
 		return str_replace("\\\"", "\"", preg_replace("/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\]/s", "['\\1']", $var));
-	} 
-} 
+	}
+}
