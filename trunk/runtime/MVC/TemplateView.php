@@ -13,8 +13,6 @@ class LtTemplateView
 
 	public $autoCompile;
 
-	private $tmp;
-
 	public function __construct()
 	{
 		/**
@@ -149,40 +147,31 @@ class LtTemplateView
 	{
 		return str_replace("\\\"", "\"", preg_replace("/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\]/s", "['\\1']", $var));
 	}
-
+	/**
+	 * 解析多个{include path/file}合并成一个文件
+	 * 
+	 * @todo 实现修改子模板后自动重新编译
+	 */
 	protected function parseSubTpl($str)
 	{
-		$this->tmp = $str;
-		if (preg_match("/\{include\s+(.+)\}/", $this->tmp))
+		$countSubTpl = preg_match_all("/\{include\s+(.+)\}/", $str, $tvar);
+		while ($countSubTpl > 0)
 		{
-			while ($this->count_subtemplates() > 0)
+			foreach($tvar[1] as $k => $subfile)
 			{
-				preg_match_all("/\{include\s+(.+)\}/", $this->tmp, $tvar);
-				foreach($tvar[1] as $k => $subfile)
+				eval("\$subfile = $subfile;");
+				if (is_file($subfile))
 				{
-					eval("\$subfile = $subfile;");
-
-					if (file_exists($subfile))
-					{
-						$subst = file_get_contents($subfile);
-					}
-					else
-					{
-						$subst = 'SubTemplate not found:' . $subfile;
-					}
-					$this->tmp = str_replace($tvar[0][$k], $subst, $this->tmp);
+					$subTpl = file_get_contents($subfile);
 				}
+				else
+				{
+					$subTpl = 'SubTemplate not found:' . $subfile;
+				}
+				$str = str_replace($tvar[0][$k], $subTpl, $str);
 			}
+			$countSubTpl = preg_match_all("/\{include\s+(.+)\}/", $str, $tvar);
 		}
-		$str = $this->tmp;
 		return $str;
-	}
-
-	protected function count_subtemplates()
-	{
-		preg_match_all("/\{include\s+(.+)\}/", $this->tmp, $tvar);
-		$count_subtemplates = count($tvar[1]);
-		$ret = intval($count_subtemplates);
-		return $ret;
 	}
 }
