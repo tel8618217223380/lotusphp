@@ -8,8 +8,7 @@
 <fieldset>
 	<legend>Data passed by <em>$this-&gt;code</em> <em>$this-&gt;message</em></legend>
 	<xmp>
-	<?php
-	echo "code: $this->code\nmessage: $this->message";
-	?>
+		code: {$code}
+		message: {$message}
 	</xmp>
 </fieldset>

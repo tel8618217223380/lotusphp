@@ -112,7 +112,10 @@ class LtTemplateView
 		$str = preg_replace("/\{([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\s*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{\\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\(([^{}]*)\))\}/", "<?php echo \$\\1;?>", $str); 
 		// 变量
-		$str = preg_replace("/(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\.([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/s", "\\1['\\2']", $str);
+		$str = preg_replace("/(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\.([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/s", "\\1['\\2']", $str); 
+		// 内置变量 code message data
+		$str = preg_replace("/\{\\\$([code|message|data][a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/es", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
+
 		$str = preg_replace("/\{(\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{(\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\}/es", "\$this->addquote('<?php echo \\1;?>')", $str); 
 		// 类->属性  类->方法
@@ -130,11 +133,24 @@ class LtTemplateView
 		return $str;
 	}
 	/**
-	 * 变量加上单引号
+	 * 变量加上单引号 
+	 * 如果是数字就不加单引号, 如果已经加上单引号或者双引号保持不变
 	 */
 	protected function addquote($var)
 	{
-		return str_replace("\\\"", "\"", preg_replace("/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\]/s", "['\\1']", $var));
+		preg_match_all("/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\]/s", $var, $vars);
+		foreach($vars[1] as $k => $v)
+		{
+			if (is_numeric($v))
+			{
+				$var = str_replace($vars[0][$k], "[$v]", $var);
+			}
+			else
+			{
+				$var = str_replace($vars[0][$k], "['$v']", $var);
+			}
+		}
+		return str_replace("\\\"", "\"", $var);
 	}
 
 	/**
