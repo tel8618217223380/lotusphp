@@ -109,7 +109,8 @@ class Lotus
 		$router->init(); 
 		// mvc
 		$dispatcher = new LtDispatcher;
-		$dispatcher->viewDir = $this->option["view_dir"];
+		$dispatcher->viewDir = $this->option['view_dir'];
+		$dispatcher->viewTplDir = $this->option['view_tpl_dir'];
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}
 
