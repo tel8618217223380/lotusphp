@@ -123,6 +123,8 @@ class LtTemplateView
 		$str = preg_replace("/\{\/loop\}/", "<?php } ?>", $str); 
 		// url生成
 		$str = preg_replace("/\{url\(([^}]+)\)\}/", "<?php echo C('LtUrl')->generate(\\1);?>", $str); 
+		// config读取
+		$str = preg_replace("/\{config\(([^}]+)\)\}/", "<?php echo C('LtConfig')->get(\\1);?>", $str); 
 		// 函数
 		$str = preg_replace("/\{([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\s*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{\\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\(([^{}]*)\))\}/", "<?php echo \$\\1;?>", $str); 
