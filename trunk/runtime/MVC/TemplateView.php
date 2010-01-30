@@ -16,10 +16,9 @@ class LtTemplateView
 		/**
 		 * 自动编译通过对比文件修改时间确定是否编译,
 		 * 当禁止自动编译时, 需要手工删除编译后的文件来重新编译.
-		 * @todo 由于不支持component include自动编译,默认禁止.
-		 * 更新模板后手工删除编译目录相关文件 
+		 * @todo 尚不支持component include自动编译
 		 */
-		$this->autoCompile = false;
+		$this->autoCompile = true;
 		$this->component = false;
 	}
 
@@ -112,13 +111,13 @@ class LtTemplateView
 		$str = $this->parseSubTpl($str); 
 		$str = $this->parseComponent($str); 
 		// --
-		$str = preg_replace("/\{php\s+(.+)\}/", "<?php \\1?>", $str); 
-		// --
+		$str = str_replace("{LF}", "<?php echo \"\\n\"?>", $str);
+		// if else elseif
 		$str = preg_replace("/\{if\s+(.+?)\}/", "<?php if(\\1) { ?>", $str);
 		$str = preg_replace("/\{else\}/", "<?php } else { ?>", $str);
 		$str = preg_replace("/\{elseif\s+(.+?)\}/", "<?php } elseif (\\1) { ?>", $str);
 		$str = preg_replace("/\{\/if\}/", "<?php } ?>", $str); 
-		// --
+		// loop
 		$str = preg_replace("/\{loop\s+(\S+)\s+(\S+)\}/", "<?php if(is_array(\\1)) foreach(\\1 as \\2) { ?>", $str);
 		$str = preg_replace("/\{loop\s+(\S+)\s+(\S+)\s+(\S+)\}/", "<?php if(is_array(\\1)) foreach(\\1 as \\2=>\\3) { ?>", $str);
 		$str = preg_replace("/\{\/loop\}/", "<?php } ?>", $str); 
@@ -135,7 +134,7 @@ class LtTemplateView
 		$str = preg_replace("/\{(\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{(\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\}/es", "\$this->addquote('<?php echo \\1;?>')", $str); 
 		// 类->属性  类->方法
-		$str = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+\-\>[a-zA-Z_\x7f-\xff][\$\'\"\,\[\]\(\)a-zA-Z0-9_\x7f-\xff]+)\}/es", "\$this->addquote('<?php echo \\1;?>')", $str); 
+		$str = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff][+\-\>\$\'\"\,\[\]\(\)a-zA-Z0-9_\x7f-\xff]+)\}/es", "\$this->addquote('<?php echo \\1;?>')", $str); 
 		// 常量
 		$str = preg_replace("/\{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)\}/s", "<?php echo \\1;?>", $str); 
 		// 合并相邻php标记
