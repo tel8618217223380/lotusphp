@@ -16,6 +16,7 @@ class LtTemplateView
 		/**
 		 * 自动编译通过对比文件修改时间确定是否编译,
 		 * 当禁止自动编译时, 需要手工删除编译后的文件来重新编译.
+		 * 
 		 * @todo 尚不支持component include自动编译
 		 */
 		$this->autoCompile = true;
@@ -27,13 +28,12 @@ class LtTemplateView
 		if (!empty($this->layout))
 		{
 			include $this->template(true);
-		}
-		elseif ($this->component)
+		}elseif ($this->component)
 		{
 			/**
-			component在模板中写{component module action} 
-			实现合并成一个文件, 不需要include
-			*/
+			 * component在模板中写{component module action} 
+			 * 实现合并成一个文件, 不需要include
+			 */
 		}
 		else
 		{
@@ -45,7 +45,7 @@ class LtTemplateView
 	 * 如果文件存在且允许自动编译, 则对比模板文件和编译后的文件修改时间 
 	 * 当修改模板后自支重新编译
 	 * 
-	 * @param bool 是否使用布局
+	 * @param bool $ 是否使用布局
 	 * @return string 返回编译后的模板路径
 	 */
 	public function template($islayout = false)
@@ -79,7 +79,7 @@ class LtTemplateView
 			}
 		}
 		else
-		{
+		{ 
 			// 目标文件不存在,编译模板
 			$iscompile = true;
 		}
@@ -107,16 +107,17 @@ class LtTemplateView
 	/**
 	 * 解析{}内字符串,替换php代码
 	 * 
-	 * @param string
-	 * @return string
+	 * @param string $ 
+	 * @return string 
 	 */
 	protected function parse($str)
 	{
 		$str = $this->removeComments($str);
-		$str = $this->parseSubTpl($str); 
+		$str = $this->parseSubTpl($str);
 		$str = $this->parseComponent($str); 
-		// --
-		$str = str_replace("{LF}", "<?php echo \"\\n\"?>", $str);
+		// 回车 换行
+		$str = str_replace("{CR}", "<?php echo \"\\r\"?>", $str); 
+		$str = str_replace("{LF}", "<?php echo \"\\n\"?>", $str); 
 		// if else elseif
 		$str = preg_replace("/\{if\s+(.+?)\}/", "<?php if(\\1) { ?>", $str);
 		$str = preg_replace("/\{else\}/", "<?php } else { ?>", $str);
@@ -145,8 +146,19 @@ class LtTemplateView
 		// 常量
 		$str = preg_replace("/\{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)\}/s", "<?php echo \\1;?>", $str); 
 		// 合并相邻php标记
-		$str = preg_replace("/\?\>[\r\n\t ]*\<\?php[\r\n\t ]*/s", "", $str); 
-		// 多个合并成一个 第二参数考虑 \\1
+		$str = preg_replace("/\?\>[\r\n\t ]*\<\?php[\r\n\t ]*/s", "", $str);
+		/**
+		 * 删除空行
+		 * Dos和windows采用回车+换行CR/LF表示下一行,
+		 * 而UNIX/Linux采用换行符LF表示下一行，
+		 * 苹果机(MAC OS系统)则采用回车符CR表示下一行.
+		 * CR用符号 '\r'表示, 十进制ASCII代码是13, 十六进制代码为0x0D;
+		 * LF使用'\n'符号表示, ASCII代码是10, 十六制为0x0A.
+		 * 所以Windows平台上换行在文本文件中是使用 0d 0a 两个字节表示, 
+		 * 而UNIX和苹果平台上换行则是使用0a或0d一个字节表示.
+		 * 
+		 * 这里统一替换成windows平台回车换行, 第二参数考虑 \\1 保持原有
+		 */
 		$str = preg_replace("/([\r\n])+/", "\r\n", $str); 
 		// 删除第一行
 		$str = preg_replace("/^[\r\n]+/", "", $str); 
@@ -179,19 +191,48 @@ class LtTemplateView
 	 * 模板中第一行可以写exit函数防止浏览
 	 * 删除行首尾空白, html javascript css注释
 	 */
-	protected function removeComments($str)
+	protected function removeComments($str, $clear = false)
 	{
 		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
 		// 删除行首尾空白
 		$str = preg_replace("/([\r\n]+)[\t ]+/s", "\\1", $str);
 		$str = preg_replace("/[\t ]+([\r\n]+)/s", "\\1", $str); 
-		// 删除 html 注释 <!--  -->
+		// 删除 {} 前后的 html 注释 <!--  -->
 		$str = preg_replace("/\<\!\-\-\s*\{(.+?)\}\s*\-\-\>/s", "{\\1}", $str);
-		$str = preg_replace("/\<\!\-\-\s*\-\-\>/s", "", $str); 
-		// 删除 javascript 单行注释//
-		$str = preg_replace("/\/\/[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\r\n]/", "", $str); 
-		// 删除 javascript 和 css 多行注释 /*有问题啊*/
-		$str = preg_replace("/\/\*[^\/]*\*\//s", "", $str);
+		$str = preg_replace("/\<\!\-\-\s*\-\-\>/s", "", $str);
+
+		// 删除 html注释
+		$str = preg_replace("/\<\!\-\-\s*[^\<\{]*\s*\-\-\>/s", "", $str); 
+		/**
+		 * javascript css 单行,多行注释可能是常规显示内容
+		 * 默认禁止删除
+		 */
+		if ($clear)
+		{ 
+			$str = $this->clear($str);
+		}
+		return $str;
+	}
+
+	protected function clear($str)
+	{
+		// 清除单行注释
+		preg_match_all("/\<script(.*)\<\/script\>/is", $str, $tvar);
+		print_r($tvar);exit;
+		foreach($tvar[1] as $k => $v)
+		{
+			$str = str_replace($tvar[0][$k], '', $str);
+		}
+                // 删除 javascript 单行注释//
+                $str = preg_replace("/\/\/[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\r\n]/", "", $str); 
+                // 删除 javascript 和 css 多行注释 /*有问题啊*/
+                $str = preg_replace("/\/\*[^\/]*\*\//s", "", $str);
+		// 清除多行注释
+		preg_match_all("/\<[style|script].*(/\/\*[^\/]*\*\/)\<\/[style|script]\>/is", $str, $tvar);
+		foreach($tvar[1] as $k => $v)
+		{
+			$str = str_replace($tvar[0][$k], '', $str);
+		}
 		return $str;
 	}
 
@@ -237,7 +278,7 @@ class LtTemplateView
 			$i = 0;
 			while ($i < $countCom)
 			{
-				$comfile = $this->templateDir . $tvar[1][$i].'_'.$tvar[2][$i].'.php';
+				$comfile = $this->templateDir . $tvar[1][$i] . '_' . $tvar[2][$i] . '.php';
 				if (is_file($comfile))
 				{
 					$subTpl = file_get_contents($comfile);
