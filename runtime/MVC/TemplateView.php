@@ -16,8 +16,10 @@ class LtTemplateView
 		/**
 		 * 自动编译通过对比文件修改时间确定是否编译,
 		 * 当禁止自动编译时, 需要手工删除编译后的文件来重新编译.
+		 * @todo 由于不支持component include自动编译,默认禁止.
+		 * 更新模板后手工删除编译目录相关文件 
 		 */
-		$this->autoCompile = true;
+		$this->autoCompile = false;
 		$this->component = false;
 	}
 
@@ -52,8 +54,6 @@ class LtTemplateView
 			$tplfile = $this->templateDir . $this->template . '.php';
 			$objfile = $this->compiledDir . $this->template . '.php';
 		}
-		$iscompile = true; 
-		// if (file_exists($objfile)) //性能
 		if (is_file($objfile))
 		{
 			if ($this->autoCompile)
@@ -62,11 +62,20 @@ class LtTemplateView
 				{
 					$iscompile = false;
 				}
+				else
+				{
+					$iscompile = true;
+				}
 			}
 			else
 			{
 				$iscompile = false;
 			}
+		}
+		else
+		{
+			// 目标文件不存在,编译模板
+			$iscompile = true;
 		}
 		if ($iscompile)
 		{
