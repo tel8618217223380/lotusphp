@@ -5,10 +5,12 @@
 class LtDispatcher
 {
 	public $viewDir;
+	public $viewTplDir;
 	public $data;
 
 	public function __construct()
 	{
+
 	}
 
 	protected function _dispatch($module, $action, $context = null, $classType = "Action")
@@ -32,9 +34,10 @@ class LtDispatcher
 			}
 			$newContext->uri['module'] = $module;
 			$newContext->uri[strtolower($classType)] = $action;
-			$actionInstance = new $actionClassName($newContext);
+			$actionInstance = new $actionClassName();
 			$actionInstance->context = $newContext;
 			$actionInstance->viewDir = $this->viewDir;
+			$actionInstance->viewTplDir = $this->viewTplDir; // 模板编译目录
 			$actionInstance->executeChain();
 			$this->data = $actionInstance->data;
 		}
