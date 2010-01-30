@@ -11,7 +11,7 @@ class ConfigAllTest
 
         $suite->addTestSuite('RightWayToUseConfig');
         $suite->addTestSuite('WrongWayToUseConfig');
-        $suite->addTestSuite('PerformanceTuning4Config');
+        $suite->addTestSuite('PerformanceTuningConfig');
 
         return $suite;
     }

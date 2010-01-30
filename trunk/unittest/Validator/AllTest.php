@@ -11,7 +11,7 @@ class ValidatorAllTest
 
         $suite->addTestSuite('RightWayToUseValidator');
         $suite->addTestSuite('WrongWayToUseValidator');
-        $suite->addTestSuite('PerformanceTuning4Validator');
+        $suite->addTestSuite('PerformanceTuningValidator');
 
         return $suite;
     }

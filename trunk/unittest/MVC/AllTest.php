@@ -11,7 +11,7 @@ class MVCAllTest
 
         $suite->addTestSuite('RightWayToUseMVC');
         $suite->addTestSuite('WrongWayToUseMVC');
-        $suite->addTestSuite('PerformanceTuning4MVC');
+        $suite->addTestSuite('PerformanceTuningMVC');
 
         return $suite;
     }

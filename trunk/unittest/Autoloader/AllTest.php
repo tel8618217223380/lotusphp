@@ -11,7 +11,7 @@ class AutoloaderAllTest
 
         $suite->addTestSuite('RightWayToUseAutoloader');
         $suite->addTestSuite('WrongWayToUseAutoloader');
-        $suite->addTestSuite('PerformanceTuning4Autoloader');
+        $suite->addTestSuite('PerformanceTuningAutoloader');
 
         return $suite;
     }

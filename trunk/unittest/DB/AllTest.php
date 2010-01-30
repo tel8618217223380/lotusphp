@@ -11,7 +11,7 @@ class DbAllTest
 
         $suite->addTestSuite('RightWayToUseDb');
         $suite->addTestSuite('WrongWayToUseDb');
-        $suite->addTestSuite('PerformanceTuning4Db');
+        $suite->addTestSuite('PerformanceTuningDb');
 
         return $suite;
     }

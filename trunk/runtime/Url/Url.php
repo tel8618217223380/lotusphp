@@ -23,7 +23,7 @@ class LtUrl
 	}
 
 	/**
-	 * ½«±äÁ¿·´ÏòÆ¥ÅäÂ·ÓÉ±í, ·µ»ØÆ¥ÅäºóµÄurl
+	 * å°†å˜é‡åå‘åŒ¹é…è·¯ç”±è¡¨, è¿”å›žåŒ¹é…åŽçš„url
 	 * 
 	 * @param array $params 
 	 * @return string 
@@ -43,9 +43,9 @@ class LtUrl
 		{
 			if ($v[0] == $varprefix)
 			{ 
-				// ±äÁ¿
+				// å˜é‡
 				$varname = substr($v, 1); 
-				// Æ¥Åä±äÁ¿
+				// åŒ¹é…å˜é‡
 				if (isset($args[$varname]))
 				{
 					$regex = "/^{$this->routingTable['reqs'][$varname]}\$/i";
@@ -62,7 +62,7 @@ class LtUrl
 			}
 			else if ($v[0] == '*')
 			{ 
-				// Í¨Åä·û
+				// é€šé…ç¬¦
 				$tmp = '';
 				foreach($args as $key => $value)
 				{
@@ -77,7 +77,7 @@ class LtUrl
 			}
 			else
 			{ 
-				// ¾²Ì¬
+				// é™æ€
 			}
 		}
 		$protocol = strtoupper($this->routingTable['protocol']);

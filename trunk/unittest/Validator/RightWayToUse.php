@@ -11,4 +11,3 @@ class RightWayToUseValidator extends PHPUnit_Framework_TestCase
 
 	}
 }
-?>

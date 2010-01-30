@@ -1,6 +1,6 @@
 <?php
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "RightWayToUse.php";
-
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "WrongWayToUse.php";
 class LotusAllTest
 {
     public static function suite()
@@ -8,7 +8,7 @@ class LotusAllTest
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit_Framework');
 
         $suite->addTestSuite('RightWayToUseLotus');
-
+        $suite->addTestSuite('WrongWayToUseLotus');
         return $suite;
     }
 }

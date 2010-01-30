@@ -40,7 +40,14 @@ class LtTemplateView
 			include $this->template();
 		}
 	}
-
+	/**
+	 * 返回编译后的模板路径, 如果不存在则编译生成并返回路径. 
+	 * 如果文件存在且允许自动编译, 则对比模板文件和编译后的文件修改时间 
+	 * 当修改模板后自支重新编译
+	 * 
+	 * @param bool 是否使用布局
+	 * @return string 返回编译后的模板路径
+	 */
 	public function template($islayout = false)
 	{
 		if ($islayout)
@@ -98,12 +105,10 @@ class LtTemplateView
 	}
 
 	/**
-	 * 读模板进行替换后写入编译目录
-	 * 所有变量用{}
+	 * 解析{}内字符串,替换php代码
 	 * 
-	 * @param string $tplfile ：模板文件名
-	 * @param string $objfile ：编译后的文件名
-	 * @return 
+	 * @param string
+	 * @return string
 	 */
 	protected function parse($str)
 	{
