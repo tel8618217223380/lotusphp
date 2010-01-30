@@ -17,6 +17,7 @@ abstract class LtAction
 	 * @var object 
 	 */
 	public $viewDir;
+	public $viewTplDir;
 
 	/**
 	 * The dtd config for validator
@@ -109,6 +110,10 @@ abstract class LtAction
 	 */
 	protected function afterConstruct()
 	{
+		if (empty($this->viewTplDir))
+		{
+			$this->viewTplDir = dirname($this->viewDir) . "/viewTpl/";
+		}
 	}
 
 	/**
@@ -198,7 +203,7 @@ abstract class LtAction
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
-				$this->view->compiledDir = $this->viewDir . "tpl_obj/";
+				$this->view->compiledDir = $this->viewTplDir;
 				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["action"];
 				$this->view->render();
 				break;

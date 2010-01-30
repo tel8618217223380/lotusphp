@@ -1,7 +1,7 @@
 <?php
 /**
  * 加载MVC类文件
- * 加载的类很多，且需要注意先后顺序，推荐使用LtAutoloader自动加载
+加载的类很多，且需要注意先后顺序，推荐使用LtAutoloader自动加载
  */
 $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example"));
 include $lotusHome . "/runtime/MVC/Dispatcher.php";
@@ -31,7 +31,11 @@ include $appDir . "action/testUsingTitleAction.php";
  */
 $dispatcher = new LtDispatcher;
 $dispatcher->viewDir = "./simplest_tpl/view/";
-// $dispatcher->dispatchAction("User", "Signin");
+/**
+ * 保存模板编译后的文件目录,
+ * 如果不指定,默认在view同级目录生成viewTpl目录
+ */
+$dispatcher->viewTplDir = "/tmp/LtTemplateView/";
 
 $module = isset($_GET['module']) ? $_GET['module'] : 'Index';
 $action = isset($_GET['action']) ? $_GET['action'] : 'Index';

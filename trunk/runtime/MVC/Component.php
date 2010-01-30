@@ -17,6 +17,7 @@ abstract class LtComponent
 	 * @var object 
 	 */
 	public $viewDir;
+	public $viewTplDir;
 	/**
 	 * A flag to indicate if subclass call LtComponent::__construct()
 	 * 
@@ -63,20 +64,21 @@ abstract class LtComponent
 	}
 
 	protected function afterConstruct()
-	{ 
-		
+	{
+		if (empty($this->viewTplDir))
+		{
+			$this->viewTplDir = dirname($this->viewDir) . "/viewTpl/";
+		}
 	}
 	/**
 	 * Do something before subClass::execute().
 	 */
 	protected function beforeExecute()
-	{ 
-		
+	{
 	}
 
 	protected function execute()
 	{
-
 	}
 
 	protected function writeResponse()
@@ -102,7 +104,7 @@ abstract class LtComponent
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
-				$this->view->compiledDir = $this->viewDir . "tpl_obj/";
+				$this->view->compiledDir = $this->viewTplDir;
 				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["component"];
 				$this->view->render();
 				break;
@@ -126,5 +128,4 @@ abstract class LtComponent
 				break;
 		}
 	}
-
 }
