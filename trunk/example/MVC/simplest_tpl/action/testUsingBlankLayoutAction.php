@@ -5,7 +5,7 @@ class testUsingBlankLayoutAction extends LtAction
 	{
 		parent::__construct();
 		$this->responseType = 'tpl'; // 使用模板引擎
-		$this->layout = 'top_navigator';
+		// $this->layout = 'top_navigator'; // 不用布局
 	}
 	public function execute()
 	{
