@@ -26,6 +26,8 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 */
 		$lotus->devMode = true;
 		//$lotus->option["cache_adapter"] = "file";
+		// 必需指定配置文件
+		$lotus->option["config_file"] = dirname(__FILE__) . "/conf.php";
 		$lotus->init();
 		
 		/**
