@@ -1,8 +1,8 @@
 <?php
 /**
-var_export²»Ö§³Öobject
-²Î¿¼: http://php.net/manual/en/function.var-export.php
-serializeÖ§³Öobject
+var_exportä¸æ”¯æŒobject
+å‚è€ƒ: http://php.net/manual/en/function.var-export.php
+serializeæ”¯æŒobject
 */
 class LtCacheAdapterFile implements LtCacheAdapter
 {
@@ -75,9 +75,9 @@ class LtCacheAdapterFile implements LtCacheAdapter
 			// ----------------------------
 			// $data = include($cacheFile);
 			// -----------------------------
-			// ·ÀÖ¹¹ý¶àincludeÎÄ¼þ±»¼ÇÂ¼µ½phpÒýÇæ
-			// Í¨¹ý²é¿´get_included_files()¿ÉÖª
-			// Í¬Ê±·ÀÖ¹¹ý¶àincludeÎÄ¼þ±»apc»º´æ
+			// é˜²æ­¢è¿‡å¤šincludeæ–‡ä»¶è¢«è®°å½•åˆ°phpå¼•æ“Ž
+			// é€šè¿‡æŸ¥çœ‹get_included_files()å¯çŸ¥
+			// åŒæ—¶é˜²æ­¢è¿‡å¤šincludeæ–‡ä»¶è¢«apcç¼“å­˜
 			// ------------------------------------------------
 			$data = file_get_contents($cacheFile,false,null,6);
 			$data = eval($data);
