@@ -14,6 +14,6 @@ $this->data = array_merge($this->data,$dispatcher->data);
 
 <div style="clear:both"></div>
 <div style="margin:0 auto;width:300px;">
-<p>Ò»´Îdispatcher¿ÉÒÔ¶à´ÎÊ¹ÓÃÁË<br />Òª×¢Òâ¶à¸ödispatcherÖ®¼ä±äÁ¿³åÍ»</p>
+<p>ä¸€æ¬¡dispatcherå¯ä»¥å¤šæ¬¡ä½¿ç”¨äº†<br />è¦æ³¨æ„å¤šä¸ªdispatcherä¹‹é—´å˜é‡å†²çª</p>
 {component stock Price}
 </div>
