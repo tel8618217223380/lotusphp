@@ -25,10 +25,13 @@ class RightWayToUseObjectUtil extends PHPUnit_Framework_TestCase
 		 * 这是唯一一个不遵守“Lotus组件初始化三步曲”规则的组件
 		 * 因为它需要用个冒号静态调用
 		 */
+		$countInst = count(LtObjectUtil::$instances);
 		$obj1 = LtObjectUtil::singleton("stdClass");//stdClass是php内置的类
 		$obj2 = LtObjectUtil::singleton("stdClass");
+		$countInst = count(LtObjectUtil::$instances) - $countInst;
+
 		$this->assertTrue($obj1 === $obj2);
-		$this->assertEquals(1, count(LtObjectUtil::$instances));
+		$this->assertEquals(1, $countInst);
 		
 		$obj2->prop = 1;
 		$this->assertEquals(1, $obj1->prop);

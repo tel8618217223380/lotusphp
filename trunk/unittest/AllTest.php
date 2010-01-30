@@ -10,8 +10,15 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Autoloader/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Cache/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Captcha/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Config/AllTest.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Cookie/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "DB/AllTest.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "MVC/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "ObjectUtil/AllTest.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Pagination/AllTest.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "RBAC/AllTest.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Router/AllTest.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Url/AllTest.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Validator/AllTest.php";
 
 class AllTest
 {
@@ -24,8 +31,15 @@ class AllTest
         $suite->addTestSuite('CacheAllTest');
         $suite->addTestSuite('CaptchaAllTest');
         $suite->addTestSuite('ConfigAllTest');
+        $suite->addTestSuite('CookieAllTest');
         $suite->addTestSuite('DbAllTest');
+        $suite->addTestSuite('MVCAllTest');
         $suite->addTestSuite('ObjectUtilAllTest');
+        $suite->addTestSuite('PaginationAllTest');
+        $suite->addTestSuite('RBACAllTest');
+        $suite->addTestSuite('RouterAllTest');
+        $suite->addTestSuite('UrlAllTest');
+        $suite->addTestSuite('ValidatorAllTest');
 
         return $suite;
     }

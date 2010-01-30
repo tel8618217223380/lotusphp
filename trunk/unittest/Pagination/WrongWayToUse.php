@@ -4,7 +4,7 @@
  * 不要按本文档描述的方式使用LtPagination
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
-class WrongWayToUseCache extends PHPUnit_Framework_TestCase
+class WrongWayToUsePagination extends PHPUnit_Framework_TestCase
 {
 	/**
 	 */

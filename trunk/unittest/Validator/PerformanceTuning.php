@@ -5,4 +5,8 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class PerformanceTuning4Validator extends PHPUnit_Framework_TestCase
 {
+	public function testPerformance()
+	{
+
+	}
 }

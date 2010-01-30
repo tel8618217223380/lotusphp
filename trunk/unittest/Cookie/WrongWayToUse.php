@@ -6,14 +6,9 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class WrongWayToUseCookie extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * 调用getImageResource()和verify()接口不带seed参数
-	 * @expectedException PHPUnit_Framework_Error
-	 */
-	public function testBlankSeed()
+
+	public function testWrongUsedWay()
 	{
-		$Cookie = new LtCookie;
-		$Cookie->init();
-		$im = $Cookie->getImageResource("");
+
 	}
 }
