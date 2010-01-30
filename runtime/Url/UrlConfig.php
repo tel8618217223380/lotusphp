@@ -1,7 +1,7 @@
 <?php
 class LtUrlConfig
 {
-	// 默认的路由表 
+	// 榛樿鐨勮矾鐢辫〃 
 	public $routingTable = array('pattern' => ":module/:action/*",
 		'default' => array('module' => 'default', 'action' => 'index'),
 		'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),

@@ -11,7 +11,7 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterEAccelerator.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterFile.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterPhps.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";
-class PerformanceTuning4Autoloader extends PHPUnit_Framework_TestCase
+class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 {
 	public function testPerformance()
 	{

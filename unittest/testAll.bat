@@ -1,4 +1,4 @@
 @ECHO OFF
-REM ÔÚwindows»·¾³ÏÂ,Ö±½ÓÔËÐÐ±¾Åú´¦Àí¾Í»á²âÊÔÈ«²¿LotusPHP×é¼þ
+REM åœ¨windowsçŽ¯å¢ƒä¸‹,ç›´æŽ¥è¿è¡Œæœ¬æ‰¹å¤„ç†å°±ä¼šæµ‹è¯•å…¨éƒ¨LotusPHPç»„ä»¶
 CALL phpunit.bat AllTest.php
 PAUSE

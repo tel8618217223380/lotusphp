@@ -8,8 +8,8 @@ class PaginationAllTest
     {
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit_Framework');
 
-        $suite->addTestSuite('RightWayToUseCache');
-        $suite->addTestSuite('WrongWayToUseCache');
+        $suite->addTestSuite('RightWayToUsePagination');
+        $suite->addTestSuite('WrongWayToUsePagination');
 
         return $suite;
     }

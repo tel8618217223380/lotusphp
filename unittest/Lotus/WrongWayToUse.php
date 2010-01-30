@@ -9,4 +9,8 @@ class WrongWayToUseLotus extends PHPUnit_Framework_TestCase
 	/**
 	 * 未按指定的三步曲使用
 	 */
+	public function testWrongUsedWay()
+	{
+
+	}
 }
