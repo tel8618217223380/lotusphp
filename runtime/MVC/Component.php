@@ -37,7 +37,7 @@ abstract class LtComponent
 
 	protected $message;
 
-	protected $data;
+	public $data;
 
 	protected $view;
 
@@ -73,6 +73,12 @@ abstract class LtComponent
 	{ 
 		
 	}
+
+	protected function execute()
+	{
+
+	}
+
 	protected function writeResponse()
 	{
 		switch ($this->responseType)
@@ -88,6 +94,7 @@ abstract class LtComponent
 				{
 					$this->view = new LtTemplateView;
 				}
+				$this->view->component = true;
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;

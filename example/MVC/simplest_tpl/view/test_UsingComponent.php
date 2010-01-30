@@ -7,5 +7,13 @@ $dispatcher = new LtDispatcher;
 $dispatcher->viewDir = "./simplest_tpl/view/";
 $this->context->companyName = 'IBM';
 $dispatcher->dispatchComponent("stock", "Price", $this->context);
+$this->data = array_merge($this->data,$dispatcher->data);
 ?>
+{component stock Price}
+</div>
+
+<div style="clear:both"></div>
+<div style="margin:0 auto;width:300px;">
+<p>一次dispatcher可以多次使用了<br />要注意多个dispatcher之间变量冲突</p>
+{component stock Price}
 </div>
