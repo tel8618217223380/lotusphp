@@ -1,17 +1,15 @@
 <?php
 class LtTemplateView
 {
+	public $layout;
 	public $layoutDir;
 
+	public $template;
 	public $templateDir;
-
 	public $compiledDir;
 
-	public $layout;
-
-	public $template;
-
-	public $autoCompile;
+	public $autoCompile; // bool
+	public $component; // bool
 
 	public function __construct()
 	{
@@ -20,13 +18,21 @@ class LtTemplateView
 		 * 当禁止自动编译时, 需要手工删除编译后的文件来重新编译.
 		 */
 		$this->autoCompile = true;
+		$this->component = false;
 	}
 
 	public function render()
 	{
-		if (isset($this->layout) && strlen($this->layout))
+		if (!empty($this->layout))
 		{
 			include $this->template(true);
+		}
+		elseif ($this->component)
+		{
+			/**
+			component在模板中写{component module action} 
+			实现合并成一个文件, 不需要include
+			*/
 		}
 		else
 		{
@@ -95,6 +101,7 @@ class LtTemplateView
 	{
 		$str = $this->removeComments($str);
 		$str = $this->parseSubTpl($str); 
+		$str = $this->parseComponent($str); 
 		// --
 		$str = preg_replace("/\{php\s+(.+)\}/", "<?php \\1?>", $str); 
 		// --
@@ -154,6 +161,26 @@ class LtTemplateView
 	}
 
 	/**
+	 * 模板中第一行可以写exit函数防止浏览
+	 * 删除行首尾空白, html javascript css注释
+	 */
+	protected function removeComments($str)
+	{
+		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
+		// 删除行首尾空白
+		$str = preg_replace("/([\r\n]+)[\t ]+/s", "\\1", $str);
+		$str = preg_replace("/[\t ]+([\r\n]+)/s", "\\1", $str); 
+		// 删除 html 注释 <!--  -->
+		$str = preg_replace("/\<\!\-\-\s*\{(.+?)\}\s*\-\-\>/s", "{\\1}", $str);
+		$str = preg_replace("/\<\!\-\-\s*\-\-\>/s", "", $str); 
+		// 删除 javascript 单行注释//
+		$str = preg_replace("/\/\/[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\r\n]/", "", $str); 
+		// 删除 javascript 和 css 多行注释 /*有问题啊*/
+		$str = preg_replace("/\/\*[^\/]*\*\//s", "", $str);
+		return $str;
+	}
+
+	/**
 	 * 解析多个{include path/file}合并成一个文件
 	 * 
 	 * @todo 实现修改子模板后自动重新编译
@@ -181,23 +208,35 @@ class LtTemplateView
 		$str = $this->removeComments($str);
 		return $str;
 	}
+
 	/**
-	 * 模板中第一行可以写exit函数防止浏览
-	 * 删除行首尾空白, html javascript css注释
+	 * 解析多个{component module action}合并成一个文件
+	 * 
+	 * @todo 实现修改子模板后自动重新编译
 	 */
-	protected function removeComments($str)
+	protected function parseComponent($str)
 	{
-		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
-		// 删除行首尾空白
-		$str = preg_replace("/([\r\n]+)[\t ]+/s", "\\1", $str);
-		$str = preg_replace("/[\t ]+([\r\n]+)/s", "\\1", $str); 
-		// 删除 html 注释 <!--  -->
-		$str = preg_replace("/\<\!\-\-\s*\{(.+?)\}\s*\-\-\>/s", "{\\1}", $str);
-		$str = preg_replace("/\<\!\-\-\s*\-\-\>/s", "", $str); 
-		// 删除 javascript 单行注释//
-		$str = preg_replace("/\/\/[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\r\n]/", "", $str); 
-		// 删除 javascript 和 css 多行注释 /*有问题啊*/
-		$str = preg_replace("/\/\*[^\/]*\*\//s", "", $str);
+		$countCom = preg_match_all("/\{component\s+([a-zA-Z0-9\.\-_]+)\s+([a-zA-Z0-9\.\-_]+)\}/", $str, $tvar);
+		while ($countCom > 0)
+		{
+			$i = 0;
+			while ($i < $countCom)
+			{
+				$comfile = $this->templateDir . $tvar[1][$i].'_'.$tvar[2][$i].'.php';
+				if (is_file($comfile))
+				{
+					$subTpl = file_get_contents($comfile);
+				}
+				else
+				{
+					$subTpl = 'SubTemplate not found:' . $comfile;
+				}
+				$str = str_replace($tvar[0][$i], $subTpl, $str);
+				$i++;
+			}
+			$countCom = preg_match_all("/\{component\s+([a-zA-Z0-9\.\-_]+)\s+([a-zA-Z0-9\.\-_]+)\}/", $str, $tvar);
+		}
+		$str = $this->removeComments($str);
 		return $str;
 	}
 }

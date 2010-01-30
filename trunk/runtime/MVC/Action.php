@@ -60,7 +60,7 @@ abstract class LtAction
 
 	protected $message;
 
-	protected $data;
+	public $data;
 
 	protected $view;
 

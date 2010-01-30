@@ -22,7 +22,7 @@ $appDir = "./simplest_tpl/";
 include $appDir . "action/UserSigninAction.php";
 include $appDir . "action/IndexIndexAction.php";
 include $appDir . "action/testUsingComponentAction.php";
-include $appDir . "action/stockPriceComponentComponent.php";
+include $appDir . "action/stockPriceComponent.php";
 include $appDir . "action/testUsingBlankLayoutAction.php";
 include $appDir . "action/testPassDataAction.php";
 include $appDir . "action/testUsingTitleAction.php";

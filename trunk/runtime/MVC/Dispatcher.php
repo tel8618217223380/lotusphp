@@ -5,6 +5,7 @@
 class LtDispatcher
 {
 	public $viewDir;
+	public $data;
 
 	public function __construct()
 	{
@@ -35,6 +36,7 @@ class LtDispatcher
 			$actionInstance->context = $newContext;
 			$actionInstance->viewDir = $this->viewDir;
 			$actionInstance->executeChain();
+			$this->data = $actionInstance->data;
 		}
 	}
 
