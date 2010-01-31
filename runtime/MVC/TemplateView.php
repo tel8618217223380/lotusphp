@@ -134,18 +134,20 @@ class LtTemplateView
 		$str = preg_replace("/\{([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\s*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{\\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\(([^{}]*)\))\}/", "<?php echo \$\\1;?>", $str); 
 		// 变量
-		$str = preg_replace("/(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\.([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/s", "\\1['\\2']", $str); 
+		$str = preg_replace("/(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\.([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/", "\\1['\\2']", $str); 
 		// 内置变量 code message data
-		$str = preg_replace("/\{\\\$([code|message|data][a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/es", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
+		$str = preg_replace("/\{\\\$(code[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
+		$str = preg_replace("/\{\\\$(message[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
+		$str = preg_replace("/\{\\\$(data[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
 
 		$str = preg_replace("/\{(\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str);
-		$str = preg_replace("/\{(\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\}/es", "\$this->addquote('<?php echo \\1;?>')", $str); 
+		$str = preg_replace("/\{(\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\}/e", "\$this->addquote('<?php echo \\1;?>')", $str); 
 		// 类->属性  类->方法
 		$str = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff][+\-\>\$\'\"\,\[\]\(\)a-zA-Z0-9_\x7f-\xff]+)\}/es", "\$this->addquote('<?php echo \\1;?>')", $str); 
 		// 常量
-		$str = preg_replace("/\{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)\}/s", "<?php echo \\1;?>", $str); 
+		$str = preg_replace("/\{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str); 
 		// 合并相邻php标记
-		$str = preg_replace("/\?\>[\r\n\t ]*\<\?php[\r\n\t ]*/s", "", $str);
+		$str = preg_replace("/\?\>\s*\<\?php[\r\n\t ]*/", "", $str);
 		/**
 		 * 删除空行
 		 * Dos和windows采用回车+换行CR/LF表示下一行,
