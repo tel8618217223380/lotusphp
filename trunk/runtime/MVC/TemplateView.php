@@ -237,8 +237,6 @@ class LtTemplateView
 	/**
 	 * 解析多个{include path/file}合并成一个文件
 	 * @example 
-	 * {include debug_info}
-	 * {include debug_info.php}
 	 * {include 'debug_info'}
 	 * {include 'debug_info.php'}
 	 * {include "debug_info"}
@@ -254,7 +252,6 @@ class LtTemplateView
 		{
 			foreach($tvar[1] as $k => $subfile)
 			{
-				$subfile = '"'. trim($subfile,'\'"') .'"';
 				eval("\$subfile = $subfile;");
 				if (is_file($subfile))
 				{
