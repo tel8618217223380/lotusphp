@@ -6,7 +6,7 @@ require_once $lotusHome . "runtime/Cache/CacheConfigBuilder.php";
 require_once $lotusHome . "runtime/Cache/CacheConnectionManager.php";
 require_once $lotusHome . "runtime/Cache/CacheHandle.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapter.php";
-//require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterApc.php";
+require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterApc.php";
 //require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterEAccelerator.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterFile.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterPhps.php";

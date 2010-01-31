@@ -82,7 +82,7 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 	{
 		if ($this->del($key))
 		{
-			return $this->add($key,$value,$ttl);
+			return $this->add($key, $value, $ttl);
 		}
 		else
 		{
