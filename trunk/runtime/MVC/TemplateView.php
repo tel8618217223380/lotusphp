@@ -10,7 +10,6 @@ class LtTemplateView
 
 	public $autoCompile; // bool
 	public $component; // bool
-
 	public function __construct()
 	{
 		/**
@@ -45,7 +44,7 @@ class LtTemplateView
 	 * 如果文件存在且允许自动编译, 则对比模板文件和编译后的文件修改时间 
 	 * 当修改模板后自支重新编译
 	 * 
-	 * @param bool $ 是否使用布局
+	 * @param bool $islayout 是否使用布局
 	 * @return string 返回编译后的模板路径
 	 */
 	public function template($islayout = false)
@@ -107,7 +106,7 @@ class LtTemplateView
 	/**
 	 * 解析{}内字符串,替换php代码
 	 * 
-	 * @param string $ 
+	 * @param string $str 
 	 * @return string 
 	 */
 	protected function parse($str)
@@ -116,7 +115,7 @@ class LtTemplateView
 		$str = $this->parseSubTpl($str);
 		$str = $this->parseComponent($str); 
 		// 回车 换行
-		$str = str_replace("{CR}", "<?php echo \"\\r\"?>", $str); 
+		$str = str_replace("{CR}", "<?php echo \"\\r\"?>", $str);
 		$str = str_replace("{LF}", "<?php echo \"\\n\"?>", $str); 
 		// if else elseif
 		$str = preg_replace("/\{if\s+(.+?)\}/", "<?php if(\\1) { ?>", $str);
@@ -191,7 +190,7 @@ class LtTemplateView
 	 * 模板中第一行可以写exit函数防止浏览
 	 * 删除行首尾空白, html javascript css注释
 	 */
-	protected function removeComments($str, $clear = false)
+	protected function removeComments($str, $clear = true)
 	{
 		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
 		// 删除行首尾空白
@@ -199,39 +198,36 @@ class LtTemplateView
 		$str = preg_replace("/[\t ]+([\r\n]+)/s", "\\1", $str); 
 		// 删除 {} 前后的 html 注释 <!--  -->
 		$str = preg_replace("/\<\!\-\-\s*\{(.+?)\}\s*\-\-\>/s", "{\\1}", $str);
-		$str = preg_replace("/\<\!\-\-\s*\-\-\>/s", "", $str);
-
-		// 删除 html注释
-		$str = preg_replace("/\<\!\-\-\s*[^\<\{]*\s*\-\-\>/s", "", $str); 
-		/**
-		 * javascript css 单行,多行注释可能是常规显示内容
-		 * 默认禁止删除
-		 */
+		$str = preg_replace("/\<\!\-\-\s*\-\-\>/s", "", $str); 
+		// 删除 html注释 存在 < { 就不删除 
+		$str = preg_replace("/\<\!\-\-\s*[^\<\{]*\s*\-\-\>/s", "", $str);
 		if ($clear)
-		{ 
+		{
 			$str = $this->clear($str);
 		}
 		return $str;
 	}
-
+	/**
+	 * 清除一部分 style script内的注释
+	 * 多行注释内部存在 / 字符就不会清除
+	 */
 	protected function clear($str)
 	{
-		// 清除单行注释
-		preg_match_all("/\<script(.*)\<\/script\>/is", $str, $tvar);
-		print_r($tvar);exit;
-		foreach($tvar[1] as $k => $v)
-		{
-			$str = str_replace($tvar[0][$k], '', $str);
+		preg_match_all("|<script[^>]*>(.*)</script>|Usi", $str, $tvar);
+		foreach($tvar[0] as $k => $v)
+		{ 
+			// 删除单行注释
+			$v = preg_replace("/\/\/\s*[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/", "", $v); 
+			// 删除多行注释
+			$v = preg_replace("/\/\*[^\/]*\*\//s", "", $v);
+			$str = str_replace($tvar[0][$k], $v, $str);
 		}
-                // 删除 javascript 单行注释//
-                $str = preg_replace("/\/\/[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*[\r\n]/", "", $str); 
-                // 删除 javascript 和 css 多行注释 /*有问题啊*/
-                $str = preg_replace("/\/\*[^\/]*\*\//s", "", $str);
-		// 清除多行注释
-		preg_match_all("/\<[style|script].*(/\/\*[^\/]*\*\/)\<\/[style|script]\>/is", $str, $tvar);
-		foreach($tvar[1] as $k => $v)
-		{
-			$str = str_replace($tvar[0][$k], '', $str);
+		preg_match_all("|<style[^>]*>(.*)</style>|Usi", $str, $tvar);
+		foreach($tvar[0] as $k => $v)
+		{ 
+			// 删除多行注释
+			$v = preg_replace("/\/\*[^\/]*\*\//s", "", $v);
+			$str = str_replace($tvar[0][$k], $v, $str);
 		}
 		return $str;
 	}

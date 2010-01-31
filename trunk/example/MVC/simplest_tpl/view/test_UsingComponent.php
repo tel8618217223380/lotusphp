@@ -28,9 +28,3 @@ $this->data = array_merge($this->data,$dispatcher->data);
 <div style="margin:0 auto;width:300px;">
 {component stock Price}
 </div>
-<fieldset>
-	<legend>Data passed by <em>$this-&gt;data</em></legend>
-	<xmp>
-	<?php print_r($this->data) ?>
-	</xmp>
-</fieldset>
