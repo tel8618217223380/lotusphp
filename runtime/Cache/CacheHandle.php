@@ -6,7 +6,6 @@ class LtCacheHandle
 	public $role = "master";
 	public $connectionManager;
 	protected $connectionAdapter;
-	protected $connectionResource;
 
 	public function __construct()
 	{
@@ -41,6 +40,5 @@ class LtCacheHandle
 	{
 		$connectionInfo = $this->connectionManager->getConnection($this->group, $this->node, $this->role);
 		$this->connectionAdapter = $connectionInfo["connectionAdapter"];
-		$this->connectionResource = $connectionInfo["connectionResource"];
 	}
 }

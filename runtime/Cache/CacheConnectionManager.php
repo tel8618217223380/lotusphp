@@ -1,7 +1,6 @@
 <?php
 class LtCacheConnectionManager
 {
-	public $servers;
 	protected $connectionAdapter;
 
 	public function getConnection($group, $node, $role)
@@ -21,7 +20,7 @@ class LtCacheConnectionManager
 
 	protected function getNewConnection($group, $node, $role)
 	{
-		$servers = $this->servers;
+		$servers = LtCache::$servers;
 		$hostTotal = count($servers[$group][$node][$role]);
 		$hostIndexArray = array_keys($servers[$group][$node][$role]);
 		while ($hostTotal)

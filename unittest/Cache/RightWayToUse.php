@@ -26,6 +26,13 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	public function testMostUsedWay()
 	{
 		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/cache_files/"));
+		LtCache::$servers = $ccb->getServers();
+
+		/**
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
@@ -45,66 +52,43 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	public function testMostUsedWayWithMultiGroup()
 	{
 		/**
-		 * 实例化组件入口类
+		 * 构造缓存配置
 		 */
-		$cache = new LtCache;
-		$cache->init();
-
-		//初始化完毕，测试其效果
-		$ch = $cache->getCacheHandle();
-
-		$this->assertTrue($ch->add("test_key", "test_value"));
-		$this->assertEquals("test_value", $ch->get("test_key"));
-		$this->assertTrue($ch->update("test_key", "new_value"));
-		$this->assertEquals("new_value", $ch->get("test_key"));
-		$this->assertTrue($ch->del("test_key"));
-		$this->assertFalse($ch->get("test_key"));
-	}
-
-	/**
-	 * 测试单机单库的配置方法
-	 */
-	public function configBuilderDataProvider()
-	{
-		$singleHost1 = array(
-			"adapter"        => "phps",
-			"host"           => "/tmp/cache_file_root_1",
-		);
-		$expected1["group_0"]["node_0"]["master"][] = array(
-			"adapter"        => "phps",
-			"host"           => "/tmp/cache_file_root_1",
-		);
-		$singleHost2 = array(
-			"adapter"        => "apc",
-		);
-		$expected2["group_0"]["node_0"]["master"][] = array(
-			"adapter"        => "apc",
-		);
-		$singleHost3 = array(
-			"adapter"        => "memcached",
-			"host"           => "localhost",
-			"port"           => 11211,
-		);
-		$expected3["group_0"]["node_0"]["master"][] = array(
-			"adapter"        => "memcached",
-			"host"           => "localhost",
-			"port"           => 11211,
-		);
-		return array(
-			array($singleHost1, $expected1),
-			array($singleHost2, $expected2),
-			array($singleHost3, $expected3),
-		);
-	}
-
-	/**
-	 * @dataProvider configBuilderDataProvider
-	 */
-	public function testConfigBuilder($singleHost, $expected)
-	{
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost($singleHost);
-		$this->assertEquals($expected, $ccb->getServers());
+		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/cache_files/prod_info"));
+		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/cache_files/trade_info"));
+		LtCache::$servers = $ccb->getServers();
+
+		/**
+		 * 操作prod_info
+		 */
+		$cache1 = new LtCache;
+		$cache1->group = "prod_info";
+		$cache1->init();
+
+		$ch = $cache1->getCacheHandle();
+		$this->assertTrue($ch->add("key_1", "prod_1"));
+		$this->assertEquals("prod_1", $ch->get("key_1"));
+		$this->assertTrue($ch->update("key_1", "new_value"));
+		$this->assertEquals("new_value", $ch->get("key_1"));
+		$this->assertTrue($ch->del("key_1"));
+		$this->assertFalse($ch->get("key_1"));
+
+		/**
+		 * 操作trade_info
+		 * trade_info也用了key_1这个 键，但他并不会跟prod_info的key_1冲突，因为他们的host是不一样的
+		 */
+		$cache2 = new LtCache;
+		$cache2->group = "trade_info";
+		$cache2->init();
+
+		$ch = $cache2->getCacheHandle();
+		$this->assertTrue($ch->add("key_1", "prod_1"));
+		$this->assertEquals("prod_1", $ch->get("key_1"));
+		$this->assertTrue($ch->update("key_1", "new_value"));
+		$this->assertEquals("new_value", $ch->get("key_1"));
+		$this->assertTrue($ch->del("key_1"));
+		$this->assertFalse($ch->get("key_1"));
 	}
 
 	/**
@@ -148,152 +132,71 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/cache_files/prod_info"));
 		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/cache_files/trade_info"));
 		//如果在同 一个目录下，需要用不同的key_prefix，防止key冲突
-		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "key_prefix" => 5, "host" => "/var/data/cache_files"));
-		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "key_prefix" => 6, "host" => "/var/data/cache_files"));
+		//$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "key_prefix" => 5, "host" => "/var/data/cache_files"));
+		//$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "key_prefix" => 6, "host" => "/var/data/cache_files"));
 
 		$this->assertEquals(
 		array(
-			"sys_group" => array(
-				"sys_node_1" => array(
+			"prod_cat" => array(
+				"node_0" => array(
 					"master" => array(
 						array(
-									"adapter"        => "apc",
+							"adapter"        => "apc",
+							"key_prefix"     => 1,
 						),
 					),
 				),
 			),
-			"user_group" => array(
-				"user_node_1" => array(
+			"geo_code" => array(
+				"node_0" => array(
 					"master" => array(
 						array(
-									"host"           => "10.0.1.1",
-									"port"           => 3306,
-									"username"       => "root",
-									"password"       => "123456",
-									"adapter"        => "mysqli",
-									"charset"        => "UTF-8",
-									"pconnect"       => false,
-									"connection_ttl" => 30,
-									"dbname"         => null,
-									"schema"         => "member_1",
-									"connection_adapter" => "mysqli",
-								  "sql_adapter"        => "mysql",
-						),
-					),
-				),
-				"user_node_2" => array(
-					"master" => array(
-						array(
-									"host"           => "10.0.1.1",
-									"port"           => 3306,
-									"username"       => "root",
-									"password"       => "123456",
-									"adapter"        => "mysqli",
-									"charset"        => "UTF-8",
-									"pconnect"       => false,
-									"connection_ttl" => 30,
-									"dbname"         => null,
-									"schema"         => "member_2",
-									"connection_adapter" => "mysqli",
-								  "sql_adapter"        => "mysql",
+							"adapter"        => "apc",
+							"key_prefix"     => 2,
 						),
 					),
 				),
 			),
-			"trade_group" => array(
-				"trade_node_1" => array(
+			"user_card" => array(
+				"node_0" => array(
 					"master" => array(
 						array(
-									"host"           => "10.0.2.1",
-									"port"           => 1521,
-									"username"       => "root",
-									"password"       => "123456",
-									"adapter"        => "oci",
-									"charset"        => "UTF-8",
-									"pconnect"       => true,
-									"connection_ttl" => 3600,
-									"dbname"         => "finance",
-									"schema"         => "trade",
-									"connection_adapter" => "oci",
-								  "sql_adapter"        => "oracle",
-						),
-						array(
-									"host"           => "10.0.2.2",
-									"port"           => 1521,
-									"username"       => "root",
-									"password"       => "123456",
-									"adapter"        => "oci",
-									"charset"        => "UTF-8",
-									"pconnect"       => true,
-									"connection_ttl" => 3600,
-									"dbname"         => "finance",
-									"schema"         => "trade",
-									"connection_adapter" => "oci",
-								  "sql_adapter"        => "oracle",
+							"adapter"        => "memcached",
+							"key_prefix"     => 3,
+							"host"           => "10.0.0.1",
+							"port"           => 11211,
 						),
 					),
 				),
-				"trade_node_2" => array(
+			),
+			"prod_stat" => array(
+				"node_0" => array(
 					"master" => array(
 						array(
-									"host"           => "10.0.2.3",
-									"port"           => 1521,
-									"username"       => "root",
-									"password"       => "123456",
-									"adapter"        => "oci",
-									"charset"        => "UTF-8",
-									"pconnect"       => true,
-									"connection_ttl" => 3600,
-									"dbname"         => "finance",
-									"schema"         => "trade",
-									"connection_adapter" => "oci",
-								  "sql_adapter"        => "oracle",
-						),
-						array(
-									"host"           => "10.0.2.4",
-									"port"           => 1521,
-									"username"       => "root",
-									"password"       => "123456",
-									"adapter"        => "oci",
-									"charset"        => "UTF-8",
-									"pconnect"       => true,
-									"connection_ttl" => 3600,
-									"dbname"         => "finance",
-									"schema"         => "trade",
-									"connection_adapter" => "oci",
-								  "sql_adapter"        => "oracle",
+							"adapter"        => "memcached",
+							"key_prefix"     => 4,
+							"host"           => "10.0.0.1",
+							"port"           => 11211,
 						),
 					),
 				),
-				"trade_node_3" => array(
+			),
+			"prod_info" => array(
+				"node_0" => array(
 					"master" => array(
 						array(
-									"host"           => "10.0.2.5",
-									"port"           => 1521,
-									"username"       => "root",
-									"password"       => "123456",
-									"adapter"        => "oci",
-									"charset"        => "UTF-8",
-									"pconnect"       => true,
-									"connection_ttl" => 3600,
-									"dbname"         => "finance",
-									"schema"         => "trade",
-									"connection_adapter" => "oci",
-								  "sql_adapter"        => "oracle",
+							"adapter"        => "phps",
+							"host"           => "/var/data/cache_files/prod_info",
 						),
+					),
+				),
+			),
+			"trade_info" => array(
+				"node_0" => array(
+					"master" => array(
 						array(
-									"host"           => "10.0.2.6",
-									"port"           => 1521,
-									"username"       => "root",
-									"password"       => "123456",
-									"adapter"        => "oci",
-									"charset"        => "UTF-8",
-									"pconnect"       => true,
-									"connection_ttl" => 3600,
-									"dbname"         => "finance",
-									"schema"         => "trade",
-									"connection_adapter" => "oci",
-								  "sql_adapter"        => "oracle",
+							"adapter"        => "phps",
+							"host"           => "/var/data/cache_files/trade_info",
 						),
 					),
 				),

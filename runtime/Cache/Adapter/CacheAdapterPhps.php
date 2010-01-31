@@ -2,12 +2,18 @@
 class LtCacheAdapterPhps implements LtCacheAdapter
 {
 	protected $cacheFileRoot;
+	protected $keyPrefix;
 
 	public function connect($hostConf)
 	{	
 		if(isset($hostConf["host"]))
 		{
-			$this->cacheFileRoot= rtrim($hostConf["host"], '\\/') . DIRECTORY_SEPARATOR;
+			$this->cacheFileRoot = rtrim($hostConf["host"], '\\/') . DIRECTORY_SEPARATOR;
+			if (isset($hotConf["key_prefix"]))
+			{
+				$this->cacheFileRoot .= $hotConf["key_prefix"] . DIRECTORY_SEPARATOR;
+				
+			}
 			return true;
 		}
 		else
