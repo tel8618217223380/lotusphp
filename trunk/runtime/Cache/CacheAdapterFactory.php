@@ -2,8 +2,7 @@
 class LtCacheAdapterFactory
 {
 	public function getConnectionAdapter($adapter)
-	{
-	
+	{	
 		$adapterClassName = "LtCacheAdapter" . ucfirst($adapter);
 		if(!class_exists($adapterClassName))
 		{

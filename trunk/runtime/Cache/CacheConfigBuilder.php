@@ -37,14 +37,8 @@ class LtCacheConfigBuilder
 				trigger_error("No db adapter specified");
 			}
 			$ref = $this->defaultConfig;
-			if (isset($this->defaultAdapterConfigs[$this->adapters[$hostConfig["adapter"]]["sql_adapter"]]))
-			{
-				$ref = array_merge($ref, $this->defaultAdapterConfigs[$this->adapters[$hostConfig["adapter"]]["sql_adapter"]]);
-			}
 		}
 		$conf = array_merge($ref, $hostConfig);
-		$conf = array_merge($conf, $this->adapters[$conf["adapter"]]);
-		$conf = $this->convertDbnameToSchema($conf);
 		$this->servers[$groupId][$nodeId][$role][] = $conf;
 	}
 

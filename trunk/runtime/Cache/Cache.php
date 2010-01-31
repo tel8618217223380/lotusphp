@@ -1,7 +1,7 @@
 <?php
 class LtCache
 {
-	public $servers;
+	static public $servers;
 	public $group;
 	public $node;
 
@@ -9,12 +9,7 @@ class LtCache
 
 	public function init()
 	{
-		$this->servers["default_group"]["default_node"]["master"][] = array(
-			"adapter" => "phps",
-			"host"    => "/tmp/LtCache/",
-		);
 		$this->ch = new LtCacheHandle;
-		$this->ch->connectionManager->servers = $this->servers;
 		$this->ch->group = $this->getGroup();
 		$this->ch->node = $this->getNode();
 	}
@@ -36,9 +31,9 @@ class LtCache
 		{
 			return $this->group;
 		}
-		elseif (1 == count($this->servers))
+		elseif (1 == count(self::$servers))
 		{
-			return key($this->servers);
+			return key(self::$servers);
 		}
 	}
 
@@ -48,10 +43,9 @@ class LtCache
 		{
 			return $this->node;
 		}
-		$servers = $this->servers;
-		if (1 == count($servers[$this->getGroup()]))
+		if (1 == count(self::$servers[$this->getGroup()]))
 		{
-			return key($servers[$this->getGroup()]);
+			return key(self::$servers[$this->getGroup()]);
 		}
 	}
 }
