@@ -1,19 +1,24 @@
 <?php
 class LtCacheAdapterFile implements LtCacheAdapter
 {
-	public $options;
+	protected $cacheFileRoot;
 
-	protected function getCacheFile($key)
-	{
-		if(!isset($this->options["cache_file_root"]))
+	public function connect($hostConf)
+	{	
+		if(isset($hostConf["host"]))
 		{
-			trigger_error("Must set [cache_file_root]");
+			$this->cacheFileRoot = rtrim($hostConf["host"], '\\/') . DIRECTORY_SEPARATOR;
+			if (isset($hotConf["key_prefix"]))
+			{
+				$this->cacheFileRoot .= $hotConf["key_prefix"] . DIRECTORY_SEPARATOR;
+				
+			}
+			return true;
 		}
-		$token = md5($key);
-		$cachePath = rtrim($this->options["cache_file_root"], '\\/') . DIRECTORY_SEPARATOR
-		. substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2);
-		$cacheFile = $cachePath . DIRECTORY_SEPARATOR . 'file-' . $token. '.php';
-		return $cacheFile;
+		else
+		{
+			trigger_error("Must set [host]");
+		}
 	}
 
 	public function add($key, $value, $ttl=0)
@@ -67,16 +72,9 @@ class LtCacheAdapterFile implements LtCacheAdapter
 		}
 		else
 		{
-			// ----------------------------
-			// $data = include($cacheFile);
-			// -----------------------------
-			// 防止过多include文件被记录到php引擎
-			// 通过查看get_included_files()可知
-			// 同时防止过多include文件被apc缓存
-			// ------------------------------------------------
+			// 使用eval而不是eval,防止过多include文件被apc缓存
 			$data = file_get_contents($cacheFile,false,null,6);
 			$data = eval($data);
-			// ------------------------------------------------
 			if(0 != $data['ttl'] && time() > $data['ttl'])
 			{
 				@unlink($cacheFile);
@@ -87,5 +85,24 @@ class LtCacheAdapterFile implements LtCacheAdapter
 				return $data['value'];
 			}
 		}
+	}
+
+	public function update($key, $value, $ttl = 0)
+	{
+		if ($this->del($key))
+		{
+			return $this->add($key,$value,$ttl);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	protected function getCacheFile($key)
+	{
+		$token = md5($key);
+		return $this->cacheFileRoot	. substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .
+		DIRECTORY_SEPARATOR . 'file-' . $token. '.php';
 	}
 }

@@ -2,7 +2,6 @@
 class LtCacheAdapterPhps implements LtCacheAdapter
 {
 	protected $cacheFileRoot;
-	protected $keyPrefix;
 
 	public function connect($hostConf)
 	{	
