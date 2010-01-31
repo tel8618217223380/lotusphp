@@ -57,10 +57,10 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 				'{/if}',
 				), 
 			// loop
-			array('<?php if(is_array($data)) foreach($data as $v) { ?>',
+			array('<?php if(isset($data) && is_array($data)) foreach($data as $v) { ?>',
 				'{loop $data $v}',
 				), 
-			array('<?php if(is_array($data)) foreach($data as $k=>$v) { ?>',
+			array('<?php if(isset($data) && is_array($data)) foreach($data as $k=>$v) { ?>',
 				'{loop $data $k $v}',
 				), 
 			array("<?php } ?>",
