@@ -61,7 +61,10 @@ Navigator:
 中文 数字123之类, 字母abcDEF之类，注释内容被删除。	
 	 -->
 
-<!-- <pre>.test delete  -> [??] !</pre> -->
+<!-- test < delete -->
+<!-- test > delete -->
+<!-- test { delete -->
+<!-- test } delete -->
 <pre>
 // 单行注释
 /*
