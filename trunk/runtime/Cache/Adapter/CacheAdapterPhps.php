@@ -1,29 +1,29 @@
 <?php
 class LtCacheAdapterPhps implements LtCacheAdapter
 {
-	public $options;
+	protected $cacheFileRoot;
 
-	protected function getCacheFile($key)
-	{
-		if(!isset($this->options["cache_file_root"]))
+	public function connect($hostConf)
+	{	
+		if(isset($hostConf["host"]))
 		{
-			trigger_error("Must set [cache_file_root]");
+			$this->cacheFileRoot= rtrim($hostConf["host"], '\\/') . DIRECTORY_SEPARATOR;
+			return true;
 		}
-		$token = md5($key);
-		$cachePath = rtrim($this->options["cache_file_root"], '\\/') . DIRECTORY_SEPARATOR
-		. substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2);
-		$cacheFile = $cachePath . DIRECTORY_SEPARATOR . 'phps-' . $token. '.php';
-		return $cacheFile;
+		else
+		{
+			trigger_error("Must set [host]");
+		}
 	}
 
 	public function add($key, $value, $ttl=0)
 	{
-		if(false !== $this->get($key))
+		$cacheFile = $this->getCacheFile($key);
+		if(is_file($cacheFile))
 		{
 			trigger_error("Key Conflict: {$key}");
 			return false;
 		}
-		$cacheFile = $this->getCacheFile($key);
 		$cachePath = pathinfo($cacheFile,PATHINFO_DIRNAME);
 		if(!is_dir($cachePath))
 		{
@@ -46,7 +46,7 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 		}
 		else
 		{
-			return @unlink($cacheFile);
+			return unlink($cacheFile);
 		}
 	}
 	
@@ -63,7 +63,7 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 			$ttl = file_get_contents($cacheFile,false,null,13,10);
 			if(0 != $ttl && time() > $ttl)
 			{
-				@unlink($cacheFile);
+				unlink($cacheFile);
 				return false;
 			}
 			else
@@ -71,5 +71,24 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 				return unserialize(file_get_contents($cacheFile,false,null,23));
 			}
 		}
+	}
+
+	public function update($key, $value, $ttl = 0)
+	{
+		if ($this->del($key))
+		{
+			return $this->add($key,$value,$ttl);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	protected function getCacheFile($key)
+	{
+		$token = md5($key);
+		return $this->cacheFileRoot	. substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .
+		DIRECTORY_SEPARATOR . 'phps-' . $token. '.php';
 	}
 }

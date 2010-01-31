@@ -14,6 +14,21 @@ class LtDbConnectionManager
 	protected $sqlAdapter;
 	static $connectionPool;
 
+	public function getConnection($group, $node, $role = "master")
+	{
+		if (($connection = $this->getNewConnection($group, $node, $role)) ||($connection = $this->getCachedConnection($group, $node, $role)))
+		{
+			return array(
+				"connectionAdapter" => $this->connectionAdapter,
+				"connectionResource" => $connection
+			);
+		}
+		else
+		{
+			trigger_error("no db server can be connected");
+		}
+	}
+
 	protected function getConnectionKey($connConf)
 	{
 		return $connConf['adapter'] . $connConf['host'] . $connConf['port'] . $connConf['username'] . $connConf['dbname'];
@@ -93,20 +108,5 @@ class LtDbConnectionManager
 			}//end else
 		}//end while
 		return false;
-	}
-
-	public function getConnection($group, $node, $role = "master")
-	{
-		if (($connection = $this->getNewConnection($group, $node, $role)) ||($connection = $this->getCachedConnection($group, $node, $role)))
-		{
-			return array(
-				"connectionAdapter" => $this->connectionAdapter,
-				"connectionResource" => $connection
-			);
-		}
-		else
-		{
-			trigger_error("no db server can be connected");
-		}
 	}
 }
