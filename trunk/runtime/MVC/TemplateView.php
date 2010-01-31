@@ -10,13 +10,15 @@ class LtTemplateView
 
 	public $autoCompile; // bool
 	public $component; // bool
+	private $tpl_include_files;
+
 	public function __construct()
 	{
 		/**
 		 * 自动编译通过对比文件修改时间确定是否编译,
 		 * 当禁止自动编译时, 需要手工删除编译后的文件来重新编译.
 		 * 
-		 * @todo 尚不支持component include自动编译
+		 * 支持component include自动编译
 		 */
 		$this->autoCompile = true;
 		$this->component = false;
@@ -24,15 +26,21 @@ class LtTemplateView
 
 	public function render()
 	{
+		if (empty($this->compiledDir))
+		{
+			$this->compiledDir = dirname($this->templateDir) . "/viewTpl/";
+		}
+		if (empty($this->autoCompile))
+		{
+			$this->autoCompile = true;
+		}
 		if (!empty($this->layout))
 		{
 			include $this->template(true);
 		}elseif ($this->component)
-		{
-			/**
-			 * component在模板中写{component module action} 
-			 * 实现合并成一个文件, 不需要include
-			 */
+		{ 
+			// component在模板中写{component module action}
+			// 实现合并成一个文件, 不需要include
 		}
 		else
 		{
@@ -63,13 +71,16 @@ class LtTemplateView
 		{
 			if ($this->autoCompile)
 			{
-				if (@filemtime($tplfile) <= @filemtime($objfile))
+				$iscompile = true;
+				$tpl_include_files = include($objfile);
+				$last_modified_time = array();
+				foreach($tpl_include_files as $f)
+				{
+					$last_modified_time[] = filemtime($f);
+				}
+				if (filemtime($objfile) == max($last_modified_time))
 				{
 					$iscompile = false;
-				}
-				else
-				{
-					$iscompile = true;
 				}
 			}
 			else
@@ -84,6 +95,8 @@ class LtTemplateView
 		}
 		if ($iscompile)
 		{
+			$this->tpl_include_files[] = $objfile;
+			$this->tpl_include_files[] = $tplfile;
 			$dir = pathinfo($objfile, PATHINFO_DIRNAME);
 			if (!is_dir($dir))
 			{
@@ -98,6 +111,17 @@ class LtTemplateView
 				trigger_error('Template file Not found or have no access!', E_USER_ERROR);
 			}
 			$str = $this->parse($str);
+			if ($this->autoCompile)
+			{
+				$prefix = "<?php if(\$iscompile) return " . var_export(array_unique($this->tpl_include_files), true) . ";?>";
+				$prefix = preg_replace("/([\r\n])+/", "\r\n", $prefix);
+			}
+			else
+			{
+				$prefix = '';
+			}
+			$postfix = "\r\n<!--Template compilation time : " . date('Y-m-d H:i:s') . "-->\r\n";
+			$str = $prefix . $str . $postfix;
 			file_put_contents($objfile, $str);
 		}
 		return $objfile;
@@ -201,7 +225,7 @@ class LtTemplateView
 		// 删除 {} 前后的 html 注释 <!--  -->
 		$str = preg_replace("/\<\!\-\-\s*\{(.+?)\}\s*\-\-\>/s", "{\\1}", $str);
 		$str = preg_replace("/\<\!\-\-\s*\-\-\>/s", "", $str); 
-		// 删除 html注释 存在 < { 就不删除 
+		// 删除 html注释 存在 < { 就不删除
 		$str = preg_replace("/\<\!\-\-\s*[^\<\{]*\s*\-\-\>/s", "", $str);
 		if ($clear)
 		{
@@ -236,14 +260,12 @@ class LtTemplateView
 
 	/**
 	 * 解析多个{include path/file}合并成一个文件
-	 * @example 
-	 * {include 'debug_info'}
+	 * 
+	 * @example {include 'debug_info'}
 	 * {include 'debug_info.php'}
 	 * {include "debug_info"}
 	 * {include "debug_info.php"}
 	 * {include $this->templateDir . $this->template . '.php'}
-	 * 
-	 * @todo 实现修改子模板后自动重新编译
 	 */
 	protected function parseSubTpl($str)
 	{
@@ -256,19 +278,20 @@ class LtTemplateView
 				if (is_file($subfile))
 				{
 					$subTpl = file_get_contents($subfile);
-				}
-				elseif (is_file($this->templateDir.$subfile))
-				{
+					$this->tpl_include_files[] = $subfile;
+				}elseif (is_file($this->templateDir . $subfile))
+				{ 
 					// 追加当前目录查找
-					$subTpl = file_get_contents($this->templateDir.$subfile);
-				}
-				elseif (is_file($this->templateDir.$subfile.'.php'))
-				{
+					$subTpl = file_get_contents($this->templateDir . $subfile);
+					$this->tpl_include_files[] = $this->templateDir . $subfile;
+				}elseif (is_file($this->templateDir . $subfile . '.php'))
+				{ 
 					// 追加.php后缀查找
-					$subTpl = file_get_contents($this->templateDir.$subfile.'.php');
+					$subTpl = file_get_contents($this->templateDir . $subfile . '.php');
+					$this->tpl_include_files[] = $this->templateDir . $subfile . '.php';
 				}
 				else
-				{
+				{ 
 					// 找不到文件
 					$subTpl = 'SubTemplate not found:' . $subfile;
 				}
@@ -282,8 +305,6 @@ class LtTemplateView
 
 	/**
 	 * 解析多个{component module action}合并成一个文件
-	 * 
-	 * @todo 实现修改子模板后自动重新编译
 	 */
 	protected function parseComponent($str)
 	{
@@ -297,6 +318,7 @@ class LtTemplateView
 				if (is_file($comfile))
 				{
 					$subTpl = file_get_contents($comfile);
+					$this->tpl_include_files[] = $comfile;
 				}
 				else
 				{

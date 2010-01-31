@@ -18,6 +18,7 @@ abstract class LtAction
 	 */
 	public $viewDir;
 	public $viewTplDir;
+	public $viewTplAutoCompile;
 
 	/**
 	 * The dtd config for validator
@@ -110,10 +111,7 @@ abstract class LtAction
 	 */
 	protected function afterConstruct()
 	{
-		if (empty($this->viewTplDir))
-		{
-			$this->viewTplDir = dirname($this->viewDir) . "/viewTpl/";
-		}
+
 	}
 
 	/**
@@ -204,6 +202,7 @@ abstract class LtAction
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
 				$this->view->compiledDir = $this->viewTplDir;
+				$this->view->autoCompile = $this->viewTplAutoCompile;
 				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["action"];
 				$this->view->render();
 				break;

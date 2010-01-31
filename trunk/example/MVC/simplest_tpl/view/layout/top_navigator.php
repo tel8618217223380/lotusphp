@@ -1,5 +1,7 @@
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
 	<title>{$data.title}Using View</title>
 	<style type="text/css">
 /* Global CSS */
@@ -11,8 +13,8 @@
 	} 
 -->
 	/*
-	ע�����ݱ�ģ������ɾ��
-	ģ��������css{}��Ҫ�пո�,��ֹ��������
+	注释内容被模板引擎删除
+	模板引擎中css{}内要有空格,防止解析出错
 	*/
 <!--[if IE]>
 body{ margin:0;padding:0; }
@@ -20,13 +22,13 @@ body{ margin:0;padding:0; }
 
 	</style>
 <script type="text/javascript">
-// ע�����ݱ�ģ������ɾ��
+// 注释内容被模板引擎删除
 //<![CDATA[
 var logged_in_user_email = null;
 //]]>
 
 	/*
-	ע�����ݱ�ģ������ɾ��
+	注释内容被模板引擎删除
 	*/
 <!--//<![CDATA[
  var codesite_token = null;
@@ -58,7 +60,7 @@ Navigator:
 <hr />
 
 <!-- 
-���� ����123֮��, ��ĸabcDEF֮�࣬ע�����ݱ�ɾ����	
+中文 数字123之类, 字母abcDEF之类，注释内容被删除。	
 	 -->
 
 <!-- test < delete -->
@@ -66,24 +68,24 @@ Navigator:
 <!-- test { delete -->
 <!-- test } delete -->
 <pre>
-// ����ע��
+// 单行注释
 /*
-����
-ע��
-�п����ǳ�����ʾ����
-����
+多行
+注释
+有可能是常规显示内容
+保留
 */
 <!--  -->
 </pre>
 
 <script type="text/javascript">
-// ע�����ݱ�ģ������ɾ��
+// 注释内容被模板引擎删除
 //<![CDATA[
 var logged_in_user_email = null;
 //]]>
 
 	/*
-	ע�����ݱ�ģ������ɾ��
+	注释内容被模板引擎删除
 	*/
 <!--//<![CDATA[
  var codesite_token = null;
