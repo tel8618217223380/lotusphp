@@ -105,6 +105,11 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 			array('<?php if (isset($this->code)) echo $this->code;?>',
 				'{$code}',
 				),
+
+			array('totalTime: <?php echo $totalTime;?>s  memoryUsage: <?php echo $memory_usage;?>',
+				'totalTime: {$totalTime}s  memoryUsage: {$memory_usage}',
+				),
+
 			array('<?php if (isset($this->message)) echo $this->message;?>',
 				'{$message}',
 				),
