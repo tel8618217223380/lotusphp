@@ -18,6 +18,7 @@ abstract class LtComponent
 	 */
 	public $viewDir;
 	public $viewTplDir;
+	public $viewTplAutoCompile;
 	/**
 	 * A flag to indicate if subclass call LtComponent::__construct()
 	 * 
@@ -65,10 +66,7 @@ abstract class LtComponent
 
 	protected function afterConstruct()
 	{
-		if (empty($this->viewTplDir))
-		{
-			$this->viewTplDir = dirname($this->viewDir) . "/viewTpl/";
-		}
+
 	}
 	/**
 	 * Do something before subClass::execute().
@@ -105,6 +103,7 @@ abstract class LtComponent
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
 				$this->view->compiledDir = $this->viewTplDir;
+				$this->view->autoCompile = $this->viewTplAutoCompile;
 				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["component"];
 				$this->view->render();
 				break;

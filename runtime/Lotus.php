@@ -111,6 +111,7 @@ class Lotus
 		$dispatcher = new LtDispatcher;
 		$dispatcher->viewDir = $this->option['view_dir'];
 		$dispatcher->viewTplDir = $this->option['view_tpl_dir'];
+		$dispatcher->viewTplAutoCompile = $this->option['view_tpl_auto_compile'];
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}
 
