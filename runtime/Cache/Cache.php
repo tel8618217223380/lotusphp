@@ -1,74 +1,57 @@
 <?php
 class LtCache
 {
-	protected $cacheHandle;
+	public $servers;
+	public $group;
+	public $node;
 
-	public $namespaceMapping;
-
-	public $conf;
-
-	public function __construct()
-	{
-		$this->conf = new LtCacheConfig;
-	}
+	protected $ch;
 
 	public function init()
 	{
-		$adapterClassName = "LtCacheAdapter" . ucfirst($this->conf->adapter);
-		if(!class_exists($adapterClassName))
+		$this->servers["default_group"]["default_node"]["master"][] = array(
+			"adapter" => "phps",
+			"host"    => "/tmp/LtCache/",
+		);
+		$this->ch = new LtCacheHandle;
+		$this->ch->connectionManager->servers = $this->servers;
+		$this->ch->group = $this->getGroup();
+		$this->ch->node = $this->getNode();
+	}
+
+	public function getCacheHandle()
+	{
+		return $this->ch;
+	}
+
+	public function changeNode($node)
+	{
+		$this->node = $node;
+		$this->dbh->node = $node;
+	}
+
+	protected function getGroup()
+	{
+		if ($this->group)
 		{
-			trigger_error('Invalid adapter');
+			return $this->group;
 		}
-		$this->cacheHandle = new $adapterClassName;
-		if (property_exists($this->cacheHandle, "options"))
+		elseif (1 == count($this->servers))
 		{
-			$this->cacheHandle->options = $this->conf->options;
+			return key($this->servers);
 		}
 	}
 
-	public function add($key, $value, $ttl = 0, $namespace='')
+	protected function getNode()
 	{
-		return $this->cacheHandle->add($this->getRealKey($namespace, $key), $value, $ttl);
-	}
-
-	public function del($key, $namespace='')
-	{
-		return $this->cacheHandle->del($this->getRealKey($namespace, $key));
-	}
-
-	public function get($key, $namespace='')
-	{
-		return $this->cacheHandle->get($this->getRealKey($namespace, $key));
-	}
-
-	public function update($key, $value, $ttl = 0, $namespace='')
-	{
-		$realKey = $this->getRealKey($namespace, $key);
-		if ($result = $this->cacheHandle->del($realKey))
+		if ($this->node)
 		{
-			return $this->cacheHandle->add($realKey, $value, $ttl);
+			return $this->node;
 		}
-		return $result;
-	}
-
-	protected function getRealKey($namespace, $key)
-	{
-		$keyPrefix = "";
-		if ($this->namespaceMapping)
+		$servers = $this->servers;
+		if (1 == count($servers[$this->getGroup()]))
 		{
-			if (isset($this->namespaceMapping[$namespace]))
-			{
-				$keyPrefix = $this->namespaceMapping[$namespace];
-			}
-			else
-			{
-				trigger_error("Invalid namespace: $namespace, please register it first");
-			}
+			return key($servers[$this->getGroup()]);
 		}
-		else
-		{
-			$keyPrefix = sprintf("%u", crc32($namespace));
-		}
-		return $keyPrefix.$key;
 	}
 }

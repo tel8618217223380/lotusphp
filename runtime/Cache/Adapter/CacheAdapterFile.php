@@ -1,9 +1,4 @@
 <?php
-/**
-var_export不支持object
-参考: http://php.net/manual/en/function.var-export.php
-serialize支持object
-*/
 class LtCacheAdapterFile implements LtCacheAdapter
 {
 	public $options;
