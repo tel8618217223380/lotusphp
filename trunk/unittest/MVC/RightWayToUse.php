@@ -160,7 +160,7 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 				), 
 			// config读取
 			array("<?php echo C('LtConfig')->get('baseurl');?>",
-				"{config('baseurl')}",
+				"{conf('baseurl')}",
 				), 
 
 			// ADD other
