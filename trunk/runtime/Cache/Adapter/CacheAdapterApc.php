@@ -11,6 +11,7 @@ class LtCacheAdapterApc implements LtCacheAdapter
 		}
 		return true;
 	}
+
 	public function add($key, $value, $ttl=0)
 	{
 		return apc_add($this->getRealKey($key), $value, $ttl);

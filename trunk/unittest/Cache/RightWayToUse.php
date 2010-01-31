@@ -96,7 +96,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	 * 适用场景：
 	 * 一个类似淘宝、ebay的电子商务网站
 	 */
-	public function testConfigBuilderDistDb()
+	public function testConfigBuilderDistCache()
 	{
 		$ccb = new LtCacheConfigBuilder;
 
