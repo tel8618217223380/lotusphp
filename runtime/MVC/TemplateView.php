@@ -236,6 +236,14 @@ class LtTemplateView
 
 	/**
 	 * 解析多个{include path/file}合并成一个文件
+	 * @example 
+	 * {include debug_info}
+	 * {include debug_info.php}
+	 * {include 'debug_info'}
+	 * {include 'debug_info.php'}
+	 * {include "debug_info"}
+	 * {include "debug_info.php"}
+	 * {include $this->templateDir . $this->template . '.php'}
 	 * 
 	 * @todo 实现修改子模板后自动重新编译
 	 */
@@ -246,13 +254,25 @@ class LtTemplateView
 		{
 			foreach($tvar[1] as $k => $subfile)
 			{
+				$subfile = '"'. trim($subfile,'\'"') .'"';
 				eval("\$subfile = $subfile;");
 				if (is_file($subfile))
 				{
 					$subTpl = file_get_contents($subfile);
 				}
+				elseif (is_file($this->templateDir.$subfile))
+				{
+					// 追加当前目录查找
+					$subTpl = file_get_contents($this->templateDir.$subfile);
+				}
+				elseif (is_file($this->templateDir.$subfile.'.php'))
+				{
+					// 追加.php后缀查找
+					$subTpl = file_get_contents($this->templateDir.$subfile.'.php');
+				}
 				else
 				{
+					// 找不到文件
 					$subTpl = 'SubTemplate not found:' . $subfile;
 				}
 				$str = str_replace($tvar[0][$k], $subTpl, $str);
