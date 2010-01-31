@@ -123,8 +123,8 @@ class LtTemplateView
 		$str = preg_replace("/\{elseif\s+(.+?)\}/", "<?php } elseif (\\1) { ?>", $str);
 		$str = preg_replace("/\{\/if\}/", "<?php } ?>", $str); 
 		// loop
-		$str = preg_replace("/\{loop\s+(\S+)\s+(\S+)\}/", "<?php if(is_array(\\1)) foreach(\\1 as \\2) { ?>", $str);
-		$str = preg_replace("/\{loop\s+(\S+)\s+(\S+)\s+(\S+)\}/", "<?php if(is_array(\\1)) foreach(\\1 as \\2=>\\3) { ?>", $str);
+		$str = preg_replace("/\{loop\s+(\S+)\s+(\S+)\}/e", "\$this->addquote('<?php if(isset(\\1) && is_array(\\1)) foreach(\\1 as \\2) { ?>')", $str);
+		$str = preg_replace("/\{loop\s+(\S+)\s+(\S+)\s+(\S+)\}/e", "\$this->addquote('<?php if(isset(\\1) && is_array(\\1)) foreach(\\1 as \\2=>\\3) { ?>')", $str);
 		$str = preg_replace("/\{\/loop\}/", "<?php } ?>", $str); 
 		// url生成
 		$str = preg_replace("/\{url\(([^}]+)\)\}/", "<?php echo C('LtUrl')->generate(\\1);?>", $str); 
