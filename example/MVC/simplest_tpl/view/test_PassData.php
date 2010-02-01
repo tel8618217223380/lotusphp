@@ -1,14 +1,14 @@
 <fieldset>
 	<legend>Data passed by <em>$this-&gt;data</em></legend>
-	<xmp>
+	<pre>
 	<?php print_r($this->data) ?>
-	</xmp>
+	</pre>
 </fieldset>
 
 <fieldset>
 	<legend>Data passed by <em>$this-&gt;code</em> <em>$this-&gt;message</em></legend>
-	<xmp>
+	<pre>
 		code: {$code}
 		message: {$message}
-	</xmp>
+	</pre>
 </fieldset>
