@@ -4,13 +4,13 @@ class Lotus
 	/**
 	 * Lotus Option array
 	 * 
-	 * @var array array(
-	 * )
+	 * @var array array();
 	 */
 	public $option;
 	public $devMode = true;
 	public $mvcMode = false;
 	protected $lotusRuntimeDir;
+	protected $cacheHandle;
 
 	public function __construct()
 	{
@@ -19,6 +19,34 @@ class Lotus
 
 	public function init()
 	{
+		/**
+		 * Init Cache component to sotre LtAutoloader, LtConfig data
+		 */
+		require_once $this->lotusRuntimeDir . "Cache/Cache.php";
+		require_once $this->lotusRuntimeDir . "Cache/CacheAdapterFactory.php";
+		require_once $this->lotusRuntimeDir . "Cache/CacheConfigBuilder.php";
+		require_once $this->lotusRuntimeDir . "Cache/CacheConnectionManager.php";
+		require_once $this->lotusRuntimeDir . "Cache/CacheHandle.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapter.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterApc.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterEAccelerator.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterFile.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterMemcached.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterPhps.php";
+		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
+
+		$ccb = new LtCacheConfigBuilder;
+		/**
+		@todo ¹¹Ôì»º´æÅäÖÃ
+		*/
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/cache_files/"));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$this->cacheHandle = $cache->getCacheHandle();
+		/**
+		 * Init Cache end.
+		 */
 		$this->prepareAutoloader();
 		$this->prepareConfig();
 		/**
@@ -31,7 +59,9 @@ class Lotus
 				$this->$method();
 			}
 		}
-		// is MVC
+		/**
+		 * run MVC
+		 */
 		$this->mvcMode && $this->runMVC();
 	}
 
@@ -42,29 +72,7 @@ class Lotus
 		 */
 		require_once $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
 		require_once $this->lotusRuntimeDir . "Autoloader/AutoloaderConfig.php";
-		require_once $this->lotusRuntimeDir . "Cache/Cache.php";
-		require_once $this->lotusRuntimeDir . "Cache/CacheConfig.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapter.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterApc.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterEAccelerator.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterFile.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterPhps.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
 		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
-
-		/**
-		 * Init Cache component to sotre LtAutoloader, LtConfig data
-		 */
-		$cache = LtObjectUtil::singleton("LtCache");
-		if (isset($this->option["cache_adapter"]))
-		{
-			$cache->conf->adapter = $this->option["cache_adapter"];
-		}
-		if (isset($this->option["cache_options"]))
-		{
-			$cache->conf->options = $this->option["cache_options"];
-		}
-		$cache->init();
 
 		/**
 		 * Prepare autoloader to load all lotus components and user-defined libraries;
@@ -77,13 +85,13 @@ class Lotus
 		$autoloader = new LtAutoloader;
 		$autoloader->autoloadPath = $autoloadDirs;
 
-		if(!empty($this->option["autoload_cache_dir"]))
+		if (!empty($this->option["autoload_cache_dir"]))
 		{
 			$autoloader->conf->mappingFileRoot = $this->option["autoload_cache_dir"];
 		}
 		if (!$this->devMode)
 		{
-			LtAutoloader::$storeHandle = LtObjectUtil::singleton("LtCache");
+			LtAutoloader::$storeHandle = $this->cacheHandle;
 		}
 		$autoloader->init();
 	}
@@ -93,7 +101,7 @@ class Lotus
 		$conf = LtObjectUtil::singleton("LtConfig");
 		if (!$this->devMode)
 		{
-			LtConfig::$storeHandle = LtObjectUtil::singleton("LtCache");
+			LtConfig::$storeHandle = $this->cacheHandle;
 		}
 		if (isset($this->option["config_file"]))
 		{
@@ -103,15 +111,19 @@ class Lotus
 	}
 
 	protected function runMVC()
-	{ 
-		// router
+	{
+		/**
+		 * router
+		 */
 		$router = LtObjectUtil::singleton('LtRouter');
-		$router->init(); 
-		// mvc
+		$router->init();
+		/**
+		 * mvc
+		 */
 		$dispatcher = new LtDispatcher;
 		$dispatcher->viewDir = $this->option['view_dir'];
 		$dispatcher->viewTplDir = $this->option['view_tpl_dir'];
-		$dispatcher->viewTplAutoCompile = $this->option['view_tpl_auto_compile'];
+		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}
 

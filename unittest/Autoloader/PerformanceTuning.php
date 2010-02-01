@@ -4,11 +4,15 @@
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 require_once $lotusHome . "runtime/Cache/Cache.php";
-require_once $lotusHome . "runtime/Cache/CacheConfig.php";
+require_once $lotusHome . "runtime/Cache/CacheAdapterFactory.php";
+require_once $lotusHome . "runtime/Cache/CacheConfigBuilder.php";
+require_once $lotusHome . "runtime/Cache/CacheConnectionManager.php";
+require_once $lotusHome . "runtime/Cache/CacheHandle.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapter.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterApc.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterEAccelerator.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterFile.php";
+require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterMemcached.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterPhps.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";
 class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
@@ -18,10 +22,13 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		/**
 		 * 初始化LtCache，LtAutoloader用LtCache作存储层的时候性能才会提高
 		 */
-		$cacheHandle = new LtCache;
-		$cacheHandle->conf->adapter = 'phps';
-		$cacheHandle->init();
-		
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/cache_files/"));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$cacheHandle = $cache->getCacheHandle();
+
 		//准备autoloadPath
 		$autoloadPath = array(
 			dirname(__FILE__) . "/test_data/class_dir_1",
@@ -42,10 +49,10 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		$this->assertTrue(class_exists("HelloWorld"));
 		
 		/**
-		 * 运行200次，要求在1秒内运行完
+		 * 运行150次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
-		$times = 200;
+		$times = 150;
 		$startTime = microtime(true);
 		for($i = 0; $i < $times; $i++)
 		{

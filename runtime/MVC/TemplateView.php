@@ -100,7 +100,7 @@ class LtTemplateView
 			$dir = pathinfo($objfile, PATHINFO_DIRNAME);
 			if (!is_dir($dir))
 			{
-				if (!@mkdir($dir, 0777, true))
+				if (!mkdir($dir, 0777, true))
 				{
 					trigger_error("Can not create $dir");
 				}
