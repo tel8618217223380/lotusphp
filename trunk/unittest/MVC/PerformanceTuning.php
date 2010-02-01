@@ -1,19 +1,65 @@
 <?php
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
-require_once $lotusHome . "runtime/Cache/Cache.php";
-require_once $lotusHome . "runtime/Cache/CacheConfig.php";
-require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapter.php";
-require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterApc.php";
-require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterEAccelerator.php";
-require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterFile.php";
-require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterPhps.php";
-require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";
+
 class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 {
 	/**
-	 * 本测试展示了如何用LtCache给MVC提高性能
+	 * 模板编译性能测试
 	 */
 	public function testPerformance()
 	{
+		/**
+		 * 加载Action类文件
+		 */
+		$appDir = dirname(__FILE__) . "/test_data/simplest_app";
+		require_once "$appDir/action/UserAddAction.php";
+		require_once "$appDir/action/stockPriceComponent.php";
+		/**
+		 * 实例化
+		 */
+		$dispatcher = new LtDispatcher;
+		$dispatcher->viewDir = "$appDir/view/";
+		$dispatcher->dispatchAction("User", "Add");
+		touch("$appDir/view/User_Add.php"); 
+		unlink("$appDir/viewTpl/layout/top_navigator-User_Add.php");
+
+		/**
+		 * 运行100次，要求在1秒内运行完
+		 */
+		$base_memory_usage = memory_get_usage();
+		$times = 100;
+		$startTime = microtime(true);
+		for($i = 0; $i < $times; $i++)
+		{
+			/**
+			 * 实例化
+			 */
+			$dispatcher = new LtDispatcher;
+			$dispatcher->viewDir = "$appDir/view/";
+			ob_start();
+			$dispatcher->dispatchAction("User", "Add");
+			ob_clean();
+			touch("$appDir/view/User_Add.php"); 
+			/**
+			@todo优化文件cache,采用直接覆盖而不删除文件更新内容
+			*/
+			// unlink("$appDir/viewTpl/layout/top_navigator-User_Add.php");
+		}
+		$endTime = microtime(true);
+		$totalTime = round(($endTime - $startTime), 6);
+		$averageTime = round(($totalTime / $times), 6);
+
+		$memory_usage = memory_get_usage() - $base_memory_usage;
+		$memory_usage = ($memory_usage >= 1048576) ? round((round($memory_usage / 1048576 * 100) / 100), 2) . 'MB' : (($memory_usage >= 1024) ? round((round($memory_usage / 1024 * 100) / 100), 2) . 'KB' : $memory_usage . 'BYTES');
+
+		$averageMemory = round(($memory_usage / $times), 2);
+		$averageMemory = ($averageMemory >= 1048576) ? round((round($averageMemory / 1048576 * 100) / 100), 2) . 'MB' : (($averageMemory >= 1024) ? round((round($averageMemory / 1024 * 100) / 100), 2) . 'KB' : $averageMemory . 'BYTES');
+
+		echo "\n---------------------autoloader--------------------------\n";
+		echo "times      \t$times\n";
+		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
+		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
+		echo "\n---------------------------------------------------------\n";
+		$this->assertTrue(1 > $totalTime);
 	}
 }

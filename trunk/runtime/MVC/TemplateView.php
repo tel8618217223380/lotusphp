@@ -37,10 +37,12 @@ class LtTemplateView
 		if (!empty($this->layout))
 		{
 			include $this->template(true);
-		}elseif ($this->component)
+		}
+		elseif ($this->component)
 		{ 
 			// component在模板中写{component module action}
 			// 实现合并成一个文件, 不需要include
+			return;
 		}
 		else
 		{
