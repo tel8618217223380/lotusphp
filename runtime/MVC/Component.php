@@ -94,7 +94,7 @@ abstract class LtComponent
 				{
 					$this->view = new LtTemplateView;
 				}
-				$this->view->component = true;
+				$this->view->component = true; // ÊÇ·ñ×é¼ş
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;
