@@ -113,7 +113,7 @@ class LtTemplateView
 			$str = $this->parse($str);
 			if ($this->autoCompile)
 			{
-				$prefix = "<?php if(\$iscompile) return " . var_export(array_unique($this->tpl_include_files), true) . ";?>";
+				$prefix = "<?php\r\nif(isset(\$iscompile)&&true==\$iscompile)\r\nreturn " . var_export(array_unique($this->tpl_include_files), true) . ";?>";
 				$prefix = preg_replace("/([\r\n])+/", "\r\n", $prefix);
 			}
 			else
