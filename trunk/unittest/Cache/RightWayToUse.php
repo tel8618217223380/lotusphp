@@ -117,7 +117,9 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 如果使用同一个memcache服务器（主机地址和端口都相同 ），用不同的key_prefix，防止key冲突
 		 */
 		$ccb->addHost("user_card", "node_0", "master", array("adapter" => "memcached", "key_prefix" => 3, "host" => "10.0.0.1", "port" => 11211));
+		$ccb->addHost("user_card", "node_1", "master", array("adapter" => "memcached", "key_prefix" => 3, "host" => "10.0.0.2", "port" => 11211));
 		$ccb->addHost("prod_stat", "node_0", "master", array("adapter" => "memcached", "key_prefix" => 4, "host" => "10.0.0.1", "port" => 11211));
+		$ccb->addHost("prod_stat", "node_1", "master", array("adapter" => "memcached", "key_prefix" => 4, "host" => "10.0.0.2", "port" => 11211));
 		//如果全用不同的memcache服务器（主机地址或端口不相同 ），可以不指定key_prefix
 		//$ccb->addHost("user_card", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11211));
 		//$ccb->addHost("prod_stat", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11212));
@@ -168,6 +170,16 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 						),
 					),
 				),
+				"node_1" => array(
+					"master" => array(
+						array(
+							"adapter"        => "memcached",
+							"key_prefix"     => 3,
+							"host"           => "10.0.0.2",
+							"port"           => 11211,
+						),
+					),
+				),
 			),
 			"prod_stat" => array(
 				"node_0" => array(
@@ -176,6 +188,16 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 							"adapter"        => "memcached",
 							"key_prefix"     => 4,
 							"host"           => "10.0.0.1",
+							"port"           => 11211,
+						),
+					),
+				),
+				"node_1" => array(
+					"master" => array(
+						array(
+							"adapter"        => "memcached",
+							"key_prefix"     => 4,
+							"host"           => "10.0.0.2",
 							"port"           => 11211,
 						),
 					),
