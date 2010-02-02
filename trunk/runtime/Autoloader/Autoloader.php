@@ -18,17 +18,12 @@ class LtAutoloader
 		{
 			self::$storeHandle = new LtAutoloaderStore;
 		}
-		else
-		{
-			self::$namespace = md5(serialize($this->autoloadPath));
-			self::$storeHandle->namespaceMapping[self::$namespace] = sprintf("%u", crc32(self::$namespace));
-		} 
 		// Whether scanning directory
-		if (0 == self::$storeHandle->get(".class_total", self::$namespace) && 0 == self::$storeHandle->get(".function_total", self::$namespace))
+		if (0 == self::$storeHandle->get(".class_total") && 0 == self::$storeHandle->get(".function_total"))
 		{
-			self::$storeHandle->add(".class_total", 0, 0, self::$namespace);
-			self::$storeHandle->add(".function_total", 0, 0, self::$namespace);
-			self::$storeHandle->add(".functions", array(), 0, self::$namespace);
+			self::$storeHandle->add(".class_total", 0);
+			self::$storeHandle->add(".function_total", 0);
+			self::$storeHandle->add(".functions", array(), 0);
 			$this->autoloadPath = $this->preparePath($this->autoloadPath);
 			$autoloadPath = $this->autoloadPath;
 			foreach($autoloadPath as $key => $path)
@@ -52,7 +47,7 @@ class LtAutoloader
 
 	public function loadFunction()
 	{
-		if ($functionFiles = self::$storeHandle->get(".functions", self::$namespace))
+		if ($functionFiles = self::$storeHandle->get(".functions"))
 		{
 			foreach ($functionFiles as $functionFile)
 			{
@@ -63,7 +58,7 @@ class LtAutoloader
 
 	public function loadClass($className)
 	{
-		if ($classFile = self::$storeHandle->get(strtolower($className), self::$namespace))
+		if ($classFile = self::$storeHandle->get(strtolower($className)))
 		{
 			include($classFile);
 		}
@@ -214,7 +209,7 @@ class LtAutoloader
 	protected function addClass($className, $file)
 	{
 		$key = strtolower($className);
-		if ($existedClassFile = self::$storeHandle->get($key, self::$namespace))
+		if ($existedClassFile = self::$storeHandle->get($key))
 		{
 			trigger_error("duplicate class [$className] found in:\n$existedClassFile\n$file\n");
 			return false;
@@ -222,7 +217,7 @@ class LtAutoloader
 		else
 		{
 			self::$storeHandle->add($key, $file, 0, self::$namespace);
-			self::$storeHandle->update(".class_total", self::$storeHandle->get(".class_total", self::$namespace) + 1, 0, self::$namespace);
+			self::$storeHandle->update(".class_total", self::$storeHandle->get(".class_total") + 1);
 			return true;
 		}
 	}
@@ -239,8 +234,8 @@ class LtAutoloader
 		else
 		{
 			$this->functionFileMapping[$functionName] = $file;
-			self::$storeHandle->update(".functions", array_unique(array_values($this->functionFileMapping)), 0, self::$namespace);
-			self::$storeHandle->update(".function_total", count($this->functionFileMapping), 0, self::$namespace);
+			self::$storeHandle->update(".functions", array_unique(array_values($this->functionFileMapping)));
+			self::$storeHandle->update(".function_total", count($this->functionFileMapping));
 			return true;
 		}
 	}
@@ -285,15 +280,14 @@ class LtAutoloaderStore
 {
 	protected $stack;
 
-	public function add($key, $value, $ttl, $namespace)
+	public function add($key, $value, $ttl = 0)
 	{
-		$this->stack[$this->getRealKey($namespace, $key)] = $value;
+		$this->stack[$key] = $value;
 		return true;
 	}
 
-	public function del($key, $namespace)
+	public function del($key)
 	{
-		$key = $this->getRealKey($namespace, $key);
 		if (isset($this->stack[$key]))
 		{
 			unset($this->stack[$key]);
@@ -305,20 +299,14 @@ class LtAutoloaderStore
 		}
 	}
 
-	public function get($key, $namespace)
+	public function get($key)
 	{
-		$key = $this->getRealKey($namespace, $key);
 		return isset($this->stack[$key]) ? $this->stack[$key] : false;
 	}
 
-	public function update($key, $value, $ttl, $namespace)
+	public function update($key, $value, $ttl = 0)
 	{
-		$this->stack[$this->getRealKey($namespace, $key)] = $value;
+		$this->stack[$key] = $value;
 		return true;
-	}
-
-	protected function getRealKey($namespace, $key)
-	{
-		return sprintf("%u", crc32($namespace)) . $key;
 	}
 }
