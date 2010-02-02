@@ -29,7 +29,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/cache_files/"));
+		$ccb->addSingleHost(array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
 		LtCache::$servers = $ccb->getServers();
 
 		/**
@@ -204,7 +204,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	/**
 	 * 测试ttl
 	 */
-	public function testLtCacheTTL()
+	public function CacheTTL()
 	{
 		/**
 		 * 准备测试数据
