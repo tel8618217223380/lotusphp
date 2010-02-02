@@ -612,4 +612,10 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$dcb->getServers()
 		);//end $this->assertEquals
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

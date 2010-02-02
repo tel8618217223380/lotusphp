@@ -27,13 +27,12 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 		LtCache::$servers = $ccb->getServers();
 		$cache = new LtCache;
 		$cache->init();
-		$cacheHandle = $cache->getCacheHandle();
-		
-		//准备confif_file
+		$cacheHandle = $cache->getCacheHandle(); 
+		// 准备confif_file
 		$config_file = dirname(__FILE__) . "/test_data/conf.php";
-		
+
 		/**
-		 * 运行autoloader成功取到一个配置
+		 * 运行autoloader成功取到一个配置 
 		 * 这是为了证明：使用LtCache作为LtConfig的存储，功能是正常的
 		 */
 		$conf = new LtConfig;
@@ -41,7 +40,7 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 		$conf->configFile = $config_file;
 		$conf->init();
 		$this->assertEquals("localhost", $conf->get("db.conn.host"));
-		
+
 		/**
 		 * 运行200次，要求在1秒内运行完
 		 */
@@ -56,13 +55,13 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 			$conf->init();
 		}
 		$endTime = microtime(true);
-		$totalTime = round(($endTime-$startTime), 6);
-		$averageTime = round(($totalTime/$times), 6);
+		$totalTime = round(($endTime - $startTime), 6);
+		$averageTime = round(($totalTime / $times), 6);
 
 		$memory_usage = memory_get_usage() - $base_memory_usage;
 		$memory_usage = ($memory_usage >= 1048576) ? round((round($memory_usage / 1048576 * 100) / 100), 2) . 'MB' : (($memory_usage >= 1024) ? round((round($memory_usage / 1024 * 100) / 100), 2) . 'KB' : $memory_usage . 'BYTES');
-		
-		$averageMemory = round(($memory_usage/$times),2);
+
+		$averageMemory = round(($memory_usage / $times), 2);
 		$averageMemory = ($averageMemory >= 1048576) ? round((round($averageMemory / 1048576 * 100) / 100), 2) . 'MB' : (($averageMemory >= 1024) ? round((round($averageMemory / 1024 * 100) / 100), 2) . 'KB' : $averageMemory . 'BYTES');
 
 		echo "\n----------------------config-----------------------------\n";
@@ -71,5 +70,12 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
 		echo "\n---------------------------------------------------------\n";
 		$this->assertTrue(1 > $totalTime);
+	}
+	protected function setUp()
+	{
+		LtConfig::$storeHandle = null;
+	}
+	protected function tearDown()
+	{
 	}
 }

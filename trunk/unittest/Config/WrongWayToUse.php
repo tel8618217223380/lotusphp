@@ -40,4 +40,11 @@ class WrongWayToUseConfig extends PHPUnit_Framework_TestCase
 		$conf->configFile = dirname(__FILE__) . "/test_data/conf_not_exists.php";
 		$conf->init();
 	}
+	protected function setUp()
+	{
+		LtConfig::$storeHandle = null;
+	}
+	protected function tearDown()
+	{
+	}
 }

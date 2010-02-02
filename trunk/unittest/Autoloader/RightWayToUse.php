@@ -387,8 +387,11 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$this->assertTrue(class_exists($class));
 	}
 
-	public function tearDown()
+	protected function setUp()
 	{
 		LtAutoloader::$storeHandle = null;
+	}
+	protected function tearDown()
+	{
 	}
 }

@@ -2,11 +2,10 @@
 class LtConfig
 {
 	static public $storeHandle;
-	static public $namespace;
 	public $configFile;
 
 	/**
-	 * @警告
+	 * 警告
 	 * 这里会包含两个用户定义的配置文件，为了不和配置文件里的变量名发生重名
 	 * 本方法不定义和使用变量名
 	 */
@@ -20,12 +19,7 @@ class LtConfig
 		{
 			self::$storeHandle = new LtConfigStore;
 		}
-		else
-		{
-			self::$namespace = md5($this->configFile);
-			self::$storeHandle->namespaceMapping[self::$namespace] = sprintf("%u", crc32(self::$namespace));
-		}
-		if (0 == self::$storeHandle->get(".config_total", self::$namespace))
+		if (0 == self::$storeHandle->get(".config_total"))
 		{
 			$conf = include($this->configFile);
 			if (!is_array($conf))
@@ -34,8 +28,7 @@ class LtConfig
 			}
 			if (!empty($conf))
 			{
-				// 放这里是防止返回一个空数组时发生冲突, 另可考虑update方法
-				self::$storeHandle->add(".config_total", 0, 0, self::$namespace);
+				self::$storeHandle->add(".config_total", 0, 0);
 				$this->storeConfigArray($conf);
 			}
 		}
@@ -43,7 +36,7 @@ class LtConfig
 
 	public function get($key)
 	{
-		$ret = self::$storeHandle->get($key, self::$namespace);
+		$ret = self::$storeHandle->get($key);
 		if (false === $ret)
 		{
 			trigger_error("key not exists");
@@ -55,8 +48,8 @@ class LtConfig
 	{
 		foreach($configArray as $key => $value)
 		{
-			self::$storeHandle->add($key, $value, 0, self::$namespace);
-			self::$storeHandle->update(".config_total", self::$storeHandle->get(".config_total", self::$namespace) + 1, 0, self::$namespace);
+			self::$storeHandle->add($key, $value, 0);
+			self::$storeHandle->update(".config_total", self::$storeHandle->get(".config_total") + 1, 0);
 		}
 	}
 }
@@ -65,16 +58,15 @@ class LtConfigStore
 {
 	protected $stack;
 
-	public function add($key, $value, $ttl, $namespace)
+	public function add($key, $value, $ttl)
 	{
-		$this->stack[$this->getRealKey($namespace, $key)] = $value;
+		$this->stack[$key] = $value;
 		return true;
 	}
 
-	public function del($key, $namespace)
+	public function del($key)
 	{
-		$key = $this->getRealKey($namespace, $key);
-		if(isset($this->stack[$key]))
+		if (isset($this->stack[$key]))
 		{
 			unset($this->stack[$key]);
 			return true;
@@ -85,20 +77,14 @@ class LtConfigStore
 		}
 	}
 
-	public function get($key, $namespace)
+	public function get($key)
 	{
-		$key = $this->getRealKey($namespace, $key);
 		return isset($this->stack[$key]) ? $this->stack[$key] : false;
 	}
 
-	public function update($key, $value, $ttl, $namespace)
+	public function update($key, $value, $ttl)
 	{
-		$this->stack[$this->getRealKey($namespace, $key)] = $value;
+		$this->stack[$key] = $value;
 		return true;
-	}
-
-	protected function getRealKey($namespace, $key)
-	{
-		return sprintf("%u", crc32($namespace)) . $key;
 	}
 }

@@ -162,4 +162,10 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		$cache->init();
 		$cache->add('key', 'value', 2,'testname');
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

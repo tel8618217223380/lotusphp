@@ -80,9 +80,6 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 				),
 			// 变量
 			array('<?php echo $var[\'key\'];?>',
-				'{$var.key}',
-				),
-			array('<?php echo $var[\'key\'];?>',
 				'{$var[key]}',
 				),
 			array('<?php echo $var[\'key\'];?>',
@@ -100,6 +97,15 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 				),
 			array('<?php echo $var;?>',
 				'{$var}',
+				),
+			array('<?php echo $var[\'key\'.$prefix];?>',
+				'{$var[\'key\'.$prefix]}',
+				),
+			array('<?php echo $var[$a.$b][\'a\'][0];?>',
+				'{$var[$a.$b][a][0]}',
+				),
+			array('<?php echo $var[$this->data[$key]][\'a\'][0];?>',
+				'{$var[$this->data[$key]][a][0]}',
 				),
 			// code message data
 			array('<?php if (isset($this->code)) echo $this->code;?>',
@@ -175,5 +181,11 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 		$tpl = new LtTemplateViewProxy;
 		$str = $tpl->parse($userParameter);
 		$this->assertEquals($expected, $str);
+	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
 	}
 }

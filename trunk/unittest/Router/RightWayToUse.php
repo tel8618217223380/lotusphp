@@ -203,4 +203,10 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$router->routingTable = $routingTable;
 		$this->assertEquals($userParameter, $router->reverseMatchingRoutingTable($expected));
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

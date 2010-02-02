@@ -2,7 +2,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-	<title>{$data.title}Using View</title>
+	<title>{$data[title]}Using View</title>
 	<style type="text/css">
 /* Global CSS */
 

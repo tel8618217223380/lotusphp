@@ -15,4 +15,10 @@ class WrongWayToUseObjectUtil extends PHPUnit_Framework_TestCase
 	{
 		LtObjectUtil::singleton("");
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

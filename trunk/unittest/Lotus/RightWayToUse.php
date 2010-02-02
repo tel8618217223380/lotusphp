@@ -35,4 +35,10 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 */
 		$this->asserttrue(class_exists("LtCaptcha"));
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }
