@@ -7,43 +7,47 @@ class Lotus
 	 * @var array array();
 	 */
 	public $option;
-	public $devMode = true;
-	public $mvcMode = false;
+	public $mvcMode;
+
+	protected $devMode;
 	protected $lotusRuntimeDir;
 	protected $cacheHandle;
 
 	public function __construct()
 	{
+		$this->mvcMode = false; // é»˜è®¤ä¸ä½¿ç”¨MVC
+		$this->devMode = true; // é»˜è®¤ä¸ºå¼€å‘æ¨¡å¼
 		$this->lotusRuntimeDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	}
 
 	public function init()
 	{
-		/**
-		 * Init Cache component to sotre LtAutoloader, LtConfig data
-		 */
-		require_once $this->lotusRuntimeDir . "Cache/Cache.php";
-		require_once $this->lotusRuntimeDir . "Cache/CacheAdapterFactory.php";
-		require_once $this->lotusRuntimeDir . "Cache/CacheConfigBuilder.php";
-		require_once $this->lotusRuntimeDir . "Cache/CacheConnectionManager.php";
-		require_once $this->lotusRuntimeDir . "Cache/CacheHandle.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapter.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterApc.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterEAccelerator.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterFile.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterMemcached.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterPhps.php";
-		require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
+		if (isset($this->option["cache"]))
+		{
+			/**
+			 * Init Cache component to sotre LtAutoloader, LtConfig data
+			 */
+			require_once $this->lotusRuntimeDir . "Cache/Cache.php";
+			require_once $this->lotusRuntimeDir . "Cache/CacheAdapterFactory.php";
+			require_once $this->lotusRuntimeDir . "Cache/CacheConfigBuilder.php";
+			require_once $this->lotusRuntimeDir . "Cache/CacheConnectionManager.php";
+			require_once $this->lotusRuntimeDir . "Cache/CacheHandle.php";
+			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapter.php";
+			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterApc.php";
+			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterEAccelerator.php";
+			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterFile.php";
+			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterMemcached.php";
+			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterPhps.php";
+			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
+			$ccb = new LtCacheConfigBuilder;
+			$ccb->addSingleHost($this->option["cache"]);
+			LtCache::$servers = $ccb->getServers();
+			$cache = new LtCache;
+			$cache->init();
+			$this->cacheHandle = $cache->getCacheHandle();
+			$this->devMode = false; // äº§å“æ¨¡å¼
+		}
 
-		$ccb = new LtCacheConfigBuilder;
-		/**
-		@todo ¹¹Ôì»º´æÅäÖÃ
-		*/
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/cache_files/"));
-		LtCache::$servers = $ccb->getServers();
-		$cache = new LtCache;
-		$cache->init();
-		$this->cacheHandle = $cache->getCacheHandle();
 		/**
 		 * Init Cache end.
 		 */
