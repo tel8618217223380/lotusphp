@@ -18,7 +18,7 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testDirNameWithSpace()
 	{
 		$autoloader = new LtAutoloader;
-		$autoloader->autoloadPath = "./dirname with space"; //这个目录确实存在
+		$autoloader->autoloadPath = dirname(__FILE__) . "/test_data/dirname with space"; //这个目录确实存在
 		$autoloader->init();
 	}
 
@@ -56,5 +56,10 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap = new LtAutoloaderProxy;
 		$ap->addFunction("Function1", __FILE__);
 		$ap->addFunction("function1", __FILE__);
+	}
+
+	public function tearDown()
+	{
+		LtAutoloader::$storeHandle = null;
 	}
 }
