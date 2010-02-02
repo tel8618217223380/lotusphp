@@ -2,7 +2,6 @@
 class LtAutoloader
 {
 	static public $storeHandle;
-	static public $namespace;
 	public $autoloadPath;
 	public $conf;
 	protected $functionFileMapping;
