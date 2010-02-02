@@ -80,14 +80,14 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 
 	public function update($key, $value, $ttl = 0)
 	{
-		if ($this->del($key))
+		$cacheFile = $this->getCacheFile($key);
+		if(!is_file($cacheFile))
 		{
-			return $this->add($key, $value, $ttl);
-		}
-		else
-		{
+			trigger_error("Key not exists: {$key}");
 			return false;
 		}
+		$expireTime = (0 == $ttl) ? '0000000000' : (time()+$ttl);
+		return (boolean) file_put_contents($cacheFile, '<?php exit;?>' . $expireTime . serialize($value));
 	}
 
 	protected function getCacheFile($key)

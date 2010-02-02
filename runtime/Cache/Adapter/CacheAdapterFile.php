@@ -89,13 +89,21 @@ class LtCacheAdapterFile implements LtCacheAdapter
 
 	public function update($key, $value, $ttl = 0)
 	{
-		if ($this->del($key))
+		$cacheFile = $this->getCacheFile($key);
+		if(!is_file($cacheFile))
 		{
-			return $this->add($key, $value, $ttl);
+			trigger_error("Key not exists: {$key}");
+			return false;
+		}
+		$data['ttl'] = (0 >= $ttl) ? 0 : (time()+intval($ttl));
+		if(is_object($value) || is_resource($value))
+		{
+			return (boolean) file_put_contents($cacheFile, "<?php\nreturn array('ttl'=>". $data['ttl'] . ",'value'=>unserialize(\"" . addslashes(serialize($value)) . "\"));\n");
 		}
 		else
 		{
-			return false;
+			$data['value'] = $value;
+			return (boolean) file_put_contents($cacheFile, "<?php\nreturn ".var_export($data, true).";\n");
 		}
 	}
 
