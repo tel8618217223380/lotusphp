@@ -37,8 +37,7 @@ class LtTemplateView
 		if (!empty($this->layout))
 		{
 			include $this->template(true);
-		}
-		elseif ($this->component)
+		}elseif ($this->component)
 		{ 
 			// component在模板中写{component module action}
 			// 实现合并成一个文件, 不需要include
@@ -124,12 +123,12 @@ class LtTemplateView
 			}
 			$postfix = "\r\n<!--Template compilation time : " . date('Y-m-d H:i:s') . "-->\r\n";
 			$str = $prefix . $str . $postfix;
-			if(!file_put_contents($objfile, $str))
+			if (!file_put_contents($objfile, $str))
 			{
-				if(file_put_contents($objfile.'.tmp', $str))
+				if (file_put_contents($objfile . '.tmp', $str))
 				{
-					copy($objfile.'.tmp', $objfile); // win下不能重命名已经存在的文件
-					unlink($objfile.'.tmp');
+					copy($objfile . '.tmp', $objfile); // win下不能重命名已经存在的文件
+					unlink($objfile . '.tmp');
 				}
 			}
 		}
@@ -167,14 +166,17 @@ class LtTemplateView
 		$str = preg_replace("/\{([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\s*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{\\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\(([^{}]*)\))\}/", "<?php echo \$\\1;?>", $str); 
 		// 变量
-		$str = preg_replace("/(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\.([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/", "\\1['\\2']", $str); 
+		/**
+		 * 放弃支持$name.name.name
+		 * $str = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\.([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1['\\2'];?>", $str);
+		 */
 		// 内置变量 code message data
 		$str = preg_replace("/\{\\\$(code[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
 		$str = preg_replace("/\{\\\$(message[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
 		$str = preg_replace("/\{\\\$(data[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
-
+		// 其它变量
 		$str = preg_replace("/\{(\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str);
-		$str = preg_replace("/\{(\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\}/e", "\$this->addquote('<?php echo \\1;?>')", $str); 
+		$str = preg_replace("/\{(\\$[a-zA-Z0-9_\.\[\]\'\"\$\x7f-\xff]+)\}/e", "\$this->addquote('<?php echo \\1;?>')", $str); 
 		// 类->属性  类->方法
 		$str = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff][+\-\>\$\'\"\,\[\]\(\)a-zA-Z0-9_\x7f-\xff]+)\}/es", "\$this->addquote('<?php echo \\1;?>')", $str); 
 		// 常量

@@ -16,4 +16,10 @@ class WrongWayToUseCaptcha extends PHPUnit_Framework_TestCase
 		$captcha->init();
 		$im = $captcha->getImageResource("");
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

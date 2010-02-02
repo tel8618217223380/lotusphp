@@ -111,4 +111,10 @@ class RightWayToUseUrl extends PHPUnit_Framework_TestCase
 		$url->routingTable = $routingTable;
 		$this->assertEquals($userParameter, $url->reverseMatchingRoutingTable($expected));
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

@@ -37,4 +37,10 @@ class RightWayToUseRBAC extends PHPUnit_Framework_TestCase
 	 * 下面是内部接口的测试用例,是给开发者保证质量用的,使用者可以不往下看
 	 * ============================================================
 	 */
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

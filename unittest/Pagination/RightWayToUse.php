@@ -31,4 +31,10 @@ class RightWayToUsePagination extends PHPUnit_Extensions_OutputTestCase
 		// 判断输出内容是否正确
 		$this->expectOutputString('<div class="pages"><a href="page.php?page=1" style="font-weight:bold">&lsaquo;</a><a href="page.php?page=2">2</a><a href="page.php?page=3">3</a><a href="page.php?page=4">4</a><strong>5</strong><a href="page.php?page=6">6</a><a href="page.php?page=7">7</a><a href="page.php?page=8">8</a><a href="page.php?page=9">9</a><a href="page.php?page=40" style="font-weight:bold">&rsaquo;</a>5/40 goto<input type="text" size="3" onkeydown="javascript: if(event.keyCode==13){ location=\'page.php?page=:page\'.replace(\':page\',this.value);return false;}" />page total 1000</div>');
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

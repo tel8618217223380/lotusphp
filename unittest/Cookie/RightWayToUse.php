@@ -48,4 +48,10 @@ class RightWayToUseCookie extends PHPUnit_Framework_TestCase
 		$encrypted = $cp->encrypt("lotusphp");
 		$this->assertEquals("lotusphp", $cp->decrypt($encrypted));
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

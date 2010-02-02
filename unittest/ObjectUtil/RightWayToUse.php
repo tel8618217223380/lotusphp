@@ -36,4 +36,10 @@ class RightWayToUseObjectUtil extends PHPUnit_Framework_TestCase
 		$obj2->prop = 1;
 		$this->assertEquals(1, $obj1->prop);
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

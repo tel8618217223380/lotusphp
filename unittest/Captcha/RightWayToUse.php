@@ -49,4 +49,10 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 		$word = $cp->getSavedCaptchaWord($seed);
 		$this->assertTrue($cp->verify($seed, $word));
 	}
+	protected function setUp()
+	{
+	}
+	protected function tearDown()
+	{
+	}
 }

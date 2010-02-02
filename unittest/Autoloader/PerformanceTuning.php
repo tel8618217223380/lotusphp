@@ -79,4 +79,11 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		echo "\n---------------------------------------------------------\n";
 		$this->assertTrue(1 > $totalTime);
 	}
+	protected function setUp()
+	{
+		LtAutoloader::$storeHandle = null;
+	}
+	protected function tearDown()
+	{
+	}
 }
