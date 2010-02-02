@@ -14,7 +14,6 @@ class LtAutoloaderProxy extends LtAutoloader
 	{
 		parent::__construct();
 		parent::$storeHandle = new LtAutoloaderStore;
-		parent::$namespace = "";
 	}
 	public function __get($prop)
 	{
