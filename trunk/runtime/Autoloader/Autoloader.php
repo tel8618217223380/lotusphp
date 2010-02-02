@@ -215,7 +215,7 @@ class LtAutoloader
 		}
 		else
 		{
-			self::$storeHandle->add($key, $file, 0, self::$namespace);
+			self::$storeHandle->add($key, $file);
 			self::$storeHandle->update(".class_total", self::$storeHandle->get(".class_total") + 1);
 			return true;
 		}
