@@ -124,7 +124,7 @@ class LtTemplateView
 			}
 			$postfix = "\r\n<!--Template compilation time : " . date('Y-m-d H:i:s') . "-->\r\n";
 			$str = $prefix . $str . $postfix;
-			file_put_contents($objfile, $str);
+			file_put_contents($objfile, $str, LOCK_EX);
 		}
 		return $objfile;
 	}

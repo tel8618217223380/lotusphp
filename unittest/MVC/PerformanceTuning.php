@@ -19,30 +19,26 @@ class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 		 */
 		$dispatcher = new LtDispatcher;
 		$dispatcher->viewDir = "$appDir/view/";
+		$dispatcher->viewTplDir = "/tmp/LtTemplateView/test/";
+		ob_start();
 		$dispatcher->dispatchAction("User", "Add");
+		ob_clean();
 		touch("$appDir/view/User_Add.php"); 
-		unlink("$appDir/viewTpl/layout/top_navigator-User_Add.php");
+		//unlink("$appDir/viewTpl/layout/top_navigator-User_Add.php");
 
 		/**
-		 * 运行100次，要求在1秒内运行完
+		 * 运行1000次，要求在10秒内运行完
+		 * @todo 解决高并发情况下的文件写出错
 		 */
 		$base_memory_usage = memory_get_usage();
-		$times = 100;
+		$times = 1000;
 		$startTime = microtime(true);
 		for($i = 0; $i < $times; $i++)
 		{
-			/**
-			 * 实例化
-			 */
-			$dispatcher = new LtDispatcher;
-			$dispatcher->viewDir = "$appDir/view/";
 			ob_start();
 			$dispatcher->dispatchAction("User", "Add");
 			ob_clean();
 			touch("$appDir/view/User_Add.php"); 
-			/**
-			@todo优化文件cache,采用直接覆盖而不删除文件更新内容
-			*/
 			// unlink("$appDir/viewTpl/layout/top_navigator-User_Add.php");
 		}
 		$endTime = microtime(true);
@@ -60,6 +56,6 @@ class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
 		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
 		echo "\n---------------------------------------------------------\n";
-		$this->assertTrue(1 > $totalTime);
+		$this->assertTrue(10 > $totalTime);
 	}
 }
