@@ -42,4 +42,6 @@ if($lotus->debug)
 // ------------- 
 echo "\n<!--\n";
 print_r($lotus);
+$conf = LtObjectUtil::singleton("LtConfig");
+print_r($conf->getAll());
 echo "-->";
