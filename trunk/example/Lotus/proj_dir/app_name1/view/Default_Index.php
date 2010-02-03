@@ -10,7 +10,7 @@
 LotusPHP开始工作啦！
 code: {$code}{CR}{LF}
 message: {$message}{CR}{LF}
-username: {$data["username"]}
+username from a database: {$data[username]}
 </pre>
 </body>
 </html>

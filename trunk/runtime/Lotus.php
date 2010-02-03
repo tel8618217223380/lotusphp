@@ -179,14 +179,22 @@ class Lotus
 		 * @todo 处理conf
 		 */
 		$conf = LtObjectUtil::singleton("LtConfig");
-		if ($singleHost = $conf->get('singleHost'))
+//		if ($dbServer = $conf->get('singleHost'))
+//		{
+//			$dcb = new LtDbConfigBuilder;
+//			$dcb->addSingleHost($singleHost);
+//			LtDb::$storeHandle = new LtDbStore;
+//			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
+//			$db = LtObjectUtil::singleton('LtDb');
+//			$db->init();
+//		}
+		$dbServer = $conf->get('db_server');
+		foreach($dbServer as $v)
 		{
 			$dcb = new LtDbConfigBuilder;
-			$dcb->addSingleHost($singleHost);
-			LtDb::$storeHandle = new LtDbStore;
-			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
-			$db = LtObjectUtil::singleton('LtDb');
-			$db->init();
+			$dcb->addHost($v[0],$v[1],$v[2],$v[3]);
 		}
+		LtDb::$storeHandle = new LtDbStore;
+		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
 	}
 }
