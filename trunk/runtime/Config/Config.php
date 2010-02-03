@@ -44,6 +44,11 @@ class LtConfig
 		return $ret;
 	}
 
+	public function getAll()
+	{
+		return self::$storeHandle->get('.config_data');
+	}
+
 	protected function storeConfigArray($configArray)
 	{
 		foreach($configArray as $key => $value)
@@ -51,6 +56,7 @@ class LtConfig
 			self::$storeHandle->add($key, $value, 0);
 			self::$storeHandle->update(".config_total", self::$storeHandle->get(".config_total") + 1, 0);
 		}
+		self::$storeHandle->add('.config_data', $configArray, 0);
 	}
 }
 
