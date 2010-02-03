@@ -204,7 +204,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	/**
 	 * 测试ttl
 	 */
-	public function CacheTTL()
+	public function testCacheTTL()
 	{
 		/**
 		 * 准备测试数据
