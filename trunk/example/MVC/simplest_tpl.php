@@ -33,7 +33,7 @@ $dispatcher = new LtDispatcher;
 $dispatcher->viewDir = "./simplest_tpl/view/";
 /**
  * 保存模板编译后的文件目录,
- * 如果不指定,默认在view同级目录生成viewTpl目录
+ * 如果不指定,默认在view同级目录生成LtTemplateView目录
  */
 $dispatcher->viewTplDir = "/tmp/LtTemplateView/";
 

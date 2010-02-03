@@ -1,0 +1,38 @@
+<?php
+$lotusHome = substr(dirname(__FILE__), 0, strpos(__FILE__, "example"));
+include $lotusHome . 'runtime/Lotus.php';
+/**
+ * 初始化Lotus类
+ */
+$lotus = new Lotus();
+/**
+ * 项目目录
+ */
+$lotus->option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
+/**
+ * 临时目录,默认是proj_dir/tmp/
+ * 开发模式下的Autoloader 和 MVC的模板引擎 及 文件类型Cache
+ */
+$lotus->option['tmp_dir'] = '/tmp/';
+
+/**
+ * 应用名称对项目目录下的子目录名称
+ */
+$lotus->option['app_name'] = 'app_name1';
+/**
+ * 是否使用MVC
+ */
+$lotus->mvcMode = true;
+/**
+ * 使用cache可以提升性能
+ */
+// $lotus->option["cache_server"] = array("adapter" => "file",
+// "host" => "/tmp/cache_cms/");
+$lotus->init();
+/**
+ * 
+ * @todo 显示调试信息
+ */
+echo '<!--';
+print_r($lotus->debugInfo);
+echo '-->';

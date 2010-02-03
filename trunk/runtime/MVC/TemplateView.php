@@ -37,11 +37,10 @@ class LtTemplateView
 		if (!empty($this->layout))
 		{
 			include $this->template(true);
-		}elseif ($this->component)
-		{ 
-			// component在模板中写{component module action}
-			// 实现合并成一个文件, 不需要include
-			return;
+		}
+		else if ($this->component)
+		{
+			return; // 模板内使用{component module action}合并文件
 		}
 		else
 		{
@@ -58,6 +57,10 @@ class LtTemplateView
 	 */
 	public function template($islayout = false)
 	{
+		$this->layoutDir = rtrim($this->layoutDir, '\\/') . '/';
+		$this->compiledDir = rtrim($this->compiledDir, '\\/') . '/';
+		$this->templateDir = rtrim($this->templateDir, '\\/') . '/';
+
 		if ($islayout)
 		{
 			$tplfile = $this->layoutDir . $this->layout . '.php';
@@ -147,8 +150,8 @@ class LtTemplateView
 		$str = $this->parseSubTpl($str);
 		$str = $this->parseComponent($str); 
 		// 回车 换行
-		$str = str_replace("{CR}", "<?php echo \"\\r\"?>", $str);
-		$str = str_replace("{LF}", "<?php echo \"\\n\"?>", $str); 
+		$str = str_replace("{CR}", "<?php echo \"\\r\";?>", $str);
+		$str = str_replace("{LF}", "<?php echo \"\\n\";?>", $str); 
 		// if else elseif
 		$str = preg_replace("/\{if\s+(.+?)\}/", "<?php if(\\1) { ?>", $str);
 		$str = preg_replace("/\{else\}/", "<?php } else { ?>", $str);
@@ -173,7 +176,7 @@ class LtTemplateView
 		// 内置变量 code message data
 		$str = preg_replace("/\{\\\$(code[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
 		$str = preg_replace("/\{\\\$(message[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
-		$str = preg_replace("/\{\\\$(data[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
+		$str = preg_replace("/\{\\\$(data[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str); 
 		// 其它变量
 		$str = preg_replace("/\{(\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{(\\$[a-zA-Z0-9_\.\[\]\'\"\$\x7f-\xff]+)\}/e", "\$this->addquote('<?php echo \\1;?>')", $str); 
