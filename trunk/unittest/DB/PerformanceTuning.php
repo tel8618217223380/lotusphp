@@ -21,6 +21,79 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";class P
 		/**
 		 * 初始化LtCache，LtDb用LtCache作存储层的时候性能才会提高
 		 */
+		/**
+		 * 配置数据库连接信息
+		 */
+		$dcb = new LtDbConfigBuilder;
+		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
+		LtDb::$storeHandle = new LtDbStore;
+		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
+		/**
+		 * 实例化组件入口类
+		 */
+		$db = new LtDb;
+		$db->init();
+
+		/**
+		 * 用法 1： 直接操作数据库
+		 * 
+		 * 优点：学习成本低，快速入门
+		 * 
+		 * 适用场景：
+		 *     1. 临时写个脚本操作数据库，不想花时间学习LtDb的查询引擎
+		 *     2. 只写少量脚本，不是一个完整持续的项目，不需要SqlMap来管理SQL语句
+		 */
+		$dbh = $db->getDbHandle();
+		$dbh->query("DROP TABLE IF EXISTS test_user");
+		$dbh->query("
+			CREATE TABLE test_user (
+			id INT NOT NULL AUTO_INCREMENT,
+			name VARCHAR( 20 ) NOT NULL ,
+			age INT NOT NULL ,
+			PRIMARY KEY ( id ) 
+		)");
+
+		/**
+		 * 用法 2： 使用Table Gateway查询引擎
+		 * 
+		 * 优点：自动生成SQL语句
+		 * 
+		 * 适用场景：
+		 *     1. 对数据表进行增简单的删查改操作，尤其是单条数据的操作
+		 *     2. 简单的SELECT，动态合成WHERE子句
+		 */
+		$tg = $db->getTableGateway("test_user");
+
+		/**
+		 * 运行100次，要求在1秒内运行完
+		 */
+		$base_memory_usage = memory_get_usage();
+		$times = 100;
+		$startTime = microtime(true);
+
+		for($i = 0; $i < $times; $i++)
+		{
+			$tg->insert(array("id" => $i, "name" => "lotusphp", "age" => 1));
+		}
+		$dbh->query("DROP TABLE IF EXISTS test_user");
+
+		$endTime = microtime(true);
+		$totalTime = round(($endTime-$startTime), 6);
+		$averageTime = round(($totalTime/$times), 6);
+
+		$memory_usage = memory_get_usage() - $base_memory_usage;
+		$memory_usage = ($memory_usage >= 1048576) ? round((round($memory_usage / 1048576 * 100) / 100), 2) . 'MB' : (($memory_usage >= 1024) ? round((round($memory_usage / 1024 * 100) / 100), 2) . 'KB' : $memory_usage . 'BYTES');
+		
+		$averageMemory = round(($memory_usage/$times),2);
+		$averageMemory = ($averageMemory >= 1048576) ? round((round($averageMemory / 1048576 * 100) / 100), 2) . 'MB' : (($averageMemory >= 1024) ? round((round($averageMemory / 1024 * 100) / 100), 2) . 'KB' : $averageMemory . 'BYTES');
+
+		echo "\n----------------db getTableGateway insert----------------\n";
+		echo "times      \t$times\n";
+		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
+		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
+		echo "\n---------------------------------------------------------\n";
+		$this->assertTrue(1 > $totalTime);
+
 	}
 	protected function setUp()
 	{
