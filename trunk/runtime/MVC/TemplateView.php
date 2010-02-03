@@ -147,8 +147,7 @@ class LtTemplateView
 	protected function parse($str)
 	{
 		$str = $this->removeComments($str);
-		$str = $this->parseSubTpl($str);
-		$str = $this->parseComponent($str); 
+		$str = $this->parseIncludeComponent($str); 
 		// 回车 换行
 		$str = str_replace("{CR}", "<?php echo \"\\r\";?>", $str);
 		$str = str_replace("{LF}", "<?php echo \"\\n\";?>", $str); 
@@ -271,7 +270,26 @@ class LtTemplateView
 		}
 		return $str;
 	}
-
+	/**
+	 * 
+	 * @todo 注意相互引用的模板嵌套会导致死循环
+	 */
+	protected function parseIncludeComponent($str)
+	{
+		$count_include_component = preg_match_all("/\{include\s+(.+)\}/", $str, $tvar);
+		$count_include_component += preg_match_all("/\{component\s+([a-zA-Z0-9\.\-_]+)\s+([a-zA-Z0-9\.\-_]+)\}/", $str, $tvar);
+		unset($tvar);
+		while ($count_include_component > 0)
+		{
+			$str = $this->parseInclude($str);
+			$str = $this->parseComponent($str);
+			$count_include_component = preg_match_all("/\{include\s+(.+)\}/", $str, $tvar);
+			$count_include_component += preg_match_all("/\{component\s+([a-zA-Z0-9\.\-_]+)\s+([a-zA-Z0-9\.\-_]+)\}/", $str, $tvar);
+			unset($tvar);
+		}
+		$str = $this->removeComments($str);
+		return $str;
+	}
 	/**
 	 * 解析多个{include path/file}合并成一个文件
 	 * 
@@ -281,7 +299,7 @@ class LtTemplateView
 	 * {include "debug_info.view.php"}
 	 * {include $this->templateDir . $this->template}
 	 */
-	protected function parseSubTpl($str)
+	private function parseInclude($str)
 	{
 		$countSubTpl = preg_match_all("/\{include\s+(.+)\}/", $str, $tvar);
 		while ($countSubTpl > 0)
@@ -298,19 +316,19 @@ class LtTemplateView
 					$findfile = $subfile . '.view.php';
 				}
 				else if (is_file($this->templateDir . $subfile))
-				{ 
+				{
 					$findfile = $this->templateDir . $subfile;
 				}
 				else if (is_file($this->templateDir . $subfile . '.view.php'))
-				{ 
+				{
 					$findfile = $this->templateDir . $subfile . '.view.php';
 				}
 				else
 				{
 					$findfile = '';
-				}
-				//
-				if(!empty($findfile))
+				} 
+				
+				if (!empty($findfile))
 				{
 					$subTpl = file_get_contents($findfile);
 					$this->tpl_include_files[] = $findfile;
@@ -324,14 +342,13 @@ class LtTemplateView
 			}
 			$countSubTpl = preg_match_all("/\{include\s+(.+)\}/", $str, $tvar);
 		}
-		$str = $this->removeComments($str);
 		return $str;
 	}
 
 	/**
 	 * 解析多个{component module action}合并成一个文件
 	 */
-	protected function parseComponent($str)
+	private function parseComponent($str)
 	{
 		$countCom = preg_match_all("/\{component\s+([a-zA-Z0-9\.\-_]+)\s+([a-zA-Z0-9\.\-_]+)\}/", $str, $tvar);
 		while ($countCom > 0)
@@ -354,7 +371,6 @@ class LtTemplateView
 			}
 			$countCom = preg_match_all("/\{component\s+([a-zA-Z0-9\.\-_]+)\s+([a-zA-Z0-9\.\-_]+)\}/", $str, $tvar);
 		}
-		$str = $this->removeComments($str);
 		return $str;
 	}
 }
