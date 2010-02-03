@@ -7,6 +7,7 @@
 <body>
 <h1>{$message}</h1>
 <pre>
+LotusPHP开始工作啦！
 code: {$code}{CR}{LF}
 message: {$message}{CR}{LF}
 username: {$data["username"]}

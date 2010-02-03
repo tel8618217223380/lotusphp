@@ -40,7 +40,7 @@ if($lotus->debug)
 	echo "<!--totalTime: {$lotus->debugInfo['totalTime']}s  memoryUsage: {$lotus->debugInfo['memoryUsage']} devMode: {$lotus->debugInfo['devMode']}-->";
 }
 // ------------- 
-echo "\n<!--\n";
+echo "\r\n<!--\r\n";
 print_r($lotus);
 $conf = LtObjectUtil::singleton("LtConfig");
 print_r($conf->getAll());

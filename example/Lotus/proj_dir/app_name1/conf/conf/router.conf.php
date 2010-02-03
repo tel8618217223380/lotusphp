@@ -1,6 +1,6 @@
 <?php
 /**
- * url´«µİÄ£Ê½
+ * urlä¼ é€’æ¨¡å¼
  * standard, rewrite, path_info
  */
 $config['my_url_option'] = array(
@@ -8,7 +8,7 @@ $config['my_url_option'] = array(
 );
 
 /**
- * Â·ÓÉÆ¥Åä¹æÔò
+ * è·¯ç”±åŒ¹é…è§„åˆ™
  */
 $config['my_routers'] = array(
     'book' => array(
