@@ -10,7 +10,8 @@
 LotusPHP开始工作啦！
 code: {$code}{CR}{LF}
 message: {$message}{CR}{LF}
-username from a database: {$data[username]}
+username from mysql: {$data[username]}{CR}{LF}
+username from sqlite: {$data[user_name]} created:{date('Y-m-d H:i:s',$this->data['created'])}
 </pre>
 </body>
 </html>

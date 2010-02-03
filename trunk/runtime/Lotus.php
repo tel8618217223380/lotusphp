@@ -189,9 +189,9 @@ class Lotus
 //			$db->init();
 //		}
 		$dbServer = $conf->get('db_server');
+		$dcb = new LtDbConfigBuilder;
 		foreach($dbServer as $v)
 		{
-			$dcb = new LtDbConfigBuilder;
 			$dcb->addHost($v[0],$v[1],$v[2],$v[3]);
 		}
 		LtDb::$storeHandle = new LtDbStore;
