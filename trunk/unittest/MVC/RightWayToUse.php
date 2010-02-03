@@ -15,7 +15,7 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 		 * 加载Action类文件
 		 */
 		$appDir = dirname(__FILE__) . "/test_data/simplest_app";
-		require_once "$appDir/action/UserSigninAction.php";
+		require_once "$appDir/action/User-Signin.Action.php";
 
 		/**
 		 * 实例化

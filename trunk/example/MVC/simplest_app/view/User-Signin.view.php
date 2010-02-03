@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Lotusphp MVC simplest</title>
+<title>Lotusphp MVC simplest例子</title>
 <meta name="generator" content="lotusphp" />
 </head>
 <body>

@@ -12,8 +12,8 @@ class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 		 * 加载Action类文件
 		 */
 		$appDir = dirname(__FILE__) . "/test_data/simplest_app";
-		require_once "$appDir/action/UserAddAction.php";
-		require_once "$appDir/action/stockPriceComponent.php";
+		require_once "$appDir/action/User-Add.Action.php";
+		require_once "$appDir/action/stock-Price.Component.php";
 		/**
 		 * 实例化
 		 */
@@ -23,8 +23,8 @@ class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 		ob_start();
 		$dispatcher->dispatchAction("User", "Add");
 		ob_end_clean();
-		touch($dispatcher->viewDir . "User_Add.php"); 
-		unlink($dispatcher->viewTplDir . "layout/top_navigator-User_Add.php");
+		touch($dispatcher->viewDir . "User-Add.view.php"); 
+		unlink($dispatcher->viewTplDir . "layout/top_navigator-User-Add.view.php");
 
 		/**
 		 * 运行100次，要求在2秒内运行完
@@ -37,7 +37,7 @@ class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 			ob_start();
 			$dispatcher->dispatchAction("User", "Add");
 			ob_end_clean();
-			touch($dispatcher->viewDir . "User_Add.php"); 
+			touch($dispatcher->viewDir . "User-Add.view.php"); 
 		}
 		$endTime = microtime(true);
 		$totalTime = round(($endTime - $startTime), 6);

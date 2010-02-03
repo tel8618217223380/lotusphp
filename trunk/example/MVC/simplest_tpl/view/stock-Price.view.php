@@ -4,3 +4,4 @@
 	<br />
 	52wk Range: {$data['stockPrice'][1]}-{$data['stockPrice'][2]}
 </fieldset>
+{include 'test-test'}

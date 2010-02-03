@@ -63,13 +63,13 @@ class LtTemplateView
 
 		if ($islayout)
 		{
-			$tplfile = $this->layoutDir . $this->layout . '.php';
-			$objfile = $this->compiledDir . 'layout/' . $this->layout . '-' . $this->template . '.php';
+			$tplfile = $this->layoutDir . $this->layout . '.view.php';
+			$objfile = $this->compiledDir . 'layout/' . $this->layout . '-' . $this->template . '.view.php';
 		}
 		else
 		{
-			$tplfile = $this->templateDir . $this->template . '.php';
-			$objfile = $this->compiledDir . $this->template . '.php';
+			$tplfile = $this->templateDir . $this->template . '.view.php';
+			$objfile = $this->compiledDir . $this->template . '.view.php';
 		}
 		if (is_file($objfile))
 		{
@@ -276,10 +276,10 @@ class LtTemplateView
 	 * 解析多个{include path/file}合并成一个文件
 	 * 
 	 * @example {include 'debug_info'}
-	 * {include 'debug_info.php'}
+	 * {include 'debug_info.view.php'}
 	 * {include "debug_info"}
-	 * {include "debug_info.php"}
-	 * {include $this->templateDir . $this->template . '.php'}
+	 * {include "debug_info.view.php"}
+	 * {include $this->templateDir . $this->template}
 	 */
 	protected function parseSubTpl($str)
 	{
@@ -291,18 +291,29 @@ class LtTemplateView
 				eval("\$subfile = $subfile;");
 				if (is_file($subfile))
 				{
-					$subTpl = file_get_contents($subfile);
-					$this->tpl_include_files[] = $subfile;
-				}elseif (is_file($this->templateDir . $subfile))
+					$findfile = $subfile;
+				}
+				else if (is_file($subfile . '.view.php'))
+				{
+					$findfile = $subfile . '.view.php';
+				}
+				else if (is_file($this->templateDir . $subfile))
 				{ 
-					// 追加当前目录查找
-					$subTpl = file_get_contents($this->templateDir . $subfile);
-					$this->tpl_include_files[] = $this->templateDir . $subfile;
-				}elseif (is_file($this->templateDir . $subfile . '.php'))
+					$findfile = $this->templateDir . $subfile;
+				}
+				else if (is_file($this->templateDir . $subfile . '.view.php'))
 				{ 
-					// 追加.php后缀查找
-					$subTpl = file_get_contents($this->templateDir . $subfile . '.php');
-					$this->tpl_include_files[] = $this->templateDir . $subfile . '.php';
+					$findfile = $this->templateDir . $subfile . '.view.php';
+				}
+				else
+				{
+					$findfile = '';
+				}
+				//
+				if(!empty($findfile))
+				{
+					$subTpl = file_get_contents($findfile);
+					$this->tpl_include_files[] = $findfile;
 				}
 				else
 				{ 
@@ -328,7 +339,7 @@ class LtTemplateView
 			$i = 0;
 			while ($i < $countCom)
 			{
-				$comfile = $this->templateDir . $tvar[1][$i] . '_' . $tvar[2][$i] . '.php';
+				$comfile = $this->templateDir . $tvar[1][$i] . '-' . $tvar[2][$i] . '.view.php';
 				if (is_file($comfile))
 				{
 					$subTpl = file_get_contents($comfile);
