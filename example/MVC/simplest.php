@@ -18,7 +18,7 @@ include $lotusHome . "/runtime/Validator/ValidatorDtd.php";
  * 加载Action类文件
  */
 $appDir = "./simplest_app/";
-include $appDir . "action/UserSigninAction.php";
+include $appDir . "action/User-Signin.Action.php";
 
 /*
  * 实例化

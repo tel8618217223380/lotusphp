@@ -19,13 +19,13 @@ include $lotusHome . "/runtime/Validator/ValidatorDtd.php";
  * 加载Action类文件
  */
 $appDir = "./simplest_tpl/";
-include $appDir . "action/UserSigninAction.php";
-include $appDir . "action/IndexIndexAction.php";
-include $appDir . "action/testUsingComponentAction.php";
-include $appDir . "action/stockPriceComponent.php";
-include $appDir . "action/testUsingBlankLayoutAction.php";
-include $appDir . "action/testPassDataAction.php";
-include $appDir . "action/testUsingTitleAction.php";
+include $appDir . "action/User-Signin.Action.php";
+include $appDir . "action/Index-Index.Action.php";
+include $appDir . "action/test-UsingComponent.Action.php";
+include $appDir . "action/stock-Price.Component.php";
+include $appDir . "action/test-UsingBlankLayout.Action.php";
+include $appDir . "action/test-PassData.Action.php";
+include $appDir . "action/test-UsingTitle.Action.php";
 /**
  * 实例化
  */

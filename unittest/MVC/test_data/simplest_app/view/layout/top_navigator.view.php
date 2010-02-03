@@ -56,7 +56,7 @@ Navigator:
 	Template file: {$this->templateDir}{$this->template}.php
 </pre>
 <hr />
-{include $this->templateDir . $this->template . '.php'}
+{include $this->templateDir . $this->template}
 <hr />
 
 <!-- 

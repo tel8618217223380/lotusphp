@@ -104,7 +104,7 @@ abstract class LtComponent
 				$this->view->templateDir = $this->viewDir;
 				$this->view->compiledDir = $this->viewTplDir;
 				$this->view->autoCompile = $this->viewTplAutoCompile;
-				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["component"];
+				$this->view->template = $this->context->uri["module"] . "-" . $this->context->uri["component"];
 				$this->view->render();
 				break;
 
@@ -122,7 +122,7 @@ abstract class LtComponent
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
-				$this->view->template = $this->context->uri["module"] . "_" . $this->context->uri["component"];
+				$this->view->template = $this->context->uri["module"] . "-" . $this->context->uri["component"];
 				$this->view->render();
 				break;
 		}
