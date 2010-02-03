@@ -25,7 +25,7 @@ class LtDbConnectionManager
 		}
 		else
 		{
-			trigger_error("no db server can be connected");
+			trigger_error("db server can not be connected: group=$group, node=$node, role=$role", E_USER_ERROR);
 		}
 	}
 
