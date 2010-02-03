@@ -9,6 +9,10 @@ class Lotus
 	public $option;
 	public $mvcMode;
 
+	protected $proj_dir;
+	protected $app_dir;
+	protected $app_name;
+
 	protected $devMode;
 	protected $lotusRuntimeDir;
 	protected $cacheHandle;
@@ -22,7 +26,19 @@ class Lotus
 
 	public function init()
 	{
-		if (isset($this->option["cache"]))
+		if (!isset($this->option["proj_dir"]) || empty($this->option["proj_dir"]))
+		{
+			trigger_error('option[\'proj_dir\'] must be set');
+		}
+		if (!isset($this->option["app_name"]) || empty($this->option["app_name"]))
+		{
+			trigger_error('option[\'app_name\'] must be set');
+		}
+		$this->proj_dir = rtrim($this->option["proj_dir"], '\\/') . '/';
+		$this->app_name = $this->option["app_name"];
+		$this->app_dir = $proj_dir . $this->app_name . '/';
+
+		if (!empty($this->option["cache"]))
 		{
 			/**
 			 * Init Cache component to sotre LtAutoloader, LtConfig data
@@ -45,7 +61,7 @@ class Lotus
 			$cache = new LtCache;
 			$cache->init();
 			$this->cacheHandle = $cache->getCacheHandle();
-			$this->devMode = false; // 产品模式
+			$this->devMode = false; // 生产模式
 		}
 
 		/**
@@ -82,17 +98,17 @@ class Lotus
 		 * Prepare autoloader to load all lotus components and user-defined libraries;
 		 */
 		$autoloadDirs = array($this->lotusRuntimeDir);
-		if (isset($this->option["autoload_path"]))
-		{
-			$autoloadDirs[] = $this->option["autoload_path"];
-		}
+		$autoloadDirs[] = $this->proj_dir . 'lib';
+		$autoloadDirs[] = $this->app_dir . 'action';
+		$autoloadDirs[] = $this->app_dir . 'lib';
+
 		$autoloader = new LtAutoloader;
 		$autoloader->autoloadPath = $autoloadDirs;
+		/**
+		 * 开发模式下保存分析结果
+		 */
+		$autoloader->conf->mappingFileRoot = $this->proj_dir . 'tmp/LtAutoload';
 
-		if (!empty($this->option["autoload_cache_dir"]))
-		{
-			$autoloader->conf->mappingFileRoot = $this->option["autoload_cache_dir"];
-		}
 		if (!$this->devMode)
 		{
 			LtAutoloader::$storeHandle = $this->cacheHandle;
@@ -107,11 +123,8 @@ class Lotus
 		{
 			LtConfig::$storeHandle = $this->cacheHandle;
 		}
-		if (isset($this->option["config_file"]))
-		{
-			$conf->configFile = $this->option["config_file"];
-			$conf->init();
-		}
+		$conf->configFile = $this->app_dir . 'conf/conf.php';
+		$conf->init();
 	}
 
 	protected function runMVC()
@@ -125,14 +138,18 @@ class Lotus
 		 * mvc
 		 */
 		$dispatcher = new LtDispatcher;
-		$dispatcher->viewDir = $this->option['view_dir'];
-		$dispatcher->viewTplDir = $this->option['view_tpl_dir'];
+		$dispatcher->viewDir = $this->app_dir . 'view/';
+		$dispatcher->viewTplDir = $this->proj_dir . 'tmp/view_tpl/' . $this->app_name;
 		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}
 
 	protected function initDb()
 	{
+		/**
+		 * 
+		 * @todo 处理conf
+		 */
 		$conf = LtObjectUtil::singleton("LtConfig");
 		if ($singleHost = $conf->get('singleHost'))
 		{
