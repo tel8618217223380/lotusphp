@@ -1,12 +1,12 @@
 <?php
 /**
- * Õâ¸öÊý×é±äÁ¿½ÐÊ²Ã´¶¼ÊÇÎÞËùÎ½µÄ£¬Ö»ÒªÔÚÄ©Î²°ÑËüreturn¼´¿É
+ * è¿™ä¸ªæ•°ç»„å˜é‡å«ä»€ä¹ˆéƒ½æ˜¯æ— æ‰€è°“çš„ï¼Œåªè¦åœ¨æœ«å°¾æŠŠå®ƒreturnå³å¯
  */
 $config = array();
 include substr(dirname(__FILE__),0,strpos(__FILE__, "app_name1")).'/conf/common.conf.php';
 /**
- * ×Ô¶¯É¨ÃèconfÄ¿Â¼ÏÂµÄphpÎÄ¼þ£¬½«Ö®°üº¬½øÀ´£¬µ«²»Ö§³Ö×ÓÄ¿Â¼
- * Õâ¶Î´úÂëµÈ¼ÛÓÚ£º
+ * è‡ªåŠ¨æ‰«æconfç›®å½•ä¸‹çš„phpæ–‡ä»¶ï¼Œå°†ä¹‹åŒ…å«è¿›æ¥ï¼Œä½†ä¸æ”¯æŒå­ç›®å½•
+ * è¿™æ®µä»£ç ç­‰ä»·äºŽï¼š
  * include("conf/db.conf.php");
  * include("conf/validator.conf.php");
  */
@@ -19,9 +19,9 @@ foreach(glob(dirname(__FILE__) . '/conf/*.php') as $confFile)
 }
 
 /**
- * Ò»¶¨²»ÒªÍüÁËÕâ¸öreturnÓï¾ä
- * Èç¹û²»return£¬include(conf.php)µÄÊ±ºòÊÕµ½µÄ·µ»ØÖµÊÇÕûÊý1
- * ¼ÓÁËreturn£¬include(conf.php)ÊÕµ½µÄ·µ»ØÖµ²ÅÊÇÊý×é 
- * lotusphpÐèÒªµÄ·µ»ØÖµÊÇÒ»¸öÊý×é
+ * ä¸€å®šä¸è¦å¿˜äº†è¿™ä¸ªreturnè¯­å¥
+ * å¦‚æžœä¸returnï¼Œinclude(conf.php)çš„æ—¶å€™æ”¶åˆ°çš„è¿”å›žå€¼æ˜¯æ•´æ•°1
+ * åŠ äº†returnï¼Œinclude(conf.php)æ”¶åˆ°çš„è¿”å›žå€¼æ‰æ˜¯æ•°ç»„ 
+ * lotusphpéœ€è¦çš„è¿”å›žå€¼æ˜¯ä¸€ä¸ªæ•°ç»„
  */
 return $config;
