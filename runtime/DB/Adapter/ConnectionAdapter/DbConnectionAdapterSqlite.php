@@ -19,6 +19,13 @@ class LtDbConnectionAdapterSqlite implements LtDbConnectionAdapter
 			$func = 'sqlite_open';
 		} 
 		$connConf["host"] = rtrim($connConf["host"], '\\/') . DIRECTORY_SEPARATOR;
+		if(!is_dir($connConf["host"]))
+		{
+			if(!@mkdir($connConf["host"], 0777, true))
+			{
+				trigger_error("Can not create {$connConf['host']}");
+			}
+		}
 		$error = '';
 		$connResource = $func($connConf["host"] . $connConf["dbname"], 0666, $error);
 		if (!$connResource)
