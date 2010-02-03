@@ -24,15 +24,22 @@ $lotus->option['app_name'] = 'app_name1';
  */
 $lotus->mvcMode = true;
 /**
+ * 是否显示调试信息
+ */
+$lotus->debug = true;
+/**
  * 使用cache可以提升性能
  */
-// $lotus->option["cache_server"] = array("adapter" => "file",
-// "host" => "/tmp/cache_cms/");
+$lotus->option["cache_server"] = array("adapter" => "file", "host" => "/tmp/LtCache/proj_dir/app_name1/");
 $lotus->init();
 /**
- * 
- * @todo 显示调试信息
+ * 显示调试信息
  */
-echo '<!--';
-print_r($lotus->debugInfo);
-echo '-->';
+if($lotus->debug)
+{
+	echo "<!--totalTime: {$lotus->debugInfo['totalTime']}s  memoryUsage: {$lotus->debugInfo['memoryUsage']} devMode: {$lotus->debugInfo['devMode']}-->";
+}
+// ------------- 
+echo "\n<!--\n";
+print_r($lotus);
+echo "-->";

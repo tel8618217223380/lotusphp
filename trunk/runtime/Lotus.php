@@ -8,26 +8,33 @@ class Lotus
 	 */
 	public $option;
 	public $mvcMode;
+	public $debug; // default false
+	public $debugInfo;
 
 	protected $proj_dir;
 	protected $app_dir;
 	protected $app_name;
 	protected $tmp_dir;
-	protected $devMode;
+	protected $devMode; // default true
 	protected $lotusRuntimeDir;
 	protected $cacheHandle;
 
-	public $debugInfo;
 
 	public function __construct()
 	{
 		$this->mvcMode = false; // 默认不使用MVC
 		$this->devMode = true; // 默认为开发模式
+		$this->debug = false; // 默认不显示调试信息
 		$this->lotusRuntimeDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	}
 
 	public function init()
 	{
+		if ($this->debug)
+		{
+			$this->debugInfo['memoryUsage'] = memory_get_usage();
+			$this->debugInfo['totalTime'] = microtime(true);
+		}
 		if (empty($this->option["proj_dir"]))
 		{
 			trigger_error('option[\'proj_dir\'] must be set');
@@ -42,13 +49,13 @@ class Lotus
 		$this->app_dir = $this->proj_dir . $this->app_name . '/';
 		if (empty($this->option["tmp_dir"]))
 		{
-			$this->tmp_dir = $this->proj_dir.'tmp/';
+			$this->tmp_dir = $this->proj_dir . 'tmp/';
 		}
 		else
 		{
 			$this->tmp_dir = rtrim($this->option["tmp_dir"], '\\/') . '/';
 		}
-		if (!empty($this->option["cache"]))
+		if (!empty($this->option['cache_server']))
 		{
 			/**
 			 * Init Cache component to sotre LtAutoloader, LtConfig data
@@ -66,18 +73,12 @@ class Lotus
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterPhps.php";
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
 			$ccb = new LtCacheConfigBuilder;
-			$ccb->addSingleHost($this->option["cache"]);
+			$ccb->addSingleHost($this->option['cache_server']);
 			LtCache::$servers = $ccb->getServers();
 			$cache = new LtCache;
 			$cache->init();
 			$this->cacheHandle = $cache->getCacheHandle();
 			$this->devMode = false; // 生产模式
-		}
-		else
-		{
-			$this->devMode = false; // 生产模式
-			$this->debugInfo['base_memory_usage'] = memory_get_usage();
-			$this->debugInfo['startTime'] = microtime(true);
 		}
 
 		/**
@@ -99,6 +100,17 @@ class Lotus
 		 * run MVC
 		 */
 		$this->mvcMode && $this->runMVC();
+		/**
+		 * debugInfo
+		 */
+		if ($this->debug)
+		{
+			$endTime = microtime(true);
+			$this->debugInfo['totalTime'] = round(($endTime - $this->debugInfo['totalTime']), 6);
+			$memoryUsage = memory_get_usage() - $this->debugInfo['memoryUsage'];
+			$this->debugInfo['memoryUsage'] = ($memoryUsage >= 1048576) ? round((round($memoryUsage / 1048576 * 100) / 100), 2) . 'MB' : (($memoryUsage >= 1024) ? round((round($memoryUsage / 1024 * 100) / 100), 2) . 'KB' : $memoryUsage . 'BYTES');
+			$this->debugInfo['devMode'] = $this->devMode ? 'true' : 'false';
+		}
 	}
 
 	protected function prepareAutoloader()
@@ -155,7 +167,7 @@ class Lotus
 		 */
 		$dispatcher = new LtDispatcher;
 		$dispatcher->viewDir = $this->app_dir . 'view/';
-		$dispatcher->viewTplDir = $this->tmp_dir . 'LtTemplateView/' . $this->app_name.'/';
+		$dispatcher->viewTplDir = $this->tmp_dir . 'LtTemplateView/' . $this->app_name . '/';
 		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}
