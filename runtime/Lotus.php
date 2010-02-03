@@ -12,10 +12,12 @@ class Lotus
 	protected $proj_dir;
 	protected $app_dir;
 	protected $app_name;
-
+	protected $tmp_dir;
 	protected $devMode;
 	protected $lotusRuntimeDir;
 	protected $cacheHandle;
+
+	public $debugInfo;
 
 	public function __construct()
 	{
@@ -26,18 +28,26 @@ class Lotus
 
 	public function init()
 	{
-		if (!isset($this->option["proj_dir"]) || empty($this->option["proj_dir"]))
+		if (empty($this->option["proj_dir"]))
 		{
 			trigger_error('option[\'proj_dir\'] must be set');
 		}
-		if (!isset($this->option["app_name"]) || empty($this->option["app_name"]))
+		if (empty($this->option["app_name"]))
 		{
 			trigger_error('option[\'app_name\'] must be set');
 		}
+
 		$this->proj_dir = rtrim($this->option["proj_dir"], '\\/') . '/';
 		$this->app_name = $this->option["app_name"];
-		$this->app_dir = $proj_dir . $this->app_name . '/';
-
+		$this->app_dir = $this->proj_dir . $this->app_name . '/';
+		if (empty($this->option["tmp_dir"]))
+		{
+			$this->tmp_dir = $this->proj_dir.'tmp/';
+		}
+		else
+		{
+			$this->tmp_dir = rtrim($this->option["tmp_dir"], '\\/') . '/';
+		}
 		if (!empty($this->option["cache"]))
 		{
 			/**
@@ -62,6 +72,12 @@ class Lotus
 			$cache->init();
 			$this->cacheHandle = $cache->getCacheHandle();
 			$this->devMode = false; // 生产模式
+		}
+		else
+		{
+			$this->devMode = false; // 生产模式
+			$this->debugInfo['base_memory_usage'] = memory_get_usage();
+			$this->debugInfo['startTime'] = microtime(true);
 		}
 
 		/**
@@ -107,7 +123,7 @@ class Lotus
 		/**
 		 * 开发模式下保存分析结果
 		 */
-		$autoloader->conf->mappingFileRoot = $this->proj_dir . 'tmp/LtAutoload';
+		$autoloader->conf->mappingFileRoot = $this->tmp_dir . 'LtAutoloader/';
 
 		if (!$this->devMode)
 		{
@@ -139,7 +155,7 @@ class Lotus
 		 */
 		$dispatcher = new LtDispatcher;
 		$dispatcher->viewDir = $this->app_dir . 'view/';
-		$dispatcher->viewTplDir = $this->proj_dir . 'tmp/view_tpl/' . $this->app_name;
+		$dispatcher->viewTplDir = $this->tmp_dir . 'LtTemplateView/' . $this->app_name.'/';
 		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}
