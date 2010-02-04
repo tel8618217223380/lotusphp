@@ -14,6 +14,7 @@ class LtCacheAdapterEAccelerator implements LtCacheAdapter
 
 	public function add($key, $value, $ttl=0)
 	{
+		$value = serialize($value); //eAccelerator doesn't serialize object
 		return eaccelerator_put($this->getRealKey($key), $value, $ttl);
 	}
 
@@ -27,7 +28,7 @@ class LtCacheAdapterEAccelerator implements LtCacheAdapter
 		$value = eaccelerator_get($this->getRealKey($key));
 		if (!empty($value))
 		{
-			return $value;
+			return unserialize($value);
 		}
 		else
 		{
@@ -37,16 +38,8 @@ class LtCacheAdapterEAccelerator implements LtCacheAdapter
 
 	public function update($key, $value, $ttl = 0)
 	{
+		$value = serialize($value);
 		return eaccelerator_put($this->getRealKey($key), $value, $ttl);
-// 直接更新
-//		if ($this->del($this->getRealKey($key)))
-//		{
-//			return $this->add($this->getRealKey($key), $value, $ttl);
-//		}
-//		else
-//		{
-//			return false;
-//		}
 	}
 
 	protected function getRealKey($key)
