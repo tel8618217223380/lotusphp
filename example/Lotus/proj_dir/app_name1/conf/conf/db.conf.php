@@ -1,5 +1,17 @@
 <?php
-$config['singleHost'] = array("adapter" => "sqlite", "host" => '/tmp/Lotus/DBSqlite/', "port" => '', "password" => "", "dbname" => 'sqlite_test0.db');
+
+/**
+ * 
+ * @example :
+ * $config['db_only_one'] = array(
+ * "adapter" => "sqlite", 
+ * "host" => '/tmp/Lotus/DBSqlite/', 
+ * "port" => '', 
+ * "password" => "", 
+ * "dbname" => 'sqlite_test0.db'
+ * );
+ */
+$config['db_only_one'] = array();
 
 $config['db_server'][] = array("user_group", "user_node_1", "master", array("host" => "10.0.1.1", "password" => "123456", "adapter" => "mysqli", "dbname" => "member_1"));
 

@@ -19,7 +19,6 @@ class Lotus
 	protected $lotusRuntimeDir;
 	protected $cacheHandle;
 
-
 	public function __construct()
 	{
 		$this->mvcMode = false; // 默认不使用MVC
@@ -176,24 +175,34 @@ class Lotus
 	{
 		/**
 		 * 
-		 * @todo 处理conf
+		 * @todo 处理conf , Db 性能
 		 */
 		$conf = LtObjectUtil::singleton("LtConfig");
-//		if ($dbServer = $conf->get('singleHost'))
-//		{
-//			$dcb = new LtDbConfigBuilder;
-//			$dcb->addSingleHost($singleHost);
-//			LtDb::$storeHandle = new LtDbStore;
-//			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
-//			$db = LtObjectUtil::singleton('LtDb');
-//			$db->init();
-//		}
-		$dbServer = $conf->get('db_server');
-		$dcb = new LtDbConfigBuilder;
-		foreach($dbServer as $v)
+		if ($dbServer = $conf->get('db_only_one'))
 		{
-			$dcb->addHost($v[0],$v[1],$v[2],$v[3]);
+			$dcb = new LtDbConfigBuilder;
+			$dcb->addSingleHost($dbServer);
 		}
+		else if ($dbServer = $conf->get('db_server'))
+		{
+			$dcb = new LtDbConfigBuilder;
+			foreach($dbServer as $v)
+			{
+				$dcb->addHost($v[0], $v[1], $v[2], $v[3]);
+			}
+		}
+		else
+		{
+			return null;
+		}
+//		if(!empty($this->cacheHandle))
+//		{
+//			LtDb::$storeHandle = $this->cacheHandle;
+//		}
+//		else
+//		{
+//			LtDb::$storeHandle = new LtDbStore;
+//		}
 		LtDb::$storeHandle = new LtDbStore;
 		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
 	}
