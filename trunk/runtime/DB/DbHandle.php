@@ -117,7 +117,8 @@ class LtDbHandle
 	 */
 	public function bindParameter($sql, $parameter)
 	{
-		$sql = preg_replace("/:([a-zA-Z0-9_\-\x7f-\xff][a-zA-Z0-9_\-\x7f-\xff]*)\s*([,\)]?)/", "\x01\x02\x03\\1\x01\x02\x03\\2", $sql);
+		// 注意替换结果尾部加一个空格
+		$sql = preg_replace("/:([a-zA-Z0-9_\-\x7f-\xff][a-zA-Z0-9_\-\x7f-\xff]*)\s*([,\)]?)/", "\x01\x02\x03\\1\x01\x02\x03\\2 ", $sql);
 		foreach($parameter as $key => $value)
 		{
 			$find[] = "\x01\x02\x03$key\x01\x02\x03";
