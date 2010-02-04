@@ -7,7 +7,7 @@ class LtCacheAdapterEAccelerator implements LtCacheAdapter
 	{
 		if(isset($hostConf["key_prefix"]))
 		{
-			$this->keyPrefix = $hotConf["key_prefix"];
+			$this->keyPrefix = $hostConf["key_prefix"];
 		}
 		return true;
 	}
@@ -24,14 +24,10 @@ class LtCacheAdapterEAccelerator implements LtCacheAdapter
 
 	public function get($key)
 	{
-		return eaccelerator_get($this->getRealKey($key));
-	}
-
-	public function update($key, $value, $ttl = 0)
-	{
-		if ($this->del($this->getRealKey($key)))
+		$value = eaccelerator_get($this->getRealKey($key));
+		if (!empty($value))
 		{
-			return $this->add($this->getRealKey($key), $value, $ttl);
+			return $value;
 		}
 		else
 		{
@@ -39,9 +35,23 @@ class LtCacheAdapterEAccelerator implements LtCacheAdapter
 		}
 	}
 
+	public function update($key, $value, $ttl = 0)
+	{
+		return eaccelerator_put($this->getRealKey($key), $value, $ttl);
+// 直接更新
+//		if ($this->del($this->getRealKey($key)))
+//		{
+//			return $this->add($this->getRealKey($key), $value, $ttl);
+//		}
+//		else
+//		{
+//			return false;
+//		}
+	}
+
 	protected function getRealKey($key)
 	{
-		if ($this->keyPrefix)
+		if (!empty($this->keyPrefix))
 		{
 			return $this->keyPrefix . "-" . $key;
 		}

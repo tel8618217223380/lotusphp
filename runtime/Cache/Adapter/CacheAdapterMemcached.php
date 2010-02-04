@@ -8,7 +8,7 @@ class LtCacheAdapterMemcached implements LtCacheAdapter
 	{
 		if(isset($hostConf["key_prefix"]))
 		{
-			$this->keyPrefix = $hotConf["key_prefix"];
+			$this->keyPrefix = $hostConf["key_prefix"];
 		}
 		$this->connectionResource = new Memcached();
 		$this->connectionResource->addServer($hostConf["host"], $hostConf["port"]);
