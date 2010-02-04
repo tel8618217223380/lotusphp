@@ -234,9 +234,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ccb = new LtCacheConfigBuilder;
 		$ccb->addHost("test_ttl", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/cache_files/test_ttl/phps"));
 		$ccb->addHost("test_ttl", "node_1", "master", array("adapter" => "file", "host" => "/tmp/cache_files/test_ttl/file"));
-		/**
-		@todo eAccelerator导致崩溃
-		*/
 		//$ccb->addHost("test_ttl", "node_2", "master", array("adapter" => "eAccelerator", "key_prefix" => "test"));
 
 		LtCache::$servers = $ccb->getServers();
