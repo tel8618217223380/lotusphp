@@ -32,5 +32,5 @@ class LtAutoloaderConfig
 	 * 
 	 * @var string
 	 */
-	public $mappingFileRoot = "/tmp/LtAutoloader/";
+	public $mappingFileRoot = "/tmp/Lotus/autoloader/";
 }

@@ -22,7 +22,7 @@ class LtSessionSaveHandleSqlite
 		}
 
 		$this->table = 'lotus_session';
-		$dbHandle = sqlite_open('/tmp/LtSession/session_sqlite2.db', 0666);
+		$dbHandle = sqlite_open('/tmp/Lotus/session/session_sqlite2.db', 0666);
 
 		if (!$dbHandle)
 		{

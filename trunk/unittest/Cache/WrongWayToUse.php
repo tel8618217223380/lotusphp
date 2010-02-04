@@ -17,7 +17,7 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "not_exists", "host" => "/tmp/LtCache/test/", "key_prefix" => "test"));
+		$ccb->addSingleHost(array("adapter" => "not_exists", "host" => "/tmp/Lotus/unittest/cache/", "key_prefix" => "test"));
 		LtCache::$servers = $ccb->getServers();
 		/**
 		 * 实例化组件入口类
@@ -39,7 +39,7 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/keyconflict/", "key_prefix" => "test"));
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_keyconflict/", "key_prefix" => "test"));
 		LtCache::$servers = $ccb->getServers();
 		$cache = new LtCache;
 		$cache->init();
@@ -60,7 +60,7 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/keynotexists/", "key_prefix" => "test"));
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_keynotexists/", "key_prefix" => "test"));
 		LtCache::$servers = $ccb->getServers();
 		$cache = new LtCache;
 		$cache->init();

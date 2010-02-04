@@ -23,7 +23,7 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 		 * 初始化LtCache，LtConfig用LtCache作存储层的时候性能才会提高
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/configPerformance/"));
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/config/"));
 		LtCache::$servers = $ccb->getServers();
 		$cache = new LtCache;
 		$cache->init();

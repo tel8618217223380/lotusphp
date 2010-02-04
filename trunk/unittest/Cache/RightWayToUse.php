@@ -31,10 +31,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ccb = new LtCacheConfigBuilder;
 		//$ccb->addSingleHost(array("adapter" => "apc", "key_prefix" => "test_apc_"));
 		//$ccb->addSingleHost(array("adapter" => "eAccelerator", "key_prefix" => "test_eAccelerator_"));
-		//$ccb->addSingleHost(array("adapter" => "File", "host" => "/tmp/LtCache/test/file/"));
+		//$ccb->addSingleHost(array("adapter" => "File", "host" => "/tmp/Lotus/unittest/cache/"));
 		//$ccb->addSingleHost(array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
 		//$ccb->addSingleHost(array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/", "key_prefix" => "test_phps"));
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/", "key_prefix" => "test_phps"));
 		//$ccb->addSingleHost(array("adapter" => "Xcache", "key_prefix" => "test_xcache_"));
 		LtCache::$servers = $ccb->getServers();
 
@@ -60,8 +60,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/prod_info"));
-		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/trade_info"));
+		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/prod_info"));
+		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/trade_info"));
 		LtCache::$servers = $ccb->getServers();
 
 		/**
@@ -232,8 +232,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addHost("test_ttl", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/ttl/"));
-		$ccb->addHost("test_ttl", "node_1", "master", array("adapter" => "file", "host" => "/tmp/LtCache/test/file/ttl/"));
+		$ccb->addHost("test_ttl", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_ttl/"));
+		$ccb->addHost("test_ttl", "node_1", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_ttl/"));
 		//$ccb->addHost("test_ttl", "node_2", "master", array("adapter" => "eAccelerator", "key_prefix" => "test"));
 
 		LtCache::$servers = $ccb->getServers();

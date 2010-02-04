@@ -19,7 +19,7 @@ class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 		 */
 		$dispatcher = new LtDispatcher;
 		$dispatcher->viewDir = "$appDir/view/";
-		$dispatcher->viewTplDir = "/tmp/LtTemplateView/test/";
+		$dispatcher->viewTplDir = "/tmp/Lotus/unittest/MVC/";
 		ob_start();
 		$dispatcher->dispatchAction("User", "Add");
 		ob_end_clean();
