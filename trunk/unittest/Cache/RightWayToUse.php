@@ -29,7 +29,13 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
+		//$ccb->addSingleHost(array("adapter" => "apc", "host" => "/tmp/cache_files/"));
+		//$ccb->addSingleHost(array("adapter" => "eAccelerator", "key_prefix" => "test"));
+		//$ccb->addSingleHost(array("adapter" => "File", "host" => "/tmp/cache_files/"));
+		//$ccb->addSingleHost(array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
+		//$ccb->addSingleHost(array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/cache_files/", "key_prefix" => "test"));
+		//$ccb->addSingleHost(array("adapter" => "Xcache", "host" => "/tmp/cache_files/"));
 		LtCache::$servers = $ccb->getServers();
 
 		/**
@@ -45,7 +51,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertTrue($ch->update("test_key", "new_value"));
 		$this->assertEquals("new_value", $ch->get("test_key"));
 		$this->assertTrue($ch->del("test_key"));
-		$this->assertFalse($ch->get("test_key"));
+		$this->assertFalse($ch->get("test_key")); //EA数据不存在返回null
 	}
 
 	public function testMostUsedWayWithMultiGroup()
@@ -228,6 +234,11 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ccb = new LtCacheConfigBuilder;
 		$ccb->addHost("test_ttl", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/cache_files/test_ttl/phps"));
 		$ccb->addHost("test_ttl", "node_1", "master", array("adapter" => "file", "host" => "/tmp/cache_files/test_ttl/file"));
+		/**
+		@todo eAccelerator导致崩溃
+		*/
+		//$ccb->addHost("test_ttl", "node_2", "master", array("adapter" => "eAccelerator", "key_prefix" => "test"));
+
 		LtCache::$servers = $ccb->getServers();
 
 		/**

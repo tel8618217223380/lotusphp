@@ -7,7 +7,7 @@ class LtCacheAdapterApc implements LtCacheAdapter
 	{
 		if(isset($hostConf["key_prefix"]))
 		{
-			$this->keyPrefix = $hotConf["key_prefix"];
+			$this->keyPrefix = $hostConf["key_prefix"];
 		}
 		return true;
 	}

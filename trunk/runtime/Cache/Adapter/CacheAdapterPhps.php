@@ -8,9 +8,9 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 		if(isset($hostConf["host"]))
 		{
 			$this->cacheFileRoot = rtrim($hostConf["host"], '\\/') . DIRECTORY_SEPARATOR;
-			if (isset($hotConf["key_prefix"]))
+			if (isset($hostConf["key_prefix"]))
 			{
-				$this->cacheFileRoot .= $hotConf["key_prefix"] . DIRECTORY_SEPARATOR;
+				$this->cacheFileRoot .= $hostConf["key_prefix"] . DIRECTORY_SEPARATOR;
 				
 			}
 			return true;
