@@ -135,7 +135,7 @@ class Lotus
 		/**
 		 * 开发模式下保存分析结果
 		 */
-		$autoloader->conf->mappingFileRoot = $this->tmp_dir . 'LtAutoloader/';
+		$autoloader->conf->mappingFileRoot = $this->tmp_dir . 'autoloader/';
 
 		if (!$this->devMode)
 		{
@@ -167,7 +167,7 @@ class Lotus
 		 */
 		$dispatcher = new LtDispatcher;
 		$dispatcher->viewDir = $this->app_dir . 'view/';
-		$dispatcher->viewTplDir = $this->tmp_dir . 'LtTemplateView/' . $this->app_name . '/';
+		$dispatcher->viewTplDir = $this->tmp_dir . 'templateView/' . $this->app_name . '/';
 		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}
