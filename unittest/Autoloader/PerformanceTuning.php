@@ -23,7 +23,7 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		 * 初始化LtCache，LtAutoloader用LtCache作存储层的时候性能才会提高
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/cache_files/"));
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/LtCache/testPerformance/"));
 		LtCache::$servers = $ccb->getServers();
 		$cache = new LtCache;
 		$cache->init();

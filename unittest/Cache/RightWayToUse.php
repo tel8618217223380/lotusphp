@@ -29,13 +29,13 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		//$ccb->addSingleHost(array("adapter" => "apc", "host" => "/tmp/cache_files/"));
-		//$ccb->addSingleHost(array("adapter" => "eAccelerator", "key_prefix" => "test"));
-		//$ccb->addSingleHost(array("adapter" => "File", "host" => "/tmp/cache_files/"));
+		//$ccb->addSingleHost(array("adapter" => "apc", "key_prefix" => "test_apc_"));
+		//$ccb->addSingleHost(array("adapter" => "eAccelerator", "key_prefix" => "test_eAccelerator_"));
+		//$ccb->addSingleHost(array("adapter" => "File", "host" => "/tmp/LtCache/test/file/"));
 		//$ccb->addSingleHost(array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
 		//$ccb->addSingleHost(array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/cache_files/", "key_prefix" => "test"));
-		//$ccb->addSingleHost(array("adapter" => "Xcache", "host" => "/tmp/cache_files/"));
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/", "key_prefix" => "test_phps"));
+		//$ccb->addSingleHost(array("adapter" => "Xcache", "key_prefix" => "test_xcache_"));
 		LtCache::$servers = $ccb->getServers();
 
 		/**
@@ -60,8 +60,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/cache_files/prod_info"));
-		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/cache_files/trade_info"));
+		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/prod_info"));
+		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/trade_info"));
 		LtCache::$servers = $ccb->getServers();
 
 		/**
@@ -135,11 +135,11 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * trade_info表示订单数据，存储订单详情，及该订单涉及的商品的快照、交易双方的信用等级
 		 * 如果在同 一个目录下，需要用不同的key_prefix，防止key冲突
 		 */
-		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/cache_files/prod_info"));
-		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/cache_files/trade_info")); 
+		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/prod_info"));
+		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/trade_info")); 
 		// 如果在同 一个目录下，需要用不同的key_prefix，防止key冲突
-		// $ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "key_prefix" => 5, "host" => "/var/data/cache_files"));
-		// $ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "key_prefix" => 6, "host" => "/var/data/cache_files"));
+		// $ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "key_prefix" => 5, "host" => "/var/data/LtCache/test/phps/"));
+		// $ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "key_prefix" => 6, "host" => "/var/data/LtCache/test/phps/"));
 		$this->assertEquals(
 			array("prod_cat" => array("node_0" => array("master" => array(
 							array("adapter" => "apc",
@@ -191,14 +191,14 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 					),
 				"prod_info" => array("node_0" => array("master" => array(
 							array("adapter" => "phps",
-								"host" => "/var/data/cache_files/prod_info",
+								"host" => "/var/data/LtCache/test/phps/prod_info",
 								),
 							),
 						),
 					),
 				"trade_info" => array("node_0" => array("master" => array(
 							array("adapter" => "phps",
-								"host" => "/var/data/cache_files/trade_info",
+								"host" => "/var/data/LtCache/test/phps/trade_info",
 								),
 							),
 						),
@@ -232,8 +232,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addHost("test_ttl", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/cache_files/test_ttl/phps"));
-		$ccb->addHost("test_ttl", "node_1", "master", array("adapter" => "file", "host" => "/tmp/cache_files/test_ttl/file"));
+		$ccb->addHost("test_ttl", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/LtCache/test/phps/ttl/"));
+		$ccb->addHost("test_ttl", "node_1", "master", array("adapter" => "file", "host" => "/tmp/LtCache/test/file/ttl/"));
 		//$ccb->addHost("test_ttl", "node_2", "master", array("adapter" => "eAccelerator", "key_prefix" => "test"));
 
 		LtCache::$servers = $ccb->getServers();
@@ -270,5 +270,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	}
 	protected function tearDown()
 	{
+		LtCache::$servers = null;
 	}
 }
