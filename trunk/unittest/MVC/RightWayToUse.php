@@ -157,6 +157,13 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 			array('<?php echo $classname->method("a",\'b\');?>',
 				'{$classname->method("a",\'b\')}',
 				),
+			// 静态变量
+			array('<?php echo Lotus::$debugInfo[\'totalTime\'];?>',
+				'{Lotus::$debugInfo[\'totalTime\']}',
+				),
+			array('<?php echo Lotus::$debugInfo;?>',
+				'{Lotus::$debugInfo}',
+				),
 			// url生成测试
 			array("<?php echo C('LtUrl')->generate('Admin', 'DoLogout');?>",
 				"{url('Admin', 'DoLogout')}",

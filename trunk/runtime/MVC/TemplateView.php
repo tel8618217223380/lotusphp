@@ -183,6 +183,10 @@ class LtTemplateView
 		$str = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff][+\-\>\$\'\"\,\[\]\(\)a-zA-Z0-9_\x7f-\xff]+)\}/es", "\$this->addquote('<?php echo \\1;?>')", $str); 
 		// 常量
 		$str = preg_replace("/\{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str); 
+		// 静态变量
+		$str = preg_replace("/\{([a-zA-Z0-9_]*::?\\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str);
+		$str = preg_replace("/\{([a-zA-Z0-9_]*::?\\\$[a-zA-Z0-9_\.\[\]\'\"\$\x7f-\xff]+)\}/e", "\$this->addquote('<?php echo \\1;?>')", $str); 
+
 		// 合并相邻php标记
 		$str = preg_replace("/\?\>\s*\<\?php[\r\n\t ]*/", "", $str);
 		/**
