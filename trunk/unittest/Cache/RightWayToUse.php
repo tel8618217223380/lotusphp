@@ -51,7 +51,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertTrue($ch->update("test_key", "new_value"));
 		$this->assertEquals("new_value", $ch->get("test_key"));
 		$this->assertTrue($ch->del("test_key"));
-		$this->assertFalse($ch->get("test_key")); //EA数据不存在返回null
+		$this->assertFalse($ch->get("test_key"));
 	}
 
 	public function testMostUsedWayWithMultiGroup()
