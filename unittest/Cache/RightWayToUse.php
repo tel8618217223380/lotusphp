@@ -10,15 +10,15 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐） 
 	 * -------------------------------------------------------------------
 	 * LtCache要求： 
-	 *    # key必须是数字或者字串，不能是数组，对象 
+	 *      # key必须是数字或者字串，不能是数组，对象 
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCache不在意：
-	 *    # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
+	 *      # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCache建议（不强求）：
-	 *    # 为保证key不冲突，最好定义多个group，将不同领域的数据分开存 
+	 *      # 为保证key不冲突，最好定义多个group，将不同领域的数据分开存 
 	 * 
 	 * 本测试用例期望效果：
 	 * 能成功通过add(), get(), del(), update()接口读写数据
@@ -29,15 +29,11 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		//$ccb->addSingleHost(array("adapter" => "apc", "key_prefix" => "test_apc_"));
-		//$ccb->addSingleHost(array("adapter" => "eAccelerator", "key_prefix" => "test_eAccelerator_"));
-		//$ccb->addSingleHost(array("adapter" => "File", "host" => "/tmp/Lotus/unittest/cache/"));
-		//$ccb->addSingleHost(array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
-		//$ccb->addSingleHost(array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/", "key_prefix" => "test_phps"));
-		//$ccb->addSingleHost(array("adapter" => "Xcache", "key_prefix" => "test_xcache_"));
+		$ccb->addSingleHost(array("adapter" => "phps",
+				"host" => "/tmp/Lotus/unittest/cache/",
+				"key_prefix" => "test_phps"
+				));
 		LtCache::$servers = $ccb->getServers();
-
 		/**
 		 * 实例化组件入口类
 		 */
@@ -52,6 +48,58 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertEquals("new_value", $ch->get("test_key"));
 		$this->assertTrue($ch->del("test_key"));
 		$this->assertFalse($ch->get("test_key"));
+
+		/**
+		 * 测试各适配器add(), get(), del(), update()接口
+		 */
+		$ccb->addHost("test_agdu", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
+		$ccb->addHost("test_agdu", "node_1", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
+
+		LtCache::$servers = $ccb->getServers();
+
+		if (extension_loaded('apc'))
+		{
+			$ccb->addHost("test_agdu", "node_2", "master", array("adapter" => "apc", "key_prefix" => "test_apc_"));
+		}
+		if (extension_loaded('eAccelerator'))
+		{
+			$ccb->addHost("test_agdu", "node_3", "master", array("adapter" => "eAccelerator", "key_prefix" => "test_eAccelerator_"));
+		}
+		if (extension_loaded('memcache'))
+		{
+			$ccb->addHost("test_agdu", "node_4", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
+		}
+		if (extension_loaded('memcached'))
+		{
+			$ccb->addHost("test_agdu", "node_5", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
+		}
+		if (extension_loaded('Xcache'))
+		{
+			$ccb->addHost("test_agdu", "node_6", "master", array("adapter" => "Xcache", "key_prefix" => "test_xcache_"));
+		}
+		/**
+		 * 测试test_agdu组各节点
+		 */
+		foreach(LtCache::$servers['test_agdu'] as $k => $v)
+		{
+			$cache->group = "test_agdu";
+			$cache->node = $k;
+			$cache->init();
+			echo "\n------" . $cache->group . '------' . $cache->node . "------\n";
+
+			$ch = $cache->getCacheHandle();
+
+			$this->assertTrue($ch->add("test_key", "test_value"));
+			$this->assertEquals("test_value", $ch->get("test_key"));
+			$this->assertTrue($ch->update("test_key", "new_value"));
+			$this->assertEquals("new_value", $ch->get("test_key"));
+			$this->assertTrue($ch->del("test_key"));
+			$this->assertFalse($ch->get("test_key"));
+		}
+		/**
+		 * 使其它测试不受干扰
+		 */
+		LtCache::$servers = null;
 	}
 
 	public function testMostUsedWayWithMultiGroup()
@@ -233,9 +281,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 */
 		$ccb = new LtCacheConfigBuilder;
 		$ccb->addHost("test_ttl", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_ttl/"));
-		$ccb->addHost("test_ttl", "node_1", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_ttl/"));
-		//$ccb->addHost("test_ttl", "node_2", "master", array("adapter" => "eAccelerator", "key_prefix" => "test"));
-
+		$ccb->addHost("test_ttl", "node_1", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_ttl/")); 
+		// $ccb->addHost("test_ttl", "node_2", "master", array("adapter" => "eAccelerator", "key_prefix" => "test"));
 		LtCache::$servers = $ccb->getServers();
 
 		/**
@@ -247,7 +294,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$cache->group = "test_ttl";
 			$cache->node = $k;
 			$cache->init();
-			echo "\n------".$cache->group .'------'.$cache->node."------\n";
+			echo "\n------" . $cache->group . '------' . $cache->node . "------\n";
 
 			$ch = $cache->getCacheHandle();
 
