@@ -14,9 +14,12 @@ class LtCache
 		$this->ch->node = $this->getNode();
 	}
 
-	public function getCacheHandle()
+	public function getTDG($tableName)
 	{
-		return $this->ch;
+		$tdg = new LtCacheTableDataGateway;
+		$tdg->tableName = $tableName;
+		$tdg->ch = $this->ch;
+		return $tdg;
 	}
 
 	public function changeNode($node)

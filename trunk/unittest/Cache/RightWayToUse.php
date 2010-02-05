@@ -40,7 +40,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$cache = new LtCache;
 		$cache->init(); 
 		// 初始化完毕，测试其效果
-		$ch = $cache->getCacheHandle();
+		$ch = $cache->getTDG("test");
 
 		$this->assertTrue($ch->add("test_key", "test_value"));
 		$this->assertEquals("test_value", $ch->get("test_key"));
@@ -87,7 +87,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$cache->init();
 			echo "\n------" . $cache->group . '------' . $cache->node . "------\n";
 
-			$ch = $cache->getCacheHandle();
+			$ch = $cache->getTDG("test_agdu");
 
 			$this->assertTrue($ch->add("test_key", "test_value"));
 			$this->assertEquals("test_value", $ch->get("test_key"));
@@ -108,18 +108,18 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/prod_info"));
-		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/trade_info"));
+		$ccb->addHost("phps_cache_1", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache_files_1"));
+		$ccb->addHost("phps_cache_2", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache_files_2"));
 		LtCache::$servers = $ccb->getServers();
 
 		/**
 		 * 操作prod_info
 		 */
 		$cache1 = new LtCache;
-		$cache1->group = "prod_info";
+		$cache1->group = "phps_cache_1";
 		$cache1->init();
 
-		$ch = $cache1->getCacheHandle();
+		$ch = $cache1->getTDG("prod_info");
 		$this->assertTrue($ch->add("key_1", "prod_1"));
 		$this->assertEquals("prod_1", $ch->get("key_1"));
 		$this->assertTrue($ch->update("key_1", "new_value"));
@@ -132,10 +132,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * trade_info也用了key_1这个 键，但他并不会跟prod_info的key_1冲突，因为他们的host是不一样的
 		 */
 		$cache2 = new LtCache;
-		$cache2->group = "trade_info";
+		$cache2->group = "phps_cache_2";
 		$cache2->init();
 
-		$ch = $cache2->getCacheHandle();
+		$ch = $cache2->getTDG("trade_info");
 		$this->assertTrue($ch->add("key_1", "prod_1"));
 		$this->assertEquals("prod_1", $ch->get("key_1"));
 		$this->assertTrue($ch->update("key_1", "new_value"));
@@ -296,7 +296,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$cache->init();
 			echo "\n------" . $cache->group . '------' . $cache->node . "------\n";
 
-			$ch = $cache->getCacheHandle();
+			$ch = $cache->getTDG("test");
 
 			foreach ($testDataList as $k => $v)
 			{

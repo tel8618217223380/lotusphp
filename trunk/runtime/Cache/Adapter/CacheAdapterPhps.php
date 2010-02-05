@@ -21,9 +21,9 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 		}
 	}
 
-	public function add($key, $value, $ttl=0)
+	public function add($key, $value, $ttl = 0, $tableName, $connectionResource)
 	{
-		$cacheFile = $this->getCacheFile($key);
+		$cacheFile = $this->getCacheFile($tableName, $key);
 		if(is_file($cacheFile))
 		{
 			trigger_error("Key Conflict: {$key}");
@@ -41,9 +41,9 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 		return (boolean) file_put_contents($cacheFile, '<?php exit;?>' . $expireTime . serialize($value));
 	}
 	
-	public function del($key)
+	public function del($key, $tableName, $connectionResource)
 	{
-		$cacheFile = $this->getCacheFile($key);
+		$cacheFile = $this->getCacheFile($tableName, $key);
 		if(!is_file($cacheFile))
 		{
 			trigger_error("Key not exists: {$key}");
@@ -55,9 +55,9 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 		}
 	}
 	
-	public function get($key)
+	public function get($key, $tableName, $connectionResource)
 	{
-		$cacheFile = $this->getCacheFile($key);
+		$cacheFile = $this->getCacheFile($tableName, $key);
 		if (!is_file($cacheFile))
 		{
 			return false;
@@ -78,9 +78,9 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 		}
 	}
 
-	public function update($key, $value, $ttl = 0)
+	public function update($key, $value, $ttl = 0, $tableName, $connectionResource)
 	{
-		$cacheFile = $this->getCacheFile($key);
+		$cacheFile = $this->getCacheFile($tableName, $key);
 		if(!is_file($cacheFile))
 		{
 			trigger_error("Key not exists: {$key}");
@@ -90,10 +90,14 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 		return (boolean) file_put_contents($cacheFile, '<?php exit;?>' . $expireTime . serialize($value));
 	}
 
-	protected function getCacheFile($key)
+	protected function getCacheFile($tableName, $key)
 	{
 		$token = md5($key);
-		return $this->cacheFileRoot	. substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2) .
-		DIRECTORY_SEPARATOR . 'phps-' . $token. '.php';
+		$cacheFile = $this->cacheFileRoot	. substr($token, 0,2) . DIRECTORY_SEPARATOR . substr($token, 2,2);
+		if ($tableName)
+		{
+			$cacheFile .=  DIRECTORY_SEPARATOR .$tableName;
+		}
+		return $cacheFile .	DIRECTORY_SEPARATOR . 'phps-' . $token. '.php';
 	}
 }

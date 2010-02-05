@@ -5,6 +5,7 @@ class LtCacheHandle
 	public $node;
 	public $role = "master";
 	public $connectionManager;
+	public $connectionResource;
 	protected $connectionAdapter;
 
 	public function __construct()
@@ -12,33 +13,34 @@ class LtCacheHandle
 		$this->connectionManager = new LtCacheConnectionManager;
 	}
 
-	public function add($key, $value, $ttl = 0)
+	public function add($key, $value, $ttl = 0, $tableName)
 	{
 		$this->initConnection();
-		return $this->connectionAdapter->add($key, $value, $ttl);
+		return $this->connectionAdapter->add($key, $value, $ttl, $tableName, $this->connectionResource);
 	}
 
-	public function del($key)
+	public function del($key, $tableName)
 	{
 		$this->initConnection();
-		return $this->connectionAdapter->del($key);
+		return $this->connectionAdapter->del($key, $tableName, $this->connectionResource);
 	}
 
-	public function get($key)
+	public function get($key, $tableName)
 	{
 		$this->initConnection();
-		return $this->connectionAdapter->get($key);
+		return $this->connectionAdapter->get($key, $tableName, $this->connectionResource);
 	}
 
-	public function update($key, $value, $ttl = 0)
+	public function update($key, $value, $ttl = 0, $tableName)
 	{
 		$this->initConnection();
-		return $this->connectionAdapter->update($key, $value, $ttl);
+		return $this->connectionAdapter->update($key, $value, $ttl, $tableName, $this->connectionResource);
 	}
 
 	protected function initConnection()
 	{
 		$connectionInfo = $this->connectionManager->getConnection($this->group, $this->node, $this->role);
 		$this->connectionAdapter = $connectionInfo["connectionAdapter"];
+		$this->connectionResource = $connectionInfo["connectionResource"];
 	}
 }

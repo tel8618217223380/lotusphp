@@ -23,9 +23,9 @@ class LtDb
 		return $this->dbh;
 	}
 
-	public function getTableGateway($tableName)
+	public function getTDG($tableName)
 	{
-		$tg = new LtDbTable;
+		$tg = new LtDbTableDataGateway;
 		$tg->tableName = $tableName;
 		$tg->dbh = $this->dbh;
 		return $tg;
@@ -73,7 +73,7 @@ class LtDbStore
 {
 	protected $stack;
 
-	public function add($key, $value, $ttl)
+	public function add($key, $value, $ttl = 0)
 	{
 		$this->stack[$key] = $value;
 		return true;
