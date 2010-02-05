@@ -3,6 +3,7 @@ class LtConfig
 {
 	static public $storeHandle;
 	public $configFile;
+	protected $conf;
 
 	/**
 	 * 警告
@@ -36,11 +37,16 @@ class LtConfig
 
 	public function get($key)
 	{
+		if (isset($this->conf[$key]))
+		{
+			return $this->conf[$key];
+		}
 		$ret = self::$storeHandle->get($key);
 		if (false === $ret)
 		{
 			trigger_error("key not exists");
 		}
+		$this->conf[$key] = $ret;
 		return $ret;
 	}
 
