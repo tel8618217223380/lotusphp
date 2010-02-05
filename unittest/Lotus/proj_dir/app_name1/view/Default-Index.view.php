@@ -7,7 +7,7 @@
 <body>
 <h1>{$message}</h1>
 <pre>
-LotusPHP开始工作啦！
+LotusPHP Works!
 code: {$code}{CR}{LF}
 message: {$message}{CR}{LF}
 username from mysql: {$data[username]}{CR}{LF}

@@ -35,11 +35,11 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		/**
 		 * 是否使用MVC
 		 */
-		$lotus->mvcMode = false;
+		$lotus->mvcMode = true;
 		/**
 		 * 是否显示调试信息
 		 */
-		$lotus->debug = false;
+		$lotus->debug = true;
 
 		/**
 		 * devMode的默认值是true，即默认处于开发模式 
@@ -50,8 +50,8 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 */
 		/**
 		 * 使用cache可以提升性能
-		 */
-		//$lotus->option["cache_server"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
+		 */ 
+		// $lotus->option["cache_server"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
 		$lotus->init();
 
 		/**
@@ -69,8 +69,10 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
-		//$_GET['module'] = 'Default';
-		//$_GET['action'] = 'Index';
+		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1'; 
+		// $_GET['module'] = 'Default';
+		// $_GET['action'] = 'Index';
+		$_SERVER['PATH_INFO'] = '/Default/Index';
 	}
 	protected function tearDown()
 	{
