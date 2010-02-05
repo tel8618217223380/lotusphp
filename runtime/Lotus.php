@@ -135,7 +135,10 @@ class Lotus
 		 * 开发模式下保存分析结果
 		 */
 		$autoloader->conf->mappingFileRoot = $this->tmp_dir . 'autoloader/';
-
+		if (isset($this->option["is_load_function"]))
+		{
+			$autoloader->conf->isLoadFunction  = $this->option["is_load_function"];
+		}
 		if (!$this->devMode)
 		{
 			LtAutoloader::$storeHandle = $this->cacheHandle;
