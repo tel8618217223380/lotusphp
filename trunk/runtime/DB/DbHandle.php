@@ -60,7 +60,7 @@ class LtDbHandle
 		switch ($queryType)
 		{
 			case "SELECT":
-				$servers = LtDb::$storeHandle->get("servers", LtDb::$namespace);
+				$servers = LtDb::$storeHandle->get("servers");
 				if (!$forceUseMaster && isset($servers[$this->group][$this->node]["slave"]))
 				{
 					$this->role = "slave";
@@ -138,7 +138,7 @@ class LtDbHandle
 	protected function getCurrentSqlAdapter()
 	{
 		$factory = new LtDbAdapterFactory;
-		$servers = LtDb::$storeHandle->get("servers", LtDb::$namespace);
+		$servers = LtDb::$storeHandle->get("servers");
 		$host = key($servers[$this->group][$this->node][$this->role]);
 		return $factory->getSqlAdapter($servers[$this->group][$this->node][$this->role][$host]["sql_adapter"]);
 	}

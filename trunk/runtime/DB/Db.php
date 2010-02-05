@@ -2,7 +2,7 @@
 class LtDb
 {
 	static public $storeHandle;
-	static public $namespace = "";
+
 	public $group;
 	public $node;
 	protected $dbh;
@@ -49,10 +49,9 @@ class LtDb
 		if ($this->group)
 		{
 			return $this->group;
-		}
-		elseif (1 == count(self::$storeHandle->get("servers", self::$namespace)))
+		}elseif (1 == count(self::$storeHandle->get("servers")))
 		{
-			return key(self::$storeHandle->get("servers", self::$namespace));
+			return key(self::$storeHandle->get("servers"));
 		}
 	}
 
@@ -62,7 +61,7 @@ class LtDb
 		{
 			return $this->node;
 		}
-		$servers = self::$storeHandle->get("servers", self::$namespace);
+		$servers = self::$storeHandle->get("servers");
 		if (1 == count($servers[$this->getGroup()]))
 		{
 			return key($servers[$this->getGroup()]);
@@ -74,16 +73,15 @@ class LtDbStore
 {
 	protected $stack;
 
-	public function add($key, $value, $ttl, $namespace)
+	public function add($key, $value, $ttl)
 	{
-		$this->stack[$this->getRealKey($namespace, $key)] = $value;
+		$this->stack[$key] = $value;
 		return true;
 	}
 
-	public function del($key, $namespace)
+	public function del($key)
 	{
-		$key = $this->getRealKey($namespace, $key);
-		if(isset($this->stack[$key]))
+		if (isset($this->stack[$key]))
 		{
 			unset($this->stack[$key]);
 			return true;
@@ -94,20 +92,14 @@ class LtDbStore
 		}
 	}
 
-	public function get($key, $namespace)
+	public function get($key)
 	{
-		$key = $this->getRealKey($namespace, $key);
 		return isset($this->stack[$key]) ? $this->stack[$key] : false;
 	}
 
-	public function update($key, $value, $ttl, $namespace)
+	public function update($key, $value, $ttl)
 	{
-		$this->stack[$this->getRealKey($namespace, $key)] = $value;
+		$this->stack[$key] = $value;
 		return true;
-	}
-
-	protected function getRealKey($namespace, $key)
-	{
-		return sprintf("%u", crc32($namespace)) . $key;
 	}
 }

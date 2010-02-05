@@ -198,15 +198,17 @@ class Lotus
 		{
 			return null;
 		}
-//		if(!empty($this->cacheHandle))
-//		{
-//			LtDb::$storeHandle = $this->cacheHandle;
-//		}
-//		else
-//		{
-//			LtDb::$storeHandle = new LtDbStore;
-//		}
-		LtDb::$storeHandle = new LtDbStore;
-		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
+		if(!empty($this->cacheHandle))
+		{
+			LtDb::$storeHandle = $this->cacheHandle;
+		}
+		else
+		{
+			LtDb::$storeHandle = new LtDbStore;
+		}
+		if(!LtDb::$storeHandle->get("servers"))
+		{
+			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
+		}
 	}
 }
