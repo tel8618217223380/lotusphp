@@ -22,12 +22,34 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";class P
 		 * 初始化LtCache，LtDb用LtCache作存储层的时候性能才会提高
 		 */
 		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "phps",
+				"host" => "/tmp/Lotus/unittest/dbPerformance/",
+				"key_prefix" => "dbPerformance"
+				));
+		LtCache::$servers = $ccb->getServers();
+		/**
+		 * 实例化组件入口类
+		 */
+		$cache = new LtCache;
+		$cache->init(); 
+
+		/**
 		 * 配置数据库连接信息
 		 */
 		$dcb = new LtDbConfigBuilder;
 		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
-		LtDb::$storeHandle = new LtDbStore;
-		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
+		/**
+		@todo 性能没有提升反而下降 ?
+		*/
+		// LtDb::$storeHandle = new LtDbStore;
+		LtDb::$storeHandle = $cache->getCacheHandle();
+		if(!LtDb::$storeHandle->get("servers"))
+		{
+			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
+		}		
 		/**
 		 * 实例化组件入口类
 		 */
