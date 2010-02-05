@@ -23,6 +23,11 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 		 */
 		$lotus->option['app_name'] = 'app_name1';
 		/**
+		 * 是否自动加载函数文件, 默认为AutoloaderConfig.php的设置
+		 */
+		$lotus->option['is_load_function'] = false;
+
+		/**
 		 * 是否使用MVC
 		 */
 		$lotus->mvcMode = false;
