@@ -27,7 +27,7 @@ class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 		unlink($dispatcher->viewTplDir . "layout/top_navigator-User-Add.view.php");
 
 		/**
-		 * 运行100次，要求在2秒内运行完
+		 * 运行100次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
 		$times = 1000;
@@ -54,7 +54,7 @@ class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
 		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
 		echo "\n---------------------------------------------------------\n";
-		$this->assertTrue(15 > $totalTime);
+		$this->assertTrue(1 > $totalTime);
 	}
 	protected function setUp()
 	{

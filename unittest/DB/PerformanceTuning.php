@@ -65,10 +65,10 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";class P
 		$tg = $db->getTableGateway("test_user");
 
 		/**
-		 * 运行300次，要求在4秒内运行完
+		 * 运行1000次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
-		$times = 300;
+		$times = 1000;
 		$startTime = microtime(true);
 
 		for($i = 0; $i < $times; $i++)
@@ -92,7 +92,7 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";class P
 		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
 		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
 		echo "\n---------------------------------------------------------\n";
-		$this->assertTrue(4 > $totalTime);
+		$this->assertTrue(1 > $totalTime);
 
 	}
 	protected function setUp()
