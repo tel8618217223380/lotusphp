@@ -32,6 +32,7 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 * 应用名称对项目目录下的子目录名称
 		 */
 		$lotus->option['app_name'] = 'app_name1';
+
 		/**
 		 * 是否使用MVC
 		 */
@@ -52,6 +53,10 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 * 使用cache可以提升性能
 		 */ 
 		//$lotus->option["cache_server"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
+		/**
+		 * 使用cache后,每个应用使用不同的cache表防止key冲突 
+		 */
+		$lotus->option['cache_table'] = 'app_name1';
 		$lotus->init();
 
 		/**
