@@ -1,7 +1,7 @@
 <?php
 /**
  * Database Table abstract
- *
+ * 
  * @todo pretty join support
  */
 class LtDbTable
@@ -9,69 +9,104 @@ class LtDbTable
 	public $dbh;
 	/**
 	 * The created field name
-	 *
-	 * @var string
+	 * 
+	 * @var string 
 	 */
 	public $createdColumn;
 
 	/**
 	 * The modified field name
-	 *
-	 * @var string
+	 * 
+	 * @var string 
 	 */
 	public $modifiedColumn;
 
 	/**
 	 * The table name
-	 *
-	 * @var string
+	 * 
+	 * @var string 
 	 */
 	public $tableName;
 
 	/**
 	 * The fields array
-	 *
-	 * @var array
+	 * 
+	 * @var array 
 	 */
 	protected $fields;
 
 	/**
 	 * The primary key
-	 *
-	 * @var string
+	 * 
+	 * @var string 
 	 */
 	protected $primaryKey;
+	protected $servers;
 
 	/**
 	 * Build table's field list
-	 *
-	 * @return array
+	 * 
+	 * @return array 
 	 */
 	protected function buildFieldList()
 	{
-		if (!$this->fields)
+		$group = $this->dbh->group;
+		$node = $this->dbh->node;
+		$role = $this->dbh->role;
+		$table = $this->tableName;
+		if (empty($this->servers))
+		{
+			$this->servers = LtDb::$storeHandle->get('servers');
+		}
+		$servers = $this->servers;
+
+		$host = key($servers[$group][$node][$role]);
+		if (isset($servers[$group][$node][$role][$host]['db_table']))
+		{
+			if (isset($servers[$group][$node][$role][$host]['db_table'][$table]))
+			{
+				$t = $servers[$group][$node][$role][$host]['db_table'][$table];
+			}
+		}
+
+		if (!empty($t['fields']))
+		{
+			$this->fields = $t['fields'];
+			if (!empty($t['primaryKey']))
+			{
+				$this->primaryKey = $t['primaryKey'];
+			}
+			return true; // 使用缓存数据
+		}
+
+		if (empty($this->fields))
 		{
 			$this->dbh->query(''); //set sqlAdapter
 			$this->fields = $this->dbh->sqlAdapter->getFields($this->dbh->query($this->dbh->sqlAdapter->showFields($this->tableName)));
-		}
-		if (!$this->primaryKey) 
-		{
-			foreach($this->fields as $field)
+
+			if (empty($this->primaryKey))
 			{
-				if ($field['primary'] == 1)
+				foreach($this->fields as $field)
 				{
-					$this->primaryKey = $field['name'];
-					break;
+					if ($field['primary'] == 1)
+					{
+						$this->primaryKey = $field['name'];
+						break;
+					}
 				}
 			}
 		}
+		$t[$table]['fields'] = $this->fields;
+		$t[$table]['primaryKey'] = $this->primaryKey;
+		$servers[$group][$node][$role][$host]['db_table'] = $t;
+		LtDb::$storeHandle->update('servers', $servers, 0);
 	}
 
 	/**
 	 * A shortcut to SELECT COUNT(*) FROM table WHERE condition
-	 *
-	 * @param array $args
-	 * @return integer
+	 * 
+	 * @param array $args 
+	 * @return integer 
 	 * @example count(array('expression' => 'id < :id', 'value' => array('id' => 10)));
 	 */
 	public function count($args = null)
@@ -87,9 +122,9 @@ class LtDbTable
 
 	/**
 	 * Delete a row by primary key
-	 *
-	 * @param string $primaryKeyId
-	 * @return string
+	 * 
+	 * @param string $primaryKeyId 
+	 * @return string 
 	 * @example delete(10);
 	 */
 	public function delete($primaryKeyId)
@@ -103,9 +138,9 @@ class LtDbTable
 	/**
 	 * Delete many rows from table
 	 * Please use this method carefully!
-	 *
-	 * @param array $args
-	 * @return integer
+	 * 
+	 * @param array $args 
+	 * @return integer 
 	 * @example deleteRows(array('expression' => "id > :id", 'value' => array('id' => 2)));
 	 */
 	public function deleteRows($args = null)
@@ -119,18 +154,17 @@ class LtDbTable
 
 	/**
 	 * Fetch one row from table by primary key
-	 *
-	 * @param string $primaryKeyId
-	 * @param array $args
-	 * @param boolean $useSlave
-	 * @return array
-	 *
+	 * 
+	 * @param string $primaryKeyId 
+	 * @param array $args 
+	 * @param boolean $useSlave 
+	 * @return array 
 	 * @example fetch(10)
 	 */
 	public function fetch($primaryKeyId, $args = null, $useSlave = true)
 	{
 		$this->buildFieldList();
-		$fetchRowsArgs['where']['expression'] =  $this->tableName . '.' . $this->primaryKey . '=:' . $this->primaryKey;
+		$fetchRowsArgs['where']['expression'] = $this->tableName . '.' . $this->primaryKey . '=:' . $this->primaryKey;
 		$fetchRowsArgs['where']['value'][$this->primaryKey] = $primaryKeyId;
 		$fetchRowsArgs['fields'] = isset($args['fields']) ? $args['fields'] : null;
 		$fetchRowsArgs['join'] = isset($args['join']) ? $args['join'] : null;
@@ -140,11 +174,10 @@ class LtDbTable
 
 	/**
 	 * Fetch many rows from table
-	 *
-	 * @param array $args
-	 * @param boolean $useSlave
-	 * @return array
-	 *
+	 * 
+	 * @param array $args 
+	 * @param boolean $useSlave 
+	 * @return array 
 	 * @example fetchRows(array('where' => array('expression' => "id > :id", 'value' => array('id' => 2))));
 	 */
 	public function fetchRows($args = null, $useSlave = true)
@@ -161,16 +194,16 @@ class LtDbTable
 		{
 			$this->dbh->query(''); //set sqlAdapter
 			$offset = isset($args['offset']) ? $args['offset'] : 0;
-			$sql = $sql . ' '. $this->dbh->sqlAdapter->limit($args['limit'], $offset);
+			$sql = $sql . ' ' . $this->dbh->sqlAdapter->limit($args['limit'], $offset);
 		}
 		return $this->dbh->query($sql, $bind);
 	}
 
 	/**
 	 * Insert one row into table, then return the inserted row's pk
-	 *
-	 * @param array $args
-	 * @return string
+	 * 
+	 * @param array $args 
+	 * @return string 
 	 * @example insert(array('name' => 'lily', 'age' => '12'));
 	 */
 	public function insert($args = null)
@@ -208,10 +241,10 @@ class LtDbTable
 
 	/**
 	 * Update one row  by primary key
-	 *
-	 * @param string $primaryKeyId
-	 * @param array $args
-	 * @return integer
+	 * 
+	 * @param string $primaryKeyId 
+	 * @param array $args 
+	 * @return integer 
 	 * @example update(1, array('name' => 'lily', 'age' => '18'));
 	 */
 	public function update($primaryKeyId, $args = null)
@@ -225,10 +258,10 @@ class LtDbTable
 	/**
 	 * Update manay rows
 	 * Please use this method carefully!
-	 *
-	 * @param array $where
-	 * @param array $args
-	 * @return integer
+	 * 
+	 * @param array $where 
+	 * @param array $args 
+	 * @return integer 
 	 * @example updateRows(array('expression' => "id > :id", 'value' => array('id' => 2)), array('name' => 'kiwi', 'age' => '1'));
 	 */
 	public function updateRows($where, $args = null)
