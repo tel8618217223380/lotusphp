@@ -10,15 +10,15 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐） 
 	 * -------------------------------------------------------------------
 	 * LtCache要求： 
-	 *      # key必须是数字或者字串，不能是数组，对象 
+	 *       # key必须是数字或者字串，不能是数组，对象 
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCache不在意：
-	 *      # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
+	 *       # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCache建议（不强求）：
-	 *      # 为保证key不冲突，最好定义多个group，将不同领域的数据分开存 
+	 *       # 为保证key不冲突，最好定义多个group，将不同领域的数据分开存 
 	 * 
 	 * 本测试用例期望效果：
 	 * 能成功通过add(), get(), del(), update()接口读写数据
@@ -30,16 +30,17 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 */
 		$ccb = new LtCacheConfigBuilder;
 		$ccb->addSingleHost(array("adapter" => "phps",
-				"host" => "/tmp/Lotus/unittest/cache/",
-				"key_prefix" => "test_phps"
+				"host" => "/tmp/Lotus/unittest/cache/"
 				));
 		LtCache::$servers = $ccb->getServers();
 		/**
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
-		$cache->init(); 
-		// 初始化完毕，测试其效果
+		$cache->init();
+		/**
+		 * 初始化完毕, 测试其效果, 使用不同的tableName防止key冲突
+		 */
 		$ch = $cache->getTDG("test");
 
 		$this->assertTrue($ch->add("test_key", "test_value"));
@@ -52,34 +53,38 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		/**
 		 * 测试各适配器add(), get(), del(), update()接口
 		 */
-		$ccb->addHost("test_agdu", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
-		$ccb->addHost("test_agdu", "node_1", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
-
-		LtCache::$servers = $ccb->getServers();
+		$ccb->addHost("test_agdu", "node_phps", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
+		$ccb->addHost("test_agdu", "node_file", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
 
 		if (extension_loaded('apc'))
 		{
-			$ccb->addHost("test_agdu", "node_2", "master", array("adapter" => "apc", "key_prefix" => "test_apc_"));
+			echo "\n-----apc loaded-----\n";
+			$ccb->addHost("test_agdu", "node_apc", "master", array("adapter" => "apc"));
 		}
-		if (extension_loaded('eAccelerator'))
+		if (extension_loaded('eaccelerator'))
 		{
-			$ccb->addHost("test_agdu", "node_3", "master", array("adapter" => "eAccelerator", "key_prefix" => "test_eAccelerator_"));
+			echo "\n-----eAccelerator loaded-----\n";
+			$ccb->addHost("test_agdu", "node_eaccelerator", "master", array("adapter" => "eAccelerator"));
 		}
 		if (extension_loaded('memcache'))
 		{
-			$ccb->addHost("test_agdu", "node_4", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
+			echo "\n-----memcache loaded-----\n";
+			$ccb->addHost("test_agdu", "node_memcache", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
 		}
 		if (extension_loaded('memcached'))
 		{
-			$ccb->addHost("test_agdu", "node_5", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
+			echo "\n-----memcached loaded-----\n";
+			$ccb->addHost("test_agdu", "node_memcached", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
 		}
-		if (extension_loaded('Xcache'))
+		if (extension_loaded('xcache'))
 		{
-			$ccb->addHost("test_agdu", "node_6", "master", array("adapter" => "Xcache", "key_prefix" => "test_xcache_"));
+			echo "\n-----xcache loaded-----\n";
+			$ccb->addHost("test_agdu", "node_xcache", "master", array("adapter" => "Xcache"));
 		}
 		/**
 		 * 测试test_agdu组各节点
 		 */
+		LtCache::$servers = $ccb->getServers();
 		foreach(LtCache::$servers['test_agdu'] as $k => $v)
 		{
 			$cache->group = "test_agdu";
@@ -99,7 +104,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		/**
 		 * 使其它测试不受干扰
 		 */
-		LtCache::$servers = null;
+		//LtCache::$servers = null;
 	}
 
 	public function testMostUsedWayWithMultiGroup()
@@ -158,22 +163,22 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 特点：数据条数少且稳定，每条数据量小，变化频率低，访问频率高，适合用APC
 		 * prod_cat表示发布商品时选择的系统商品类目 
 		 * geo_code表示收货地址中用到的行政区划，省市区三级
-		 * 他们都使用本地共享内存，用不同的key_prefix，防止key冲突
+		 * 他们都使用本地共享内存，用不同的tablename，防止key冲突
 		 */
-		$ccb->addHost("prod_cat", "node_0", "master", array("adapter" => "apc", "key_prefix" => 1));
-		$ccb->addHost("geo_code", "node_0", "master", array("adapter" => "apc", "key_prefix" => 2));
+		$ccb->addHost("prod_cat", "node_0", "master", array("adapter" => "apc"));
+		$ccb->addHost("geo_code", "node_0", "master", array("adapter" => "apc"));
 
 		/**
 		 * 用户 名片数据和商品统计数据缓存 
 		 * 特点：数据条数极多，每条数据量小，变化频率高，访问频率很高，适合用memcached 
 		 * user_card表示用户 名片数据，存储用户 的昵称、信用点数，最后活动时间；prod_stat表示商品统计数据，存储商品的点击数，收藏数，最后编辑时间 
-		 * 如果使用同一个memcache服务器（主机地址和端口都相同 ），用不同的key_prefix，防止key冲突
+		 * 如果使用同一个memcache服务器（主机地址和端口都相同 ），用不同的tablename，防止key冲突
 		 */
-		$ccb->addHost("user_card", "node_0", "master", array("adapter" => "memcached", "key_prefix" => 3, "host" => "10.0.0.1", "port" => 11211));
-		$ccb->addHost("user_card", "node_1", "master", array("adapter" => "memcached", "key_prefix" => 3, "host" => "10.0.0.2", "port" => 11211));
-		$ccb->addHost("prod_stat", "node_0", "master", array("adapter" => "memcached", "key_prefix" => 4, "host" => "10.0.0.1", "port" => 11211));
-		$ccb->addHost("prod_stat", "node_1", "master", array("adapter" => "memcached", "key_prefix" => 4, "host" => "10.0.0.2", "port" => 11211)); 
-		// 如果全用不同的memcache服务器（主机地址或端口不相同 ），可以不指定key_prefix
+		$ccb->addHost("user_card", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11211));
+		$ccb->addHost("user_card", "node_1", "master", array("adapter" => "memcached", "host" => "10.0.0.2", "port" => 11211));
+		$ccb->addHost("prod_stat", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11211));
+		$ccb->addHost("prod_stat", "node_1", "master", array("adapter" => "memcached", "host" => "10.0.0.2", "port" => 11211)); 
+		// 如果全用不同的memcache服务器（主机地址或端口不相同 ），可以不指定tablename
 		// $ccb->addHost("user_card", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11211));
 		// $ccb->addHost("prod_stat", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11212));
 		/**
@@ -181,31 +186,31 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 特点：数据条数极多，每条数据量大，占用空间大，变化频率低，适合用文件缓存 
 		 * prod_info表示商品数据，存储商品标题、描述等 信息 
 		 * trade_info表示订单数据，存储订单详情，及该订单涉及的商品的快照、交易双方的信用等级
-		 * 如果在同 一个目录下，需要用不同的key_prefix，防止key冲突
+		 * 如果在同 一个目录下，需要用不同的tablename，防止key冲突
 		 */
 		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/prod_info"));
 		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/trade_info")); 
-		// 如果在同 一个目录下，需要用不同的key_prefix，防止key冲突
-		// $ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "key_prefix" => 5, "host" => "/var/data/LtCache/test/phps/"));
-		// $ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "key_prefix" => 6, "host" => "/var/data/LtCache/test/phps/"));
+		// 如果在同 一个目录下，需要用不同的tablename，防止key冲突
+		// $ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/"));
+		// $ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/"));
 		$this->assertEquals(
 			array("prod_cat" => array("node_0" => array("master" => array(
 							array("adapter" => "apc",
-								"key_prefix" => 1,
+
 								),
 							),
 						),
 					),
 				"geo_code" => array("node_0" => array("master" => array(
 							array("adapter" => "apc",
-								"key_prefix" => 2,
+
 								),
 							),
 						),
 					),
 				"user_card" => array("node_0" => array("master" => array(
 							array("adapter" => "memcached",
-								"key_prefix" => 3,
+
 								"host" => "10.0.0.1",
 								"port" => 11211,
 								),
@@ -213,7 +218,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 						),
 					"node_1" => array("master" => array(
 							array("adapter" => "memcached",
-								"key_prefix" => 3,
+
 								"host" => "10.0.0.2",
 								"port" => 11211,
 								),
@@ -222,7 +227,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 					),
 				"prod_stat" => array("node_0" => array("master" => array(
 							array("adapter" => "memcached",
-								"key_prefix" => 4,
+
 								"host" => "10.0.0.1",
 								"port" => 11211,
 								),
@@ -230,7 +235,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 						),
 					"node_1" => array("master" => array(
 							array("adapter" => "memcached",
-								"key_prefix" => 4,
+
 								"host" => "10.0.0.2",
 								"port" => 11211,
 								),
@@ -277,17 +282,41 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ttl_update = 2;
 
 		/**
+		 * 使其它测试不受干扰
+		 */
+		//LtCache::$servers = null;
+		/**
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addHost("test_ttl", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_ttl/"));
-		$ccb->addHost("test_ttl", "node_1", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_ttl/")); 
-		// $ccb->addHost("test_ttl", "node_2", "master", array("adapter" => "eAccelerator", "key_prefix" => "test"));
-		LtCache::$servers = $ccb->getServers();
+		$ccb->addHost("test_ttl", "node_phps", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_ttl/"));
+		$ccb->addHost("test_ttl", "node_file", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_ttl/"));
 
+		if (extension_loaded('apc'))
+		{
+			$ccb->addHost("test_ttl", "node_apc", "master", array("adapter" => "apc"));
+		}
+		if (extension_loaded('eaccelerator'))
+		{
+			$ccb->addHost("test_ttl", "node_eaccelerator", "master", array("adapter" => "eAccelerator"));
+		}
+		if (extension_loaded('memcache'))
+		{
+			$ccb->addHost("test_ttl", "node_memcache", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
+		}
+		if (extension_loaded('memcached'))
+		{
+			$ccb->addHost("test_ttl", "node_memcached", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
+		}
+		if (extension_loaded('xcache'))
+		{
+			$ccb->addHost("test_ttl", "node_xcache", "master", array("adapter" => "Xcache"));
+		}
 		/**
 		 * 测试test_ttl组各节点
 		 */
+		LtCache::$servers = $ccb->getServers();
+
 		$cache = new LtCache;
 		foreach(LtCache::$servers['test_ttl'] as $k => $v)
 		{
@@ -296,7 +325,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$cache->init();
 			echo "\n------" . $cache->group . '------' . $cache->node . "------\n";
 
-			$ch = $cache->getTDG("test");
+			$ch = $cache->getTDG("test_ttl");
 
 			foreach ($testDataList as $k => $v)
 			{
@@ -310,6 +339,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 				$this->assertFalse($ch->get($k));
 			}
 		}
+		/**
+		 * 使其它测试不受干扰
+		 */
+		//LtCache::$servers = null;
 	}
 
 	protected function setUp()
