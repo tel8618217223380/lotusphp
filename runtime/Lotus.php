@@ -17,7 +17,7 @@ class Lotus
 	protected $tmp_dir;
 	protected $devMode; // default true
 	protected $lotusRuntimeDir;
-	protected $cacheHandle;
+	protected $cacheInst;
 
 	public function __construct()
 	{
@@ -73,19 +73,13 @@ class Lotus
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterPhps.php";
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
 			require_once $this->lotusRuntimeDir . "Cache/QueryEngine/TableDataGateway/CacheTableDataGateway.php";
+
 			$ccb = new LtCacheConfigBuilder;
-			$ccb->addSingleHost($this->option['cache_server']);
+			$v = $this->option['cache_server'];
+			$ccb->addHost($v[0],$v[1],$v[2],$v[3]);
 			LtCache::$servers = $ccb->getServers();
-			$cache = new LtCache;
-			$cache->init();
-			if (empty($this->option["cache_table"]))
-			{
-				$this->cacheHandle = $cache->getTDG('lotus');
-			}
-			else
-			{
-				$this->cacheHandle = $cache->getTDG($this->option["cache_table"]);
-			}
+			$this->cacheInst = new LtCache;
+			$this->cacheInst->init();
 			$this->devMode = false; // 生产模式
 		}
 
@@ -129,7 +123,6 @@ class Lotus
 		require_once $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
 		require_once $this->lotusRuntimeDir . "Autoloader/AutoloaderConfig.php";
 		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
-
 		/**
 		 * Prepare autoloader to load all lotus components and user-defined libraries;
 		 */
@@ -137,7 +130,6 @@ class Lotus
 		$autoloadDirs[] = $this->proj_dir . 'lib';
 		$autoloadDirs[] = $this->app_dir . 'action';
 		$autoloadDirs[] = $this->app_dir . 'lib';
-
 		$autoloader = new LtAutoloader;
 		$autoloader->autoloadPath = $autoloadDirs;
 		/**
@@ -150,7 +142,8 @@ class Lotus
 		}
 		if (!$this->devMode)
 		{
-			LtAutoloader::$storeHandle = $this->cacheHandle;
+			$tb = sprintf("%u", crc32(serialize($autoloadDirs)));
+			LtAutoloader::$storeHandle = $this->cacheInst->getTDG($tb);
 		}
 		$autoloader->init();
 	}
@@ -158,11 +151,12 @@ class Lotus
 	protected function prepareConfig()
 	{
 		$conf = LtObjectUtil::singleton("LtConfig");
+		$conf->configFile = $this->app_dir . 'conf/conf.php';
 		if (!$this->devMode)
 		{
-			LtConfig::$storeHandle = $this->cacheHandle;
+			$tb = sprintf("%u", crc32(serialize($conf->configFile)));
+			LtConfig::$storeHandle = $this->cacheInst->getTDG($tb);
 		}
-		$conf->configFile = $this->app_dir . 'conf/conf.php';
 		$conf->init();
 	}
 
@@ -189,27 +183,9 @@ class Lotus
 		 * 
 		 * @todo 处理conf , Db 性能
 		 */
-		$conf = LtObjectUtil::singleton("LtConfig");
-		if ($dbServer = $conf->get('db_only_one'))
+		if (!$this->devMode)
 		{
-			$dcb = new LtDbConfigBuilder;
-			$dcb->addSingleHost($dbServer);
-		}
-		else if ($dbServer = $conf->get('db_server'))
-		{
-			$dcb = new LtDbConfigBuilder;
-			foreach($dbServer as $v)
-			{
-				$dcb->addHost($v[0], $v[1], $v[2], $v[3]);
-			}
-		}
-		else
-		{
-			return null;
-		}
-		if (!empty($this->cacheHandle))
-		{
-			LtDb::$storeHandle = $this->cacheHandle;
+			LtDb::$storeHandle = $this->cacheInst->getTDG('LtDB');
 		}
 		else
 		{
@@ -217,6 +193,24 @@ class Lotus
 		}
 		if (!LtDb::$storeHandle->get("servers"))
 		{
+			$conf = LtObjectUtil::singleton("LtConfig");
+			if ($dbServer = $conf->get('db_only_one'))
+			{
+				$dcb = new LtDbConfigBuilder;
+				$dcb->addSingleHost($dbServer);
+			}
+			else if ($dbServer = $conf->get('db_server'))
+			{
+				$dcb = new LtDbConfigBuilder;
+				foreach($dbServer as $v)
+				{
+					$dcb->addHost($v[0], $v[1], $v[2], $v[3]);
+				}
+			}
+			else
+			{
+				return null;
+			}
 			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 		}
 	}
