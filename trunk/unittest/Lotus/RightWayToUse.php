@@ -51,7 +51,7 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		/**
 		 * 使用cache可以提升性能
 		 */ 
-		// $lotus->option["cache_server"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
+		//$lotus->option["cache_server"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
 		$lotus->init();
 
 		/**

@@ -1,37 +1,31 @@
 <?php
 class LtCacheAdapterXcache implements LtCacheAdapter
 {
-	protected $keyPrefix;
-
 	public function connect($hostConf)
 	{
-		if(isset($hostConf["key_prefix"]))
-		{
-			$this->keyPrefix = $hostConf["key_prefix"];
-		}
 		return true;
 	}
 
-	public function add($key, $value, $ttl=0)
+	public function add($key, $value, $ttl=0, $tableName, $connectionResource)
 	{
-		return xcache_set($this->getRealKey($key), $value, $ttl);
+		return xcache_set($this->getRealKey($tableName, $key), $value, $ttl);
 	}
 	
-	public function del($key)
+	public function del($key, $tableName, $connectionResource)
 	{
-		return xcache_unset($this->getRealKey($key));
+		return xcache_unset($this->getRealKey($tableName, $key));
 	}
 	
-	public function get($key)
+	public function get($key, $tableName, $connectionResource)
 	{
-		return xcache_get($this->getRealKey($key));
+		return xcache_get($this->getRealKey($tableName, $key));
 	}
 
-	public function update($key, $value, $ttl = 0)
+	public function update($key, $value, $ttl = 0, $tableName, $connectionResource)
 	{
-		if ($this->del($this->getRealKey($key)))
+		if ($this->del($this->getRealKey($tableName, $key), $tableName, $connectionResource))
 		{
-			return $this->add($this->getRealKey($key), $value, $ttl);
+			return $this->add($this->getRealKey($tableName, $key), $value, $ttl, $tableName, $connectionResource);
 		}
 		else
 		{
@@ -39,15 +33,8 @@ class LtCacheAdapterXcache implements LtCacheAdapter
 		}
 	}
 
-	protected function getRealKey($key)
+	protected function getRealKey($tableName, $key)
 	{
-		if ($this->keyPrefix)
-		{
-			return $this->keyPrefix . "-" . $key;
-		}
-		else
-		{
-			return $key;
-		}
+		return $tableName . "-" . $key;
 	}
 }

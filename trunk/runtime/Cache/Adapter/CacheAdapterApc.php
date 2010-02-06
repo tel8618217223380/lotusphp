@@ -23,7 +23,7 @@ class LtCacheAdapterApc implements LtCacheAdapter
 
 	public function update($key, $value, $ttl = 0, $tableName, $connectionResource)
 	{
-		if ($this->del($key))
+		if ($this->del($key, $tableName, $connectionResource))
 		{
 			return $this->add($key, $value, $ttl, $tableName, $connectionResource);
 		}
