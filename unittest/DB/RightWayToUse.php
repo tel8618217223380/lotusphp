@@ -25,7 +25,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$dcb = new LtDbConfigBuilder;
 		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
 		LtDb::$storeHandle = new LtDbStore;
-		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
+		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 
 		/**
 		 * 实例化组件入口类
@@ -61,7 +61,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 *     1. 对数据表进行增简单的删查改操作，尤其是单条数据的操作
 		 *     2. 简单的SELECT，动态合成WHERE子句
 		 */
-		$tg = $db->getTableGateway("test_user");
+		$tg = $db->getTDG("test_user");
 		$this->assertEquals(2, $id = $tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4)));
 		$this->assertEquals(array("id" => 2, "name" => "kiwiphp", "age" => 4), $tg->fetch($id));
 		$this->assertEquals(3, $id = $tg->insert(array("name" => "chin", "age" => 28)));
@@ -93,7 +93,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			age INT NOT NULL ,
 			PRIMARY KEY ( id ) 
 		)");
-		$tg = $db->getTableGateway("test_user");
+		$tg = $db->getTDG("test_user");
 		$tg->insert(array("id" => 2, "name" => "kiwiphp", "age" => 4));
 		// ======================数据准备完成==========================
 	}
@@ -111,14 +111,14 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$dcb = new LtDbConfigBuilder;
 		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
 		LtDb::$storeHandle = new LtDbStore;
-		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
+		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 
 		/**
 		 * 实例化组件入口类
 		 */
 		$db = new LtDb;
 		$db->init();
-		$tg = $db->getTableGateway("test_user");
+		$tg = $db->getTDG("test_user");
 		$tg->fetch(1); // ===========第一次是fetch操作出错=================
 	}
 
@@ -137,7 +137,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			$dcb = new LtDbConfigBuilder;
 			$dcb->addSingleHost($host);
 			LtDb::$storeHandle = new LtDbStore;
-			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
+			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 
 			/**
 			 * 实例化组件入口类
@@ -199,7 +199,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$dcb->addHost("user_group", "user_node_2", "master", array("dbname" => "member_2"));
 
 		LtDb::$storeHandle = new LtDbStore;
-		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0, LtDb::$namespace);
+		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 
 		/**
 		 * ========== LtDb的第一个实例，仅用于操作sys_group ==========
@@ -218,7 +218,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		)"));
 
 		//使用Table Gateway查询引擎
-		$tg1 = $db1->getTableGateway("sys_category");
+		$tg1 = $db1->getTDG("sys_category");
 		$this->assertEquals(1, $id = $tg1->insert(array("id" => 1, "name" => "PHP")));
 		$this->assertEquals(array("id" => 1, "name" => "PHP"), $tg1->fetch($id));
 
@@ -244,7 +244,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		)"));
 
 		//使用Table Gateway查询引擎
-		$tg2 = $db2->getTableGateway("user_account");
+		$tg2 = $db2->getTDG("user_account");
 		$this->assertEquals(1, $id = $tg2->insert(array("id" => 1, "username" => "lotusphp")));
 		$this->assertEquals(array("id" => 1, "username" => "lotusphp"), $tg2->fetch($id));
 
@@ -264,7 +264,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		)"));
 
 		//使用Table Gateway查询引擎
-		$tg2 = $db2->getTableGateway("user_account");
+		$tg2 = $db2->getTDG("user_account");
 		$this->assertEquals(2, $id = $tg2->insert(array("id" => 2, "username" => "talkativedoggy")));
 		$this->assertEquals(array("id" => 2, "username" => "talkativedoggy"), $tg2->fetch($id));
 	}

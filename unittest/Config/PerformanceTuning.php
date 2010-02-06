@@ -3,6 +3,7 @@
  * 本测试展示了如何用LtCache给LtConfig提高性能
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
+
 require_once $lotusHome . "runtime/Cache/Cache.php";
 require_once $lotusHome . "runtime/Cache/CacheAdapterFactory.php";
 require_once $lotusHome . "runtime/Cache/CacheConfigBuilder.php";
@@ -12,9 +13,12 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapter.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterApc.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterEAccelerator.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterFile.php";
+require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterMemcache.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterMemcached.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterPhps.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";
+require_once $lotusHome . "runtime/Cache/QueryEngine/TableDataGateway/CacheTableDataGateway.php";
+
 class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 {
 	public function testPerformance()

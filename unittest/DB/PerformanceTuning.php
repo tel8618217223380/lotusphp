@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
+
 require_once $lotusHome . "runtime/Cache/Cache.php";
 require_once $lotusHome . "runtime/Cache/CacheAdapterFactory.php";
 require_once $lotusHome . "runtime/Cache/CacheConfigBuilder.php";
@@ -9,9 +10,13 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapter.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterApc.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterEAccelerator.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterFile.php";
+require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterMemcache.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterMemcached.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterPhps.php";
-require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";class PerformanceTuningDb extends PHPUnit_Framework_TestCase
+require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";
+require_once $lotusHome . "runtime/Cache/QueryEngine/TableDataGateway/CacheTableDataGateway.php";
+
+class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * 本测试展示了如何用LtCache给LtDb提高性能
@@ -44,8 +49,8 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";class P
 		/**
 		@todo 性能没有提升反而下降 ?
 		*/
-		// LtDb::$storeHandle = new LtDbStore;
-		LtDb::$storeHandle = $cache->getCacheHandle();
+		//LtDb::$storeHandle = new LtDbStore;
+		LtDb::$storeHandle = $cache->getTDG('unittest-db');
 		if(!LtDb::$storeHandle->get("servers"))
 		{
 			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
@@ -84,7 +89,7 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";class P
 		 *     1. 对数据表进行增简单的删查改操作，尤其是单条数据的操作
 		 *     2. 简单的SELECT，动态合成WHERE子句
 		 */
-		$tg = $db->getTableGateway("test_user");
+		$tg = $db->getTDG("test_user");
 
 		/**
 		 * 运行1000次，要求在1秒内运行完
@@ -109,7 +114,7 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";class P
 		$averageMemory = round(($memory_usage/$times),2);
 		$averageMemory = ($averageMemory >= 1048576) ? round((round($averageMemory / 1048576 * 100) / 100), 2) . 'MB' : (($averageMemory >= 1024) ? round((round($averageMemory / 1024 * 100) / 100), 2) . 'KB' : $averageMemory . 'BYTES');
 
-		echo "\n----------------db getTableGateway insert----------------\n";
+		echo "\n----------------db getTDG insert----------------\n";
 		echo "times      \t$times\n";
 		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
 		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";

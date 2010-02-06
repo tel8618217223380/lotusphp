@@ -68,15 +68,17 @@ class Lotus
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterApc.php";
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterEAccelerator.php";
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterFile.php";
+			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterMemcache.php";
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterMemcached.php";
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterPhps.php";
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
+			require_once $this->lotusRuntimeDir . "Cache/QueryEngine/TableDataGateway/CacheTableDataGateway.php";
 			$ccb = new LtCacheConfigBuilder;
 			$ccb->addSingleHost($this->option['cache_server']);
 			LtCache::$servers = $ccb->getServers();
 			$cache = new LtCache;
 			$cache->init();
-			$this->cacheHandle = $cache->getCacheHandle();
+			$this->cacheHandle = $cache->getTDG('lotus');
 			$this->devMode = false; // 生产模式
 		}
 

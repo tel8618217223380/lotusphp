@@ -24,7 +24,7 @@ class DefaultIndexAction extends LtAction
 			PRIMARY KEY ( id ) 
 		)"); 
 		// 使用Table Gateway查询引擎
-		$tg = $db->getTableGateway("user_account");
+		$tg = $db->getTDG("user_account");
 		$id = $tg->insert(array("id" => 1, "username" => "lotusphp"));
 		$data = $tg->fetch($id); 
 		// -------------------------------------------------------------
@@ -41,7 +41,7 @@ class DefaultIndexAction extends LtAction
 			[modified] INTEGER  NOT NULL
 		)"); 
 		// 使用Table Gateway查询引擎
-		$tg1 = $db1->getTableGateway("user");
+		$tg1 = $db1->getTDG("user");
 		$id1 = $tg1->insert(array("user_id" => 1, "user_name" => "kiwiphp", 'created' => time(), 'modified' => time()));
 		$data1 = $tg1->fetch($id1);
 		$dbh1->query("DROP TABLE user"); 

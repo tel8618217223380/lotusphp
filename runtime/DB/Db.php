@@ -25,7 +25,7 @@ class LtDb
 
 	public function getTDG($tableName)
 	{
-		$tg = new LtDbTableDataGateway;
+		$tg = new LtDbTable;
 		$tg->tableName = $tableName;
 		$tg->dbh = $this->dbh;
 		return $tg;
