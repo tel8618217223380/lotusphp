@@ -78,7 +78,14 @@ class Lotus
 			LtCache::$servers = $ccb->getServers();
 			$cache = new LtCache;
 			$cache->init();
-			$this->cacheHandle = $cache->getTDG('lotus');
+			if (empty($this->option["cache_table"]))
+			{
+				$this->cacheHandle = $cache->getTDG('lotus');
+			}
+			else
+			{
+				$this->cacheHandle = $cache->getTDG($this->option["cache_table"]);
+			}
 			$this->devMode = false; // 生产模式
 		}
 
@@ -139,7 +146,7 @@ class Lotus
 		$autoloader->conf->mappingFileRoot = $this->tmp_dir . 'autoloader/';
 		if (isset($this->option["is_load_function"]))
 		{
-			$autoloader->conf->isLoadFunction  = $this->option["is_load_function"];
+			$autoloader->conf->isLoadFunction = $this->option["is_load_function"];
 		}
 		if (!$this->devMode)
 		{
@@ -200,7 +207,7 @@ class Lotus
 		{
 			return null;
 		}
-		if(!empty($this->cacheHandle))
+		if (!empty($this->cacheHandle))
 		{
 			LtDb::$storeHandle = $this->cacheHandle;
 		}
@@ -208,7 +215,7 @@ class Lotus
 		{
 			LtDb::$storeHandle = new LtDbStore;
 		}
-		if(!LtDb::$storeHandle->get("servers"))
+		if (!LtDb::$storeHandle->get("servers"))
 		{
 			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 		}
