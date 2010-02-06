@@ -59,7 +59,6 @@ class LtDbTable
 			$this->servers = LtDb::$storeHandle->get('servers');
 		}
 		$servers = $this->servers;
-
 		$host = key($servers[$group][$node][$role]);
 		if (isset($servers[$group][$node][$role][$host]['db_table']))
 		{
@@ -95,11 +94,12 @@ class LtDbTable
 					}
 				}
 			}
+			$t['fields'] = $this->fields;
+			$t['primaryKey'] = $this->primaryKey;
+			$servers[$group][$node][$role][$host]['db_table'][$table] = $t;
+			LtDb::$storeHandle->update('servers', $servers, 0);
+			$this->servers = array();
 		}
-		$t[$table]['fields'] = $this->fields;
-		$t[$table]['primaryKey'] = $this->primaryKey;
-		$servers[$group][$node][$role][$host]['db_table'] = $t;
-		LtDb::$storeHandle->update('servers', $servers, 0);
 	}
 
 	/**
@@ -182,6 +182,7 @@ class LtDbTable
 	 */
 	public function fetchRows($args = null, $useSlave = true)
 	{
+		$this->buildFieldList();
 		$selectTemplate = 'SELECT %s FROM %s%s';
 		$fields = isset($args['fields']) ? $args['fields'] : '*';
 		$where = isset($args['where']['expression']) ? ' WHERE ' . $args['where']['expression'] : '';
