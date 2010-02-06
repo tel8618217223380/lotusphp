@@ -8,13 +8,15 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder; 
-		// $ccb->addSingleHost(array("adapter" => "apc", "key_prefix" => "test_apc_"));
-		// $ccb->addSingleHost(array("adapter" => "eAccelerator", "key_prefix" => "test_eAccelerator_"));
+		// $ccb->addSingleHost(array("adapter" => "apc"));
+		// $ccb->addSingleHost(array("adapter" => "eAccelerator"));
 		// $ccb->addSingleHost(array("adapter" => "File", "host" => "/tmp/Lotus/unittest/cache/testPerformance/"));
 		// $ccb->addSingleHost(array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
 		// $ccb->addSingleHost(array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/testPerformance/", "key_prefix" => "test_phps")); 
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/testPerformance/")); 
 		// $ccb->addSingleHost(array("adapter" => "Xcache", "key_prefix" => "test_xcache_"));
+		
+		
 		LtCache::$servers = $ccb->getServers();
 
 		/**
@@ -23,7 +25,7 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 		$cache = new LtCache;
 		$cache->init(); 
 		// 初始化完毕，测试其效果
-		$ch = $cache->getCacheHandle();
+		$ch = $cache->getTDG('test-performance');
 
 		$this->assertTrue($ch->add("test_key", "test_value"));
 		$this->assertEquals("test_value", $ch->get("test_key"));
@@ -69,5 +71,6 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 	}
 	protected function tearDown()
 	{
+		LtCache::$servers = null;
 	}
 }
