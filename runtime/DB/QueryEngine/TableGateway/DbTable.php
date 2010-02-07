@@ -192,7 +192,6 @@ class LtDbTable
 		$sql = sprintf($selectTemplate, $fields, $this->tableName, $join . $where . $groupby . $orderby);
 		if (isset($args['limit']))
 		{
-			$this->dbh->query(''); //set sqlAdapter
 			$offset = isset($args['offset']) ? $args['offset'] : 0;
 			$sql = $sql . ' ' . $this->dbh->sqlAdapter->limit($args['limit'], $offset);
 		}
