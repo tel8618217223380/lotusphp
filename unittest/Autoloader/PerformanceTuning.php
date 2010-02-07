@@ -31,7 +31,7 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		LtCache::$servers = $ccb->getServers();
 		$cache = new LtCache;
 		$cache->init();
-		$cacheHandle = $cache->getCacheHandle();
+		$cacheHandle = $cache->getTDG('unittest-autoloader');
 
 		//准备autoloadPath
 		$autoloadPath = array(
