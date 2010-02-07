@@ -19,7 +19,12 @@ class LtUrl
 	{
 		$args['module'] = $module;
 		$args['action'] = $action;
-		return $this->reverseMatchingRoutingTable($args);
+		$key = sprintf("%u", crc32(serialize($args)));
+		if (!isset($this->href[$key]))
+		{
+			$this->href[$key] = $this->reverseMatchingRoutingTable($args);
+		}
+		return $this->href[$key];
 	}
 
 	/**
