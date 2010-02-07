@@ -19,41 +19,36 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterPhps.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";
 require_once $lotusHome . "runtime/Cache/QueryEngine/TableDataGateway/CacheTableDataGateway.php";
 
-class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
+class PerformanceTuningUrl extends PHPUnit_Framework_TestCase
 {
 	public function testPerformance()
 	{
-		/**
-		 * 初始化LtCache，LtConfig用LtCache作存储层的时候性能才会提高
-		 */
-		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/config/"));
-		LtCache::$servers = $ccb->getServers();
-		$cache = new LtCache;
-		$cache->init();
-		$cacheHandle = $cache->getTDG('unittest-config'); 
-		// 准备confif_file
-		$config_file = dirname(__FILE__) . "/test_data/conf.php";
+		// 初始化LtUrl
+		$url = new LtUrl;
+		// 不初始化路由表则使用默认配置如下
+		$url->routingTable = array('pattern' => ":module/:action/*",
+			'default' => array('module' => 'default', 'action' => 'index'),
+			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
+			'varprefix' => ':',
+			'delimiter' => '/',
+			'postfix' => '',
+			'protocol' => '',
+			);
+		$url->init(); 
+		// 初始化结束
+		// 测试生成超链接
+		$href = $url->generate('news', 'list', array('catid' => 4, 'page' => 10));
+		$this->assertEquals('news/list/catid/4/page/10', $href);
 
 		/**
-		 * 运行autoloader成功取到一个配置 
-		 * 这是为了证明：使用LtCache作为LtConfig的存储，功能是正常的
-		 */
-		$conf = new LtConfig;
-		LtConfig::$storeHandle = $cacheHandle;
-		$conf->configFile = $config_file;
-		$conf->init();
-		$this->assertEquals("localhost", $conf->get("db.conn.host"));
-
-		/**
-		 * 运行1000次，要求在1秒内运行完
+		 * 运行10000次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
 		$times = 1000;
 		$startTime = microtime(true);
 		for($i = 0; $i < $times; $i++)
 		{
-			$conf->get('db.conn.host');
+			$url->generate('news', 'list', array('catid' => 4, 'page' => 10));
 		}
 		$endTime = microtime(true);
 		$totalTime = round(($endTime - $startTime), 6);
@@ -65,7 +60,7 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 		$averageMemory = round(($memory_usage / $times), 2);
 		$averageMemory = ($averageMemory >= 1048576) ? round((round($averageMemory / 1048576 * 100) / 100), 2) . 'MB' : (($averageMemory >= 1024) ? round((round($averageMemory / 1024 * 100) / 100), 2) . 'KB' : $averageMemory . 'BYTES');
 
-		echo "\n----------------------config-----------------------------\n";
+		echo "\n----------------------Url-----------------------------\n";
 		echo "times      \t$times\n";
 		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
 		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
@@ -74,7 +69,6 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
-		LtConfig::$storeHandle = null;
 	}
 	protected function tearDown()
 	{
