@@ -16,6 +16,7 @@ class LtDb
 		$this->dbh = new LtDbHandle;
 		$this->dbh->group = $this->getGroup();
 		$this->dbh->node = $this->getNode();
+		$this->dbh->init();
 	}
 
 	public function getDbHandle()

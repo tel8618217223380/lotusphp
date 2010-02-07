@@ -80,7 +80,6 @@ class LtDbTable
 
 		if (empty($this->fields))
 		{
-			$this->dbh->query(''); //set sqlAdapter
 			$this->fields = $this->dbh->sqlAdapter->getFields($this->dbh->query($this->dbh->sqlAdapter->showFields($this->tableName)));
 
 			if (empty($this->primaryKey))
