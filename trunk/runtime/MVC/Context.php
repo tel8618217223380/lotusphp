@@ -13,7 +13,7 @@ class LtContext
 	 * @param integer $offset
 	 * @return string
 	 */
-	static public function argv($offset)
+	public function argv($offset)
 	{
 		return isset($_SERVER['argv']) && isset($_SERVER['argv'][$offset]) ? $_SERVER['argv'][$offset] : null;
 	}
@@ -24,7 +24,7 @@ class LtContext
 	 * @param string $name
 	 * @return array
 	 */
-	static public function file($name)
+	public function file($name)
 	{
 		return isset($_FILES[$name]) ? $_FILES[$name] : null;
 	}
@@ -35,7 +35,7 @@ class LtContext
 	 * @param string $name
 	 * @return string
 	 */
-	static public function get($name)
+	public function get($name)
 	{
 		return isset($_GET[$name]) ? $_GET[$name] : null;
 	}
@@ -46,7 +46,7 @@ class LtContext
 	 * @param string $name
 	 * @return string
 	 */
-	static public function post($name)
+	public function post($name)
 	{
 		return isset($_POST[$name]) ? $_POST[$name] : null;
 	}
@@ -57,7 +57,7 @@ class LtContext
 	 * @param string $name
 	 * @return string
 	 */
-	static public function request($name)
+	public function request($name)
 	{
 		return isset($_REQUEST[$name]) ? $_REQUEST[$name] : null;
 	}
@@ -68,7 +68,7 @@ class LtContext
 	 * @param string $name
 	 * @return string
 	 */
-	static public function server($name)
+	public function server($name)
 	{
 		if ('REMOTE_ADDR' == $name)
 		{
