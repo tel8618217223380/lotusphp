@@ -14,6 +14,14 @@ class LtDbHandle
 		$this->connectionManager = new LtDbConnectionManager;
 	}
 
+	public function init()
+	{
+		$this->sqlAdapter = $this->getCurrentSqlAdapter();
+		$connectionInfo = $this->connectionManager->getConnection($this->group, $this->node, $this->role);
+		$this->connectionAdapter = $connectionInfo["connectionAdapter"];
+		$this->connectionResource = $connectionInfo["connectionResource"];
+	}
+
 	/**
 	 * Trancaction methods
 	 */
@@ -39,23 +47,21 @@ class LtDbHandle
 	 * @param  $bind 
 	 * @param  $forceUseMaster 
 	 * @return false on query failed
-	 *          --sql type--                         --return value--
-	 *          SELECT, SHOW, DESECRIBE, EXPLAIN     rowset or NULL when no record found
-	 *          INSERT                               the ID generated for an AUTO_INCREMENT column
-	 *          UPDATE, DELETE, REPLACE              affected count
-	 *          USE, DROP, ALTER, CREATE, SET etc    true
+	 *           --sql type--                         --return value--
+	 *           SELECT, SHOW, DESECRIBE, EXPLAIN     rowset or NULL when no record found
+	 *           INSERT                               the ID generated for an AUTO_INCREMENT column
+	 *           UPDATE, DELETE, REPLACE              affected count
+	 *           USE, DROP, ALTER, CREATE, SET etc    true
 	 * @notice 每次只能执行一条SQL
-	 *          不要通过此接口执行USE DATABASE, SET NAMES这样的语句
+	 *           不要通过此接口执行USE DATABASE, SET NAMES这样的语句
 	 */
 	public function query($sql, $bind = null, $forceUseMaster = false)
 	{
+		$sql = trim($sql);
 		if (empty($sql))
 		{
-			$this->sqlAdapter = $this->getCurrentSqlAdapter();
-			return; 
-			// trigger_error('Empty the SQL statement');
+			trigger_error('Empty the SQL statement');
 		}
-		$this->sqlAdapter = $this->getCurrentSqlAdapter();
 		$queryType = $this->sqlAdapter->detectQueryType($sql);
 		switch ($queryType)
 		{
@@ -116,7 +122,7 @@ class LtDbHandle
 	 * @todo 兼容pgsql等其它数据库，pgsql的某些数据类型不接受单引号引起来的值
 	 */
 	public function bindParameter($sql, $parameter)
-	{
+	{ 
 		// 注意替换结果尾部加一个空格
 		$sql = preg_replace("/:([a-zA-Z0-9_\-\x7f-\xff][a-zA-Z0-9_\-\x7f-\xff]*)\s*([,\)]?)/", "\x01\x02\x03\\1\x01\x02\x03\\2 ", $sql);
 		foreach($parameter as $key => $value)
