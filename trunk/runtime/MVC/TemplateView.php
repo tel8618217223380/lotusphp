@@ -64,7 +64,7 @@ class LtTemplateView
 		if ($islayout)
 		{
 			$tplfile = $this->layoutDir . $this->layout . '.view.php';
-			$objfile = $this->compiledDir . 'layout/' . $this->layout . '-' . $this->template . '.view.php';
+			$objfile = $this->compiledDir . 'layout/' . $this->layout . '@' . $this->template . '.view.php';
 		}
 		else
 		{
