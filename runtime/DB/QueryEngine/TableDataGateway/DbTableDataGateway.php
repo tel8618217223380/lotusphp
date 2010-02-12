@@ -4,7 +4,7 @@
  * 
  * @todo pretty join support
  */
-class LtDbTable
+class LtDbTableDataGateway
 {
 	public $dbh;
 	/**
