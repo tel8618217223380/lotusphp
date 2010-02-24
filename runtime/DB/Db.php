@@ -50,9 +50,11 @@ class LtDb
 		if ($this->group)
 		{
 			return $this->group;
-		}elseif (1 == count(self::$storeHandle->get("servers")))
+		}
+		else if (1 == count(self::$storeHandle->get("servers")))
 		{
-			return key(self::$storeHandle->get("servers"));
+			$servers = self::$storeHandle->get("servers");
+			return key($servers);
 		}
 	}
 
