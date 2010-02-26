@@ -260,7 +260,7 @@ class LtTemplateView
 		foreach($tvar[0] as $k => $v)
 		{ 
 			// 删除单行注释
-			$v = preg_replace("/\/\/\s*[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/", "", $v); 
+			$v = preg_replace("/\/\/\s*[^\r\n]*/", "", $v); 
 			// 删除多行注释
 			$v = preg_replace("/\/\*[^\/]*\*\//s", "", $v);
 			$str = str_replace($tvar[0][$k], $v, $str);
