@@ -31,16 +31,15 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		LtCache::$servers = $ccb->getServers();
 		$cache = new LtCache;
 		$cache->init();
-		$cacheHandle = $cache->getTDG('unittest-autoloader');
-
-		//准备autoloadPath
+		$cacheHandle = $cache->getTDG('unittest-autoloader'); 
+		// 准备autoloadPath
 		$autoloadPath = array(
 			dirname(__FILE__) . "/test_data/class_dir_1",
 			dirname(__FILE__) . "/test_data/class_dir_2",
 			dirname(__FILE__) . "/test_data/function_dir_1",
 			dirname(__FILE__) . "/test_data/function_dir_2",
-		);
-		
+			);
+
 		/**
 		 * 运行autoloader成功加载一个类
 		 * 这是为了证明：使用LtCache作为LtAutoloader的存储，功能是正常的
@@ -51,7 +50,7 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		$autoloader->autoloadPath = $autoloadPath;
 		$autoloader->init();
 		$this->assertTrue(class_exists("HelloWorld"));
-		
+
 		/**
 		 * 运行1000次，要求在1秒内运行完
 		 */
@@ -67,14 +66,12 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 			$autoloader->init();
 		}
 		$endTime = microtime(true);
-		$totalTime = round(($endTime-$startTime), 6);
-		$averageTime = round(($totalTime/$times), 6);
+		$totalTime = round(($endTime - $startTime), 6);
+		$averageTime = round(($totalTime / $times), 6);
 
 		$memory_usage = memory_get_usage() - $base_memory_usage;
-		$memory_usage = ($memory_usage >= 1048576) ? round((round($memory_usage / 1048576 * 100) / 100), 2) . 'MB' : (($memory_usage >= 1024) ? round((round($memory_usage / 1024 * 100) / 100), 2) . 'KB' : $memory_usage . 'BYTES');
-		
-		$averageMemory = round(($memory_usage/$times),2);
-		$averageMemory = ($averageMemory >= 1048576) ? round((round($averageMemory / 1048576 * 100) / 100), 2) . 'MB' : (($averageMemory >= 1024) ? round((round($averageMemory / 1024 * 100) / 100), 2) . 'KB' : $averageMemory . 'BYTES');
+		$averageMemory = $this->size($memory_usage / $times);
+		$memory_usage = $this->size($memory_usage);
 
 		echo "\n---------------------autoloader--------------------------\n";
 		echo "times      \t$times\n";
@@ -89,5 +86,26 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 	}
 	protected function tearDown()
 	{
+	}
+
+	private function size($size)
+	{
+		if ($size >= 1073741824)
+		{
+			$size = round($size / 1073741824, 2) . ' GB';
+		}
+		else if ($size >= 1048576)
+		{
+			$size = round($size / 1048576, 2) . ' MB';
+		}
+		else if ($size >= 1024)
+		{
+			$size = round($size / 1024, 2) . ' KB';
+		}
+		else
+		{
+			$size = round($size, 2) . ' Bytes';
+		}
+		return $size;
 	}
 }

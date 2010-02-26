@@ -92,10 +92,10 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 		$tg = $db->getTDG("test_user");
 
 		/**
-		 * 运行1000次，要求在1秒内运行完
+		 * 运行100次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
-		$times = 1000;
+		$times = 100;
 		$startTime = microtime(true);
 
 		for($i = 0; $i < $times; $i++)
@@ -109,10 +109,8 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 		$averageTime = round(($totalTime/$times), 6);
 
 		$memory_usage = memory_get_usage() - $base_memory_usage;
-		$memory_usage = ($memory_usage >= 1048576) ? round((round($memory_usage / 1048576 * 100) / 100), 2) . 'MB' : (($memory_usage >= 1024) ? round((round($memory_usage / 1024 * 100) / 100), 2) . 'KB' : $memory_usage . 'BYTES');
-		
-		$averageMemory = round(($memory_usage/$times),2);
-		$averageMemory = ($averageMemory >= 1048576) ? round((round($averageMemory / 1048576 * 100) / 100), 2) . 'MB' : (($averageMemory >= 1024) ? round((round($averageMemory / 1024 * 100) / 100), 2) . 'KB' : $averageMemory . 'BYTES');
+		$averageMemory = $this->size($memory_usage / $times);
+		$memory_usage = $this->size($memory_usage);
 
 		echo "\n----------------db getTDG insert----------------\n";
 		echo "times      \t$times\n";
@@ -127,5 +125,25 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 	}
 	protected function tearDown()
 	{
+	}
+	private function size($size)
+	{
+		if ($size >= 1073741824)
+		{
+			$size = round($size / 1073741824, 2) . ' GB';
+		}
+		else if ($size >= 1048576)
+		{
+			$size = round($size / 1048576, 2) . ' MB';
+		}
+		else if ($size >= 1024)
+		{
+			$size = round($size / 1024, 2) . ' KB';
+		}
+		else
+		{
+			$size = round($size, 2) . ' Bytes';
+		}
+		return $size;
 	}
 }
