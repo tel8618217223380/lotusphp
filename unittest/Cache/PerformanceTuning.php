@@ -35,10 +35,10 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 		$this->assertFalse($ch->get("test_key"));
 
 		/**
-		 * 运行1000次，要求在1秒内运行完
+		 * 运行500次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
-		$times = 1000;
+		$times = 500;
 		$startTime = microtime(true);
 		// ----------------------------测试读取 
 		$ch->add("test_key", "test_value");
