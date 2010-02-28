@@ -183,9 +183,9 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 				"<!--  -->",
 				), 
 			// 删除单行注释
-			array("<script type=\"text/javascript\">\r\n</script>",
-				"<script type=\"text/javascript\">// Get the editor instance that we want to interact with.\n</script>",
-				), 
+//			array("<script type=\"text/javascript\">\r\n</script>",
+//				"<script type=\"text/javascript\">// Get the editor instance that we want to interact with.\n</script>",
+//				), 
 
 
 			// ADD other

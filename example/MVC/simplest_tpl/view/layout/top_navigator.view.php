@@ -79,6 +79,7 @@ Navigator:
 </pre>
 
 <script type="text/javascript">
+// Get the editor instance that we want to interact with.
 // 注释内容被模板引擎删除
 //<![CDATA[
 var logged_in_user_email = null;
