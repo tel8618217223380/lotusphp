@@ -134,6 +134,7 @@ class LtTemplateView
 					unlink($objfile . '.tmp');
 				}
 			}
+			@chmod($objfile,0777);
 		}
 		return $objfile;
 	}
