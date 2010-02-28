@@ -234,7 +234,7 @@ class LtTemplateView
 	 * 模板中第一行可以写exit函数防止浏览
 	 * 删除行首尾空白, html javascript css注释
 	 */
-	protected function removeComments($str, $clear = true)
+	protected function removeComments($str, $clear = false)
 	{
 		$str = str_replace(array('<?php exit?>', '<?php exit;?>'), array('', ''), $str); 
 		// 删除行首尾空白
@@ -261,7 +261,7 @@ class LtTemplateView
 		foreach($tvar[0] as $k => $v)
 		{ 
 			// 删除单行注释
-			$v = preg_replace("/\/\/\s*[^\r\n]*/", "", $v); 
+			$v = preg_replace("/\/\/\s*[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/", "", $v); 
 			// 删除多行注释
 			$v = preg_replace("/\/\*[^\/]*\*\//s", "", $v);
 			$str = str_replace($tvar[0][$k], $v, $str);
