@@ -28,6 +28,8 @@ class LtDb
 	{
 		$tg = new LtDbTableDataGateway;
 		$tg->tableName = $tableName;
+		$tg->createdColumn = 'created';
+		$tg->modifiedColumn = 'modified';
 		$tg->dbh = $this->dbh;
 		return $tg;
 	}
