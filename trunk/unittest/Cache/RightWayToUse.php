@@ -78,28 +78,28 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		/**
 		 * 测试各适配器add(), get(), del(), update()接口
 		 */
-		$ccb->addHost("test_agdu", "node_phps", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
-		$ccb->addHost("test_agdu", "node_file", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
+		$ccb->addHost("group_phps", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
+		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
 		if (extension_loaded('memcache'))
 		{
 			echo "\n-----memcache loaded-----\n";
-			$ccb->addHost("test_agdu", "node_memcache", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
+			$ccb->addHost("group_memcache", "node_0", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
 		}
 		if (extension_loaded('memcached'))
 		{
 			echo "\n-----memcached loaded-----\n";
-			$ccb->addHost("test_agdu", "node_memcached", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
+			$ccb->addHost("group_memcached", "node_0", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
 		}
 		LtCache::$servers = $ccb->getServers();
+		
 		/**
 		 * 实例化组件入口类
 		 */
-		$cache = new LtCache;
-		$cache->init();
-		foreach(LtCache::$servers['test_agdu'] as $k => $v)
+		foreach(LtCache::$servers as $k => $v)
 		{
-			$cache->group = "test_agdu";
-			$cache->node = $k;
+			$cache = new LtCache;
+			$cache->group = $k;
+			$cache->node = "node_0";
 			$cache->init();
 			echo "\n------" . $cache->group . '------' . $cache->node . "------\n";
 
