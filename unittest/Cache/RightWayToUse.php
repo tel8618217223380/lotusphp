@@ -29,9 +29,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "phps",
+		$ccb->addSingleHost(
+			array("adapter" => "phps",
 				"host" => "/tmp/Lotus/unittest/cache/"
-				));
+			));
 		LtCache::$servers = $ccb->getServers();
 		/**
 		 * 实例化组件入口类
@@ -49,23 +50,36 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertEquals("new_value", $ch->get("test_key"));
 		$this->assertTrue($ch->del("test_key"));
 		$this->assertFalse($ch->get("test_key"));
+	}
+
+	public function testOpcodeCacheAdapter()
+	{
+		if (extension_loaded('apc'))
+		{
+			echo "\n-----apc loaded-----\n";
+		}
+		if (extension_loaded('eaccelerator'))
+		{
+			echo "\n-----eAccelerator loaded-----\n";
+		}
+		if (extension_loaded('xcache'))
+		{
+			echo "\n-----xcache loaded-----\n";
+		}
+	}
+
+	public function testOtherCacheAdapter()
+	{
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
 
 		/**
 		 * 测试各适配器add(), get(), del(), update()接口
 		 */
 		$ccb->addHost("test_agdu", "node_phps", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
 		$ccb->addHost("test_agdu", "node_file", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
-
-		if (extension_loaded('apc'))
-		{
-			echo "\n-----apc loaded-----\n";
-			$ccb->addHost("test_agdu", "node_apc", "master", array("adapter" => "apc"));
-		}
-		if (extension_loaded('eaccelerator'))
-		{
-			echo "\n-----eAccelerator loaded-----\n";
-			$ccb->addHost("test_agdu", "node_eaccelerator", "master", array("adapter" => "eAccelerator"));
-		}
 		if (extension_loaded('memcache'))
 		{
 			echo "\n-----memcache loaded-----\n";
@@ -76,15 +90,12 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			echo "\n-----memcached loaded-----\n";
 			$ccb->addHost("test_agdu", "node_memcached", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
 		}
-		if (extension_loaded('xcache'))
-		{
-			echo "\n-----xcache loaded-----\n";
-			$ccb->addHost("test_agdu", "node_xcache", "master", array("adapter" => "Xcache"));
-		}
-		/**
-		 * 测试test_agdu组各节点
-		 */
 		LtCache::$servers = $ccb->getServers();
+		/**
+		 * 实例化组件入口类
+		 */
+		$cache = new LtCache;
+		$cache->init();
 		foreach(LtCache::$servers['test_agdu'] as $k => $v)
 		{
 			$cache->group = "test_agdu";
@@ -101,10 +112,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$this->assertTrue($ch->del("test_key"));
 			$this->assertFalse($ch->get("test_key"));
 		}
-		/**
-		 * 使其它测试不受干扰
-		 */
-		//LtCache::$servers = null;
 	}
 
 	public function testMostUsedWayWithMultiGroup()
@@ -260,94 +267,11 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$ccb->getServers()
 			); //end $this->assertEquals
 	}
-	/**
-	 * 测试ttl
-	 */
-	public function testCacheTTL()
-	{
-		/**
-		 * 准备测试数据
-		 */
-		$testDataList = array(
-			// $key => value
-			1 => 2,
-			1.1 => null,
-			-1 => "",
-			true => false,
-			"array" => array(1, 2, 4),
-			"object" => new LtCache,
-			"test_key" => "test_value",
-			);
-		$ttl_add = 0;
-		$ttl_update = 2;
-
-		/**
-		 * 使其它测试不受干扰
-		 */
-		//LtCache::$servers = null;
-		/**
-		 * 构造缓存配置
-		 */
-		$ccb = new LtCacheConfigBuilder;
-		$ccb->addHost("test_ttl", "node_phps", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_ttl/"));
-		$ccb->addHost("test_ttl", "node_file", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_ttl/"));
-
-		if (extension_loaded('apc'))
-		{
-			$ccb->addHost("test_ttl", "node_apc", "master", array("adapter" => "apc"));
-		}
-		if (extension_loaded('eaccelerator'))
-		{
-			$ccb->addHost("test_ttl", "node_eaccelerator", "master", array("adapter" => "eAccelerator"));
-		}
-		if (extension_loaded('memcache'))
-		{
-			$ccb->addHost("test_ttl", "node_memcache", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
-		}
-		if (extension_loaded('memcached'))
-		{
-			$ccb->addHost("test_ttl", "node_memcached", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
-		}
-		if (extension_loaded('xcache'))
-		{
-			$ccb->addHost("test_ttl", "node_xcache", "master", array("adapter" => "Xcache"));
-		}
-		/**
-		 * 测试test_ttl组各节点
-		 */
-		LtCache::$servers = $ccb->getServers();
-
-		$cache = new LtCache;
-		foreach(LtCache::$servers['test_ttl'] as $k => $v)
-		{
-			$cache->group = "test_ttl";
-			$cache->node = $k;
-			$cache->init();
-			echo "\n------" . $cache->group . '------' . $cache->node . "------\n";
-
-			$ch = $cache->getTDG("test_ttl");
-
-			foreach ($testDataList as $k => $v)
-			{
-				$this->assertTrue($ch->add($k, $v, $ttl_add));
-				sleep(1);
-				$this->assertEquals($v, $ch->get($k));
-				$this->assertTrue($ch->update($k, $v, $ttl_update));
-				sleep(1);
-				$this->assertEquals($v, $ch->get($k));
-				sleep(2);
-				$this->assertFalse($ch->get($k));
-			}
-		}
-		/**
-		 * 使其它测试不受干扰
-		 */
-		//LtCache::$servers = null;
-	}
 
 	protected function setUp()
 	{
 	}
+
 	protected function tearDown()
 	{
 		LtCache::$servers = null;
