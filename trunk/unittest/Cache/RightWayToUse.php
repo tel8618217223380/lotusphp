@@ -54,17 +54,74 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 
 	public function testOpcodeCacheAdapter()
 	{
+		$opcodeCacheAdapters = array();
 		if (extension_loaded('apc'))
 		{
 			echo "\n-----apc loaded-----\n";
+			$opcodeCacheAdapters[] = "apc";
 		}
 		if (extension_loaded('eaccelerator'))
 		{
 			echo "\n-----eAccelerator loaded-----\n";
+			$opcodeCacheAdapters[] = "eaccelerator";
 		}
 		if (extension_loaded('xcache'))
 		{
 			echo "\n-----xcache loaded-----\n";
+			$opcodeCacheAdapters[] = "xcache";
+		}
+		foreach($opcodeCacheAdapters as $adapter)
+		{
+			$result = callWeb("Cache/opcode_cache_proxy.php", array(
+				"adapter" => $adapter,
+				"operation" => "add",
+				"key" => "test_key",
+				"table_name" => "test",
+				"value" => "test_value"
+			));
+			$this->assertTrue(unserialize($result));
+			
+			$result = callWeb("Cache/opcode_cache_proxy.php", array(
+				"adapter" => $adapter,
+				"operation" => "get",
+				"key" => "test_key",
+				"table_name" => "test"
+			));
+			$this->assertEquals("test_value", unserialize($result));
+			
+			$result = callWeb("Cache/opcode_cache_proxy.php", array(
+				"adapter" => $adapter,
+				"operation" => "update",
+				"key" => "test_key",
+				"table_name" => "test",
+				"value" => "new_value"
+			));
+			$this->assertTrue(unserialize($result));
+			
+			$result = callWeb("Cache/opcode_cache_proxy.php", array(
+				"adapter" => $adapter,
+				"operation" => "get",
+				"key" => "test_key",
+				"table_name" => "test"
+			));
+			$this->assertEquals("new_value", unserialize($result));
+			
+			$result = callWeb("Cache/opcode_cache_proxy.php", array(
+				"adapter" => $adapter,
+				"operation" => "del",
+				"key" => "test_key",
+				"table_name" => "test"
+			));
+			$this->assertEquals("test_value", unserialize($result));
+			
+			$result = callWeb("Cache/opcode_cache_proxy.php", array(
+				"adapter" => $adapter,
+				"operation" => "get",
+				"key" => "test_key",
+				"table_name" => "test"
+			));
+			$this->assertFalse(unserialize($result));
+			
 		}
 	}
 
