@@ -24,7 +24,7 @@ function callWeb($url, $post, $withHeader = FALSE)
 	
 	$reponse = curl_exec($ch);
 	curl_close($ch);
-	return $html;
+	return $reponse;
 }
 /**
  * Lotus Error Handle
