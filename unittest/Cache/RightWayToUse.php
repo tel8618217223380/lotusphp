@@ -52,6 +52,9 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertFalse($ch->get("test_key"));
 	}
 
+	/**
+	 * @todo ttl测试
+	 */
 	public function testOpcodeCacheAdapter()
 	{
 		$opcodeCacheAdapters = array();
@@ -166,6 +169,13 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$this->assertTrue($ch->update("test_key", "new_value"));
 			$this->assertEquals("new_value", $ch->get("test_key"));
 			$this->assertTrue($ch->del("test_key"));
+			$this->assertFalse($ch->get("test_key"));
+			
+			//测试TTL功能
+			$this->assertTrue($ch->add("test_key", "test_value", 2));
+			sleep(1);
+			$this->assertEquals("test_value", $ch->get("test_key"));
+			sleep(2);
 			$this->assertFalse($ch->get("test_key"));
 		}
 	}
