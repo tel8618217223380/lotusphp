@@ -171,51 +171,51 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * prod_cat表示发布商品时选择的系统商品类目 
 		 * geo_code表示收货地址中用到的行政区划，省市区三级
 		 * 他们都使用本地共享内存，用不同的tablename，防止key冲突
+		 * 使用的时候就像这样：
+		 * $cache = new LtCache;
+		 * $cache->group = "local_memory";
+		 * $prodCatCache = $cache->getTDG("prod_cat");
+		 * $geoCodeCache = $cache->getTDG("geo_code");
 		 */
-		$ccb->addHost("prod_cat", "node_0", "master", array("adapter" => "apc"));
-		$ccb->addHost("geo_code", "node_0", "master", array("adapter" => "apc"));
+		$ccb->addHost("local_memory", "node_0", "master", array("adapter" => "apc"));
 
 		/**
 		 * 用户 名片数据和商品统计数据缓存 
 		 * 特点：数据条数极多，每条数据量小，变化频率高，访问频率很高，适合用memcached 
 		 * user_card表示用户 名片数据，存储用户 的昵称、信用点数，最后活动时间；prod_stat表示商品统计数据，存储商品的点击数，收藏数，最后编辑时间 
 		 * 如果使用同一个memcache服务器（主机地址和端口都相同 ），用不同的tablename，防止key冲突
+		 * 使用的时候就像这样：
+		 * $cache = new LtCache;
+		 * $cache->group = "memcache";
+		 * $prodStatCache = $cache->getTDG("prod_stat");
+		 * $userCardCache = $cache->getTDG("user_card");
 		 */
-		$ccb->addHost("user_card", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11211));
-		$ccb->addHost("user_card", "node_1", "master", array("adapter" => "memcached", "host" => "10.0.0.2", "port" => 11211));
-		$ccb->addHost("prod_stat", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11211));
-		$ccb->addHost("prod_stat", "node_1", "master", array("adapter" => "memcached", "host" => "10.0.0.2", "port" => 11211)); 
-		// 如果全用不同的memcache服务器（主机地址或端口不相同 ），可以不指定tablename
-		// $ccb->addHost("user_card", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11211));
-		// $ccb->addHost("prod_stat", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11212));
+		$ccb->addHost("memcache", "node_0", "master", array("adapter" => "memcached", "host" => "10.0.0.1", "port" => 11211));
+		$ccb->addHost("memcache", "node_1", "master", array("adapter" => "memcached", "host" => "10.0.0.2", "port" => 11211));
+
 		/**
 		 * 商品数据和订单数据缓存 
 		 * 特点：数据条数极多，每条数据量大，占用空间大，变化频率低，适合用文件缓存 
 		 * prod_info表示商品数据，存储商品标题、描述等 信息 
 		 * trade_info表示订单数据，存储订单详情，及该订单涉及的商品的快照、交易双方的信用等级
 		 * 如果在同 一个目录下，需要用不同的tablename，防止key冲突
+		 * 使用的时候就像这样：
+		 * $cache = new LtCache;
+		 * $cache->group = "local_file";
+		 * $prodStatCache = $cache->getTDG("prod_detail");
+		 * $userCardCache = $cache->getTDG("trade_detail");
 		 */
-		$ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/prod_info"));
-		$ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/trade_info")); 
-		// 如果在同 一个目录下，需要用不同的tablename，防止key冲突
-		// $ccb->addHost("prod_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/"));
-		// $ccb->addHost("trade_info", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/"));
+		$ccb->addHost("local_file", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/"));
+
 		$this->assertEquals(
-			array("prod_cat" => array("node_0" => array("master" => array(
+			array("local_memory" => array("node_0" => array("master" => array(
 							array("adapter" => "apc",
 
 								),
 							),
 						),
 					),
-				"geo_code" => array("node_0" => array("master" => array(
-							array("adapter" => "apc",
-
-								),
-							),
-						),
-					),
-				"user_card" => array("node_0" => array("master" => array(
+				"memcache" => array("node_0" => array("master" => array(
 							array("adapter" => "memcached",
 
 								"host" => "10.0.0.1",
@@ -232,33 +232,9 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 							),
 						),
 					),
-				"prod_stat" => array("node_0" => array("master" => array(
-							array("adapter" => "memcached",
-
-								"host" => "10.0.0.1",
-								"port" => 11211,
-								),
-							),
-						),
-					"node_1" => array("master" => array(
-							array("adapter" => "memcached",
-
-								"host" => "10.0.0.2",
-								"port" => 11211,
-								),
-							),
-						),
-					),
-				"prod_info" => array("node_0" => array("master" => array(
+				"local_file" => array("node_0" => array("master" => array(
 							array("adapter" => "phps",
-								"host" => "/var/data/LtCache/test/phps/prod_info",
-								),
-							),
-						),
-					),
-				"trade_info" => array("node_0" => array("master" => array(
-							array("adapter" => "phps",
-								"host" => "/var/data/LtCache/test/phps/trade_info",
+								"host" => "/var/data/LtCache/test/phps/",
 								),
 							),
 						),
