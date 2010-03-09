@@ -31,7 +31,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ccb = new LtCacheConfigBuilder;
 		$ccb->addSingleHost(
 			array("adapter" => "phps",
-				"host" => "/tmp/Lotus/unittest/cache/"
+				"host" => "/tmp/Lotus/unittest/cache/phps"
 			));
 		LtCache::$servers = $ccb->getServers();
 		/**
@@ -76,7 +76,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ccb = new LtCacheConfigBuilder;
 
 		/**
-		 * 测试各适配器add(), get(), del(), update()接口
+		 * 测试其它适配器add(), get(), del(), update()接口
 		 */
 		$ccb->addHost("group_phps", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
 		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
@@ -104,7 +104,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			echo "\n------" . $cache->group . '------' . $cache->node . "------\n";
 
 			$ch = $cache->getTDG("test_agdu");
-
 			$this->assertTrue($ch->add("test_key", "test_value"));
 			$this->assertEquals("test_value", $ch->get("test_key"));
 			$this->assertTrue($ch->update("test_key", "new_value"));
