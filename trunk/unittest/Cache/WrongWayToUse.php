@@ -225,6 +225,80 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 
 		$ch->update('key_not_exists', 'value', 2);
 	}
+	// ------------------------------------------------------------------
+	/**
+	 * Memcache key冲突且都未过期
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testMemcacheKeyConflict()
+	{
+		if (!extension_loaded('memcache'))
+		{
+			trigger_error("Memcache isn't loaded\n");
+		}
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "Memcache", "host" => "localhost", "port" => 11211));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$ch = $cache->getTDG('test');
+
+		$ch->add("test_key", "test_value");
+		$ch->add("test_key", "test_value");
+		$ch->del("test_key", "test_value");
+	}
+
+	/**
+	 * Memcache 删除不存在的key
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testMemcacheKeyDel()
+	{
+		if (!extension_loaded('memcache'))
+		{
+			trigger_error("Memcache isn't loaded\n");
+		}
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "Memcache", "key_prefix" => "test", "host" => "localhost", "port" => 11211));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$ch = $cache->getTDG('test');
+
+		$ch->del('key_not_exists', 'value', 2);
+	}
+
+	/**
+	 * Memcache 更新不存在的key
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testMemcacheKeyUpdate()
+	{
+		if (!extension_loaded('memcache'))
+		{
+			trigger_error("Memcache isn't loaded\n");
+		}
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "Memcache", "key_prefix" => "test", "host" => "localhost", "port" => 11211));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$ch = $cache->getTDG('test');
+
+		$ch->update('key_not_exists', 'value', 2);
+	}
 
 	protected function setUp()
 	{
