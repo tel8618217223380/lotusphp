@@ -29,11 +29,11 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * key冲突且都未过期
+	 * phps key冲突且都未过期
 	 * 
 	 * @expectedException PHPUnit_Framework_Error
 	 */
-	public function testFileKeyConflict()
+	public function testPhpsKeyConflict()
 	{
 		/**
 		 * 构造缓存配置
@@ -51,11 +51,11 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * 删除不存在的key
+	 * phps 删除不存在的key
 	 * 
 	 * @expectedException PHPUnit_Framework_Error
 	 */
-	public function testFileKeyDel()
+	public function testPhpsKeyDel()
 	{
 		/**
 		 * 构造缓存配置
@@ -68,6 +68,162 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		$ch = $cache->getTDG('test');
 
 		$ch->del('key_not_exists', 'value', 2);
+	}
+
+	/**
+	 * phps 更新不存在的key
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testPhpsKeyUpdate()
+	{
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_keynotexists/", "key_prefix" => "test"));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$ch = $cache->getTDG('test');
+
+		$ch->update('key_not_exists', 'value', 2);
+	} 
+	// ------------------------------------------------------------------
+	/**
+	 * file key冲突且都未过期
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testFileKeyConflict()
+	{
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_keyconflict/"));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$ch = $cache->getTDG('test');
+
+		$ch->add("test_key", "test_value");
+		$ch->add("test_key", "test_value");
+		$ch->del("test_key", "test_value");
+	}
+
+	/**
+	 * file 删除不存在的key
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testFileKeyDel()
+	{
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_keynotexists/", "key_prefix" => "test"));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$ch = $cache->getTDG('test');
+
+		$ch->del('key_not_exists', 'value', 2);
+	}
+
+	/**
+	 * file 更新不存在的key
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testfileKeyUpdate()
+	{
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_keynotexists/", "key_prefix" => "test"));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$ch = $cache->getTDG('test');
+
+		$ch->update('key_not_exists', 'value', 2);
+	} 
+	// ------------------------------------------------------------------
+	/**
+	 * EAccelerator key冲突且都未过期
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testEAcceleratorKeyConflict()
+	{
+		if (!extension_loaded('eaccelerator'))
+		{
+			trigger_error("eAccelerator isn't loaded\n");
+		}
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "eaccelerator"));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$ch = $cache->getTDG('test');
+
+		$ch->add("test_key", "test_value");
+		$ch->add("test_key", "test_value");
+		$ch->del("test_key", "test_value");
+	}
+
+	/**
+	 * EAccelerator 删除不存在的key
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testEAcceleratorKeyDel()
+	{
+		if (!extension_loaded('eaccelerator'))
+		{
+			trigger_error("eAccelerator isn't loaded\n");
+		}
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "eaccelerator", "key_prefix" => "test"));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$ch = $cache->getTDG('test');
+
+		$ch->del('key_not_exists', 'value', 2);
+	}
+
+	/**
+	 * EAccelerator 更新不存在的key
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testEAcceleratorKeyUpdate()
+	{
+		if (!extension_loaded('eaccelerator'))
+		{
+			trigger_error("eAccelerator isn't loaded\n");
+		}
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addSingleHost(array("adapter" => "eaccelerator", "key_prefix" => "test"));
+		LtCache::$servers = $ccb->getServers();
+		$cache = new LtCache;
+		$cache->init();
+		$ch = $cache->getTDG('test');
+
+		$ch->update('key_not_exists', 'value', 2);
 	}
 
 	protected function setUp()
