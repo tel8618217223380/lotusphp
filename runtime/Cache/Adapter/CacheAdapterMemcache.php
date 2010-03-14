@@ -8,7 +8,7 @@ class LtCacheAdapterMemcache implements LtCacheAdapter
 
 	public function add($key, $value, $ttl=0, $tableName, $connectionResource)
 	{
-		if(false==$connectionResource->get($this->getRealKey($tableName, $key)))
+		if(false!=$connectionResource->get($this->getRealKey($tableName, $key)))
 		{
 			trigger_error("Key Conflict: {$key}");
 			return false;

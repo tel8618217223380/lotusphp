@@ -50,6 +50,13 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertEquals("new_value", $ch->get("test_key"));
 		$this->assertTrue($ch->del("test_key"));
 		$this->assertFalse($ch->get("test_key"));
+		//删除、更新不存在的key
+		$this->assertFalse($ch->del("some_key_not_exists"));
+		$this->assertFalse($ch->update("some_key_not_exists", "any value"));
+		//添加重复的key
+		$this->assertTrue($ch->add("key1", "value1"));
+		$this->assertFalse($ch->add("key1", "value1"));
+		$ch->del("key1");
 	}
 
 	/**
