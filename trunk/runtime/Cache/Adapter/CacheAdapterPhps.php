@@ -24,11 +24,6 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 	public function add($key, $value, $ttl = 0, $tableName, $connectionResource)
 	{
 		$cacheFile = $this->getCacheFile($tableName, $key);
-		if(is_file($cacheFile))
-		{
-			trigger_error("Key Conflict: {$key}");
-			return false;
-		}
 		$cachePath = pathinfo($cacheFile,PATHINFO_DIRNAME);
 		if(!is_dir($cachePath))
 		{
@@ -38,6 +33,15 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 			}
 		}
 		$expireTime = (0 == $ttl) ? '0000000000' : (time()+$ttl);
+		if(is_file($cacheFile))
+		{
+			$existsTtl = file_get_contents($cacheFile,false,null,13,10);
+			if(0 == $existsTtl || time() < $existsTtl)
+			{
+				//trigger_error("Key Conflict: {$key}");
+				return false;
+			}
+		}		
 		return (boolean) file_put_contents($cacheFile, '<?php exit;?>' . $expireTime . serialize($value));
 	}
 	
@@ -46,7 +50,7 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 		$cacheFile = $this->getCacheFile($tableName, $key);
 		if(!is_file($cacheFile))
 		{
-			trigger_error("Key not exists: {$key}");
+			//trigger_error("Key not exists: {$key}");
 			return false;
 		}
 		else
@@ -83,7 +87,7 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 		$cacheFile = $this->getCacheFile($tableName, $key);
 		if(!is_file($cacheFile))
 		{
-			trigger_error("Key not exists: {$key}");
+			//trigger_error("Key not exists: {$key}");
 			return false;
 		}
 		$expireTime = (0 == $ttl) ? '0000000000' : (time()+$ttl);
