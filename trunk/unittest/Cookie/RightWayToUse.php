@@ -21,20 +21,14 @@ class RightWayToUseCookie extends PHPUnit_Framework_TestCase
 	 */
 	public function testMostUsedWay()
 	{
-		/**
-		 * Lotus组件初始化三步曲
-		 */
-		// 1. 实例化
-		$cookie = new LtCookie;
-		// 2. 设置属性
-		$cookie->conf->secretKey = "VHfgk!@c=_";
-		// 3. 调init()方法
-		$cookie->init();
 
-		/**
-		 * 初始化完毕，测试其效果
-		 */
-		//$cookie->setCookie(array("name" => "username", "value" => "talkativedoggy"));
+			$result = callWeb("Cookie/cookie_proxy.php", array("operation" => "set"), true);
+			print_r($result);
+			$result = callWeb("Cookie/cookie_proxy.php", array("operation" => "get"), true);
+			print_r($result);
+			$result = callWeb("Cookie/cookie_proxy.php", array("operation" => "del"), true);
+			print_r($result);
+			$this->assertTrue(true);
 	}
 
 	/**
