@@ -10,15 +10,15 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐） 
 	 * -------------------------------------------------------------------
 	 * LtCache要求： 
-	 *       # key必须是数字或者字串，不能是数组，对象 
+	 *           # key必须是数字或者字串，不能是数组，对象 
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCache不在意：
-	 *       # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
+	 *           # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCache建议（不强求）：
-	 *       # 为保证key不冲突，最好定义多个group，将不同领域的数据分开存 
+	 *           # 为保证key不冲突，最好定义多个group，将不同领域的数据分开存 
 	 * 
 	 * 本测试用例期望效果：
 	 * 能成功通过add(), get(), del(), update()接口读写数据
@@ -32,7 +32,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ccb->addSingleHost(
 			array("adapter" => "phps",
 				"host" => "/tmp/Lotus/unittest/cache/phps"
-			));
+				));
 		LtCache::$servers = $ccb->getServers();
 		/**
 		 * 实例化组件入口类
@@ -49,90 +49,146 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertTrue($ch->update("test_key", "new_value"));
 		$this->assertEquals("new_value", $ch->get("test_key"));
 		$this->assertTrue($ch->del("test_key"));
-		$this->assertFalse($ch->get("test_key"));
-		//删除、更新不存在的key
+		$this->assertFalse($ch->get("test_key")); 
+		// 删除、更新不存在的key
 		$this->assertFalse($ch->del("some_key_not_exists"));
-		$this->assertFalse($ch->update("some_key_not_exists", "any value"));
-		//添加重复的key
+		$this->assertFalse($ch->update("some_key_not_exists", "any value")); 
+		// 添加重复的key
 		$this->assertTrue($ch->add("key1", "value1"));
 		$this->assertFalse($ch->add("key1", "value1"));
 		$ch->del("key1");
+		LtCache::$servers = null;
 	}
 
 	/**
+	 * 测试数据类型支持情况
+	 */
+	public function testKeyValue()
+	{
+		$data = array(
+			// $key => value
+			1 => 2,
+			1.1 => null,
+			-1 => "",
+			"string" => "test_value_string",
+			"array" => array(1, 2, 4),
+			"object" => new LtCache(),
+			);
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+
+		/**
+		 * 测试其它适配器add(), get(), del(), update()接口
+		 */
+		$ccb->addHost("group_phps", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
+		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
+		if (extension_loaded('memcache'))
+		{
+			$ccb->addHost("group_memcache", "node_0", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
+		}
+		if (extension_loaded('memcached'))
+		{
+			$ccb->addHost("group_memcached", "node_0", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
+		}
+		LtCache::$servers = $ccb->getServers();
+
+		/**
+		 * 实例化组件入口类
+		 */
+		foreach(LtCache::$servers as $k => $v)
+		{
+			$cache = new LtCache;
+			$cache->group = $k;
+			$cache->node = "node_0";
+			$cache->init();
+			echo "\n--testKeyValue--" . $cache->group . '--' . $cache->node . "--\n";
+			$ch = $cache->getTDG("test_agdu");
+
+			foreach ($data as $k => $v)
+			{
+				$this->assertTrue($ch->add($k, $v));
+				$this->assertEquals($ch->get($k), $v);
+				$this->assertTrue($ch->update($k, 0));
+				$this->assertEquals($ch->get($k), 0);
+				$this->assertTrue($ch->update($k, $v));
+				$this->assertEquals($ch->get($k), $v);
+				$this->assertTrue($ch->del($k));
+				$this->assertFalse($ch->get($k));
+			}
+		}
+		LtCache::$servers = null;
+	}
+	/**
+	 * 
 	 * @todo ttl测试
 	 */
 	public function testOpcodeCacheAdapter()
 	{
 		$opcodeCacheAdapters = array();
+		$opcodeCacheAdapters[] = "phps";
+		$opcodeCacheAdapters[] = "file";
 		if (extension_loaded('apc'))
 		{
-			echo "\n-----apc loaded-----\n";
 			$opcodeCacheAdapters[] = "apc";
 		}
 		if (extension_loaded('eaccelerator'))
 		{
-			echo "\n-----eAccelerator loaded-----\n";
 			$opcodeCacheAdapters[] = "eaccelerator";
 		}
 		if (extension_loaded('xcache'))
 		{
-			echo "\n-----xcache loaded-----\n";
 			$opcodeCacheAdapters[] = "xcache";
 		}
 		foreach($opcodeCacheAdapters as $adapter)
 		{
-			$result = callWeb("Cache/opcode_cache_proxy.php", array(
-				"adapter" => $adapter,
-				"operation" => "add",
-				"key" => "test_key",
-				"table_name" => "test",
-				"value" => "test_value"
-			));
+			echo "\n--testOpcodeCacheAdapter--" . $adapter . "--callWeb--\n";
+			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
+					"operation" => "add",
+					"key" => "test_key",
+					"table_name" => "test",
+					"value" => "test_value"
+					));
 			$this->assertTrue(unserialize($result));
-			
-			$result = callWeb("Cache/opcode_cache_proxy.php", array(
-				"adapter" => $adapter,
-				"operation" => "get",
-				"key" => "test_key",
-				"table_name" => "test"
-			));
+
+			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
+					"operation" => "get",
+					"key" => "test_key",
+					"table_name" => "test"
+					));
 			$this->assertEquals("test_value", unserialize($result));
-			
-			$result = callWeb("Cache/opcode_cache_proxy.php", array(
-				"adapter" => $adapter,
-				"operation" => "update",
-				"key" => "test_key",
-				"table_name" => "test",
-				"value" => "new_value"
-			));
+
+			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
+					"operation" => "update",
+					"key" => "test_key",
+					"table_name" => "test",
+					"value" => "new_value"
+					));
 			$this->assertTrue(unserialize($result));
-			
-			$result = callWeb("Cache/opcode_cache_proxy.php", array(
-				"adapter" => $adapter,
-				"operation" => "get",
-				"key" => "test_key",
-				"table_name" => "test"
-			));
+
+			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
+					"operation" => "get",
+					"key" => "test_key",
+					"table_name" => "test"
+					));
 			$this->assertEquals("new_value", unserialize($result));
-			
-			$result = callWeb("Cache/opcode_cache_proxy.php", array(
-				"adapter" => $adapter,
-				"operation" => "del",
-				"key" => "test_key",
-				"table_name" => "test"
-			));
+
+			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
+					"operation" => "del",
+					"key" => "test_key",
+					"table_name" => "test"
+					));
 			$this->assertEquals("test_value", unserialize($result));
-			
-			$result = callWeb("Cache/opcode_cache_proxy.php", array(
-				"adapter" => $adapter,
-				"operation" => "get",
-				"key" => "test_key",
-				"table_name" => "test"
-			));
+
+			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
+					"operation" => "get",
+					"key" => "test_key",
+					"table_name" => "test"
+					));
 			$this->assertFalse(unserialize($result));
-			
 		}
+		LtCache::$servers = null;
 	}
 
 	public function testOtherCacheAdapter()
@@ -149,16 +205,14 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
 		if (extension_loaded('memcache'))
 		{
-			echo "\n-----memcache loaded-----\n";
 			$ccb->addHost("group_memcache", "node_0", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
 		}
 		if (extension_loaded('memcached'))
 		{
-			echo "\n-----memcached loaded-----\n";
 			$ccb->addHost("group_memcached", "node_0", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
 		}
 		LtCache::$servers = $ccb->getServers();
-		
+
 		/**
 		 * 实例化组件入口类
 		 */
@@ -168,7 +222,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$cache->group = $k;
 			$cache->node = "node_0";
 			$cache->init();
-			echo "\n------" . $cache->group . '------' . $cache->node . "------\n";
+			echo "\n--testOtherCacheAdapter--" . $cache->group . '--' . $cache->node . "--\n";
 
 			$ch = $cache->getTDG("test_agdu");
 			$this->assertTrue($ch->add("test_key", "test_value"));
@@ -176,15 +230,30 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$this->assertTrue($ch->update("test_key", "new_value"));
 			$this->assertEquals("new_value", $ch->get("test_key"));
 			$this->assertTrue($ch->del("test_key"));
-			$this->assertFalse($ch->get("test_key"));
-			
-			//测试TTL功能
+			$this->assertFalse($ch->get("test_key")); 
+			// 删除、更新不存在的key
+			$this->assertFalse($ch->del("some_key_not_exists"));
+			$this->assertFalse($ch->update("some_key_not_exists", "any value")); 
+			// 添加重复的key
+			$this->assertTrue($ch->add("key2", "value1"));
+			$this->assertFalse($ch->add("key2", "value1"));
+			$ch->del("key2");
+
+			echo "\n--test ttl --\n"; 
+			// 测试TTL功能
 			$this->assertTrue($ch->add("test_key", "test_value", 2));
 			sleep(1);
 			$this->assertEquals("test_value", $ch->get("test_key"));
 			sleep(2);
+			$this->assertFalse($ch->get("test_key")); 
+			// 测试TTL过期后可以再次add相同的key
+			$this->assertTrue($ch->add("test_key", "test_value", 1));
+			sleep(2);
+			$this->assertTrue($ch->add("test_key", "test_value", 1));
+			sleep(2);
 			$this->assertFalse($ch->get("test_key"));
 		}
+		LtCache::$servers = null;
 	}
 
 	public function testMostUsedWayWithMultiGroup()
@@ -227,6 +296,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertEquals("new_value", $ch->get("key_1"));
 		$this->assertTrue($ch->del("key_1"));
 		$this->assertFalse($ch->get("key_1"));
+		LtCache::$servers = null;
 	}
 
 	/**
@@ -315,10 +385,12 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 				),
 			$ccb->getServers()
 			); //end $this->assertEquals
+		LtCache::$servers = null;
 	}
 
 	protected function setUp()
 	{
+		LtCache::$servers = null;
 	}
 
 	protected function tearDown()

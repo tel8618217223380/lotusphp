@@ -17,7 +17,7 @@ function callWeb($url, $post, $withHeader = FALSE)
 {
 	$ch = curl_init();
 
-	curl_setopt($ch, CURLOPT_URL, "http://lotus/unittest/$url");
+	curl_setopt($ch, CURLOPT_URL, "http://127.0.0.1/lotusphp/unittest/$url");
 	curl_setopt($ch, CURLOPT_HEADER, $withHeader);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
