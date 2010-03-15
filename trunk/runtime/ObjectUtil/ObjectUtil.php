@@ -2,6 +2,24 @@
 class LtObjectUtil
 {
 	static $instances;
+
+	static public function instance_exists($className)
+	{
+		if (empty($className))
+		{
+			return false;
+		}
+		$key = strtolower($className);
+		if (isset(self::$instances[$key]))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	static public function singleton($className)
 	{
 		if (empty($className))
