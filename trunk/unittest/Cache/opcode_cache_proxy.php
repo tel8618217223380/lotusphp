@@ -11,7 +11,7 @@ $key = $_REQUEST["key"];
  */
 $ccb = new LtCacheConfigBuilder;
 $ccb->addSingleHost(array(
-	"adapter" => $opcodeCacheAdapter,
+	"adapter" => $opcodeCacheAdapter,'host'=>'/tmp/Lotus/unittest/opcache/',
 ));
 LtCache::$servers = $ccb->getServers();
 
