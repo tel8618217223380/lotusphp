@@ -1,11 +1,6 @@
 <?php
 class stockPriceComponent extends LtComponent
 {
-	public function __construct()
-	{
-		parent::__construct();
-		$this->responseType = 'tpl'; // 使用模板引擎
-	}
 	public function execute()
 	{
 		$stockInfo = array(
@@ -14,5 +9,7 @@ class stockPriceComponent extends LtComponent
 		);
 		$this->data['companyName'] = $this->context->companyName;
 		$this->data['stockPrice'] = $stockInfo[$this->context->companyName];
+		
+		$this->responseType = 'tpl'; // 使用模板引擎
 	}
 }
