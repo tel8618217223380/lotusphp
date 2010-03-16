@@ -204,7 +204,11 @@ abstract class LtAction
 				$this->view->templateDir = $this->viewDir;
 				$this->view->compiledDir = $this->viewTplDir;
 				$this->view->autoCompile = $this->viewTplAutoCompile;
-				$this->view->template = $this->context->uri["module"] . "-" . $this->context->uri["action"];
+				if (empty($this->template))
+				{
+					$this->template = $this->context->uri["module"] . "-" . $this->context->uri["action"];
+				}
+				$this->view->template = $this->template;
 				$this->view->render();
 				break;
 
@@ -222,7 +226,11 @@ abstract class LtAction
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
-				$this->view->template = $this->context->uri["module"] . "-" . $this->context->uri["action"];
+				if (empty($this->template))
+				{
+					$this->template = $this->context->uri["module"] . "-" . $this->context->uri["action"];
+				}
+				$this->view->template = $this->template;
 				$this->view->render();
 				break;
 		}
