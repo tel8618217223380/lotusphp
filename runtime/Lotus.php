@@ -57,7 +57,7 @@ class Lotus
 		if (!empty($this->option['cache_server']))
 		{
 			/**
-			 * Init Cache component to sotre LtAutoloader, LtConfig data
+			 * Init Cache component to sotre LtAutoloader, LtConfig data ...
 			 */
 			require_once $this->lotusRuntimeDir . "Cache/Cache.php";
 			require_once $this->lotusRuntimeDir . "Cache/CacheAdapterFactory.php";
@@ -76,7 +76,7 @@ class Lotus
 
 			$ccb = new LtCacheConfigBuilder;
 			$v = $this->option['cache_server'];
-			$ccb->addHost($v[0],$v[1],$v[2],$v[3]);
+			$ccb->addHost($v[0], $v[1], $v[2], $v[3]);
 			LtCache::$servers = $ccb->getServers();
 			$this->cacheInst = new LtCache;
 			$this->cacheInst->init();
@@ -84,9 +84,17 @@ class Lotus
 		}
 
 		/**
-		 * Init Cache end.
+		 * LtAutoloaderStore, LtConfigStore, LtDbStore合并成LtStoreMemory
+		 */
+		require_once $this->lotusRuntimeDir . "LtStore.php";
+		require_once $this->lotusRuntimeDir . "LtStoreMemory.php";
+		/**
+		 * init Autoloader
 		 */
 		$this->prepareAutoloader();
+		/**
+		 * init Config
+		 */
 		$this->prepareConfig();
 		/**
 		 * Initial other components
@@ -189,7 +197,7 @@ class Lotus
 		}
 		else
 		{
-			LtDb::$storeHandle = new LtDbStore;
+			LtDb::$storeHandle = new LtStoreMemory;
 		}
 		if (!LtDb::$storeHandle->get("servers"))
 		{
