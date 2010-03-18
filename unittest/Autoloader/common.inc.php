@@ -2,6 +2,7 @@
 $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
 require_once $lotusHome . "/runtime/LtStore.php";
 require_once $lotusHome . "/runtime/LtStoreMemory.php";
+require_once $lotusHome . "/runtime/LtStoreFile.php";
 require_once $lotusHome . "/runtime/Autoloader/Autoloader.php";
 require_once $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
 
