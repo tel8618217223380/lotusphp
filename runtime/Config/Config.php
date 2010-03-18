@@ -18,7 +18,7 @@ class LtConfig
 		}
 		if (!is_object(self::$storeHandle))
 		{
-			self::$storeHandle = new LtConfigStore;
+			self::$storeHandle = new LtStoreMemory;
 		}
 		if (0 == self::$storeHandle->get(".config_total"))
 		{
@@ -63,40 +63,5 @@ class LtConfig
 			self::$storeHandle->update(".config_total", self::$storeHandle->get(".config_total") + 1, 0);
 		}
 		self::$storeHandle->add('.config_data', $configArray, 0);
-	}
-}
-
-class LtConfigStore
-{
-	protected $stack;
-
-	public function add($key, $value, $ttl)
-	{
-		$this->stack[$key] = $value;
-		return true;
-	}
-
-	public function del($key)
-	{
-		if (isset($this->stack[$key]))
-		{
-			unset($this->stack[$key]);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public function get($key)
-	{
-		return isset($this->stack[$key]) ? $this->stack[$key] : false;
-	}
-
-	public function update($key, $value, $ttl)
-	{
-		$this->stack[$key] = $value;
-		return true;
 	}
 }

@@ -11,7 +11,7 @@ class LtDb
 	{
 		if (!is_object(self::$storeHandle))
 		{
-			self::$storeHandle = new LtDbStore;
+			self::$storeHandle = new LtStoreMemory;
 		}
 		$this->dbh = new LtDbHandle;
 		$this->dbh->group = $this->getGroup();
@@ -71,40 +71,5 @@ class LtDb
 		{
 			return key($servers[$this->getGroup()]);
 		}
-	}
-}
-
-class LtDbStore
-{
-	protected $stack;
-
-	public function add($key, $value, $ttl = 0)
-	{
-		$this->stack[$key] = $value;
-		return true;
-	}
-
-	public function del($key)
-	{
-		if (isset($this->stack[$key]))
-		{
-			unset($this->stack[$key]);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public function get($key)
-	{
-		return isset($this->stack[$key]) ? $this->stack[$key] : false;
-	}
-
-	public function update($key, $value, $ttl)
-	{
-		$this->stack[$key] = $value;
-		return true;
 	}
 }

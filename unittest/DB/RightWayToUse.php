@@ -24,7 +24,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 */
 		$dcb = new LtDbConfigBuilder;
 		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
-		LtDb::$storeHandle = new LtDbStore;
+		LtDb::$storeHandle = new LtStoreMemory;
 		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 
 		/**
@@ -110,7 +110,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 */
 		$dcb = new LtDbConfigBuilder;
 		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
-		LtDb::$storeHandle = new LtDbStore;
+		LtDb::$storeHandle = new LtStoreMemory;
 		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 
 		/**
@@ -136,7 +136,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			 */
 			$dcb = new LtDbConfigBuilder;
 			$dcb->addSingleHost($host);
-			LtDb::$storeHandle = new LtDbStore;
+			LtDb::$storeHandle = new LtStoreMemory;
 			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 
 			/**
@@ -198,7 +198,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$dcb->addHost("user_group", "user_node_1", "master", array("password" => "123456", "dbname" => "member_1", "adapter" => "mysql"));
 		$dcb->addHost("user_group", "user_node_2", "master", array("dbname" => "member_2"));
 
-		LtDb::$storeHandle = new LtDbStore;
+		LtDb::$storeHandle = new LtStoreMemory;
 		LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 
 		/**
