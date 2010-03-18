@@ -3,15 +3,33 @@ class LtContext
 {
 	/**
 	 * The uri property
-	 * @var array
+	 * 
+	 * @var array 
 	 */
 	public $uri;
+
+	protected $strip;
+
+	public function __construct()
+	{
+		/**
+		 * set_magic_quotes_runtime(0)
+		 */
+		if (version_compare(PHP_VERSION, '6.0.0-dev', '<') && get_magic_quotes_gpc())
+		{
+			$this->strip = true;
+		}
+		else
+		{
+			$this->strip = false;
+		}
+	}
 
 	/**
 	 * return the client input in $_SERVER['argv']
 	 * 
-	 * @param integer $offset
-	 * @return string
+	 * @param integer $offset 
+	 * @return string 
 	 */
 	public function argv($offset)
 	{
@@ -21,8 +39,8 @@ class LtContext
 	/**
 	 * return the client input in $_FILES
 	 * 
-	 * @param string $name
-	 * @return array
+	 * @param string $name 
+	 * @return array 
 	 */
 	public function file($name)
 	{
@@ -32,30 +50,44 @@ class LtContext
 	/**
 	 * return the client input in $_GET
 	 * 
-	 * @param string $name
-	 * @return string
+	 * @param string $name 
+	 * @return string 
 	 */
 	public function get($name)
 	{
-		return isset($_GET[$name]) ? $_GET[$name] : null;
+		if (isset($_GET[$name]))
+		{
+			return $this->strip ? stripslashes($_GET[$name]) : $_GET[$name];
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	/**
 	 * return the client input in $_POST
 	 * 
-	 * @param string $name
-	 * @return string
+	 * @param string $name 
+	 * @return string 
 	 */
 	public function post($name)
 	{
-		return isset($_POST[$name]) ? $_POST[$name] : null;
+		if (isset($_POST[$name]))
+		{
+			return $this->strip ? stripslashes($_POST[$name]) : $_POST[$name];
+		}
+		else
+		{
+			return null;
+		}
 	}
-	
+
 	/**
 	 * return the client input in $_REQUEST
 	 * 
-	 * @param string $name
-	 * @return string
+	 * @param string $name 
+	 * @return string 
 	 */
 	public function request($name)
 	{
@@ -65,8 +97,8 @@ class LtContext
 	/**
 	 * return the client input in $_SERVER
 	 * 
-	 * @param string $name
-	 * @return string
+	 * @param string $name 
+	 * @return string 
 	 */
 	public function server($name)
 	{
