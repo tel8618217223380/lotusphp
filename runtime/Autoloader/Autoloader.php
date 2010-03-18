@@ -248,7 +248,6 @@ class LtAutoloader
 			$key = md5($file);
 			$key_tmp = md5($key);
 			$cacheFile = rtrim($this->conf->mappingFileRoot, '\\/').'/' . substr($key_tmp, 0, 2) . '/' . substr($key_tmp, 2, 2) . '/' . 'phps-' . $key_tmp . '.php';
-			echo $cacheFile."<br />";
 			if (is_file($cacheFile) && filemtime($cacheFile) > filemtime($file))
 			{
 				$libNames = $fileStore->get($key);
