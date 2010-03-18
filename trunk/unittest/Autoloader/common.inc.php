@@ -1,5 +1,7 @@
 <?php
 $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
+require_once $lotusHome . "/runtime/LtStore.php";
+require_once $lotusHome . "/runtime/LtStoreMemory.php";
 require_once $lotusHome . "/runtime/Autoloader/Autoloader.php";
 require_once $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
 
@@ -13,7 +15,7 @@ class LtAutoloaderProxy extends LtAutoloader
 	public function __construct()
 	{
 		parent::__construct();
-		parent::$storeHandle = new LtAutoloaderStore;
+		parent::$storeHandle = new LtStoreMemory;
 	}
 	public function __get($prop)
 	{

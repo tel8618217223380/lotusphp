@@ -15,7 +15,7 @@ class LtAutoloader
 	{
 		if (!is_object(self::$storeHandle))
 		{
-			self::$storeHandle = new LtAutoloaderStore;
+			self::$storeHandle = new LtStoreMemory;
 		}
 		// Whether scanning directory
 		if (0 == self::$storeHandle->get(".class_total") && 0 == self::$storeHandle->get(".function_total"))
@@ -272,40 +272,5 @@ class LtAutoloader
 			return true;
 		}
 		return false;
-	}
-}
-
-class LtAutoloaderStore
-{
-	protected $stack;
-
-	public function add($key, $value, $ttl = 0)
-	{
-		$this->stack[$key] = $value;
-		return true;
-	}
-
-	public function del($key)
-	{
-		if (isset($this->stack[$key]))
-		{
-			unset($this->stack[$key]);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public function get($key)
-	{
-		return isset($this->stack[$key]) ? $this->stack[$key] : false;
-	}
-
-	public function update($key, $value, $ttl = 0)
-	{
-		$this->stack[$key] = $value;
-		return true;
 	}
 }
