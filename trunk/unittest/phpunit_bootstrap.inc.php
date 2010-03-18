@@ -30,4 +30,4 @@ function callWeb($url, $post, $withHeader = FALSE)
  * Lotus Error Handle
  */
 //$lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
-//include $lotusHome . "/error_handler/ErrorHandler.php";
+//include $lotusHome . "error_handler/ErrorHandler.php";
