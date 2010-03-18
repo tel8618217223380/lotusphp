@@ -243,23 +243,18 @@ class LtAutoloader
 	{
 		if (in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension))
 		{
+			$fileStore = new LtStoreFile;
+			$fileStore->setFileRoot($this->conf->mappingFileRoot);
+			$key = md5($file);
 			$cacheFile = rtrim($this->conf->mappingFileRoot, '\\/') . DIRECTORY_SEPARATOR . md5($file) . '.php';
-			if (is_file($cacheFile) && filemtime($cacheFile) > filemtime($file))
+			if ($libNames = $fileStore->get($key))
 			{
-				$libNames = unserialize(file_get_contents($cacheFile, false, null, 13));
+				//
 			}
 			else
 			{
 				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
-				$cachePath = pathinfo($cacheFile, PATHINFO_DIRNAME);
-				if (!is_dir($cachePath))
-				{
-					if (!@mkdir($cachePath, 0777, true))
-					{
-						trigger_error("Can not create $cachePath");
-					}
-				}
-				file_put_contents($cacheFile, '<?php exit;?>' . serialize($libNames));
+				$fileStore->add($key, $libNames);
 			}
 			foreach ($libNames as $libType => $libArray)
 			{

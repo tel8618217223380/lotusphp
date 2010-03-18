@@ -42,11 +42,11 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 	 */
 	public function testVerify()
 	{
-		$cp = new CaptchaProxy;
+		$cp = new LtCaptcha;
 		$cp->init();
 		$seed = md5(uniqid());
 		$cp->getImageResource($seed);
-		$word = $cp->getSavedCaptchaWord($seed);
+		$word = LtCaptcha::$storeHandle->get($seed);
 		$this->assertTrue($cp->verify($seed, $word));
 	}
 	protected function setUp()
