@@ -39,7 +39,7 @@ class LtStoreFile implements LtStore
 			}
 		}
 		$expireTime = (0 == $ttl) ? '0000000000' : (time() + $ttl);
-		$length = file_put_contents($file, '<?php exit;?>' . $expireTime . serialize($value));
+		$length = file_put_contents($file, '<?php exit;?>' . $expireTime . $value);
 		return $length > 0 ? true : false;
 	}
 
@@ -85,7 +85,7 @@ class LtStoreFile implements LtStore
 			}
 			else
 			{
-				return unserialize(file_get_contents($file, false, null, 23));
+				return file_get_contents($file, false, null, 23);
 			}
 		}
 	}
@@ -104,11 +104,11 @@ class LtStoreFile implements LtStore
 			return false;
 		}
 		$expireTime = (0 == $ttl) ? '0000000000' : (time() + $ttl);
-		$length = file_put_contents($file, '<?php exit;?>' . $expireTime . serialize($value));
+		$length = file_put_contents($file, '<?php exit;?>' . $expireTime . $value);
 		return $length > 0 ? true : false;
 	}
 
-	protected function getCacheFile($key)
+	public function getCacheFile($key)
 	{
 		$token = md5($key);
 		$file = $this->fileRoot . substr($token, 0, 2) . '/' . substr($token, 2, 2);

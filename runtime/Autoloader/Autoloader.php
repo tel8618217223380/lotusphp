@@ -246,16 +246,15 @@ class LtAutoloader
 			$fileStore = new LtStoreFile;
 			$fileStore->setFileRoot($this->conf->mappingFileRoot);
 			$key = md5($file);
-			$key_tmp = md5($key);
-			$cacheFile = rtrim($this->conf->mappingFileRoot, '\\/').'/' . substr($key_tmp, 0, 2) . '/' . substr($key_tmp, 2, 2) . '/' . 'phps-' . $key_tmp . '.php';
+			$cacheFile = $fileStore->getCacheFile($key);
 			if (is_file($cacheFile) && filemtime($cacheFile) > filemtime($file))
 			{
-				$libNames = $fileStore->get($key);
+				$libNames = unserialize($fileStore->get($key));
 			}
 			else
 			{
 				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
-				$fileStore->add($key, $libNames);
+				$fileStore->add($key, serialize($libNames));
 			}
 			foreach ($libNames as $libType => $libArray)
 			{

@@ -1,10 +1,10 @@
 <?php
 $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
-require_once $lotusHome . "/runtime/LtStore.php";
-require_once $lotusHome . "/runtime/LtStoreMemory.php";
-require_once $lotusHome . "/runtime/LtStoreFile.php";
-require_once $lotusHome . "/runtime/Autoloader/Autoloader.php";
-require_once $lotusHome . "/runtime/Autoloader/AutoloaderConfig.php";
+require_once $lotusHome . "runtime/LtStore.php";
+require_once $lotusHome . "runtime/LtStoreMemory.php";
+require_once $lotusHome . "runtime/LtStoreFile.php";
+require_once $lotusHome . "runtime/Autoloader/Autoloader.php";
+require_once $lotusHome . "runtime/Autoloader/AutoloaderConfig.php";
 
 /**
  * 用这个类把LtAutoloader的protected属性和方法暴露出来测试
