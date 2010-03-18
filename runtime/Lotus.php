@@ -88,6 +88,7 @@ class Lotus
 		 */
 		require_once $this->lotusRuntimeDir . "LtStore.php";
 		require_once $this->lotusRuntimeDir . "LtStoreMemory.php";
+		require_once $this->lotusRuntimeDir . "LtStoreFile.php";
 		/**
 		 * init Autoloader
 		 */

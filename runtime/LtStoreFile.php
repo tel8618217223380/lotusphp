@@ -112,10 +112,6 @@ class LtStoreFile implements LtStore
 	{
 		$token = md5($key);
 		$file = $this->fileRoot . substr($token, 0, 2) . '/' . substr($token, 2, 2);
-		if ($tableName)
-		{
-			$file .= '/' . $tableName;
-		}
 		return $file . '/' . 'phps-' . $token . '.php';
 	}
 }

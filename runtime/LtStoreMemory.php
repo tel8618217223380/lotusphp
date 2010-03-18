@@ -1,5 +1,5 @@
 <?php
-class LtStoreMemory
+class LtStoreMemory implements LtStore
 {
 	protected $stack;
 

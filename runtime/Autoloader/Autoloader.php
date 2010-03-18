@@ -16,7 +16,7 @@ class LtAutoloader
 		if (!is_object(self::$storeHandle))
 		{
 			self::$storeHandle = new LtStoreMemory;
-		}
+		} 
 		// Whether scanning directory
 		if (0 == self::$storeHandle->get(".class_total") && 0 == self::$storeHandle->get(".function_total"))
 		{
@@ -125,7 +125,7 @@ class LtAutoloader
 			if (preg_match("/\s/i", $dir))
 			{
 				trigger_error("Directory is invalid: {$dir}");
-			} 
+			}
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
@@ -246,10 +246,12 @@ class LtAutoloader
 			$fileStore = new LtStoreFile;
 			$fileStore->setFileRoot($this->conf->mappingFileRoot);
 			$key = md5($file);
-			$cacheFile = rtrim($this->conf->mappingFileRoot, '\\/') . DIRECTORY_SEPARATOR . md5($file) . '.php';
-			if ($libNames = $fileStore->get($key))
+			$key_tmp = md5($key);
+			$cacheFile = rtrim($this->conf->mappingFileRoot, '\\/').'/' . substr($key_tmp, 0, 2) . '/' . substr($key_tmp, 2, 2) . '/' . 'phps-' . $key_tmp . '.php';
+			echo $cacheFile."<br />";
+			if (is_file($cacheFile) && filemtime($cacheFile) > filemtime($file))
 			{
-				//
+				$libNames = $fileStore->get($key);
 			}
 			else
 			{
