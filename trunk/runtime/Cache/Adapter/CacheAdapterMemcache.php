@@ -6,7 +6,7 @@ class LtCacheAdapterMemcache implements LtCacheAdapter
 		return memcache_connect($hostConf["host"], $hostConf["port"]);
 	}
 
-	public function add($key, $value, $ttl=0, $tableName, $connectionResource)
+	public function add($key, $value, $ttl = 0, $tableName, $connectionResource)
 	{
 		return $connectionResource->add($this->getRealKey($tableName, $key), $value, false, $ttl);
 	}
