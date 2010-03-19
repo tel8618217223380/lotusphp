@@ -252,10 +252,9 @@ class LtAutoloader
 		if ($this->fileStore instanceof LtStore)
 		{
 			$key = md5($file);
-			$cacheFile = $this->fileStore->getCacheFile($key);
-			if (is_file($cacheFile) && filemtime($cacheFile) > filemtime($file))
+			if ($cahcedString = $this->fileStore->get($key, filemtime($file)))
 			{
-				$libNames = unserialize($this->fileStore->get($key));
+				$libNames = unserialize($cahcedString);
 			}
 			else
 			{

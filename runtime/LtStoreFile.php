@@ -67,7 +67,7 @@ class LtStoreFile implements LtStore
 	 * 
 	 * @return 成功返回数据,失败返回false
 	 */
-	public function get($key)
+	public function get($key, $doNotModifiedSince = null)
 	{
 		$file = $this->getCacheFile($key);
 		if (!is_file($file))
@@ -75,7 +75,7 @@ class LtStoreFile implements LtStore
 			return false;
 		}
 		else
-		{ 
+		{
 			// php > 5.1.0
 			$ttl = file_get_contents($file, false, null, 13, 10);
 			if (0 != $ttl && time() > $ttl)
@@ -85,7 +85,14 @@ class LtStoreFile implements LtStore
 			}
 			else
 			{
-				return file_get_contents($file, false, null, 23);
+				if ($doNotModifiedSince && filemtime($file) > $doNotModifiedSince)
+				{
+					return false;
+				}
+				else
+				{
+					return file_get_contents($file, false, null, 23);
+				}
 			}
 		}
 	}
@@ -109,7 +116,7 @@ class LtStoreFile implements LtStore
 		return $length > 0 ? true : false;
 	}
 
-	public function getCacheFile($key)
+	protected function getCacheFile($key)
 	{
 		$token = md5($key);
 		$file = $this->cacheFileRoot . substr($token, 0, 2) . '/' . substr($token, 2, 2);
