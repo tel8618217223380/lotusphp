@@ -67,12 +67,12 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	{
 		$data = array(
 			// $key => value
-			1 => 2,
-			1.1 => null,
-			-1 => "",
-			"string" => "test_value_string",
-			"array" => array(1, 2, 4),
-			"object" => new LtCache(),
+			array(1,2),
+			array(1.1, null),
+			array(-1, ""),
+			array("string", "test_value_string"),
+			array("array", array(1, 2, 4)),
+			array("object", new LtCache)
 			);
 		/**
 		 * 构造缓存配置
@@ -83,7 +83,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 测试其它适配器add(), get(), del(), update()接口
 		 */
 		$ccb->addHost("group_phps", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
-		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
+		//$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
 		if (extension_loaded('memcache'))
 		{
 			$ccb->addHost("group_memcache", "node_0", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
@@ -97,25 +97,25 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		/**
 		 * 实例化组件入口类
 		 */
-		foreach(LtCache::$servers as $k => $v)
+		foreach(LtCache::$servers as $group => $iDotCare)
 		{
 			$cache = new LtCache;
-			$cache->group = $k;
+			$cache->group = $group;
 			$cache->node = "node_0";
 			$cache->init();
 			echo "\n--testKeyValue--" . $cache->group . '--' . $cache->node . "--\n";
 			$ch = $cache->getTDG("test_agdu");
 
-			foreach ($data as $k => $v)
+			foreach ($data as $set)
 			{
-				$this->assertTrue($ch->add($k, $v));
-				$this->assertEquals($ch->get($k), $v);
-				$this->assertTrue($ch->update($k, 0));
-				$this->assertEquals($ch->get($k), 0);
-				$this->assertTrue($ch->update($k, $v));
-				$this->assertEquals($ch->get($k), $v);
-				$this->assertTrue($ch->del($k));
-				$this->assertFalse($ch->get($k));
+				$this->assertTrue($ch->add($set[0], $set[1]));
+				$this->assertEquals($ch->get($set[0]), $set[1]);
+				$this->assertTrue($ch->update($set[0], 0));
+				$this->assertEquals($ch->get($set[0]), 0);
+				$this->assertTrue($ch->update($set[0], $set[1]));
+				$this->assertEquals($ch->get($set[0]), $set[1]);
+				$this->assertTrue($ch->del($set[0]));
+				$this->assertFalse($ch->get($set[0]));
 			}
 		}
 		LtCache::$servers = null;
@@ -127,8 +127,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	public function testOpcodeCacheAdapter()
 	{
 		$opcodeCacheAdapters = array();
-		$opcodeCacheAdapters[] = "phps";
-		$opcodeCacheAdapters[] = "file";
 		if (extension_loaded('apc'))
 		{
 			$opcodeCacheAdapters[] = "apc";

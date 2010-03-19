@@ -1,8 +1,15 @@
 <?php
 /**
+ * 修改以下配置为你实际环境的值
+ * 如果你修改了这两个常量的值，请不要svn commit
+ */
+define("PEAR_PATH","D:/kiss/PHP/PEAR");
+define("LOTUS_UNITTEST_WEB_ROOT", "http://lotus/unittest/");
+
+/**
  * PHPUnit bootstrap
  */
-set_include_path(get_include_path() . PATH_SEPARATOR . "." . PATH_SEPARATOR ."D:/kiss/PHP/PEAR");
+set_include_path(get_include_path() . PATH_SEPARATOR . "." . PATH_SEPARATOR . PEAR_PATH);
 require_once 'PHPUnit/Util/Filter.php';
 require_once 'PHPUnit/Extensions/PerformanceTestCase.php';
 require_once 'PHPUnit/Extensions/OutputTestCase.php';
@@ -17,7 +24,7 @@ function callWeb($url, $post, $withHeader = FALSE)
 {
 	$ch = curl_init();
 
-	curl_setopt($ch, CURLOPT_URL, "http://127.0.0.1/lotusphp/unittest/$url");
+	curl_setopt($ch, CURLOPT_URL, LOTUS_UNITTEST_WEB_ROOT . $url);
 	curl_setopt($ch, CURLOPT_HEADER, $withHeader);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
