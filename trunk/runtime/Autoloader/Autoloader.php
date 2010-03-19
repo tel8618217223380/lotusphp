@@ -5,6 +5,7 @@ class LtAutoloader
 	public $autoloadPath;
 	public $conf;
 	protected $functionFileMapping;
+	protected $fileStore;
 
 	public function __construct()
 	{
@@ -16,6 +17,8 @@ class LtAutoloader
 		if (!is_object(self::$storeHandle))
 		{
 			self::$storeHandle = new LtStoreMemory;
+			$this->fileStore = new LtStoreFile;
+			$this->fileStore->setFileRoot($this->conf->mappingFileRoot);
 		} 
 		// Whether scanning directory
 		if (0 == self::$storeHandle->get(".class_total") && 0 == self::$storeHandle->get(".function_total"))
@@ -241,31 +244,38 @@ class LtAutoloader
 
 	protected function addFileMap($file)
 	{
-		if (in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension))
+		if (!in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension))
 		{
-			$fileStore = new LtStoreFile;
-			$fileStore->setFileRoot($this->conf->mappingFileRoot);
+			return false;
+		}
+		$libNames = array();
+		if ($this->fileStore instanceof LtStore)
+		{
 			$key = md5($file);
-			$cacheFile = $fileStore->getCacheFile($key);
+			$cacheFile = $this->fileStore->getCacheFile($key);
 			if (is_file($cacheFile) && filemtime($cacheFile) > filemtime($file))
 			{
-				$libNames = unserialize($fileStore->get($key));
+				$libNames = unserialize($this->fileStore->get($key));
 			}
 			else
 			{
 				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
-				$fileStore->add($key, serialize($libNames));
+				$this->fileStore->add($key, serialize($libNames));
 			}
-			foreach ($libNames as $libType => $libArray)
-			{
-				$method = "function" == $libType ? "addFunction" : "addClass";
-				foreach ($libArray as $libName)
-				{
-					$this->$method($libName, $file);
-				}
-			}
-			return true;
 		}
-		return false;
+		else
+		{
+			$libNames = $this->parseLibNames(trim(file_get_contents($file)));
+		}
+
+		foreach ($libNames as $libType => $libArray)
+		{
+			$method = "function" == $libType ? "addFunction" : "addClass";
+			foreach ($libArray as $libName)
+			{
+				$this->$method($libName, $file);
+			}
+		}
+		return true;
 	}
 }
