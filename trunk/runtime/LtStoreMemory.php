@@ -22,7 +22,7 @@ class LtStoreMemory implements LtStore
 		}
 	}
 
-	public function get($key)
+	public function get($key, $doNotModifiedSince = null)
 	{
 		return isset($this->stack[$key]) ? $this->stack[$key] : false;
 	}
