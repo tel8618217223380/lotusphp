@@ -1,15 +1,15 @@
 <?php
 class LtStoreFile implements LtStore
 {
-	protected $cacheFileRoot;
+	protected $cacheFileRoot='/tmp/Lotus/LtStoreFile/';
 
 	public function setFileRoot($path)
 	{
 		/**
 		 * @todo detect dir is esists and writable
 		 */
-			$this->fileRoot = str_replace('\\', '/', $path);
-			$this->fileRoot = rtrim($this->fileRoot, '\\/') . '/';
+			$this->cacheFileRoot = str_replace('\\', '/', $path);
+			$this->cacheFileRoot = rtrim($this->cacheFileRoot, '\\/') . '/';
 	}
 
 	/**
@@ -95,6 +95,7 @@ class LtStoreFile implements LtStore
 	 * 不管有没有过期,都更新数据
 	 * 
 	 * @return bool 
+	 * @todo 是否考虑不存在的 key 为 add ? 使用起来更方便?
 	 */
 	public function update($key, $value, $ttl = 0)
 	{
@@ -111,7 +112,7 @@ class LtStoreFile implements LtStore
 	public function getCacheFile($key)
 	{
 		$token = md5($key);
-		$file = $this->fileRoot . substr($token, 0, 2) . '/' . substr($token, 2, 2);
+		$file = $this->cacheFileRoot . substr($token, 0, 2) . '/' . substr($token, 2, 2);
 		return $file . '/' . 'phps-' . $token . '.php';
 	}
 }
