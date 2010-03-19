@@ -50,54 +50,39 @@ class LtDbTableDataGateway
 	 */
 	protected function buildFieldList()
 	{
+		if (!empty($this->fields))
+		{
+			return true;
+		}
+		$servers = LtDb::$storeHandle->get('servers');
 		$group = $this->dbh->group;
 		$node = $this->dbh->node;
 		$role = $this->dbh->role;
 		$table = $this->tableName;
-		if (empty($this->servers))
-		{
-			$this->servers = LtDb::$storeHandle->get('servers');
-		}
-		$servers = $this->servers;
 		$host = key($servers[$group][$node][$role]);
-		if (isset($servers[$group][$node][$role][$host]['db_table']))
+		$key = md5($group . $node . $role . $table . $host . $table);
+		if (!$value = LtDb::$storeHandle->get($key))
 		{
-			if (isset($servers[$group][$node][$role][$host]['db_table'][$table]))
+			$sql = $this->dbh->sqlAdapter->showFields($this->tableName);
+			$rs = $this->dbh->query($sql);
+			$this->fields = $this->dbh->sqlAdapter->getFields($rs);
+			foreach($this->fields as $field)
 			{
-				$t = $servers[$group][$node][$role][$host]['db_table'][$table];
-			}
-		}
-
-		if (!empty($t['fields']))
-		{
-			$this->fields = $t['fields'];
-			if (!empty($t['primaryKey']))
-			{
-				$this->primaryKey = $t['primaryKey'];
-			}
-			return true; // 使用缓存数据
-		}
-
-		if (empty($this->fields))
-		{
-			$this->fields = $this->dbh->sqlAdapter->getFields($this->dbh->query($this->dbh->sqlAdapter->showFields($this->tableName)));
-
-			if (empty($this->primaryKey))
-			{
-				foreach($this->fields as $field)
+				if ($field['primary'] == 1)
 				{
-					if ($field['primary'] == 1)
-					{
-						$this->primaryKey = $field['name'];
-						break;
-					}
+					$this->primaryKey = $field['name'];
+					break;
 				}
 			}
-			$t['fields'] = $this->fields;
-			$t['primaryKey'] = $this->primaryKey;
-			$servers[$group][$node][$role][$host]['db_table'][$table] = $t;
-			LtDb::$storeHandle->update('servers', $servers, 0);
-			$this->servers = array();
+
+			$value['fields'] = $this->fields;
+			$value['primaryKey'] = $this->primaryKey;
+			LtDb::$storeHandle->add($key, $value);
+		}
+		else
+		{
+			$this->fields = $value['fields'];
+			$this->primaryKey = $value['primaryKey'];
 		}
 	}
 
