@@ -76,8 +76,9 @@ class LtStoreFile implements LtStore
 		}
 		else
 		{
-			// php > 5.1.0
-			$ttl = file_get_contents($file, false, null, 13, 10);
+			// $ttl = file_get_contents($file, false, null, 13, 10);
+			$str = file_get_contents($file);
+			$ttl = substr($str, 13, 10);
 			if (0 != $ttl && time() > $ttl)
 			{
 				@unlink($file);
@@ -91,7 +92,8 @@ class LtStoreFile implements LtStore
 				}
 				else
 				{
-					return file_get_contents($file, false, null, 23);
+					// return file_get_contents($file, false, null, 23);
+					return substr($str, 23);
 				}
 			}
 		}
