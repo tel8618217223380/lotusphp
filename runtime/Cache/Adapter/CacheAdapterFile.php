@@ -45,18 +45,17 @@ class LtCacheAdapterFile implements LtCacheAdapter
 	{
 		if (is_object($value) || is_resource($value))
 		{
-			$str = "unserialize(\"" . addslashes(serialize($value)) . "\");";
+			$str = "return unserialize(\"" . addslashes(serialize($value)) . "\");";
 		}
 		else
 		{
-			$str = var_export($value, true) . ";";
+			$str = "return " . var_export($value, true) . ";";
 		}
 		return $str;
 	}
 
 	protected function stringToValue($str)
 	{
-		eval("\$v = $str");
-		return $v;
+		return eval("$str");
 	}
 }
