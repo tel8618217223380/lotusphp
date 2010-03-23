@@ -54,6 +54,15 @@ class Lotus
 		{
 			$this->tmp_dir = rtrim($this->option["tmp_dir"], '\\/') . '/';
 		}
+
+		/**
+		 * 加载共享组件
+		 */
+		require_once $this->lotusRuntimeDir . "LtStore.php";
+		require_once $this->lotusRuntimeDir . "LtStoreMemory.php";
+		require_once $this->lotusRuntimeDir . "LtStoreFile.php";
+		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
+
 		if (!empty($this->option['cache_server']))
 		{
 			/**
@@ -74,21 +83,15 @@ class Lotus
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
 			require_once $this->lotusRuntimeDir . "Cache/QueryEngine/TableDataGateway/CacheTableDataGateway.php";
 
-			$ccb = new LtCacheConfigBuilder;
+			$ccb = LtObjectUtil::singleton('LtCacheConfigBuilder');
 			$v = $this->option['cache_server'];
 			$ccb->addHost($v[0], $v[1], $v[2], $v[3]);
 			LtCache::$servers = $ccb->getServers();
-			$this->cacheInst = new LtCache;
+			$this->cacheInst = LtObjectUtil::singleton('LtCache');
 			$this->cacheInst->init();
 			$this->devMode = false; // 生产模式
 		}
 
-		/**
-		 * LtAutoloaderStore, LtConfigStore, LtDbStore合并成LtStoreMemory
-		 */
-		require_once $this->lotusRuntimeDir . "LtStore.php";
-		require_once $this->lotusRuntimeDir . "LtStoreMemory.php";
-		require_once $this->lotusRuntimeDir . "LtStoreFile.php";
 		/**
 		 * init Autoloader
 		 */
@@ -139,7 +142,7 @@ class Lotus
 		$autoloadDirs[] = $this->proj_dir . 'lib';
 		$autoloadDirs[] = $this->app_dir . 'action';
 		$autoloadDirs[] = $this->app_dir . 'lib';
-		$autoloader = new LtAutoloader;
+		$autoloader = LtObjectUtil::singleton('LtAutoloader');
 		$autoloader->autoloadPath = $autoloadDirs;
 		/**
 		 * 开发模式下保存分析结果
@@ -179,7 +182,7 @@ class Lotus
 		/**
 		 * mvc
 		 */
-		$dispatcher = new LtDispatcher;
+		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
 		$dispatcher->viewDir = $this->app_dir . 'view/';
 		$dispatcher->viewTplDir = $this->tmp_dir . 'templateView/' . $this->app_name . '/';
 		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
@@ -198,19 +201,19 @@ class Lotus
 		}
 		else
 		{
-			LtDb::$storeHandle = new LtStoreMemory;
+			LtDb::$storeHandle = LtObjectUtil::singleton('LtStoreMemory');
 		}
 		if (!LtDb::$storeHandle->get("servers"))
 		{
 			$conf = LtObjectUtil::singleton("LtConfig");
 			if ($dbServer = $conf->get('db_only_one'))
 			{
-				$dcb = new LtDbConfigBuilder;
+				$dcb = LtObjectUtil::singleton('LtDbConfigBuilder');
 				$dcb->addSingleHost($dbServer);
 			}
 			else if ($dbServer = $conf->get('db_server'))
 			{
-				$dcb = new LtDbConfigBuilder;
+				$dcb = LtObjectUtil::singleton('LtDbConfigBuilder');
 				foreach($dbServer as $v)
 				{
 					$dcb->addHost($v[0], $v[1], $v[2], $v[3]);
@@ -222,5 +225,6 @@ class Lotus
 			}
 			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 		}
+		LtObjectUtil::singleton('LtDb');
 	}
 }

@@ -86,7 +86,7 @@ class LtStoreFile implements LtStore
 			}
 			else
 			{
-				if ($doNotModifiedSince && filemtime($file) > $doNotModifiedSince)
+				if ($doNotModifiedSince && filemtime($file) < $doNotModifiedSince)
 				{
 					return false;
 				}
