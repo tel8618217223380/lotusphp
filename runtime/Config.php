@@ -1,67 +1,57 @@
 <?php
 class LtConfig
 {
-	static public $storeHandle;
-	public $configFile;
+	public static $storeHandle;
 	protected $conf;
+
+	public function init()
+	{
+		if (!is_object(self::$storeHandle))
+		{
+			self::$storeHandle = new LtStoreMemory;
+		}
+	}
+
+	public function get($key)
+	{
+		return self::$storeHandle->get($key);
+	}
 
 	/**
 	 * 警告
 	 * 这里会包含两个用户定义的配置文件，为了不和配置文件里的变量名发生重名
 	 * 本方法不定义和使用变量名
 	 */
-	public function init()
+	public function loadConfigFile($configFile)
 	{
-		if (null === $this->configFile || !is_file($this->configFile))
-		{
-			trigger_error("no config file specified or invalid config file");
-		}
-		if (!is_object(self::$storeHandle))
-		{
-			self::$storeHandle = new LtStoreMemory;
-		}
 		if (0 == self::$storeHandle->get(".config_total"))
 		{
-			$conf = include($this->configFile);
-			if (!is_array($conf))
+			if (null === $configFile || !is_file($configFile))
 			{
-				trigger_error("Not return array");
+				trigger_error("no config file specified or invalid config file");
 			}
-			if (!empty($conf))
+			$this->conf = include($configFile);
+			if (!is_array($this->conf))
 			{
-				self::$storeHandle->add(".config_total", 0, 0);
-				$this->storeConfigArray($conf);
+				trigger_error("config file do NOT return array: $configFile");
+			}
+			elseif (!empty($this->conf))
+			{
+				if (0 == self::$storeHandle->get(".config_total"))
+				{
+					self::$storeHandle->add(".config_total", 0);
+				}
+				$this->addConfig($this->conf);
 			}
 		}
 	}
 
-	public function get($key)
-	{
-		if (isset($this->conf[$key]))
-		{
-			return $this->conf[$key];
-		}
-		$ret = self::$storeHandle->get($key);
-		if (false === $ret)
-		{
-			trigger_error("key not exists");
-		}
-		$this->conf[$key] = $ret;
-		return $ret;
-	}
-
-	public function getAll()
-	{
-		return self::$storeHandle->get('.config_data');
-	}
-
-	protected function storeConfigArray($configArray)
+	public function addConfig($configArray)
 	{
 		foreach($configArray as $key => $value)
 		{
-			self::$storeHandle->add($key, $value, 0);
+			self::$storeHandle->add($key, $value);
 			self::$storeHandle->update(".config_total", self::$storeHandle->get(".config_total") + 1, 0);
 		}
-		self::$storeHandle->add('.config_data', $configArray, 0);
 	}
 }
