@@ -175,10 +175,19 @@ class Lotus
 	protected function runMVC()
 	{
 		/**
-		 * router
+		 * 加载默认的路由表, LtRouter 和 LtUrl 使共用一个
 		 */
+		$conf = LtObjectUtil::singleton("LtConfig");
 		$router = LtObjectUtil::singleton('LtRouter');
+		$url = LtObjectUtil::singleton('LtUrl');
+		if ($routingTable = $conf->get('routing_table'))
+		{
+			$router->routingTable = $routingTable;
+			$url->routingTable = $routingTable;
+		}
+		$url->baseUrl = $conf->get('base_url');
 		$router->init();
+		$url->init();
 		/**
 		 * mvc
 		 */

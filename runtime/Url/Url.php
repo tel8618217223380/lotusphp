@@ -3,6 +3,7 @@ class LtUrl
 {
 	public $conf;
 	public $routingTable;
+	public $baseUrl;
 
 	public function __construct()
 	{
@@ -12,7 +13,7 @@ class LtUrl
 	}
 	public function init()
 	{
-		//
+		// $this->baseUrl
 	}
 
 	public function generate($module, $action, $args = array())
@@ -93,6 +94,6 @@ class LtUrl
 		{
 			$ret = $ret . $postfix;
 		}
-		return $ret;
+		return $this->baseUrl . $ret;
 	}
 }
