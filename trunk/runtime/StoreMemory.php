@@ -5,6 +5,10 @@ class LtStoreMemory implements LtStore
 
 	public function add($key, $value, $ttl = 0)
 	{
+		if (isset($this->stack[$key]))
+		{
+			//
+		}
 		$this->stack[$key] = $value;
 		return true;
 	}
