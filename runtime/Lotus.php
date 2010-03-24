@@ -58,8 +58,8 @@ class Lotus
 		/**
 		 * 加载共享组件
 		 */
-		require_once $this->lotusRuntimeDir . "LtStore.php";
-		require_once $this->lotusRuntimeDir . "LtStoreMemory.php";
+		require_once $this->lotusRuntimeDir . "Store.php";
+		require_once $this->lotusRuntimeDir . "StoreMemory.php";
 		require_once $this->lotusRuntimeDir . "LtStoreFile.php";
 		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
 
