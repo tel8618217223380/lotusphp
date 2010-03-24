@@ -60,7 +60,7 @@ class Lotus
 		 */
 		require_once $this->lotusRuntimeDir . "Store.php";
 		require_once $this->lotusRuntimeDir . "StoreMemory.php";
-		require_once $this->lotusRuntimeDir . "LtStoreFile.php";
+		require_once $this->lotusRuntimeDir . "StoreFile.php";
 		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
 
 		if (!empty($this->option['cache_server']))
