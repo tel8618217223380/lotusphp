@@ -1,11 +1,11 @@
 <?php
 class LtCookie
 {
-	public $conf;
+	public static $configHandle;
 
 	public function __construct()
 	{
-		$this->conf = new LtCookieConfig;
+		self::$configHandle = new LtConfig;
 	}
 
 	public function init()
@@ -21,7 +21,7 @@ class LtCookie
 	 */
 	protected function decrypt($encryptedText)
 	{
-		$key = $this->conf->secretKey;
+		$key = self::$configHandle->get("cookie.secret_key");
 		$cryptText = base64_decode($encryptedText);
 		$ivSize = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
 		$iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
@@ -37,7 +37,7 @@ class LtCookie
 	 */
 	protected function encrypt($plainText)
 	{
-		$key = $this->conf->secretKey;
+		$key = self::$configHandle->get("cookie.secret_key");
 		$ivSize = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
 		$iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
 		$encryptText = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $plainText, MCRYPT_MODE_ECB, $iv);

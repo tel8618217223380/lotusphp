@@ -9,9 +9,10 @@ $operation = $_REQUEST["operation"];
 // 1. 实例化
 $cookie = new LtCookie; 
 // 2. 设置属性
-$cookie->conf->secretKey = "VHfgk!@c=_"; 
+LtCookie::$configHandle->addConfig(array("cookie.secret_key" => "dsds@#$%^&*(werewt"));
 // 3. 调init()方法
 $cookie->init();
+
 /**
  * 初始化完毕，测试其效果
  */

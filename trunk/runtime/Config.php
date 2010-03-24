@@ -4,12 +4,17 @@ class LtConfig
 	public static $storeHandle;
 	protected $conf;
 
-	public function init()
+	public function __construct()
 	{
 		if (!is_object(self::$storeHandle))
 		{
 			self::$storeHandle = new LtStoreMemory;
 		}
+	}
+
+	public function init()
+	{
+		//don't removeme, I am the placeholder
 	}
 
 	public function get($key)
