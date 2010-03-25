@@ -162,31 +162,26 @@ class Lotus
 
 	protected function prepareConfig()
 	{
-		$conf = LtObjectUtil::singleton("LtConfig");
-		$conf->configFile = $this->app_dir . 'conf/conf.php';
+		$configFile = $this->app_dir . 'conf/conf.php';
 		if (!$this->devMode)
 		{
-			$tb = sprintf("%u", crc32(serialize($conf->configFile)));
+			$tb = sprintf("%u", crc32(serialize($configFile)));
 			LtConfig::$storeHandle = $this->cacheInst->getTDG($tb);
 		}
+		$conf = LtObjectUtil::singleton("LtConfig");
 		$conf->init();
+		$conf->loadConfigFile($configFile);
 	}
 
 	protected function runMVC()
 	{
-		/**
-		 * 加载默认的路由表, LtRouter 和 LtUrl 使共用一个
-		 */
 		$conf = LtObjectUtil::singleton("LtConfig");
+		$conf->init();
+
 		$router = LtObjectUtil::singleton('LtRouter');
-		$url = LtObjectUtil::singleton('LtUrl');
-		if ($routingTable = $conf->get('routing_table'))
-		{
-			$router->routingTable = $routingTable;
-			$url->routingTable = $routingTable;
-		}
-		$url->baseUrl = $conf->get('base_url');
 		$router->init();
+
+		$url = LtObjectUtil::singleton('LtUrl');
 		$url->init();
 		/**
 		 * mvc
