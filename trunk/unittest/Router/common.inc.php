@@ -4,4 +4,3 @@ require_once $lotusHome . "runtime/Config.php";
 require_once $lotusHome . "runtime/Store.php";
 require_once $lotusHome . "runtime/StoreMemory.php";
 require_once $lotusHome . "runtime/Router/Router.php";
-require_once $lotusHome . "runtime/Router/RouterConfig.php";
