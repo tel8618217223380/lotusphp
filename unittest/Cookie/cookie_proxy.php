@@ -16,19 +16,19 @@ $cookie->init();
 /**
  * 初始化完毕，测试其效果
  */
-
 switch ($operation)
 {
 	case "set":
-		$cookie->setCookie('newproj', 'hello', time() + 3600);
-		$cookie->setCookie('test', array('a', 'b', 'c', 'd'), time() + 3600);
+		foreach ($_REQUEST["cookies"] as $cookieName => $cookieValue)
+		{
+			$cookie->setCookie($cookieName, $cookieValue, time() + 3600);
+		}
+		echo "where is my header";
 		break;
 	case "get":
-		$cookie->getCookie('newproj');
-		$cookie->getCookie('test');
+		$cookie->getCookie($_REQUEST["cookie_name"]);
 		break;
 	case "del":
-		$cookie->delCookie('newproj');
-		$cookie->delCookie('test');
+		$cookie->delCookie($_REQUEST["cookie_name"]);
 		break;
 }
