@@ -17,17 +17,13 @@ class RightWayToUseCookie extends PHPUnit_Framework_TestCase
 	 *  # 使用杂乱无章的字符串作为密钥（LtCookie->conf->secretKey）
 	 * 
 	 * 本测试用例期望效果：
-	 * 通过Web script对HTTP Cookie头进行单元测试，实际使用方法和效果参见unittest/Cookie/cookie_proxy.php
+	 * 通过Web script对HTTP头(Cookie在http头里)进行单元测试，实际使用方法和效果参见unittest/Cookie/cookie_proxy.php
 	 */
 	public function testMostUsedWay()
 	{
-			$result = callWeb("Cookie/cookie_proxy.php", array("operation" => "set"), true);
-			print_r($result);
+			$result = callWeb("Cookie/cookie_proxy.php", array("operation" => "set", "cookies[username]" => "lotusphp", "cookies[is_the_best]" => "yes"), true);
 			$result = callWeb("Cookie/cookie_proxy.php", array("operation" => "get"), true);
-			print_r($result);
 			$result = callWeb("Cookie/cookie_proxy.php", array("operation" => "del"), true);
-			print_r($result);
-			$this->assertTrue(true);
 	}
 
 	/**
