@@ -1,26 +1,52 @@
 <?php
 class LtUrl
 {
-	public $conf;
+	public static $configHandle;
 	public $routingTable;
 	public $baseUrl;
 
 	public function __construct()
 	{
-		$this->conf = new LtUrlConfig;
-		$this->routingTable = $this->conf->routingTable;
-		// unset($this->conf);
+		$this->routingTable = array('pattern' => ":module/:action/*",
+			'default' => array('module' => 'default', 'action' => 'index'),
+			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+',
+				'action' => '[a-zA-Z0-9\.\-_]+'
+				),
+			'varprefix' => ':',
+			'delimiter' => '/',
+			'postfix' => '',
+			'protocol' => 'PATH_INFO', // REWRITE STANDARD
+			);
+		self::$configHandle = new LtConfig;
 	}
 	public function init()
 	{
-		// $this->baseUrl
+		if ($tmp = self::$configHandle->get("router.routing_table"))
+		{
+			$this->routingTable = $tmp;
+		}
+		$protocol = strtoupper($this->routingTable['protocol']);
+		if ('REWRITE' == $protocol)
+		{
+			$this->baseUrl = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME) . '/';
+		}
+		else
+		{
+			$this->baseUrl = '';
+		}
 	}
 
 	public function generate($module, $action, $args = array())
 	{
 		$args['module'] = $module;
 		$args['action'] = $action;
-		return $this->reverseMatchingRoutingTable($args);
+		$url = ''; 
+		// $url = $_SERVER['SERVER_PORT'] == '443' ? 'https://' : 'http://';
+		// $url .= $_SERVER['HTTP_HOST'];
+		// $url .= $_SERVER['SERVER_PORT'] == '80' ? '' : ':'.$_SERVER['SERVER_PORT'];
+		$url .= $this->baseUrl;
+		$url .= $this->reverseMatchingRoutingTable($args);
+		return $url;
 	}
 
 	/**
@@ -88,12 +114,12 @@ class LtUrl
 		}
 		else if ('PATH_INFO' == $protocol)
 		{
-			$ret = $_SERVER['SCRIPT_NAME'] . '/' . $ret . $postfix;
+			$ret = $_SERVER['SCRIPT_NAME'] . $delimiter . $ret . $postfix;
 		}
 		else
 		{
 			$ret = $ret . $postfix;
 		}
-		return $this->baseUrl . $ret;
+		return $ret;
 	}
 }

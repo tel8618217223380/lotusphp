@@ -59,4 +59,12 @@ class LtConfig
 			self::$storeHandle->update(".config_total", self::$storeHandle->get(".config_total") + 1, 0);
 		}
 	}
+
+	public function updateConfig($configArray)
+	{
+		foreach($configArray as $key => $value)
+		{
+			self::$storeHandle->update($key, $value);
+		}
+	}
 }

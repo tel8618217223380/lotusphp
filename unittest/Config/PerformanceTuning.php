@@ -41,7 +41,7 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 		 */
 		$conf = new LtConfig;
 		LtConfig::$storeHandle = $cacheHandle;
-		$conf->configFile = $config_file;
+		$conf->loadConfigFile($config_file);
 		$conf->init();
 		$this->assertEquals("localhost", $conf->get("db.conn.host"));
 

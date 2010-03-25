@@ -6,40 +6,39 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * 路由表说明
-	 * $routingTable['pattern'] = 匹配模板 
-	 * $routingTable['default'] = 默认值 
-	 * $routingTable['reqs'] = 默认值的正则匹配 
-	 * $routingTable['varprefix'] = 识别变量的前缀 
-	 * $routingTable['delimiter'] = 分隔符 
-	 * $routingTable['postfix'] = url后缀
-	 * $routingTable['protocol'] = STANDARD REWRITE PATH_INFO
-	 */
 	public function testMostUsedWay()
 	{ 
 		// 模拟浏览器访问
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
 		$_SERVER["PATH_INFO"] = '/news/list/catid/4/page/10'; 
-		// 初始化LtRouter
-		$router = new LtRouter;
 		// 不初始化路由表则使用默认配置如下
-		$router->routingTable = array('pattern' => ":module/:action/*",
-			'default' => array('module' => 'default', 'action' => 'index'),
-			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-			'varprefix' => ':',
-			'delimiter' => '/',
-			'postfix' => '',
-			'protocol' => '',
+		$config['router.routing_table'] = array(
+			'pattern' => ":module/:action/*", // 匹配模板
+			'default' => array('module' => 'default', // 默认值
+				'action' => 'index' // 默认值
+				),
+			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', // 正则匹配
+				'action' => '[a-zA-Z0-9\.\-_]+' // 正则匹配
+				),
+			'varprefix' => ':', // 识别变量的前缀
+			'delimiter' => '/', // 分隔符
+			'postfix' => '', // url后缀
+			'protocol' => 'PATH_INFO', // STANDARD REWRITE PATH_INFO
 			);
-		$router->init(); 
-		// 初始化结束
+
+		/**
+		 * LtRouter 使用方法
+		 */
+		$router = new LtRouter;
+		LtRouter::$configHandle->addConfig($config);
+		$router->init();
+		/**
+		 * 解析后的变量放 $_GET
+		 */
 		$this->assertEquals(
 			array('module' => 'news', 'action' => 'list', 'catid' => 4, 'page' => 10),
 			$_GET
 			);
-		$url = $router->url('news', 'list', array('catid' => 4, 'page' => 10));
-		$this->assertEquals('news/list/catid/4/page/10', $url);
 	}
 	/**
 	 * index.php?module=hello&action=world
@@ -100,7 +99,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	/**
 	 * 准备路由表供测试
 	 */ 
-	// @todo 
+	//  @todo 
 	// 单元测试似乎有bug
 	// 只要使用构造函数同时使用@dataProvider
 	// 就会 Missing argument 1 错误
@@ -144,7 +143,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'varprefix' => ':',
 					'delimiter' => '/',
 					'postfix' => '',
-					'protocol' => '',
+					'protocol' => 'path_info',
 					),),
 			array('news-list-catid-5-page-11.html',
 				array('module' => 'news', 'action' => 'list', 'catid' => 5, 'page' => 11),
@@ -154,7 +153,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'varprefix' => ':',
 					'delimiter' => '-',
 					'postfix' => '.html',
-					'protocol' => '',
+					'protocol' => 'path_info',
 					),),
 			array('default/index',
 				array('module' => 'default', 'action' => 'index'),
@@ -164,7 +163,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'varprefix' => ':',
 					'delimiter' => '/',
 					'postfix' => '',
-					'protocol' => '',
+					'protocol' => 'path_info',
 					),),
 			array('default-index.htm',
 				array('module' => 'default', 'action' => 'index'),
@@ -174,8 +173,8 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 					'varprefix' => ':',
 					'delimiter' => '-',
 					'postfix' => '.htm',
-					'protocol' => '',
-					),),
+					'protocol' => 'path_info',
+					),), 
 			// ADD other
 			);
 	}
@@ -192,17 +191,6 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $params);
 	}
 
-	/**
-	 * 路由反向解析出url
-	 * 
-	 * @dataProvider matchDataProvider
-	 */
-	public function testReverseMatch($userParameter, $expected, $routingTable)
-	{
-		$router = new LtRouter;
-		$router->routingTable = $routingTable;
-		$this->assertEquals($userParameter, $router->reverseMatchingRoutingTable($expected));
-	}
 	protected function setUp()
 	{
 	}
