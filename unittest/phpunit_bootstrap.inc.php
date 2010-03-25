@@ -20,14 +20,18 @@ define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
 /**
  * Web server gateway
  */
-function callWeb($url, $post, $withHeader = FALSE)
+function callWeb($url, $post = null, $header = null, $returnHeader = FALSE)
 {
 	$ch = curl_init();
 
 	curl_setopt($ch, CURLOPT_URL, LOTUS_UNITTEST_WEB_ROOT . $url);
-	curl_setopt($ch, CURLOPT_HEADER, $withHeader);
+	curl_setopt($ch, CURLOPT_HEADER, $returnHeader);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+	if ($header)
+	{
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+	}
 	
 	$reponse = curl_exec($ch);
 	curl_close($ch);

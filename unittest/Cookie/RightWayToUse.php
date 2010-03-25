@@ -21,9 +21,17 @@ class RightWayToUseCookie extends PHPUnit_Framework_TestCase
 	 */
 	public function testMostUsedWay()
 	{
-			$result = callWeb("Cookie/cookie_proxy.php", array("operation" => "set", "cookies[username]" => "lotusphp", "cookies[is_the_best]" => "yes"), true);
-			$result = callWeb("Cookie/cookie_proxy.php", array("operation" => "get"), true);
-			$result = callWeb("Cookie/cookie_proxy.php", array("operation" => "del"), true);
+			$result1 = callWeb("Cookie/cookie_proxy.php", array("operation" => "set", "cookies[username]" => "lotusphp", "cookies[is_the_best]" => "yes"), null, true);
+			preg_match_all('~Set-Cookie: (.*); expires=~i', $result1, $matches);
+			$cookieHeader = "Cookie: " . implode(";",$matches[1]);
+			$this->assertTrue(0 < strpos($cookieHeader, "username="));
+			$this->assertTrue(0 < strpos($cookieHeader, "is_the_best="));
+
+			$result2 = callWeb("Cookie/cookie_proxy.php", array("operation" => "get", "cookie_name" => "username"), array($cookieHeader));
+			$this->assertEquals("lotusphp", unserialize($result2));
+			
+			echo $result3 = callWeb("Cookie/cookie_proxy.php", array("operation" => "del", "cookie_name" => "is_the_best"), array($cookieHeader), true);
+			$this->assertTrue(0 < strpos($result3, "is_the_best=deleted"));
 	}
 
 	/**
