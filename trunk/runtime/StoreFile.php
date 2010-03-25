@@ -100,19 +100,14 @@ class LtStoreFile implements LtStore
 	}
 
 	/**
-	 * 更新不存在的key返回false
+	 * key不存在则增加key-value
 	 * 不管有没有过期,都更新数据
 	 * 
 	 * @return bool 
-	 * @todo 是否考虑不存在的 key 为 add ? 使用起来更方便?
 	 */
 	public function update($key, $value, $ttl = 0)
 	{
 		$file = $this->getCacheFile($key);
-		if (!is_file($file))
-		{
-			return false;
-		}
 		$expireTime = (0 == $ttl) ? '0000000000' : (time() + $ttl);
 		$length = file_put_contents($file, '<?php exit;?>' . $expireTime . $value);
 		return $length > 0 ? true : false;

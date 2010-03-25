@@ -18,17 +18,24 @@ class RightWayToUseUrl extends PHPUnit_Framework_TestCase
 	 */
 	public function testMostUsedWay()
 	{ 
+		// 不初始化路由表则使用默认配置如下
+		$config['router.routing_table'] = array(
+			'pattern' => ":module/:action/*", // 匹配模板
+			'default' => array('module' => 'default', // 默认值
+				'action' => 'index' // 默认值
+				),
+			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', // 正则匹配
+				'action' => '[a-zA-Z0-9\.\-_]+' // 正则匹配
+				),
+			'varprefix' => ':', // 识别变量的前缀
+			'delimiter' => '/', // 分隔符
+			'postfix' => '', // url后缀
+			'protocol' => '', // STANDARD REWRITE PATH_INFO(默认)
+			);
+
 		// 初始化LtUrl
 		$url = new LtUrl;
-		// 不初始化路由表则使用默认配置如下
-		$url->routingTable = array('pattern' => ":module/:action/*",
-			'default' => array('module' => 'default', 'action' => 'index'),
-			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-			'varprefix' => ':',
-			'delimiter' => '/',
-			'postfix' => '',
-			'protocol' => '',
-			);
+		LtUrl::$configHandle->addConfig($config);
 		$url->init(); 
 		// 初始化结束
 		// 测试生成超链接
@@ -57,8 +64,8 @@ class RightWayToUseUrl extends PHPUnit_Framework_TestCase
 	public static function matchDataProvider()
 	{
 		return array(
-			array('news/list/catid/4/page/10',
-				array('module' => 'news', 'action' => 'list', 'catid' => 4, 'page' => 10),
+			array('news/list/catid/4/page/15',
+				array('module' => 'news', 'action' => 'list', 'catid' => 4, 'page' => 15),
 				array('pattern' => ":module/:action/*",
 					'default' => array('module' => 'default', 'action' => 'index'),
 					'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
@@ -108,7 +115,10 @@ class RightWayToUseUrl extends PHPUnit_Framework_TestCase
 	public function testReverseMatch($userParameter, $expected, $routingTable)
 	{
 		$url = new LtUrl;
-		$url->routingTable = $routingTable;
+		$config['router.routing_table'] = $routingTable;
+		LtUrl::$configHandle->updateConfig($config);
+		$url->init(); 
+
 		$this->assertEquals($userParameter, $url->reverseMatchingRoutingTable($expected));
 	}
 	protected function setUp()
