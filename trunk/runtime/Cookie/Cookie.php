@@ -90,7 +90,6 @@ class LtCookie
 			}
 			else
 			{
-				$ret = '';
 				$ret = $this->decrypt($_COOKIE[$name]);
 			}
 		}

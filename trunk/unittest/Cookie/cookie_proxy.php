@@ -23,10 +23,9 @@ switch ($operation)
 		{
 			$cookie->setCookie($cookieName, $cookieValue, time() + 3600);
 		}
-		echo "where is my header";
 		break;
 	case "get":
-		$cookie->getCookie($_REQUEST["cookie_name"]);
+		echo serialize($cookie->getCookie($_REQUEST["cookie_name"]));
 		break;
 	case "del":
 		$cookie->delCookie($_REQUEST["cookie_name"]);
