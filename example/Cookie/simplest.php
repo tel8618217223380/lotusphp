@@ -6,7 +6,9 @@ ob_start();
  */
 $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example"));
 include $lotusHome . "/runtime/Cookie/Cookie.php";
-include $lotusHome . "/runtime/Cookie/CookieConfig.php";
+include $lotusHome . "/runtime/Config.php";
+include $lotusHome . "/runtime/Store.php";
+include $lotusHome . "/runtime/StoreMemory.php";
 
 /**
  * 开始使用Cookie
@@ -14,7 +16,6 @@ include $lotusHome . "/runtime/Cookie/CookieConfig.php";
  */
 
 $cookie = new LtCookie;
-$cookie->conf->secretKey = "lotusphp";
 $cookie->setCookie('newproj', 'hello', time() + 3600);
 // 值为数组
 $cookie->setCookie('test', array('a', 'b', 'c', 'd'), time() + 3600);
