@@ -70,8 +70,8 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		$averageTime = round(($totalTime / $times), 6);
 
 		$memory_usage = memory_get_usage() - $base_memory_usage;
-		$averageMemory = $this->size($memory_usage / $times);
-		$memory_usage = $this->size($memory_usage);
+		$averageMemory = formatSize($memory_usage / $times);
+		$memory_usage = formatSize($memory_usage);
 
 		echo "\n---------------------autoloader--------------------------\n";
 		echo "times      \t$times\n";
@@ -86,26 +86,5 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 	}
 	protected function tearDown()
 	{
-	}
-
-	private function size($size)
-	{
-		if ($size >= 1073741824)
-		{
-			$size = round($size / 1073741824, 2) . ' GB';
-		}
-		else if ($size >= 1048576)
-		{
-			$size = round($size / 1048576, 2) . ' MB';
-		}
-		else if ($size >= 1024)
-		{
-			$size = round($size / 1024, 2) . ' KB';
-		}
-		else
-		{
-			$size = round($size, 2) . ' Bytes';
-		}
-		return $size;
 	}
 }

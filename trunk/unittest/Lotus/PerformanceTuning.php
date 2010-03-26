@@ -16,49 +16,32 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 		 * 临时目录,默认是proj_dir/tmp/
 		 * 开发模式下的Autoloader 和 MVC的模板引擎
 		 */
-		$lotus->option['app_tmp'] = '/tmp/Lotus/unittest/lotus/';
+		$lotus->option['app_tmp'] = '/tmp/Lotus/unittest/lotus-appname2';
 
 		/**
 		 * 应用名称对项目目录下的子目录名称
 		 */
 		$lotus->option['app_name'] = 'app_name2';
 		/**
-		 * 是否自动加载函数文件, 默认为AutoloaderConfig.php的设置
+		 * 禁止加载函数文件, 防止测试过程中函数冲突
 		 */
 		$lotus->option['is_load_function'] = false;
 
-		/**
-		 * 是否使用MVC
-		 */
-		$lotus->mvcMode = false;
-		/**
-		 * 是否显示调试信息
-		 */
-		$lotus->debug = false;
+		//$lotus->option['view_tpl_auto_compile'] = false;
 
 		/**
-		 * devMode的默认值是true，即默认处于开发模式 
-		 * devMode等于false的时候（如生产环境，测试环境），性能会有提高 
-		 * $lotus->devMode = false;
-		 * 当指定cache后,自动设置生产模式
-		 * 没有指定cache，自动设置开发模式
+		 * 默认使用MVC
+		 * $lotus->mvcMode = true;
 		 */
+
 		/**
 		 * 使用cache可以提升性能
 		 */
-		$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
+		$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus-appname2/cache/");
 		/**
-		开始工作
-		*/
-		$lotus->init();
-
-		/**
-		 * 显示调试信息
+		 * 开始工作
 		 */
-		if ($lotus->debug)
-		{
-			echo "<!--totalTime: {$lotus->debugInfo['totalTime']}s  memoryUsage: {$lotus->debugInfo['memoryUsage']} devMode: {$lotus->debugInfo['devMode']}-->";
-		}
+		$lotus->init();
 
 		/**
 		 * class_exists默认调用自动加载
@@ -82,8 +65,8 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 		$averageTime = round(($totalTime / $times), 6);
 
 		$memory_usage = memory_get_usage() - $base_memory_usage;
-		$averageMemory = $this->size($memory_usage / $times);
-		$memory_usage = $this->size($memory_usage);
+		$averageMemory = formatSize($memory_usage / $times);
+		$memory_usage = formatSize($memory_usage);
 
 		echo "\n---------------------Lotus------------------------------\n";
 		echo "times      \t$times\n";
@@ -95,32 +78,11 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 
 	protected function setUp()
 	{
-		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1'; 
-		$_SERVER['PATH_INFO'] = '/Default/Index';
+		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
+		$_SERVER['PATH_INFO'] = '/Index/Index';
 	}
 
 	protected function tearDown()
 	{
-	}
-
-	private function size($size)
-	{
-		if ($size >= 1073741824)
-		{
-			$size = round($size / 1073741824, 2) . ' GB';
-		}
-		else if ($size >= 1048576)
-		{
-			$size = round($size / 1048576, 2) . ' MB';
-		}
-		else if ($size >= 1024)
-		{
-			$size = round($size / 1024, 2) . ' KB';
-		}
-		else
-		{
-			$size = round($size, 2) . ' Bytes';
-		}
-		return $size;
 	}
 }

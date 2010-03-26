@@ -20,13 +20,10 @@ $lotus->option['app_tmp'] = '/tmp/Lotus/';
  */
 $lotus->option['app_name'] = 'app_name1';
 /**
- * 是否使用MVC
+ * 默认使用MVC
+ * $lotus->mvcMode = true;
  */
-$lotus->mvcMode = true;
-/**
- * 是否显示调试信息
- */
-$lotus->debug = true;
+
 /**
  * 使用cache可以提升性能
  */
@@ -34,15 +31,32 @@ $lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/l
 
 $lotus->init();
 /**
- * 显示调试信息
+ * 使用xdebug测试性能
  */
-if($lotus->debug)
+if (function_exists('xdebug_time_index') && function_exists('xdebug_peak_memory_usage'))
 {
-	echo "<!--totalTime: {$lotus->debugInfo['totalTime']}s  memoryUsage: {$lotus->debugInfo['memoryUsage']} devMode: {$lotus->debugInfo['devMode']}-->";
+	echo xdebug_time_index();
+	echo ' - ';
+	echo format_size(xdebug_peak_memory_usage());
 }
-// ------------- 
-//echo "\r\n<!--\r\n";
-//print_r($lotus);
-//$conf = LtObjectUtil::singleton("LtConfig");
-//print_r($conf->getAll());
-//echo "-->";
+
+function format_size($size)
+{
+	if ($size >= 1073741824)
+	{
+		$size = round($size / 1073741824, 2) . ' GB';
+	}
+	else if ($size >= 1048576)
+	{
+		$size = round($size / 1048576, 2) . ' MB';
+	}
+	else if ($size >= 1024)
+	{
+		$size = round($size / 1024, 2) . ' KB';
+	}
+	else
+	{
+		$size = round($size, 2) . ' Bytes';
+	}
+	return $size;
+}

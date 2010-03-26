@@ -8,8 +8,6 @@ class Lotus
 	 */
 	public $option;
 	public $mvcMode;
-	public $debug; // default false
-	public $debugInfo;
 
 	protected $proj_dir;
 	protected $app_dir;
@@ -21,19 +19,13 @@ class Lotus
 
 	public function __construct()
 	{
-		$this->mvcMode = false; // 默认不使用MVC
-		$this->devMode = true; // 默认为开发模式
-		$this->debug = false; // 默认不显示调试信息
+		$this->mvcMode = true; // 默认使用MVC
+		$this->devMode = true; // 默认开发模式
 		$this->lotusRuntimeDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	}
 
 	public function init()
 	{
-		if ($this->debug)
-		{
-			$this->debugInfo['memoryUsage'] = memory_get_usage();
-			$this->debugInfo['totalTime'] = microtime(true);
-		}
 		if (empty($this->option["proj_dir"]))
 		{
 			trigger_error('option[\'proj_dir\'] must be set');
@@ -116,17 +108,6 @@ class Lotus
 		 * run MVC
 		 */
 		$this->mvcMode && $this->runMVC();
-		/**
-		 * debugInfo
-		 */
-		if ($this->debug)
-		{
-			$endTime = microtime(true);
-			$this->debugInfo['totalTime'] = round(($endTime - $this->debugInfo['totalTime']), 6);
-			$memoryUsage = memory_get_usage() - $this->debugInfo['memoryUsage'];
-			$this->debugInfo['memoryUsage'] = ($memoryUsage >= 1048576) ? round((round($memoryUsage / 1048576 * 100) / 100), 2) . 'MB' : (($memoryUsage >= 1024) ? round((round($memoryUsage / 1024 * 100) / 100), 2) . 'KB' : $memoryUsage . 'BYTES');
-			$this->debugInfo['devMode'] = $this->devMode ? 'true' : 'false';
-		}
 	}
 
 	protected function prepareAutoloader()
