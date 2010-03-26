@@ -175,8 +175,8 @@ class Lotus
 
 	protected function runMVC()
 	{
-		$conf = LtObjectUtil::singleton("LtConfig");
-		$conf->init();
+		//$conf = LtObjectUtil::singleton("LtConfig");
+		//$conf->init();
 
 		$router = LtObjectUtil::singleton('LtRouter');
 		$router->init();
