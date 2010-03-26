@@ -2,14 +2,16 @@
 class LtStoreFile implements LtStore
 {
 	protected $cacheFileRoot='/tmp/Lotus/LtStoreFile/';
+	protected $prefix='';
 
-	public function setFileRoot($path)
+	public function setFileRoot($path, $prefix = 'Ltcache-')
 	{
 		/**
 		 * @todo detect dir is esists and writable
 		 */
 			$this->cacheFileRoot = str_replace('\\', '/', $path);
 			$this->cacheFileRoot = rtrim($this->cacheFileRoot, '\\/') . '/';
+			$this->prefix = $prefix;
 	}
 
 	/**
@@ -117,6 +119,6 @@ class LtStoreFile implements LtStore
 	{
 		$token = md5($key);
 		$file = $this->cacheFileRoot . substr($token, 0, 2) . '/' . substr($token, 2, 2);
-		return $file . '/' . 'phps-' . $token . '.php';
+		return $file . '/' . $this->prefix . $token . '.php';
 	}
 }

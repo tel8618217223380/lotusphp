@@ -1,16 +1,12 @@
 <?php
 /**
  * 本测试文档演示了Lotus的正确使用方法 
- * 按本文档操作一定会得到正确的结果
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 {
 	/**
-	 * 最常用的使用方式（推荐）
-
-	 * 本测试用例期望效果：
-	 * 能成功通过query()接口存取数据
+	 * 最常用的使用方式
 	 */
 	public function testMostUsedWay()
 	{
@@ -18,20 +14,23 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 * 初始化Lotus类
 		 */
 		$lotus = new Lotus();
+
 		/**
 		 * 项目目录, 按照约定的目录结构,自动加载配置文件,自动加载类
 		 */
 		$lotus->option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
+
 		/**
 		 * 临时目录,默认是proj_dir/tmp/
-		 * 开发模式下的Autoloader 和 MVC的模板引擎 及 文件类型Cache
+		 * 开发模式下的Autoloader 和 MVC的模板引擎
 		 */
-		$lotus->option['tmp_dir'] = '/tmp/Lotus/unittest/lotus/';
+		$lotus->option['app_tmp'] = '/tmp/Lotus/unittest/lotus/';
 
 		/**
 		 * 应用名称对项目目录下的子目录名称
 		 */
 		$lotus->option['app_name'] = 'app_name1';
+
 		/**
 		 * 是否自动加载函数文件, 默认为AutoloaderConfig.php的设置
 		 */
@@ -41,6 +40,7 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 * 是否使用MVC
 		 */
 		$lotus->mvcMode = true;
+
 		/**
 		 * 是否显示调试信息
 		 */
@@ -56,11 +56,8 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		/**
 		 * 使用cache可以提升性能
 		 */ 
-		//$lotus->option["cache_server"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
-		/**
-		 * 使用cache后,每个应用使用不同的cache表防止key冲突 
-		 */
-		$lotus->option['cache_table'] = 'app_name1';
+		$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
+
 		$lotus->init();
 
 		/**
@@ -76,6 +73,7 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 */
 		$this->asserttrue(class_exists("LtCaptcha"));
 	}
+
 	protected function setUp()
 	{
 		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1'; 
@@ -83,7 +81,9 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		// $_GET['action'] = 'Index';
 		$_SERVER['PATH_INFO'] = '/Default/Index';
 	}
+
 	protected function tearDown()
 	{
 	}
+
 }

@@ -125,6 +125,7 @@ abstract class LtAction
 		if (!empty($this->dtds) && class_exists('LtValidator'))
 		{
 			$validator = new LtValidator;
+			$validator->init();
 			foreach ($this->dtds as $variable => $dtd)
 			{
 				$from = isset($dtd->from) ? $dtd->from : 'request';

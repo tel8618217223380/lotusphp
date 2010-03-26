@@ -14,7 +14,7 @@ class Lotus
 	protected $proj_dir;
 	protected $app_dir;
 	protected $app_name;
-	protected $tmp_dir;
+	protected $app_tmp;
 	protected $devMode; // default true
 	protected $lotusRuntimeDir;
 	protected $cacheInst;
@@ -46,13 +46,13 @@ class Lotus
 		$this->proj_dir = rtrim($this->option["proj_dir"], '\\/') . '/';
 		$this->app_name = $this->option["app_name"];
 		$this->app_dir = $this->proj_dir . $this->app_name . '/';
-		if (empty($this->option["tmp_dir"]))
+		if (empty($this->option["app_tmp"]))
 		{
-			$this->tmp_dir = $this->proj_dir . 'tmp/';
+			$this->app_tmp = $this->proj_dir . 'tmp/';
 		}
 		else
 		{
-			$this->tmp_dir = rtrim($this->option["tmp_dir"], '\\/') . '/';
+			$this->app_tmp = rtrim($this->option["app_tmp"], '\\/') . '/';
 		}
 
 		/**
@@ -63,7 +63,7 @@ class Lotus
 		require_once $this->lotusRuntimeDir . "StoreFile.php";
 		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
 
-		if (!empty($this->option['cache_server']))
+		if (!empty($this->option['app_cache']))
 		{
 			/**
 			 * Init Cache component to sotre LtAutoloader, LtConfig data ...
@@ -84,11 +84,12 @@ class Lotus
 			require_once $this->lotusRuntimeDir . "Cache/QueryEngine/TableDataGateway/CacheTableDataGateway.php";
 
 			$ccb = LtObjectUtil::singleton('LtCacheConfigBuilder');
-			$v = $this->option['cache_server'];
-			$ccb->addHost($v[0], $v[1], $v[2], $v[3]);
+			$ccb->addSingleHost($this->option['app_cache']);
 			LtCache::$servers = $ccb->getServers();
 			$this->cacheInst = LtObjectUtil::singleton('LtCache');
 			$this->cacheInst->init();
+			//$this->cacheInst->group = "group_0";
+			//$this->cacheInst->node = "node_0";
 			$this->devMode = false; // 生产模式
 		}
 
@@ -148,7 +149,7 @@ class Lotus
 		/**
 		 * 开发模式下保存分析结果
 		 */
-		$autoloader->conf->mappingFileRoot = $this->tmp_dir . 'autoloader/';
+		$autoloader->conf->mappingFileRoot = $this->app_tmp . 'autoloader/';
 		if (isset($this->option["is_load_function"]))
 		{
 			$autoloader->conf->isLoadFunction = $this->option["is_load_function"];
@@ -182,7 +183,7 @@ class Lotus
 		$url->init();
 		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
 		$dispatcher->viewDir = $this->app_dir . 'view/';
-		$dispatcher->viewTplDir = $this->tmp_dir . 'templateView/' . $this->app_name . '/';
+		$dispatcher->viewTplDir = $this->app_tmp . 'templateView/' . $this->app_name . '/';
 		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}
