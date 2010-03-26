@@ -178,6 +178,8 @@ class Lotus
 	{ 
 		$router = LtObjectUtil::singleton('LtRouter');
 		$router->init();
+		$url = LtObjectUtil::singleton('LtUrl');
+		$url->init();
 		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
 		$dispatcher->viewDir = $this->app_dir . 'view/';
 		$dispatcher->viewTplDir = $this->tmp_dir . 'templateView/' . $this->app_name . '/';
