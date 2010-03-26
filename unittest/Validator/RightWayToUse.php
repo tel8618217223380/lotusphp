@@ -29,12 +29,31 @@ class RightWayToUseValidator extends PHPUnit_Framework_TestCase
 				"ban" => "/fuck/",
 				),
 			array("max_length" => "密码最长8位",
-				"mask" => "密码只能由数字或字组成",
-				//"ban" => "密码不能包含脏话"
+				"mask" => "密码只能由数字或字组成", 
+				// "ban" => "密码不能包含脏话"
 				)
 			);
 
+
+		// 配置文件
+		$config['validator.error_messages'] = array(
+			'ban' => '%s contain banned words',
+			'mask' => '%s does not match the given format',
+			'max_length' => '%s is longer than %s',
+			'min_length' => '%s is shorter than %s',
+			'max_value' => '%s is bigger than %s',
+			'min_value' => '%s is smaller than %s',
+			'max_selected' => '%s is too much',
+			'min_selected' => '%s is too few',
+			'required' => '%s is empty',
+			'equal_to' => '%s is not equal to %s',
+			);
+
 		$validator = new LtValidator;
+		// 缓存配置项 使用时从缓存读取
+		LtValidator::$configHandle->addConfig($config);
+
+		$validator->init();
 
 		foreach ($dtds as $variable => $dtd)
 		{
@@ -56,11 +75,9 @@ class RightWayToUseValidator extends PHPUnit_Framework_TestCase
 
 	protected function setUp()
 	{
-
 	}
 
 	protected function tearDown()
 	{
-
 	}
 }

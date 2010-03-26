@@ -14,14 +14,14 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 		$lotus->option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
 		/**
 		 * 临时目录,默认是proj_dir/tmp/
-		 * 开发模式下的Autoloader 和 MVC的模板引擎 及 文件类型Cache
+		 * 开发模式下的Autoloader 和 MVC的模板引擎
 		 */
-		$lotus->option['tmp_dir'] = '/tmp/Lotus/unittest/lotus/';
+		$lotus->option['app_tmp'] = '/tmp/Lotus/unittest/lotus/';
 
 		/**
 		 * 应用名称对项目目录下的子目录名称
 		 */
-		$lotus->option['app_name'] = 'app_name1';
+		$lotus->option['app_name'] = 'app_name2';
 		/**
 		 * 是否自动加载函数文件, 默认为AutoloaderConfig.php的设置
 		 */
@@ -46,7 +46,10 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 		/**
 		 * 使用cache可以提升性能
 		 */
-		//$lotus->option["cache_server"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
+		$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
+		/**
+		开始工作
+		*/
 		$lotus->init();
 
 		/**
@@ -63,10 +66,10 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 		$this->asserttrue(class_exists("LtCaptcha"));
 
 		/**
-		 * 运行1000次，要求在1秒内运行完
+		 * 运行100次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
-		$times = 1000;
+		$times = 100;
 		$startTime = microtime(true);
 
 		for($i = 0; $i < $times; $i++)
@@ -89,12 +92,17 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 		echo "\n---------------------------------------------------------\n";
 		$this->assertTrue(1 > $totalTime);
 	}
+
 	protected function setUp()
 	{
+		$_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1'; 
+		$_SERVER['PATH_INFO'] = '/Default/Index';
 	}
+
 	protected function tearDown()
 	{
 	}
+
 	private function size($size)
 	{
 		if ($size >= 1073741824)

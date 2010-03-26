@@ -13,7 +13,7 @@ $lotus->option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
  * 临时目录,默认是proj_dir/tmp/
  * 开发模式下的Autoloader 和 MVC的模板引擎 及 文件类型Cache
  */
-$lotus->option['tmp_dir'] = '/tmp/Lotus/';
+$lotus->option['app_tmp'] = '/tmp/Lotus/';
 
 /**
  * 应用名称对项目目录下的子目录名称
@@ -30,7 +30,7 @@ $lotus->debug = true;
 /**
  * 使用cache可以提升性能
  */
-$lotus->option["cache_server"] = array("lotus", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/lotus/proj_dir/app_name1/"));
+$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/lotus/proj_dir/app_name1/");
 
 $lotus->init();
 /**
