@@ -49,9 +49,16 @@ class LtRouter
 			{
 				if ('REWRITE' == $protocol)
 				{
-					$url = substr($_SERVER['REQUEST_URI'], strlen(pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME)));
-					$url = rtrim($url, "$postfix");
-					$url = explode($delimiter, trim($url, "/"));
+					if(0 == strcmp($_SERVER['REQUEST_URI'],$_SERVER['SCRIPT_NAME']))
+					{
+						$url = array();
+					}
+					else
+					{
+						$url = substr($_SERVER['REQUEST_URI'], strlen(pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME)));
+						$url = rtrim($url, "$postfix");
+						$url = explode($delimiter, trim($url, "/"));
+					}
 				}
 				else
 				{
