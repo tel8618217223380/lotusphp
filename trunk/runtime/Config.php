@@ -3,7 +3,6 @@ class LtConfig
 {
 	public static $storeHandle;
 	protected $conf;
-	private $cacheVar;
 
 	public function __construct()
 	{
@@ -20,11 +19,7 @@ class LtConfig
 
 	public function get($key)
 	{
-		if(!isset($this->cacheVar[$key]))
-		{
-			$this->cacheVar[$key] = self::$storeHandle->get($key);
-		}
-		return $this->cacheVar[$key];
+		return self::$storeHandle->get($key);
 	}
 
 	/**

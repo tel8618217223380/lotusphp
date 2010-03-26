@@ -103,13 +103,14 @@ class Lotus
 		/**
 		 * Initial other components
 		 */
-		foreach (get_class_methods($this) as $method)
-		{
-			if (4 < strlen($method) && "init" == substr($method, 0, 4))
-			{
-				$this->$method();
-			}
-		}
+		// foreach (get_class_methods($this) as $method)
+		// {
+		// if (4 < strlen($method) && "init" == substr($method, 0, 4))
+		// {
+		// $this->$method();
+		// }
+		// }
+		$this->initDb();
 		/**
 		 * run MVC
 		 */
@@ -174,18 +175,9 @@ class Lotus
 	}
 
 	protected function runMVC()
-	{
-		//$conf = LtObjectUtil::singleton("LtConfig");
-		//$conf->init();
-
+	{ 
 		$router = LtObjectUtil::singleton('LtRouter');
 		$router->init();
-
-		$url = LtObjectUtil::singleton('LtUrl');
-		$url->init();
-		/**
-		 * mvc
-		 */
 		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
 		$dispatcher->viewDir = $this->app_dir . 'view/';
 		$dispatcher->viewTplDir = $this->tmp_dir . 'templateView/' . $this->app_name . '/';
@@ -195,10 +187,6 @@ class Lotus
 
 	protected function initDb()
 	{
-		/**
-		 * 
-		 * @todo 处理conf , Db 性能
-		 */
 		if (!$this->devMode)
 		{
 			LtDb::$storeHandle = $this->cacheInst->getTDG('LtDB');
@@ -207,9 +195,11 @@ class Lotus
 		{
 			LtDb::$storeHandle = LtObjectUtil::singleton('LtStoreMemory');
 		}
+
+		$conf = LtObjectUtil::singleton("LtConfig");
+
 		if (!LtDb::$storeHandle->get("servers"))
 		{
-			$conf = LtObjectUtil::singleton("LtConfig");
 			if ($dbServer = $conf->get('db_only_one'))
 			{
 				$dcb = LtObjectUtil::singleton('LtDbConfigBuilder');
@@ -229,6 +219,15 @@ class Lotus
 			}
 			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
 		}
-		LtObjectUtil::singleton('LtDb');
+		/**
+		 * 只有一个库 只需初始化一次
+		 */
+		if ($dbServer = $conf->get('db_only_one'))
+		{
+			$db = LtObjectUtil::singleton('LtDb');
+			$db->group = "group_0";
+			$db->node = "node_0";
+			$db->init();
+		}
 	}
 }
