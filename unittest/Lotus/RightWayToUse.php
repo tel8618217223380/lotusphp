@@ -1,6 +1,6 @@
 <?php
 /**
- * 本测试文档演示了Lotus的正确使用方法 
+ * 本测试文档演示了Lotus的正确使用方法
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseLotus extends PHPUnit_Framework_TestCase
@@ -24,7 +24,7 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 * 临时目录,默认是proj_dir/tmp/
 		 * 开发模式下的Autoloader 和 MVC的模板引擎
 		 */
-		$lotus->option['app_tmp'] = '/tmp/Lotus/unittest/lotus/';
+		$lotus->option['app_tmp'] = '/tmp/Lotus/unittest/lotus-appname1/';
 
 		/**
 		 * 应用名称对项目目录下的子目录名称
@@ -37,36 +37,19 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		$lotus->option['is_load_function'] = true;
 
 		/**
-		 * 是否使用MVC
+		 * 默认使用MVC
+		 * $lotus->mvcMode = true;
 		 */
-		$lotus->mvcMode = true;
 
-		/**
-		 * 是否显示调试信息
-		 */
-		$lotus->debug = true;
-
-		/**
-		 * devMode的默认值是true，即默认处于开发模式 
-		 * devMode等于false的时候（如生产环境，测试环境），性能会有提高 
-		 * $lotus->devMode = false;
-		 * 当指定cache后,自动设置生产模式
-		 * 没有指定cache，自动设置开发模式
-		 */
 		/**
 		 * 使用cache可以提升性能
-		 */ 
-		$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus/");
-
-		$lotus->init();
+		 */
+		$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus-appname1/cache/");
 
 		/**
-		 * 显示调试信息
+		 * run
 		 */
-		if ($lotus->debug)
-		{
-			echo "<!--totalTime: {$lotus->debugInfo['totalTime']}s  memoryUsage: {$lotus->debugInfo['memoryUsage']} devMode: {$lotus->debugInfo['devMode']}-->";
-		}
+		$lotus->init();
 
 		/**
 		 * class_exists默认调用自动加载
@@ -84,6 +67,13 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 
 	protected function tearDown()
 	{
+		LtAutoloader::$storeHandle = null;
+		LtConfig::$storeHandle = null;
+		LtCache::$servers = null;
+		LtDb::$storeHandle = null;
+		LtObjectUtil::$instances = null;
+		LtRouter::$configHandle = null;
+		LtUrl::$configHandle = null;
+		// LtValidator::$configHandle=null;
 	}
-
 }
