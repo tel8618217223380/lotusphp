@@ -5,29 +5,7 @@
  */
 class LtCaptchaImageEngine
 {
-    public function drawImage($text)
-    {
-        $ini = microtime(true);
-
-        /**
-         * * Initialization
-         */
-        $this->ImageAllocate();
-
-        $fontcfg = $this->fonts[array_rand($this->fonts)];
-        $this->WriteText($text, $fontcfg);
-
-        /**
-         * * Transformations
-         */
-        $this->WaveImage();
-        if ($this->conf->blur && function_exists('imagefilter'))
-        {
-            imagefilter($this->im, IMG_FILTER_GAUSSIAN_BLUR);
-        }
-        $this->ReduceImage();
-        return $this->im;
-    }
+	public $conf;
 
     protected $maxWordLength = 9;
 
@@ -81,6 +59,30 @@ class LtCaptchaImageEngine
      */
     protected $im;
 
+    public function drawImage($text)
+    {
+        $ini = microtime(true);
+
+        /**
+         * * Initialization
+         */
+        $this->ImageAllocate();
+
+        $fontcfg = $this->fonts[array_rand($this->fonts)];
+        $this->WriteText($text, $fontcfg);
+
+        /**
+         * * Transformations
+         */
+        $this->WaveImage();
+        if ($this->conf['blur'] && function_exists('imagefilter'))
+        {
+            imagefilter($this->im, IMG_FILTER_GAUSSIAN_BLUR);
+        }
+        $this->ReduceImage();
+        return $this->im;
+    }
+
     /**
      * Creates the image resources
      */
@@ -92,14 +94,14 @@ class LtCaptchaImageEngine
             imagedestroy($this->im);
         }
 
-        $this->im = imagecreatetruecolor($this->conf->width * $this->conf->scale, $this->conf->height * $this->conf->scale); 
+        $this->im = imagecreatetruecolor($this->conf['width'] * $this->conf['scale'], $this->conf['height'] * $this->conf['scale']); 
         // Background color
         $this->GdBgColor = imagecolorallocate($this->im,
             $this->backgroundColor[0],
             $this->backgroundColor[1],
             $this->backgroundColor[2]
             );
-        imagefilledrectangle($this->im, 0, 0, $this->conf->width * $this->conf->scale, $this->conf->height * $this->conf->scale, $this->GdBgColor); 
+        imagefilledrectangle($this->im, 0, 0, $this->conf['width'] * $this->conf['scale'], $this->conf['height'] * $this->conf['scale'], $this->GdBgColor); 
         // Foreground color
         $color = $this->colors[mt_rand(0, sizeof($this->colors)-1)];
         $this->GdFgColor = imagecolorallocate($this->im, $color[0], $color[1], $color[2]); 
@@ -133,25 +135,25 @@ class LtCaptchaImageEngine
         $lettersMissing = $this->maxWordLength - strlen($text);
         $fontSizefactor = 1 + ($lettersMissing * 0.09); 
         // Text generation (char by char)
-        $x = 20 * $this->conf->scale;
-        $y = round(($this->conf->height * 27 / 40) * $this->conf->scale);
+        $x = 20 * $this->conf['scale'];
+        $y = round(($this->conf['height'] * 27 / 40) * $this->conf['scale']);
         $length = strlen($text);
         for ($i = 0; $i < $length; $i++)
         {
-            $degree = rand($this->conf->maxRotation * -1, $this->conf->maxRotation);
-            $fontsize = rand($fontcfg['minSize'], $fontcfg['maxSize']) * $this->conf->scale * $fontSizefactor;
+            $degree = rand($this->conf['max_rotation'] * -1, $this->conf['max_rotation']);
+            $fontsize = rand($fontcfg['minSize'], $fontcfg['maxSize']) * $this->conf['scale'] * $fontSizefactor;
             $letter = substr($text, $i, 1);
 
             if ($this->shadowColor)
             {
                 $coords = imagettftext($this->im, $fontsize, $degree,
-                    $x + $this->conf->scale, $y + $this->conf->scale,
+                    $x + $this->conf['scale'], $y + $this->conf['scale'],
                     $this->GdShadowColor, $fontfile, $letter);
             }
             $coords = imagettftext($this->im, $fontsize, $degree,
                 $x, $y,
                 $this->GdFgColor, $fontfile, $letter);
-            $x += ($coords[2] - $x) + ($fontcfg['spacing'] * $this->conf->scale);
+            $x += ($coords[2] - $x) + ($fontcfg['spacing'] * $this->conf['scale']);
         }
     }
 
@@ -161,22 +163,22 @@ class LtCaptchaImageEngine
     protected function WaveImage()
     { 
         // X-axis wave generation
-        $xp = $this->conf->scale * $this->Xperiod * rand(1, 3);
+        $xp = $this->conf['scale'] * $this->Xperiod * rand(1, 3);
         $k = rand(0, 100);
-        for ($i = 0; $i < ($this->conf->width * $this->conf->scale); $i++)
+        for ($i = 0; $i < ($this->conf['width'] * $this->conf['scale']); $i++)
         {
             imagecopy($this->im, $this->im,
-                $i-1, sin($k + $i / $xp) * ($this->conf->scale * $this->Xamplitude),
-                $i, 0, 1, $this->conf->height * $this->conf->scale);
+                $i-1, sin($k + $i / $xp) * ($this->conf['scale'] * $this->Xamplitude),
+                $i, 0, 1, $this->conf['height'] * $this->conf['scale']);
         } 
         // Y-axis wave generation
         $k = rand(0, 100);
-        $yp = $this->conf->scale * $this->Yperiod * rand(1, 2);
-        for ($i = 0; $i < ($this->conf->height * $this->conf->scale); $i++)
+        $yp = $this->conf['scale'] * $this->Yperiod * rand(1, 2);
+        for ($i = 0; $i < ($this->conf['height'] * $this->conf['scale']); $i++)
         {
             imagecopy($this->im, $this->im,
-                sin($k + $i / $yp) * ($this->conf->scale * $this->Yamplitude), $i-1,
-                0, $i, $this->conf->width * $this->conf->scale, 1);
+                sin($k + $i / $yp) * ($this->conf['scale'] * $this->Yamplitude), $i-1,
+                0, $i, $this->conf['width'] * $this->conf['scale'], 1);
         }
     }
 
@@ -185,11 +187,11 @@ class LtCaptchaImageEngine
      */
     protected function ReduceImage()
     {
-        $imResampled = imagecreatetruecolor($this->conf->width, $this->conf->height);
+        $imResampled = imagecreatetruecolor($this->conf['width'], $this->conf['height']);
         imagecopyresampled($imResampled, $this->im,
             0, 0, 0, 0,
-            $this->conf->width, $this->conf->height,
-            $this->conf->width * $this->conf->scale, $this->conf->height * $this->conf->scale
+            $this->conf['width'], $this->conf['height'],
+            $this->conf['width'] * $this->conf['scale'], $this->conf['height'] * $this->conf['scale']
             );
         imagedestroy($this->im);
         $this->im = $imResampled;
