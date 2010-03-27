@@ -46,10 +46,10 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 		$this->assertEquals("localhost", $conf->get("db.conn.host"));
 
 		/**
-		 * 运行1000次，要求在1秒内运行完
+		 * 运行100次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
-		$times = 1000;
+		$times = 100;
 		$startTime = microtime(true);
 		for($i = 0; $i < $times; $i++)
 		{
