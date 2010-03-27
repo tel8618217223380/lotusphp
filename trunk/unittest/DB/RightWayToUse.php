@@ -71,7 +71,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$this->assertEquals(2, $tg->count());
 		$this->assertEquals(1, $tg->delete(3));
 		$this->assertEquals(array(array("id" => 2, "name" => "kiwiphp", "age" => 4)), $tg->fetchRows());
-
+		
 		/**
 		 * 用法3：使用SqlMapClient
 		 * 
@@ -82,7 +82,11 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 *     2. 动态传入表名
 		 */
 		$smc = $db->getSqlMapClient();
-		$this->assertEquals(array(0 => array("age_total" => 1)), $smc->execute("getAgeTotal"));
+		// 准备测试数据
+		$dbh->query("INSERT INTO `test_user` (`name`,`age`) VALUE ('SqlMapClient',33)");
+		// 实际使用时是从配置文件里获取 sql
+		LtDb::$storeHandle->add($dbh->group . '.getName', array("sql"=>"SELECT `name` FROM `test_user` WHERE `age`=33","force_use_master"=>false));
+		$this->assertEquals(array(0 => array("name" => "SqlMapClient")), $smc->execute("getName"));
 
 		// ====================为下面的测试准备数据====================
 		$dbh->query("DROP TABLE IF EXISTS test_user");
@@ -218,12 +222,19 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		)"));
 
 		//使用Table Gateway查询引擎
+		/**
+		@todo 当sys_data库不存在时插入到了test库, 这是期望的吗?
+		*/
 		$tg1 = $db1->getTDG("sys_category");
 		$this->assertEquals(1, $id = $tg1->insert(array("id" => 1, "name" => "PHP")));
 		$this->assertEquals(array("id" => 1, "name" => "PHP"), $tg1->fetch($id));
 
 		//使用SqlMapClient
 		$smc1 = $db1->getSqlMapClient();
+
+		// 实际使用时是从配置文件里获取 sql
+		LtDb::$storeHandle->add($dbh1->group . '.sys.getSysCateTotal', array("sql"=>"SELECT count(`id`) as 'category_total' FROM `sys_category`","force_use_master"=>false));
+
 		$this->assertEquals(array(0 => array("category_total" => 1)), $smc1->execute("sys.getSysCateTotal"));
 
 		/**
@@ -614,8 +625,10 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
+		LtDb::$storeHandle = null;
 	}
 	protected function tearDown()
 	{
+		LtDb::$storeHandle = null;
 	}
 }

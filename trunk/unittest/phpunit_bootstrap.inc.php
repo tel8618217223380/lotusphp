@@ -4,7 +4,7 @@
 如果你修改了这两个常量的值，请不要svn commit
  */
 define("PEAR_PATH", "D:/kiss/PHP/PEAR");
-define("LOTUS_UNITTEST_WEB_ROOT", "http://lotus/unittest/");
+define("LOTUS_UNITTEST_WEB_ROOT", "http://127.0.0.1/lotusphp/unittest/");
 
 /**
  * PHPUnit bootstrap

@@ -76,5 +76,6 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 	}
 	protected function tearDown()
 	{
+		LtConfig::$storeHandle = null;
 	}
 }
