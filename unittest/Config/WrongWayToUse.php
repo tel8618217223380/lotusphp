@@ -26,7 +26,7 @@ class WrongWayToUseConfig extends PHPUnit_Framework_TestCase
 	public function testNotExistsConfigFile()
 	{
 		$conf = new LtConfig;
-		$conf->configFile = dirname(__FILE__) . "/test_data/conf_not_exists.php";
+		// $conf->configFile = dirname(__FILE__) . "/test_data/conf_not_exists.php";
 		$conf->init();
 
 		$conf->loadConfigFile(dirname(__FILE__) . "/test_data/conf_not_exists.php");
