@@ -1,13 +1,14 @@
 <?php
 class LtCaptcha
 {
-	public $conf;
+	public static $configHandle;
+	public static $storeHandle;
+
 	public $imageEngine;
-	static public $storeHandle;
 
 	public function __construct()
 	{
-		$this->conf = new LtCaptchaConfig;
+		self::$configHandle = new LtConfig;
 	}
 
 	public function init()
@@ -15,7 +16,8 @@ class LtCaptcha
 		if (!is_object(self::$storeHandle))
 		{
 			self::$storeHandle = new LtStoreFile;
-			self::$storeHandle->setFileRoot($this->conf->seedFileRoot);
+			$seedFileRoot = self::$configHandle->get("captcha.seed_file_root");
+			self::$storeHandle->setFileRoot($seedFileRoot);
 		}
 	}
 
@@ -28,9 +30,24 @@ class LtCaptcha
 		}
 		if (!is_object($this->imageEngine))
 		{
-			$this->imageEngine = new LtCaptchaImageEngine;
-			$this->imageEngine->conf = $this->conf;
-		}		
+			if ($imageEngine = self::$configHandle->get("captcha.image_engine"))
+			{
+				if (class_exists($imageEngine))
+				{
+					$this->imageEngine = new $imageEngine;
+					$this->imageEngine->conf = self::$configHandle->get("captcha.image_engine_conf");
+				}
+				else
+				{
+					trigger_error("captcha.image_engine : $imageEngine not exists");
+				}
+			}
+			else
+			{
+				trigger_error("empty captcha.image_engine");
+				return false;
+			}
+		}
 		$word = $this->generateRandCaptchaWord($seed);
 		self::$storeHandle->add($seed, $word);
 		return $this->imageEngine->drawImage($word);
@@ -51,11 +68,13 @@ class LtCaptcha
 
 	protected function generateRandCaptchaWord()
 	{
-		$allowedSymbolsLength = strlen($this->conf->allowChars) - 1;
+		$allowChars = self::$configHandle->get("captcha.allow_chars");
+		$length = self::$configHandle->get("captcha.length");
+		$allowedSymbolsLength = strlen($allowChars) - 1;
 		$captchaWord = "";
-		for ($i = 0; $i < $this->conf->length; $i ++)
+		for ($i = 0; $i < $length; $i ++)
 		{
-			$captchaWord .= $this->conf->allowChars[mt_rand(0, $allowedSymbolsLength)];
+			$captchaWord .= $allowChars[mt_rand(0, $allowedSymbolsLength)];
 		}
 		return $captchaWord;
 	}

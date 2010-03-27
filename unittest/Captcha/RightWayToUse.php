@@ -10,11 +10,11 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐） 
 	 * -------------------------------------------------------------------
 	 * LtCaptcha要求： 
-	 *  # 调用getImageResource()时传入唯一的seed，不能是常量
+	 *    # 调用getImageResource()时传入唯一的seed，不能是常量
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCaptcha建议（不强求）：
-	 *  # 使用md5(uniqid())得到随机不冲突的seed
+	 *    # 使用md5(uniqid())得到随机不冲突的seed
 	 * 
 	 * 本测试用例期望效果：
 	 * 无法对图片进行单元测试，实际使用方法和效果参见example/Captcha/simplest.php
@@ -22,15 +22,42 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 	public function testMostUsedWay()
 	{
 		/**
-		 * Lotus组件初始化三步曲
+		 * 使用方法
 		 */
-		// 1. 实例化
 		$captcha = new LtCaptcha;
-		// 2. 设置属性
-		$captcha->conf->length = 5;
-		// 3. 调init()方法
-		$captcha->init();
+		/**
+		 * 实际使用时配置是保存在配置文件中
+		 */
+		$config['captcha.seed_file_root'] = "/tmp/Lotus/captcha/seed/";
+		/**
+		 * lphabet without similar symbols (o=0, 1=l, i=j, t=f)
+		 */
+		$config['captcha.allow_chars'] = "23456789abcdeghkmnpqsuvxyz";
+		$config['captcha.length'] = 4;
 
+		$config['captcha.image_engine'] = 'LtCaptchaImageEngine';
+		/**
+		 * Blur :: effect for better image quality (but slower image processing).
+		 * Better image results with scale=3
+		 * --------
+		 * scale :: Internal image size factor (for better image quality)
+		 * 1: low, 2: medium, 3: high
+		 * ------
+		 * max_rotation :: letter rotation clockwise
+		 */
+		$config['captcha.image_engine_conf'] = array('blur' => false,
+			'scale' => 2,
+			'width' => 200,
+			'height' => 80,
+			'max_rotation' => 4,
+			);
+
+		/**
+		 * 生产环境中配置已经通过LtCache缓存
+		 */
+		LtCaptcha::$configHandle->addConfig($config);
+
+		$captcha->init();
 		/**
 		 * 初始化完毕，测试其效果
 		 */
@@ -43,6 +70,17 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 	public function testVerify()
 	{
 		$cp = new LtCaptcha;
+		$config['captcha.seed_file_root'] = "/tmp/Lotus/captcha/seed/";
+		$config['captcha.allow_chars'] = "23456789abcdeghkmnpqsuvxyz";
+		$config['captcha.length'] = 4;
+		$config['captcha.image_engine'] = 'LtCaptchaImageEngine';
+		$config['captcha.image_engine_conf'] = array('blur' => false,
+			'scale' => 2,
+			'width' => 200,
+			'height' => 80,
+			'max_rotation' => 4,
+			);
+		LtCaptcha::$configHandle->addConfig($config);
 		$cp->init();
 		$seed = md5(uniqid());
 		$cp->getImageResource($seed);
@@ -51,8 +89,10 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
+		LtCaptcha::$configHandle = null;
 	}
 	protected function tearDown()
 	{
+		LtCaptcha::$configHandle = null;
 	}
 }
