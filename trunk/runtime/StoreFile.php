@@ -1,17 +1,18 @@
 <?php
 class LtStoreFile implements LtStore
 {
-	protected $cacheFileRoot='/tmp/Lotus/LtStoreFile/';
-	protected $prefix='';
+	protected $cacheFileRoot = '/tmp/Lotus/LtStoreFile/';
+	protected $prefix = '';
 
 	public function setFileRoot($path, $prefix = 'Ltcache-')
 	{
 		/**
+		 * 
 		 * @todo detect dir is esists and writable
 		 */
-			$this->cacheFileRoot = str_replace('\\', '/', $path);
-			$this->cacheFileRoot = rtrim($this->cacheFileRoot, '\\/') . '/';
-			$this->prefix = $prefix;
+		$this->cacheFileRoot = str_replace('\\', '/', $path);
+		$this->cacheFileRoot = rtrim($this->cacheFileRoot, '\\/') . '/';
+		$this->prefix = $prefix;
 	}
 
 	/**
@@ -77,7 +78,7 @@ class LtStoreFile implements LtStore
 			return false;
 		}
 		else
-		{
+		{ 
 			// $ttl = file_get_contents($file, false, null, 13, 10);
 			$str = file_get_contents($file);
 			$ttl = substr($str, 13, 10);
@@ -93,7 +94,7 @@ class LtStoreFile implements LtStore
 					return false;
 				}
 				else
-				{
+				{ 
 					// return file_get_contents($file, false, null, 23);
 					return substr($str, 23);
 				}
@@ -102,7 +103,7 @@ class LtStoreFile implements LtStore
 	}
 
 	/**
-	 * key不存在则增加key-value
+	 * key不存在 返回false
 	 * 不管有没有过期,都更新数据
 	 * 
 	 * @return bool 
@@ -110,9 +111,16 @@ class LtStoreFile implements LtStore
 	public function update($key, $value, $ttl = 0)
 	{
 		$file = $this->getCacheFile($key);
-		$expireTime = (0 == $ttl) ? '0000000000' : (time() + $ttl);
-		$length = file_put_contents($file, '<?php exit;?>' . $expireTime . $value);
-		return $length > 0 ? true : false;
+		if (!is_file($file))
+		{
+			return false;
+		}
+		else
+		{
+			$expireTime = (0 == $ttl) ? '0000000000' : (time() + $ttl);
+			$length = file_put_contents($file, '<?php exit;?>' . $expireTime . $value);
+			return $length > 0 ? true : false;
+		}
 	}
 
 	protected function getCacheFile($key)

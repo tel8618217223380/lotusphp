@@ -196,5 +196,6 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	}
 	protected function tearDown()
 	{
+		LtRouter::$configHandle = null;
 	}
 }

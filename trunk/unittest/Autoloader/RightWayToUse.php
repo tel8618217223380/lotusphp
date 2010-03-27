@@ -348,6 +348,9 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testIsLoadFunction($pathfile, $function, $isLoadFunction)
 	{
 		$ap = new LtAutoloaderProxy;
+		// for update
+		LtAutoloader::$storeHandle->add(".function_total", 0);
+		LtAutoloader::$storeHandle->add(".functions", array(), 0);
 		$ap->conf->isLoadFunction = $isLoadFunction;
 		$ap->addFileMap($pathfile);
 		if($ap->conf->isLoadFunction)

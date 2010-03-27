@@ -6,8 +6,8 @@ class LtStoreMemory implements LtStore
 	public function add($key, $value, $ttl = 0)
 	{
 		if (isset($this->stack[$key]))
-		{
-			//
+		{ 
+			
 		}
 		$this->stack[$key] = $value;
 		return true;
@@ -31,9 +31,22 @@ class LtStoreMemory implements LtStore
 		return isset($this->stack[$key]) ? $this->stack[$key] : false;
 	}
 
+	/**
+	 * key不存在 返回false
+	 * 不管有没有过期,都更新数据
+	 * 
+	 * @return bool 
+	 */
 	public function update($key, $value, $ttl = 0)
 	{
-		$this->stack[$key] = $value;
-		return true;
+		if (!isset($this->stack[$key]))
+		{
+			return false;
+		}
+		else
+		{
+			$this->stack[$key] = $value;
+			return true;
+		}
 	}
 }
