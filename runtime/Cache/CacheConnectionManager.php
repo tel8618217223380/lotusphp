@@ -15,6 +15,7 @@ class LtCacheConnectionManager
 		else
 		{
 			trigger_error("no cache server can be connected");
+			return false;
 		}
 	}
 

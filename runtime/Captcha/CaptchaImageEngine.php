@@ -61,8 +61,6 @@ class LtCaptchaImageEngine
 
     public function drawImage($text)
     {
-        $ini = microtime(true);
-
         /**
          * * Initialization
          */

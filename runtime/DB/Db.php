@@ -58,6 +58,7 @@ class LtDb
 			$servers = self::$storeHandle->get("servers");
 			return key($servers);
 		}
+		return false;
 	}
 
 	protected function getNode()
@@ -71,5 +72,6 @@ class LtDb
 		{
 			return key($servers[$this->getGroup()]);
 		}
+		return false;
 	}
 }

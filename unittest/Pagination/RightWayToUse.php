@@ -21,7 +21,7 @@ class RightWayToUsePagination extends PHPUnit_Extensions_OutputTestCase
 		 * @todo 配置文件设置输出html形式 , 不使用handle, 这样也可以吧?
 		 */
 		$pagination->init();
-		$pager = $pagination->Pager($page, 25, 1000, '?page=:page');
+		$pager = $pagination->Pager(1, 25, 1000, '?page=:page');
 	}
 
 	protected function setUp()

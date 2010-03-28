@@ -38,6 +38,7 @@ class LtCache
 		{
 			return key(self::$servers);
 		}
+		return false;
 	}
 
 	protected function getNode()
@@ -50,5 +51,6 @@ class LtCache
 		{
 			return key(self::$servers[$this->getGroup()]);
 		}
+		return false;
 	}
 }

@@ -22,7 +22,7 @@ class LtSession
 			{
 				if (!@mkdir($sessionSavePath, 0777, true))
 				{
-					trigger_error("Can not create $cachePath");
+					trigger_error("Can not create $sessionSavePath");
 				}
 			}
 			session_save_path($sessionSavePath);
@@ -30,6 +30,7 @@ class LtSession
 		else
 		{
 			self::$saveHandle->conf = self::$configHandle->get("session.conf");
+			self::$saveHandle->init();
 			session_set_save_handler(
 				array(&self::$saveHandle, 'open'), 
 				array(&self::$saveHandle, 'close'),
