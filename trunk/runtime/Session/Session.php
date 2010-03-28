@@ -1,30 +1,35 @@
 <?php
 class LtSession
 {
-	static public $saveHandle;
-	public $conf;
+	public static $saveHandle;
+	public static $configHandle;
 
 	public function __construct()
 	{
-		$this->conf = new LtSessionConfig;
+		self::$configHandle = new LtConfig;
 	}
 
 	public function init()
-	{ 
+	{
+		if(!$sessionSavePath = self::$configHandle->get("session.save_path"))
+		{
+			$sessionSavePath = '/tmp/Lotus/session/';
+		}
 		if (!is_object(self::$saveHandle))
 		{
 			ini_set('session.save_handler', 'files');
-			if (!is_dir($this->conf->session_save_path))
+			if (!is_dir($sessionSavePath))
 			{
-				if (!@mkdir($this->conf->session_save_path, 0777, true))
+				if (!@mkdir($sessionSavePath, 0777, true))
 				{
 					trigger_error("Can not create $cachePath");
 				}
 			}
-			session_save_path($this->conf->session_save_path);
+			session_save_path($sessionSavePath);
 		}
 		else
 		{
+			self::$saveHandle->conf = self::$configHandle->get("session.conf");
 			session_set_save_handler(
 				array(&self::$saveHandle, 'open'), 
 				array(&self::$saveHandle, 'close'),
