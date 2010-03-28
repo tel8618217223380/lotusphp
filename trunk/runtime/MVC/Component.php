@@ -56,7 +56,7 @@ abstract class LtComponent
 	{
 		if (!$this->constructed)
 		{
-			DebugHelper::debug('SUBCLASS_NOT_CALL_PARENT_CONSTRUCTOR', array('class' => $actionClassName));
+			//DebugHelper::debug('SUBCLASS_NOT_CALL_PARENT_CONSTRUCTOR', array('class' => $actionClassName));
 		}
 		$this->afterConstruct();
 		$this->beforeExecute();

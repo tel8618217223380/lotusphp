@@ -75,7 +75,7 @@ class LtUrl
 				// 匹配变量
 				if (isset($args[$varname]))
 				{
-					$regex = "/^{$this->routingTable['reqs'][$varname]}\$/i";
+					$regex = "/^{$reqs[$varname]}\$/i";
 					if (preg_match($regex, $args[$varname]))
 					{
 						$ret = str_replace($v, $args[$varname], $ret);

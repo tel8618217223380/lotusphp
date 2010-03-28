@@ -143,9 +143,9 @@ class LtRouter
 				// 匹配变量
 				if (isset($url[$k]))
 				{
-					if (isset($this->routingTable['reqs'][$varname]))
+					if (isset($reqs[$varname]))
 					{
-						$regex = "/^{$this->routingTable['reqs'][$varname]}\$/i";
+						$regex = "/^{$reqs[$varname]}\$/i";
 						if (preg_match($regex, $url[$k]))
 						{
 							$ret[$varname] = $url[$k];

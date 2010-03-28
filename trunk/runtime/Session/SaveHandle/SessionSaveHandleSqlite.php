@@ -1,67 +1,71 @@
 <?php
 /**
-$ls = new LtSession;
-LtSession::$saveHandle = new LtSessionSaveHandleSqlite;
-$ls->init();
-*/
-class LtSessionSaveHandleSqlite
+ * $session = new LtSession;
+ * LtSession::$saveHandle = new LtSessionSqlite;
+ * $session->init();
+ */
+class LtSessionSqlite implements LtSessionSaveHandle
 {
-	public $lifeTime;
+	public $conf;
+
+	private $lifeTime; //session.gc_maxlifetime
 	private $dbHandle;
-	private $table;
+	private $dbName;
+	private $tableName;
 
 	public function __construct()
+	{ 
+		// --
+	}
+	public function init()
 	{
-		if (isset($this->options['life_time']))
+		if (isset($this->conf['gc_maxlifetime']))
 		{
-			$this->lifeTime = $this->options['life_time'];
+			$this->lifeTime = $this->conf['gc_maxlifetime'];
 		}
 		else
 		{
 			$this->lifeTime = get_cfg_var("session.gc_maxlifetime");
 		}
-
-		$this->table = 'lotus_session';
-		$dbHandle = sqlite_open('/tmp/Lotus/session/session_sqlite2.db', 0666);
-
-		if (!$dbHandle)
+		if (isset($this->conf['table_name']))
 		{
+			$this->tableName = $this->conf['table_name'];
+		}
+		else
+		{
+			$this->tableName = 'lotus_session';
+		}
+		if (isset($this->conf['db_name']))
+		{
+			$this->dbName = $this->conf['db_name'];
+		}
+		else
+		{
+			$this->dbName = '/tmp/Lotus/session/session_sqlite2.db';
+		}
+
+		if (!$this->dbHandle = sqlite_open($this->dbName, 0666))
+		{
+			trigger_error('session sqlite db error');
 			return false;
 		}
-		$this->dbHandle = $dbHandle;
-		$sql = "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' AND name='" . $this->table."'";
-		$res = sqlite_query($sql, $this->dbHandle);
-		$row = sqlite_fetch_array($res, SQLITE_ASSOC);
-		if (empty($row))
-		{
-			$this->runOnce();
-		}
+		return true;
 	}
 
-	public function runOnce()
-	{
-		$sql = "CREATE TABLE $this->table (
-			[session_id] VARCHAR(255)  NOT NULL PRIMARY KEY,
-			[session_expires] INTEGER DEFAULT '0' NOT NULL,
-			[session_data] TEXT  NULL
-		)";
-		return sqlite_exec($sql, $this->dbHandle);
-	}
-
-	function open($savePath, $sessName)
+	public function open($savePath, $sessName)
 	{
 		return true;
 	}
 
-	function close()
+	public function close()
 	{
-		$this->gc(ini_get('session.gc_maxlifetime'));
+		$this->gc($this->lifeTime);
 		return @sqlite_close($this->dbHandle);
 	}
 
-	function read($sessID)
+	public function read($sessID)
 	{
-		$res = sqlite_query("SELECT session_data AS d FROM $this->table
+		$res = sqlite_query("SELECT session_data AS d FROM $this->tableName
                            WHERE session_id = '$sessID'
                            AND session_expires > " . time(), $this->dbHandle);
 		if ($row = sqlite_fetch_array($res, SQLITE_ASSOC))
@@ -74,14 +78,14 @@ class LtSessionSaveHandleSqlite
 		}
 	}
 
-	function write($sessID, $sessData)
+	public function write($sessID, $sessData)
 	{
 		$newExp = time() + $this->lifeTime;
-		$res = sqlite_query("SELECT * FROM $this->table
+		$res = sqlite_query("SELECT * FROM $this->tableName
                            WHERE session_id = '$sessID'", $this->dbHandle);
 		if (sqlite_num_rows($res))
 		{
-			sqlite_exec("UPDATE $this->table
+			sqlite_exec("UPDATE $this->tableName
                         SET session_expires = '$newExp',
                         session_data = '$sessData'
                         WHERE session_id = '$sessID'", $this->dbHandle);
@@ -92,7 +96,7 @@ class LtSessionSaveHandleSqlite
 		}
 		else
 		{
-			sqlite_exec("INSERT INTO $this->table (
+			sqlite_exec("INSERT INTO $this->tableName (
                         session_id,
                         session_expires,
                         session_data)
@@ -108,9 +112,9 @@ class LtSessionSaveHandleSqlite
 		return false;
 	}
 
-	function destroy($sessID)
+	public function destroy($sessID)
 	{
-		sqlite_exec("DELETE FROM $this->table WHERE session_id = '$sessID'", $this->dbHandle);
+		sqlite_exec("DELETE FROM $this->tableName WHERE session_id = '$sessID'", $this->dbHandle);
 		if (sqlite_changes($this->dbHandle))
 		{
 			return true;
@@ -118,9 +122,26 @@ class LtSessionSaveHandleSqlite
 		return false;
 	}
 
-	function gc($sessMaxLifeTime)
+	public function gc($sessMaxLifeTime)
 	{
-		sqlite_exec("DELETE FROM $this->table WHERE session_expires < " . time(), $this->dbHandle);
+		sqlite_exec("DELETE FROM $this->tableName WHERE session_expires < " . time(), $this->dbHandle);
 		return sqlite_changes($this->dbHandle);
+	}
+
+	public function runOnce()
+	{
+		$sql = "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' AND name='" . $this->tableName . "'";
+		$res = sqlite_query($sql, $this->dbHandle);
+		$row = sqlite_fetch_array($res, SQLITE_ASSOC);
+		if (empty($row))
+		{
+			$sql = "CREATE TABLE $this->tableName (
+			[session_id] VARCHAR(255)  NOT NULL PRIMARY KEY,
+			[session_expires] INTEGER DEFAULT '0' NOT NULL,
+			[session_data] TEXT  NULL
+		)";
+			return sqlite_exec($sql, $this->dbHandle);
+		}
+		return false;
 	}
 }

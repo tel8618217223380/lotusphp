@@ -90,9 +90,13 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 	protected function setUp()
 	{
 		LtCaptcha::$configHandle = null;
+		LtCaptcha::$storeHandle = null;
+		LtConfig::$storeHandle = null;
 	}
 	protected function tearDown()
 	{
 		LtCaptcha::$configHandle = null;
+		LtCaptcha::$storeHandle = null;
+		LtConfig::$storeHandle = null;
 	}
 }
