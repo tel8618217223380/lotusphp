@@ -179,7 +179,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 添加新的测试条请增加一个数组 
 	 * array('允许加载的文件类型', '用于测试的文件名', '正确结果')
 	 */
-	public function isAllowedFileDataProvider()
+	public function allowedFileDataProvider()
 	{
 		return array(
 			array(
@@ -202,7 +202,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 添加新的测试条请增加一个数组 
 	 * array(array('禁止扫描的子目录'), '用于测试的目录名', '正确结果')
 	 */
-	public function isSkippedDirDataProvider()
+	public function skippedDirDataProvider()
 	{
 		$cd = dirname(__FILE__); //current dir, 当前目录
 		return array(
@@ -226,7 +226,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 添加新的测试条请增加一个数组 
 	 * array('文件', '函数名', '是否加载')
 	 */
-	public function isLoadFunctionDataProvider()
+	public function loadFunctionDataProvider()
 	{
 		$cd = dirname(__FILE__); //current dir, 当前目录
 		return array(
@@ -315,9 +315,9 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 测试addFileMap()能否正确的识别允许自动加载的文件 
 	 * addFileMap()依赖parseLibNames,addClass,addFunction
 	 * 
-	 * @dataProvider isAllowedFileDataProvider
+	 * @dataProvider allowedFileDataProvider
 	 */
-	public function testIsAllowedFile($extArray, $filename, $expected)
+	public function testAllowedFile($extArray, $filename, $expected)
 	{
 		$ap = new LtAutoloaderProxy;
 		$ap->conf["allow_file_extension"] = $extArray;
@@ -329,9 +329,9 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * scanDirs()依赖preparePath,addFileMap
 	 * 本测试依赖storeHandle->get
 	 * 
-	 * @dataProvider isSkippedDirDataProvider
+	 * @dataProvider skippedDirDataProvider
 	 */
-	public function testIsSkippedDir($dirBlackListArray, $dir, $expected)
+	public function testSkippedDir($dirBlackListArray, $dir, $expected)
 	{
 		$ap = new LtAutoloaderProxy;
 		$ap->conf["skip_dir_names"] = $dirBlackListArray;
@@ -343,9 +343,9 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	/**
 	 * 测试 conf->isLoadFunction 能否加载函数文件 
 	 * 
-	 * @dataProvider isLoadFunctionDataProvider
+	 * @dataProvider loadFunctionDataProvider
 	 */
-	public function testIsLoadFunction($pathfile, $function, $isLoadFunction)
+	public function testLoadFunction($pathfile, $function, $isLoadFunction)
 	{
 		$ap = new LtAutoloaderProxy;
 		// for update
