@@ -27,7 +27,7 @@ $lotus->option['app_name'] = 'app_name1';
 /**
  * 使用cache可以提升性能
  */
-$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/lotus/proj_dir/app_name1/");
+//$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/lotus/proj_dir/app_name1/");
 
 $lotus->init();
 /**
