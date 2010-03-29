@@ -14,6 +14,7 @@ include $lotusHome . "runtime/MVC/Action.php";
 include $lotusHome . "runtime/MVC/Component.php";
 include $lotusHome . "runtime/MVC/Context.php";
 include $lotusHome . "runtime/MVC/View.php";
+include $lotusHome . "runtime/MVC/TemplateView.php";
 
 include $lotusHome . "runtime/Validator/Validator.php";
 include $lotusHome . "runtime/Validator/ValidatorDtd.php";
