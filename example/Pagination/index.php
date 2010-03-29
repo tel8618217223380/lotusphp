@@ -7,7 +7,7 @@ include $lotusHome . "runtime/Pagination/Pagination.php";
 
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 $conf['pagination.pager']['num_display_entries'] = 9; //数字链接显示数量 
-$conf['pagination.pager']['num_links'] = 4; //当前页码的前面和后面链接的数量 
+$conf['pagination.pager']['num_links'] = 2; //当前页码的前面和后面链接的数量 
 $conf['pagination.pager']['per_page'] = 25; //每个页面中希望展示的项目数量 
 $conf['pagination.pager']['show_first'] = true;
 $conf['pagination.pager']['show_prev'] = true;
