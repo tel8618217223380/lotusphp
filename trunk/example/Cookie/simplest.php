@@ -16,6 +16,7 @@ include $lotusHome . "/runtime/StoreMemory.php";
  */
 
 $cookie = new LtCookie;
+
 $cookie->setCookie('newproj', 'hello', time() + 3600);
 // 值为数组
 $cookie->setCookie('test', array('a', 'b', 'c', 'd'), time() + 3600);

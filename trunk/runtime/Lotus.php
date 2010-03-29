@@ -89,25 +89,19 @@ class Lotus
 		 * init Autoloader
 		 */
 		$this->prepareAutoloader();
+
 		/**
 		 * init Config
 		 */
 		$this->prepareConfig();
-		/**
-		 * Initial other components
-		 */
-		// foreach (get_class_methods($this) as $method)
-		// {
-		// if (4 < strlen($method) && "init" == substr($method, 0, 4))
-		// {
-		// $this->$method();
-		// }
-		// }
-		$this->initDb();
+
 		/**
 		 * run MVC
 		 */
-		$this->mvcMode && $this->runMVC();
+		if ($this->mvcMode)
+		{
+			$this->runMVC();
+		}
 	}
 
 	protected function prepareAutoloader()
@@ -116,7 +110,6 @@ class Lotus
 		 * Load core component
 		 */
 		require_once $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
-		require_once $this->lotusRuntimeDir . "Autoloader/AutoloaderConfig.php";
 		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
 		/**
 		 * Prepare autoloader to load all lotus components and user-defined libraries;
@@ -167,51 +160,5 @@ class Lotus
 		$dispatcher->viewTplDir = $this->app_tmp . 'templateView/' . $this->app_name . '/';
 		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
 		$dispatcher->dispatchAction($router->module, $router->action);
-	}
-
-	protected function initDb()
-	{
-		if (!$this->devMode)
-		{
-			LtDb::$storeHandle = $this->cacheInst->getTDG('LtDB');
-		}
-		else
-		{
-			LtDb::$storeHandle = LtObjectUtil::singleton('LtStoreMemory');
-		}
-
-		$conf = LtObjectUtil::singleton("LtConfig");
-
-		if (!LtDb::$storeHandle->get("servers"))
-		{
-			if ($dbServer = $conf->get('db_only_one'))
-			{
-				$dcb = LtObjectUtil::singleton('LtDbConfigBuilder');
-				$dcb->addSingleHost($dbServer);
-			}
-			else if ($dbServer = $conf->get('db_server'))
-			{
-				$dcb = LtObjectUtil::singleton('LtDbConfigBuilder');
-				foreach($dbServer as $v)
-				{
-					$dcb->addHost($v[0], $v[1], $v[2], $v[3]);
-				}
-			}
-			else
-			{
-				return null;
-			}
-			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
-		}
-		/**
-		 * 只有一个库 只需初始化一次
-		 */
-		if ($dbServer = $conf->get('db_only_one'))
-		{
-			$db = LtObjectUtil::singleton('LtDb');
-			$db->group = "group_0";
-			$db->node = "node_0";
-			$db->init();
-		}
 	}
 }
