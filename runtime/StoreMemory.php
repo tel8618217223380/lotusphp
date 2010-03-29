@@ -6,10 +6,15 @@ class LtStoreMemory implements LtStore
 	public function add($key, $value, $ttl = 0)
 	{
 		if (isset($this->stack[$key]))
-		{ 
-			
+		{
+			if (0 == $this->stack[$key]['ttl'] || time() < $this->stack[$key]['ttl'])
+			{
+				return false;
+			}
 		}
-		$this->stack[$key] = $value;
+		$this->stack[$key]['value'] = $value;
+		$this->stack[$key]['ttl'] = (0 == $ttl) ? 0 : (time() + $ttl);
+		$this->stack[$key]['modified'] = time();
 		return true;
 	}
 
@@ -28,7 +33,29 @@ class LtStoreMemory implements LtStore
 
 	public function get($key, $doNotModifiedSince = null)
 	{
-		return isset($this->stack[$key]) ? $this->stack[$key] : false;
+		if (!isset($this->stack[$key]))
+		{
+			return false;
+		}
+		else
+		{
+			if (0 != $this->stack[$key]['ttl'] && time() > $this->stack[$key]['ttl'])
+			{
+				unset($this->stack[$key]);
+				return false;
+			}
+			else
+			{
+				if ($doNotModifiedSince && $this->stack[$key]['modified'] < $doNotModifiedSince)
+				{
+					return false;
+				}
+				else
+				{
+					return $this->stack[$key]['value'];
+				}
+			}
+		}
 	}
 
 	/**
@@ -45,7 +72,9 @@ class LtStoreMemory implements LtStore
 		}
 		else
 		{
-			$this->stack[$key] = $value;
+			$this->stack[$key]['value'] = $value;
+			$this->stack[$key]['ttl'] = (0 == $ttl) ? 0 : (time() + $ttl);
+			$this->stack[$key]['modified'] = time();
 			return true;
 		}
 	}

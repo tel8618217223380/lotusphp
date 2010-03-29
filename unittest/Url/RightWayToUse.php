@@ -123,6 +123,7 @@ class RightWayToUseUrl extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
+		LtUrl::$configHandle = null;
 	}
 	protected function tearDown()
 	{

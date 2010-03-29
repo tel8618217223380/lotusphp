@@ -17,6 +17,7 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "ObjectUtil/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Pagination/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "RBAC/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Router/AllTest.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Store/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Url/AllTest.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "Validator/AllTest.php";
 
@@ -38,6 +39,7 @@ class AllTest
         $suite->addTestSuite('PaginationAllTest');
         $suite->addTestSuite('RBACAllTest');
         $suite->addTestSuite('RouterAllTest');
+        $suite->addTestSuite('StoreAllTest');
         $suite->addTestSuite('UrlAllTest');
         $suite->addTestSuite('ValidatorAllTest');
 
