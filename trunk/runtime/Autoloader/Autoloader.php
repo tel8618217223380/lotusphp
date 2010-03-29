@@ -1,16 +1,40 @@
 <?php
 class LtAutoloader
 {
+	public $conf = array(
+		/**
+		 * 是否自动加载定义了函数的文件
+		 * 
+		 * 可选项：
+		 *  # true   自动加载
+		 *  # false  跳过函数，只自动加载定义了class或者interface的文件
+		 */
+		"load_function" => true,
+
+		/**
+		 * 要扫描的文件类型
+		 * 
+		 * 若该属性设置为array("php","inc","php3")，则扩展名为"php","inc","php3"的文件会被扫描，其它扩展名的文件会被忽略
+		 */
+		"allow_file_extension" => array("php", "inc"),
+
+		/**
+		 * 不扫描的目录
+		 * 
+		 * 若该属性设置为array(".svn", ".setting")，则所有名为".setting"的目录也会被忽略
+		 */
+		"skip_dir_names" => array(".svn"),
+
+		/**
+		 * 存放临时文件的地址
+		 */
+		"mapping_file_root" => "/tmp/Lotus/autoloader/",
+	);
+
 	static public $storeHandle;
 	public $autoloadPath;
-	public $conf;
 	protected $functionFileMapping;
 	protected $fileStore;
-
-	public function __construct()
-	{
-		$this->conf = new LtAutoloaderConfig;
-	}
 
 	public function init()
 	{
@@ -18,7 +42,7 @@ class LtAutoloader
 		{
 			self::$storeHandle = new LtStoreMemory;
 			$this->fileStore = new LtStoreFile;
-			$this->fileStore->setFileRoot($this->conf->mappingFileRoot);
+			$this->fileStore->setFileRoot($this->conf["mapping_file_root"]);
 		} 
 		// Whether scanning directory
 		if (0 == self::$storeHandle->get(".class_total") && 0 == self::$storeHandle->get(".function_total"))
@@ -40,7 +64,7 @@ class LtAutoloader
 			unset($autoloadPath);
 		} 
 		// Whether loading function files
-		if ($this->conf->isLoadFunction)
+		if ($this->conf["load_function"])
 		{
 			$this->loadFunction();
 		}
@@ -132,7 +156,7 @@ class LtAutoloader
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
-				if (in_array($file, array(".", "..")) || in_array($file, $this->conf->skipDirNames))
+				if (in_array($file, array(".", "..")) || in_array($file, $this->conf["skip_dir_names"]))
 				{
 					continue;
 				}
@@ -244,7 +268,7 @@ class LtAutoloader
 
 	protected function addFileMap($file)
 	{
-		if (!in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf->allowFileExtension))
+		if (!in_array(pathinfo($file, PATHINFO_EXTENSION), $this->conf["allow_file_extension"]))
 		{
 			return false;
 		}

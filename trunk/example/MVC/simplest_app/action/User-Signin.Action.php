@@ -10,7 +10,6 @@ class UserSigninAction extends LtAction
 				"ban" => "/fuck/",
 				),
 			array(
-				// "max_length" 使用默认的错误消息，在$this->conf->errorMessages里
 				"mask" => "用户名只能由数字或字组成",
 				"ban" => "用户名不能包含脏话"
 				)

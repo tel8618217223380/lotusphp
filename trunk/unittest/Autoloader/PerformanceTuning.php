@@ -46,7 +46,7 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		 */
 		$autoloader = new LtAutoloader;
 		LtAutoloader::$storeHandle = $cacheHandle;
-		$autoloader->conf->isLoadFunction = false;
+		$autoloader->conf["load_function"] = false;
 		$autoloader->autoloadPath = $autoloadPath;
 		$autoloader->init();
 		$this->assertTrue(class_exists("HelloWorld"));
@@ -61,7 +61,7 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		{
 			$autoloader = new LtAutoloader;
 			LtAutoloader::$storeHandle = $cacheHandle;
-			$autoloader->conf->isLoadFunction = false;
+			$autoloader->conf["load_function"] = false;
 			$autoloader->autoloadPath = $autoloadPath;
 			$autoloader->init();
 		}

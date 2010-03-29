@@ -10,11 +10,11 @@ class RightWayToUseCookie extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐） 
 	 * -------------------------------------------------------------------
 	 * LtCookie要求： 
-	 *  # 使用LtCookie必须设置密钥（LtCookie->conf->secretKey）
+	 *  # 使用LtCookie必须设置密钥（cookie.secret_key）
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCookie建议（不强求）：
-	 *  # 使用杂乱无章的字符串作为密钥（LtCookie->conf->secretKey）
+	 *  # 使用杂乱无章的字符串作为密钥
 	 * 
 	 * 本测试用例期望效果：
 	 * 通过Web script对HTTP头(Cookie在http头里)进行单元测试，实际使用方法和效果参见unittest/Cookie/cookie_proxy.php

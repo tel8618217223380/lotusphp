@@ -130,10 +130,10 @@ class Lotus
 		/**
 		 * 开发模式下保存分析结果
 		 */
-		$autoloader->conf->mappingFileRoot = $this->app_tmp . 'autoloader/';
+		$autoloader->conf["mapping_file_root"] = $this->app_tmp . 'autoloader/';
 		if (isset($this->option["is_load_function"]))
 		{
-			$autoloader->conf->isLoadFunction = $this->option["is_load_function"];
+			$autoloader->conf["load_function"] = $this->option["load_function"];
 		}
 		if (!$this->devMode)
 		{
