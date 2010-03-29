@@ -6,31 +6,41 @@ class LtPagination
 
 	public function __construct()
 	{
-		$this->conf['pagination.pager']['num_display_entries'] = 9; //数字链接显示数量 
-		$this->conf['pagination.pager']['num_links'] = 4; //当前页码的前面和后面链接的数量 
-		$this->conf['pagination.pager']['per_page'] = 25; //每个页面中希望展示的项目数量 
-		$this->conf['pagination.pager']['show_first'] = true;
-		$this->conf['pagination.pager']['show_prev'] = true;
-		$this->conf['pagination.pager']['show_next'] = true;
-		$this->conf['pagination.pager']['show_last'] = true;
-		$this->conf['pagination.pager']['show_goto'] = true;
-		$this->conf['pagination.pager']['show_info'] = true;
-		$this->conf['pagination.pager']['first_text'] = 'First';
-		$this->conf['pagination.pager']['prev_text'] = 'Prev';
-		$this->conf['pagination.pager']['next_text'] = 'Next';
-		$this->conf['pagination.pager']['last_text'] = 'Last';
-		$this->conf['pagination.pager']['full_tag_open'] = '<div class="pages">';
-		$this->conf['pagination.pager']['full_tag_close'] = '</div>';
-		$this->conf['pagination.pager']['num_tag_open'] = '';
-		$this->conf['pagination.pager']['num_tag_close'] = '';
-		$this->conf['pagination.pager']['link_tag_open'] = '<a href=":url">';
-		$this->conf['pagination.pager']['link_tag_close'] = '</a>';
-		$this->conf['pagination.pager']['link_tag_cur_open'] = '<strong>';
-		$this->conf['pagination.pager']['link_tag_cur_close'] = '</strong>';
-		$this->conf['pagination.pager']['button_tag_open'] = '<a href=":url" style="font-weight:bold">';
-		$this->conf['pagination.pager']['button_tag_close'] = '</a>';
-		$this->conf['pagination.pager']['button_tag_empty_open'] = '';
-		$this->conf['pagination.pager']['button_tag_empty_close'] = '';
+		$this->conf['per_page'] = 25; //每个页面中希望展示的项目数量 
+		$this->conf['num_display_entries'] = 9; //数字链接显示数量 
+		$this->conf['num_links'] = 4; //当前页码的前面和后面链接的数量 
+
+		$this->conf['num_point_start_end'] = 4; //Number of start and end points
+
+		$this->conf['show_point'] = true;
+		$this->conf['show_first'] = true;
+		$this->conf['show_prev'] = true;
+		$this->conf['show_next'] = true;
+		$this->conf['show_last'] = true;
+		$this->conf['show_goto'] = false;
+		$this->conf['show_info'] = false;
+
+		$this->conf['first_text'] = 'First';
+		$this->conf['prev_text'] = 'Prev';
+		$this->conf['next_text'] = 'Next';
+		$this->conf['last_text'] = 'Last';
+		$this->conf['point_text'] = '...';
+
+		$this->conf['full_tag_open'] = '<div class="pages">';
+		$this->conf['full_tag_close'] = '</div>';
+		$this->conf['num_tag_open'] = '';
+		$this->conf['num_tag_close'] = '';
+		$this->conf['link_tag_open'] = '<a href=":url">';
+		$this->conf['link_tag_close'] = '</a>';
+		$this->conf['link_tag_cur_open'] = '<strong>';
+		$this->conf['link_tag_cur_close'] = '</strong>';
+		$this->conf['button_tag_open'] = '<a href=":url" style="font-weight:bold">';
+		$this->conf['button_tag_close'] = '</a>';
+		$this->conf['button_tag_empty_open'] = '<span>';
+		$this->conf['button_tag_empty_close'] = '</span>';
+		$this->conf['point_tag_open'] = '<span>';
+		$this->conf['point_tag_close'] = '</span>';
+
 		self::$configHandle = new LtConfig;
 	}
 
@@ -74,17 +84,17 @@ class LtPagination
 		$pager .= $this->renderButton('prev', $pagenumber, $pagecount, $baseurl);
 
 		$startPoint = 1;
-		$endPoint = 9;
+		$endPoint = $this->conf['num_display_entries'];
 
-		if ($pagenumber > 4)
+		if ($pagenumber > $this->conf['num_links'])
 		{
-			$startPoint = $pagenumber - 4;
-			$endPoint = $pagenumber + 4;
+			$startPoint = $pagenumber - $this->conf['num_links'];
+			$endPoint = $pagenumber + $this->conf['num_links'];
 		}
 
 		if ($endPoint > $pagecount)
 		{
-			$startPoint = $pagecount - 8;
+			$startPoint = $pagecount + 1 - $this->conf['num_display_entries'];
 			$endPoint = $pagecount;
 		}
 
