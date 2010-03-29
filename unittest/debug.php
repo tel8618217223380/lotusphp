@@ -10,4 +10,4 @@ require_once "phpunit_bootstrap.inc.php";
 require_once './Cache/common.inc.php';
 require_once './Cache/RightWayToUse.php';
 $i = new RightWayToUseCache;
-$i->testMostUsedWay();
+$i->testKeyValue();

@@ -48,7 +48,7 @@ class LtDbConnectionManager
 
 	protected function getCachedConnection($group, $node, $role)
 	{
-		$servers = LtDb::$storeHandle->get("servers");
+		$servers = LtDb::$configHandle->get("db.servers");
 		foreach($servers[$group][$node][$role] as $hostConfig)
 		{
 			$key = $this->getConnectionKey($hostConfig);
@@ -79,7 +79,7 @@ class LtDbConnectionManager
 
 	protected function getNewConnection($group, $node, $role)
 	{
-		$servers = LtDb::$storeHandle->get("servers");
+		$servers = LtDb::$configHandle->get("db.servers");
 		$hostTotal = count($servers[$group][$node][$role]);
 		$hostIndexArray = array_keys($servers[$group][$node][$role]);
 		while ($hostTotal)
