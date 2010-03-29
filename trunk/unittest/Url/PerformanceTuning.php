@@ -74,9 +74,12 @@ class PerformanceTuningUrl extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
+		LtUrl::$configHandle = null;
+		LtConfig::$storeHandle = null;
 	}
 	protected function tearDown()
 	{
 		LtUrl::$configHandle = null;
+		LtConfig::$storeHandle = null;
 	}
 }
