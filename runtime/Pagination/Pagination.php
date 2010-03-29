@@ -7,18 +7,16 @@ class LtPagination
 	public function __construct()
 	{
 		$this->conf['per_page'] = 25; //每个页面中希望展示的项目数量 
-		$this->conf['num_display_entries'] = 9; //数字链接显示数量 
-		$this->conf['num_links'] = 4; //当前页码的前面和后面链接的数量 
-
-		$this->conf['num_point_start_end'] = 4; //Number of start and end points
-
-		$this->conf['show_point'] = true;
+		$this->conf['num_links_show'] = 9; //数字链接显示数量 
+		$this->conf['num_point_start_end'] = 2; //“点”前边和后边的链接数量
 		$this->conf['show_first'] = true;
 		$this->conf['show_prev'] = true;
 		$this->conf['show_next'] = true;
 		$this->conf['show_last'] = true;
 		$this->conf['show_goto'] = false;
 		$this->conf['show_info'] = false;
+		$this->conf['show_point'] = true;
+		$this->conf['show_empty_button'] = false;
 
 		$this->conf['first_text'] = 'First';
 		$this->conf['prev_text'] = 'Prev';
@@ -64,8 +62,14 @@ class LtPagination
 		$per_page = empty($this->conf['per_page']) ? 25 : $this->conf['per_page'];
 		$pagecount = ceil($count / $per_page);
 		$pager = $this->renderPager($page, $pagecount, $url);
-		$pager .= $this->renderButton('goto', $page, $pagecount, $url);
-		$pager .= $this->renderButton('info', $page, $pagecount, $url);
+		if ($this->conf['show_goto'])
+		{
+			$pager .= $this->renderButton('goto', $page, $pagecount, $url);
+		}
+		if ($this->conf['show_info'])
+		{
+			$pager .= $this->renderButton('info', $page, $pagecount, $url);
+		}
 		return $this->conf['full_tag_open'] . $pager . $this->conf['full_tag_close'];
 	}
 
@@ -84,17 +88,17 @@ class LtPagination
 		$pager .= $this->renderButton('prev', $pagenumber, $pagecount, $baseurl);
 
 		$startPoint = 1;
-		$endPoint = $this->conf['num_display_entries'];
-
-		if ($pagenumber > $this->conf['num_links'])
+		$endPoint = $this->conf['num_links_show'];
+		$num_links = ceil($this->conf['num_links_show'] / 2) - 1;
+		if ($pagenumber > $num_links)
 		{
-			$startPoint = $pagenumber - $this->conf['num_links'];
-			$endPoint = $pagenumber + $this->conf['num_links'];
+			$startPoint = $pagenumber - $num_links;
+			$endPoint = $pagenumber + $num_links;
 		}
 
 		if ($endPoint > $pagecount)
 		{
-			$startPoint = $pagecount + 1 - $this->conf['num_display_entries'];
+			$startPoint = $pagecount + 1 - $this->conf['num_links_show'];
 			$endPoint = $pagecount;
 		}
 
@@ -102,7 +106,21 @@ class LtPagination
 		{
 			$startPoint = 1;
 		}
+
 		$currentButton = '';
+		if ($this->conf['show_point'])
+		{
+			for($page = 1; $page < $startPoint; $page++)
+			{
+				$url = str_replace(':page', $page, $baseurl);
+				if ($page > $this->conf['num_point_start_end'])
+				{
+					$currentButton .= $this->conf['point_tag_open'] . $this->conf['point_text'] . $this->conf['point_tag_close'];
+					break;
+				}
+				$currentButton .= str_replace(':url', $url, $this->conf['link_tag_open']) . $page . $this->conf['link_tag_close'];
+			}
+		}
 		for ($page = $startPoint; $page <= $endPoint; $page++)
 		{
 			$url = str_replace(':page', $page, $baseurl);
@@ -112,6 +130,21 @@ class LtPagination
 			}
 			else
 			{
+				$currentButton .= str_replace(':url', $url, $this->conf['link_tag_open']) . $page . $this->conf['link_tag_close'];
+			}
+		}
+		if ($this->conf['show_point'])
+		{
+			$page = $pagecount - $this->conf['num_point_start_end'];
+			if ($page > $endPoint)
+			{
+				$currentButton .= $this->conf['point_tag_open'] . $this->conf['point_text'] . $this->conf['point_tag_close'];
+			}
+
+			for($page += 1; $page >= $endPoint && $page <= $pagecount; $page++)
+			{
+				if ($page == $endPoint) continue;
+				$url = str_replace(':page', $page, $baseurl);
 				$currentButton .= str_replace(':url', $url, $this->conf['link_tag_open']) . $page . $this->conf['link_tag_close'];
 			}
 		}
@@ -170,14 +203,14 @@ class LtPagination
 		{
 			if ($pagenumber <= 1)
 			{
-				$button = $this->conf['button_tag_empty_open'] . $bottenText . $this->conf['button_tag_empty_close'];
+				$button = $this->conf['show_empty_button'] ? $this->conf['button_tag_empty_open'] . $bottenText . $this->conf['button_tag_empty_close'] : '';
 			}
 		}
 		else
 		{
 			if ($pagenumber >= $pagecount)
 			{
-				$button = $this->conf['button_tag_empty_open'] . $bottenText . $this->conf['button_tag_empty_close'];
+				$button = $this->conf['show_empty_button'] ? $this->conf['button_tag_empty_open'] . $bottenText . $this->conf['button_tag_empty_close'] : '';
 			}
 		}
 		return $button;
