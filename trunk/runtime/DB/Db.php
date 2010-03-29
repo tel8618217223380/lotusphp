@@ -1,18 +1,19 @@
 <?php
 class LtDb
 {
-	static public $storeHandle;
+	static public $configHandle;
 
 	public $group;
 	public $node;
 	protected $dbh;
 
+	public function __construct()
+	{
+			self::$configHandle = new LtConfig;		
+	}
+
 	public function init()
 	{
-		if (!is_object(self::$storeHandle))
-		{
-			self::$storeHandle = new LtStoreMemory;
-		}
 		$this->dbh = new LtDbHandle;
 		$this->dbh->group = $this->getGroup();
 		$this->dbh->node = $this->getNode();
@@ -53,9 +54,9 @@ class LtDb
 		{
 			return $this->group;
 		}
-		else if (1 == count(self::$storeHandle->get("servers")))
+		else if (1 == count(self::$configHandle->get("db.servers")))
 		{
-			$servers = self::$storeHandle->get("servers");
+			$servers = self::$configHandle->get("db.servers");
 			return key($servers);
 		}
 		return false;
@@ -67,7 +68,7 @@ class LtDb
 		{
 			return $this->node;
 		}
-		$servers = self::$storeHandle->get("servers");
+		$servers = self::$configHandle->get("db.servers");
 		if (1 == count($servers[$this->getGroup()]))
 		{
 			return key($servers[$this->getGroup()]);

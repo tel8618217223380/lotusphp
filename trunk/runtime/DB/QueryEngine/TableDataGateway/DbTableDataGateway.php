@@ -54,14 +54,14 @@ class LtDbTableDataGateway
 		{
 			return true;
 		}
-		$servers = LtDb::$storeHandle->get('servers');
+		$servers = LtDb::$configHandle->get('db.servers');
 		$group = $this->dbh->group;
 		$node = $this->dbh->node;
 		$role = $this->dbh->role;
 		$table = $this->tableName;
 		$host = key($servers[$group][$node][$role]);
 		$key = md5($group . $node . $role . $table . $host . $table);
-		if (!$value = LtDb::$storeHandle->get($key))
+		if (!$value = LtDb::$configHandle->get($key))
 		{
 			$sql = $this->dbh->sqlAdapter->showFields($this->tableName);
 			$rs = $this->dbh->query($sql);
@@ -77,7 +77,7 @@ class LtDbTableDataGateway
 
 			$value['fields'] = $this->fields;
 			$value['primaryKey'] = $this->primaryKey;
-			LtDb::$storeHandle->add($key, $value);
+			LtDb::$configHandle->addConfig(array($key => $value));
 		}
 		else
 		{
