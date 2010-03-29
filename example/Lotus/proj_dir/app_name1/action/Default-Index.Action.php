@@ -12,6 +12,7 @@ class DefaultIndexAction extends LtAction
 	public function execute()
 	{
 		$db = new LtDb;
+		LtDb::$configHandle = C("LtConfig");
 		$db->group = "group_8";
 		$db->node = "node_8";
 		$db->init(); 
