@@ -6,19 +6,23 @@ include $lotusHome . "runtime/StoreMemory.php";
 include $lotusHome . "runtime/Pagination/Pagination.php";
 
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
-$conf['pagination.pager']['num_display_entries'] = 9; //数字链接显示数量 
-$conf['pagination.pager']['num_links'] = 2; //当前页码的前面和后面链接的数量 
+$conf['pagination.pager']['num_links_show'] = 9; //数字链接显示数量 
+$conf['pagination.pager']['num_point_start_end'] = 2; //“点”前边和后边的链接数量
 $conf['pagination.pager']['per_page'] = 25; //每个页面中希望展示的项目数量 
 $conf['pagination.pager']['show_first'] = true;
 $conf['pagination.pager']['show_prev'] = true;
 $conf['pagination.pager']['show_next'] = true;
 $conf['pagination.pager']['show_last'] = true;
-$conf['pagination.pager']['show_goto'] = true;
-$conf['pagination.pager']['show_info'] = true;
+$conf['pagination.pager']['show_goto'] = false;
+$conf['pagination.pager']['show_info'] = false;
+$conf['pagination.pager']['show_point'] = true;
+
+$conf['pagination.pager']['show_empty_button'] = false;
 $conf['pagination.pager']['first_text'] = 'First';
 $conf['pagination.pager']['prev_text'] = 'Prev';
 $conf['pagination.pager']['next_text'] = 'Next';
 $conf['pagination.pager']['last_text'] = 'Last';
+$conf['pagination.pager']['point_text'] = '...';
 $conf['pagination.pager']['full_tag_open'] = '<div id="pager">';
 $conf['pagination.pager']['full_tag_close'] = '</div>';
 $conf['pagination.pager']['num_tag_open'] = '<ul class="pages">';
@@ -31,10 +35,13 @@ $conf['pagination.pager']['button_tag_open'] = '<li class="pgNext"><a href=":url
 $conf['pagination.pager']['button_tag_close'] = '</a></li>';
 $conf['pagination.pager']['button_tag_empty_open'] = '<li class="pgNext pgEmpty">';
 $conf['pagination.pager']['button_tag_empty_close'] = '</li>';
+$conf['pagination.pager']['point_tag_open'] = '<li>';
+$conf['pagination.pager']['point_tag_close'] = '</li>';
+
 $pagination = new LtPagination;
 LtPagination::$configHandle->addConfig($conf);
 $pagination->init();
-$pager = $pagination->Pager($page, 1000, '?page=:page');
+$pager = $pagination->pager($page, 1000, '?page=:page');
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
