@@ -4,18 +4,14 @@ require_once $lotusHome . "runtime/Store.php";
 require_once $lotusHome . "runtime/StoreMemory.php";
 require_once $lotusHome . "runtime/StoreFile.php";
 require_once $lotusHome . "runtime/Autoloader/Autoloader.php";
-require_once $lotusHome . "runtime/Autoloader/AutoloaderConfig.php";
 
 /**
  * 用这个类把LtAutoloader的protected属性和方法暴露出来测试
  */
 class LtAutoloaderProxy extends LtAutoloader
 {
-	public $conf;
-
 	public function __construct()
 	{
-		parent::__construct();
 		parent::$storeHandle = new LtStoreMemory;
 	}
 	public function __get($prop)
