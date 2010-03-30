@@ -122,10 +122,10 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
-		LtDb::$storeHandle = null;
+		LtDb::$configHandle = null;
 	}
 	protected function tearDown()
 	{
-		LtDb::$storeHandle = null;
+		LtDb::$configHandle = null;
 	}
 }

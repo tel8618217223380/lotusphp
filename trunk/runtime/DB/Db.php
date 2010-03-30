@@ -9,7 +9,7 @@ class LtDb
 
 	public function __construct()
 	{
-			self::$configHandle = new LtConfig;		
+		self::$configHandle = new LtConfig;		
 	}
 
 	public function init()
@@ -54,9 +54,9 @@ class LtDb
 		{
 			return $this->group;
 		}
-		else if (1 == count(self::$configHandle->get("db.servers")))
+		$servers = self::$configHandle->get("db.servers");
+		if (1 == count($servers))
 		{
-			$servers = self::$configHandle->get("db.servers");
 			return key($servers);
 		}
 		return false;

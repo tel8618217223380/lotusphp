@@ -33,11 +33,13 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			array("adapter" => "phps",
 				"host" => "/tmp/Lotus/unittest/cache/phps"
 				));
-		LtCache::$servers = $ccb->getServers();
 		/**
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
+
+		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+
 		$cache->init();
 		/**
 		 * 初始化完毕, 测试其效果, 使用不同的tableName防止key冲突
@@ -57,7 +59,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertTrue($ch->add("key1", "value1"));
 		$this->assertFalse($ch->add("key1", "value1"));
 		$ch->del("key1");
-		LtCache::$servers = null;
 	}
 
 	/**
@@ -92,14 +93,15 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		{
 			$ccb->addHost("group_memcached", "node_0", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
 		}
-		LtCache::$servers = $ccb->getServers();
 
 		/**
 		 * 实例化组件入口类
 		 */
-		foreach(LtCache::$servers as $group => $iDotCare)
+		$cache = new LtCache;
+		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$servers = LtCache::$configHandle->get("cache.servers");
+		foreach($servers as $group => $iDotCare)
 		{
-			$cache = new LtCache;
 			$cache->group = $group;
 			$cache->node = "node_0";
 			$cache->init();
@@ -118,7 +120,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 				$this->assertFalse($ch->get($set[0]));
 			}
 		}
-		LtCache::$servers = null;
 	}
 	/**
 	 * 
@@ -186,7 +187,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 					));
 			$this->assertFalse(unserialize($result));
 		}
-		LtCache::$servers = null;
 	}
 
 	public function testOtherCacheAdapter()
@@ -209,17 +209,19 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		{
 			$ccb->addHost("group_memcached", "node_0", "master", array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
 		}
-		LtCache::$servers = $ccb->getServers();
-
 		/**
 		 * 实例化组件入口类
 		 */
-		foreach(LtCache::$servers as $k => $v)
+		$cache = new LtCache;
+		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$servers = LtCache::$configHandle->get("cache.servers");
+		foreach($servers as $k => $v)
 		{
-			$cache = new LtCache;
+			
 			$cache->group = $k;
 			$cache->node = "node_0";
 			$cache->init();
+			
 			echo "\n--testOtherCacheAdapter--" . $cache->group . '--' . $cache->node . "--\n";
 
 			$ch = $cache->getTDG("test_agdu");
@@ -251,7 +253,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			sleep(2);
 			$this->assertFalse($ch->get("test_key"));
 		}
-		LtCache::$servers = null;
 	}
 
 	public function testMostUsedWayWithMultiGroup()
@@ -262,12 +263,16 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ccb = new LtCacheConfigBuilder;
 		$ccb->addHost("phps_cache_1", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache_files_1"));
 		$ccb->addHost("phps_cache_2", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache_files_2"));
-		LtCache::$servers = $ccb->getServers();
+
 
 		/**
 		 * 操作prod_info
 		 */
 		$cache1 = new LtCache;
+		/**
+		LtCache 创建实例后初始化$configHandle
+		*/
+		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 		$cache1->group = "phps_cache_1";
 		$cache1->init();
 
@@ -294,7 +299,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertEquals("new_value", $ch->get("key_1"));
 		$this->assertTrue($ch->del("key_1"));
 		$this->assertFalse($ch->get("key_1"));
-		LtCache::$servers = null;
 	}
 
 	/**
@@ -383,16 +387,15 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 				),
 			$ccb->getServers()
 			); //end $this->assertEquals
-		LtCache::$servers = null;
 	}
 
 	protected function setUp()
 	{
-		LtCache::$servers = null;
+		LtCache::$configHandle = null;
 	}
 
 	protected function tearDown()
 	{
-		LtCache::$servers = null;
+		LtConfig::$storeHandle = null;	
 	}
 }

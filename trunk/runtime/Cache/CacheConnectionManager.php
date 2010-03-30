@@ -21,7 +21,7 @@ class LtCacheConnectionManager
 
 	protected function getNewConnection($group, $node, $role)
 	{
-		$servers = LtCache::$servers;
+		$servers = LtCache::$configHandle->get("cache.servers");
 		$hostTotal = count($servers[$group][$node][$role]);
 		$hostIndexArray = array_keys($servers[$group][$node][$role]);
 		while ($hostTotal)
