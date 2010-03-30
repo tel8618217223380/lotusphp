@@ -16,13 +16,13 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/testPerformance/")); 
 		// $ccb->addSingleHost(array("adapter" => "Xcache", "key_prefix" => "test_xcache_"));
 		
-		
-		LtCache::$servers = $ccb->getServers();
-
 		/**
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
+
+		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+
 		$cache->init(); 
 		// 初始化完毕，测试其效果
 		$ch = $cache->getTDG('test-performance');
@@ -69,6 +69,6 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 	}
 	protected function tearDown()
 	{
-		LtCache::$servers = null;
+
 	}
 }

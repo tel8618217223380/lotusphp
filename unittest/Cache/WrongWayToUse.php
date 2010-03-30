@@ -18,11 +18,12 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		 */
 		$ccb = new LtCacheConfigBuilder;
 		$ccb->addSingleHost(array("adapter" => "not_exists", "host" => "/tmp/Lotus/unittest/cache/"));
-		LtCache::$servers = $ccb->getServers();
+
 		/**
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
+		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 		$cache->init();
 		$ch = $cache->getTDG('test');
 		$ch->add("test_key", "test_value");
@@ -39,11 +40,11 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		 */
 		$ccb = new LtCacheConfigBuilder;
 		$ccb->addSingleHost(array("adapter" => "phps"));
-		LtCache::$servers = $ccb->getServers();
 		/**
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
+		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 		$cache->init();
 		$ch = $cache->getTDG('test');
 		$ch->add("test_key", "test_value");
@@ -61,11 +62,11 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		 */
 		$ccb = new LtCacheConfigBuilder;
 		$ccb->addSingleHost(array("adapter" => "file"));
-		LtCache::$servers = $ccb->getServers();
 		/**
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
+		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 		$cache->init();
 		$ch = $cache->getTDG('test');
 		$ch->add("test_key", "test_value");
@@ -74,11 +75,9 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 
 	protected function setUp()
 	{
-		LtCache::$servers = null;
 	}
 
 	protected function tearDown()
 	{
-		LtCache::$servers = null;
 	}
 }

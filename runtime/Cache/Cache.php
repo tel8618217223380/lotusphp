@@ -1,11 +1,17 @@
 <?php
 class LtCache
 {
-	static public $servers;
+	static public $configHandle;
+
 	public $group;
 	public $node;
 
 	protected $ch;
+
+	public function __construct()
+	{
+		self::$configHandle = new LtConfig;		
+	}
 
 	public function init()
 	{
@@ -34,9 +40,10 @@ class LtCache
 		{
 			return $this->group;
 		}
-		elseif (1 == count(self::$servers))
+		$servers = self::$configHandle->get("cache.servers");
+		if (1 == count($servers))
 		{
-			return key(self::$servers);
+			return key($servers);
 		}
 		return false;
 	}
@@ -47,9 +54,10 @@ class LtCache
 		{
 			return $this->node;
 		}
-		if (1 == count(self::$servers[$this->getGroup()]))
+		$servers = self::$configHandle->get("cache.servers");
+		if (1 == count($servers[$this->getGroup()]))
 		{
-			return key(self::$servers[$this->getGroup()]);
+			return key($servers[$this->getGroup()]);
 		}
 		return false;
 	}
