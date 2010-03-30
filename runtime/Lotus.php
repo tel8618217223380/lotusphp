@@ -137,11 +137,15 @@ class Lotus
 	protected function prepareConfig()
 	{
 		$conf = LtObjectUtil::singleton("LtConfig");
-		$configFile = $this->app_dir . 'conf/conf.php';
 		if (!$this->devMode)
 		{
+			$configFile = $this->app_dir . 'conf/conf.php';
 			$tb = sprintf("%u", crc32(serialize($configFile)));
 			LtConfig::$storeHandle = $this->cacheInst->getTDG($tb);
+		}
+		else
+		{
+			$configFile = $this->app_dir . 'conf/conf_dev.php';
 		}
 		$conf->init();
 		$conf->loadConfigFile($configFile);
