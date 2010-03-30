@@ -7,20 +7,18 @@ class Lotus
 	 * @var array array();
 	 */
 	public $option;
-	public $mvcMode;
+	public $mvcMode = true;
 
 	protected $proj_dir;
 	protected $app_dir;
 	protected $app_name;
 	protected $app_tmp;
-	protected $devMode; // default true
+	protected $devMode = true;
 	protected $lotusRuntimeDir;
 	protected $cacheInst;
 
 	public function __construct()
 	{
-		$this->mvcMode = true; // 默认使用MVC
-		$this->devMode = true; // 默认开发模式
 		$this->lotusRuntimeDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	}
 
@@ -48,12 +46,13 @@ class Lotus
 		}
 
 		/**
-		 * 加载共享组件
+		 * Load core component
 		 */
 		require_once $this->lotusRuntimeDir . "Store.php";
 		require_once $this->lotusRuntimeDir . "StoreMemory.php";
 		require_once $this->lotusRuntimeDir . "StoreFile.php";
 		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
+		require_once $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
 
 		if (!empty($this->option['app_cache']))
 		{
@@ -74,15 +73,20 @@ class Lotus
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterPhps.php";
 			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
 			require_once $this->lotusRuntimeDir . "Cache/QueryEngine/TableDataGateway/CacheTableDataGateway.php";
-
-			$ccb = LtObjectUtil::singleton('LtCacheConfigBuilder');
+			/**
+			 * 
+			 * @todo 如何更好的加速 autoloader config
+			 */
+			$ccb = new LtCacheConfigBuilder;
 			$ccb->addSingleHost($this->option['app_cache']);
-			LtCache::$servers = $ccb->getServers();
-			$this->cacheInst = LtObjectUtil::singleton('LtCache');
+			$this->cacheInst = new LtCache;
+			LtCache::$configHandle = new LtStoreMemory;
+			LtCache::$configHandle->add("cache.servers",$ccb->getServers());
+			$this->cacheInst->group = "group_0";
+			$this->cacheInst->node = "node_0";
 			$this->cacheInst->init();
-			//$this->cacheInst->group = "group_0";
-			//$this->cacheInst->node = "node_0";
-			$this->devMode = false; // 生产模式
+
+			$this->devMode = false;
 		}
 
 		/**
@@ -103,17 +107,11 @@ class Lotus
 			$this->runMVC();
 		}
 	}
-
+	/**
+	 * Autoload all lotus components and user-defined libraries;
+	 */
 	protected function prepareAutoloader()
 	{
-		/**
-		 * Load core component
-		 */
-		require_once $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
-		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
-		/**
-		 * Prepare autoloader to load all lotus components and user-defined libraries;
-		 */
 		$autoloadDirs = array($this->lotusRuntimeDir);
 		$autoloadDirs[] = $this->proj_dir . 'lib';
 		$autoloadDirs[] = $this->app_dir . 'action';
@@ -121,10 +119,10 @@ class Lotus
 		$autoloader = LtObjectUtil::singleton('LtAutoloader');
 		$autoloader->autoloadPath = $autoloadDirs;
 		/**
-		 * 开发模式下保存分析结果
+		 * 开发模式下缓存分析结果
 		 */
 		$autoloader->conf["mapping_file_root"] = $this->app_tmp . 'autoloader/';
-		if (isset($this->option["is_load_function"]))
+		if (isset($this->option["load_function"]))
 		{
 			$autoloader->conf["load_function"] = $this->option["load_function"];
 		}
@@ -138,19 +136,19 @@ class Lotus
 
 	protected function prepareConfig()
 	{
+		$conf = LtObjectUtil::singleton("LtConfig");
 		$configFile = $this->app_dir . 'conf/conf.php';
 		if (!$this->devMode)
 		{
 			$tb = sprintf("%u", crc32(serialize($configFile)));
 			LtConfig::$storeHandle = $this->cacheInst->getTDG($tb);
 		}
-		$conf = LtObjectUtil::singleton("LtConfig");
 		$conf->init();
 		$conf->loadConfigFile($configFile);
 	}
 
 	protected function runMVC()
-	{ 
+	{
 		$router = LtObjectUtil::singleton('LtRouter');
 		$router->init();
 		$url = LtObjectUtil::singleton('LtUrl');

@@ -34,7 +34,7 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		/**
 		 * 是否自动加载函数文件, 默认为AutoloaderConfig.php的设置
 		 */
-		$lotus->option['is_load_function'] = true;
+		$lotus->option['load_function'] = true;
 
 		/**
 		 * 默认使用MVC
@@ -44,7 +44,7 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		/**
 		 * 使用cache可以提升性能
 		 */
-		$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus-appname1/cache/");
+		//$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/lotus-appname1/cache/");
 
 		/**
 		 * run
@@ -67,13 +67,5 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 
 	protected function tearDown()
 	{
-		LtAutoloader::$storeHandle = null;
-		LtConfig::$storeHandle = null;
-		LtCache::$servers = null;
-		LtDb::$storeHandle = null;
-		LtObjectUtil::$instances = null;
-		LtRouter::$configHandle = null;
-		LtUrl::$configHandle = null;
-		// LtValidator::$configHandle=null;
 	}
 }

@@ -25,15 +25,12 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 		/**
 		 * 禁止加载函数文件, 防止测试过程中函数冲突
 		 */
-		$lotus->option['is_load_function'] = false;
-
-		//$lotus->option['view_tpl_auto_compile'] = false;
-
+		$lotus->option['load_function'] = false; 
+		// $lotus->option['view_tpl_auto_compile'] = false;
 		/**
 		 * 默认使用MVC
-		 * $lotus->mvcMode = true;
 		 */
-
+		$lotus->mvcMode = true;
 		/**
 		 * 使用cache可以提升性能
 		 */

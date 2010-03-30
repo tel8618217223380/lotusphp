@@ -10,11 +10,14 @@ class LtCache
 
 	public function __construct()
 	{
-		self::$configHandle = new LtConfig;		
 	}
 
 	public function init()
 	{
+		if(empty(self::$configHandle))
+		{
+			self::$configHandle = new LtConfig;	
+		}
 		$this->ch = new LtCacheHandle;
 		$this->ch->group = $this->getGroup();
 		$this->ch->node = $this->getNode();
