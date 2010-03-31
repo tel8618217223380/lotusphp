@@ -23,8 +23,8 @@ class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 		ob_start();
 		$dispatcher->dispatchAction("User", "Add");
 		ob_end_clean();
-		touch($dispatcher->viewDir . "User-Add.view.php"); 
-		unlink($dispatcher->viewTplDir . "layout/top_navigator@User-Add.view.php");
+		touch($dispatcher->viewDir . "User-Add.php"); 
+		unlink($dispatcher->viewTplDir . "layout/top_navigator@User-Add.php");
 
 		/**
 		 * 运行100次，要求在1秒内运行完
@@ -37,7 +37,7 @@ class PerformanceTuningMVC extends PHPUnit_Framework_TestCase
 			ob_start();
 			$dispatcher->dispatchAction("User", "Add");
 			ob_end_clean();
-			touch($dispatcher->viewDir . "User-Add.view.php"); 
+			touch($dispatcher->viewDir . "User-Add.php"); 
 		}
 		$endTime = microtime(true);
 		$totalTime = round(($endTime - $startTime), 6);

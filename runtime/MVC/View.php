@@ -16,11 +16,11 @@ class LtView
 	{
 		if (!empty($this->layout))
 		{
-			include($this->layoutDir . $this->layout . '.view.php');
+			include($this->layoutDir . $this->layout . '.php');
 		}
 		else
 		{
-			include($this->templateDir . $this->template . '.view.php');
+			include($this->templateDir . $this->template . '.php');
 		}
 	}
 }

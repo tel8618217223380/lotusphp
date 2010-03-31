@@ -165,14 +165,14 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 				'{Lotus::$debugInfo}',
 				),
 			// url生成测试
-			array("<?php echo C('LtUrl')->generate('Admin', 'DoLogout');?>",
+			array("<?php echo LtObjectUtil::singleton('LtUrl')->generate('Admin', 'DoLogout');?>",
 				"{url('Admin', 'DoLogout')}",
 				), 
-			array("<?php echo C('LtUrl')->generate('Admin', 'DoLogout', array('a'=>1, 'b'=>2));?>",
+			array("<?php echo LtObjectUtil::singleton('LtUrl')->generate('Admin', 'DoLogout', array('a'=>1, 'b'=>2));?>",
 				"{url('Admin', 'DoLogout', array('a'=>1, 'b'=>2))}",
 				), 
 			// config读取
-			array("<?php echo C('LtConfig')->get('baseurl');?>",
+			array("<?php echo LtObjectUtil::singleton('LtConfig')->get('baseurl');?>",
 				"{conf('baseurl')}",
 				), 
 			// 删除html注释
