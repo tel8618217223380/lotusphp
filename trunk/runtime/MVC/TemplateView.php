@@ -371,6 +371,17 @@ class LtTemplateView
 				{
 					$subTpl = 'SubTemplate not found:' . $comfile;
 				}
+
+$module = $tvar[1][$i];
+$action = $tvar[2][$i];
+$subTpl = "<?php
+\$dispatcher = LtObjectUtil::singleton('LtDispatcher');
+\$dispatcher->dispatchComponent('$module', '$action', \$this->context);
+\$data = \$dispatcher->data;
+unset(\$dispatcher);
+?>
+" . $subTpl;
+
 				$str = str_replace($tvar[0][$i], $subTpl, $str);
 				$i++;
 			}

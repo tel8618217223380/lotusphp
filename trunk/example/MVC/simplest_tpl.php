@@ -8,6 +8,7 @@ $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example")) . '/';
 include $lotusHome . "runtime/Config.php";
 include $lotusHome . "runtime/Store.php";
 include $lotusHome . "runtime/StoreMemory.php";
+include $lotusHome . "runtime/ObjectUtil/ObjectUtil.php";
 
 include $lotusHome . "runtime/MVC/Dispatcher.php";
 include $lotusHome . "runtime/MVC/Action.php";
