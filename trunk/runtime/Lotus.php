@@ -8,14 +8,14 @@ class Lotus
 	 */
 	public $option;
 	public $mvcMode = true;
+	public $devMode = false;
 
 	protected $proj_dir;
 	protected $app_dir;
 	protected $app_name;
 	protected $app_tmp;
-	protected $devMode = true;
 	protected $lotusRuntimeDir;
-	protected $cacheInst;
+	protected $coreCacheHandle;
 
 	public function __construct()
 	{
@@ -54,39 +54,17 @@ class Lotus
 		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
 		require_once $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
 
-		if (!empty($this->option['app_cache']))
+		if (!$this->devMode)
 		{
 			/**
-			 * Init Cache component to sotre LtAutoloader, LtConfig data ...
+			 * accelerate LtAutoloader, LtConfig
 			 */
-			require_once $this->lotusRuntimeDir . "Cache/Cache.php";
-			require_once $this->lotusRuntimeDir . "Cache/CacheAdapterFactory.php";
-			require_once $this->lotusRuntimeDir . "Cache/CacheConfigBuilder.php";
-			require_once $this->lotusRuntimeDir . "Cache/CacheConnectionManager.php";
-			require_once $this->lotusRuntimeDir . "Cache/CacheHandle.php";
-			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapter.php";
-			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterApc.php";
-			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterEAccelerator.php";
-			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterFile.php";
-			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterMemcache.php";
-			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterMemcached.php";
-			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterPhps.php";
-			require_once $this->lotusRuntimeDir . "Cache/Adapter/CacheAdapterXcache.php";
-			require_once $this->lotusRuntimeDir . "Cache/QueryEngine/TableDataGateway/CacheTableDataGateway.php";
-			/**
-			 * 
-			 * @todo 如何更好的加速 autoloader config
-			 */
-			$ccb = new LtCacheConfigBuilder;
-			$ccb->addSingleHost($this->option['app_cache']);
-			$this->cacheInst = new LtCache;
-			LtCache::$configHandle = new LtStoreMemory;
-			LtCache::$configHandle->add("cache.servers",$ccb->getServers());
-			$this->cacheInst->group = "group_0";
-			$this->cacheInst->node = "node_0";
-			$this->cacheInst->init();
-
-			$this->devMode = false;
+			$this->coreCacheHandle = new LtStoreFile;
+			$this->coreCacheHandle->cacheFileRoot = $this->app_tmp . 'coreCache/';
+			$prefix = sprintf("%u", crc32(serialize($this->app_dir)));
+			$this->coreCacheHandle->prefix = 'Lotus-'.$prefix.'-';
+			$this->coreCacheHandle->useSerialize = true;
+			$this->coreCacheHandle->init();
 		}
 
 		/**
@@ -119,17 +97,17 @@ class Lotus
 		$autoloader = LtObjectUtil::singleton('LtAutoloader');
 		$autoloader->autoloadPath = $autoloadDirs;
 		/**
-		 * 开发模式下缓存分析结果
+		 * 开发模式下缓存分析结果, 当修改源文件后重新生成缓存 
+		 * 源文件没有修改直接取缓存数据
 		 */
-		$autoloader->conf["mapping_file_root"] = $this->app_tmp . 'autoloader/';
+		$autoloader->conf["mapping_file_root"] = $this->app_tmp . 'autoloader-dev/';
 		if (isset($this->option["load_function"]))
 		{
 			$autoloader->conf["load_function"] = $this->option["load_function"];
 		}
 		if (!$this->devMode)
-		{
-			$tb = sprintf("%u", crc32(serialize($autoloadDirs)));
-			LtAutoloader::$storeHandle = $this->cacheInst->getTDG($tb);
+		{ 
+			LtAutoloader::$storeHandle = $this->coreCacheHandle;
 		}
 		$autoloader->init();
 	}
@@ -139,9 +117,8 @@ class Lotus
 		$conf = LtObjectUtil::singleton("LtConfig");
 		if (!$this->devMode)
 		{
-			$configFile = $this->app_dir . 'conf/conf.php';
-			$tb = sprintf("%u", crc32(serialize($configFile)));
-			LtConfig::$storeHandle = $this->cacheInst->getTDG($tb);
+			$configFile = $this->app_dir . 'conf/conf.php'; 
+			LtConfig::$storeHandle = $this->coreCacheHandle;
 		}
 		else
 		{

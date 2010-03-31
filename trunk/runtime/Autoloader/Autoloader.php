@@ -28,7 +28,7 @@ class LtAutoloader
 		/**
 		 * 存放临时文件的地址
 		 */
-		"mapping_file_root" => "/tmp/Lotus/autoloader/",
+		"mapping_file_root" => "/tmp/Lotus/autoloader-dev/",
 	);
 
 	static public $storeHandle;
@@ -42,7 +42,9 @@ class LtAutoloader
 		{
 			self::$storeHandle = new LtStoreMemory;
 			$this->fileStore = new LtStoreFile;
-			$this->fileStore->setFileRoot($this->conf["mapping_file_root"]);
+			$this->fileStore->cacheFileRoot = $this->conf["mapping_file_root"];
+			$this->fileStore->prefix = 'LtAutoloader-dev-';
+			$this->fileStore->init();
 		} 
 		// Whether scanning directory
 		if (0 == self::$storeHandle->get(".class_total") && 0 == self::$storeHandle->get(".function_total"))
