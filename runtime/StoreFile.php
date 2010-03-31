@@ -2,16 +2,16 @@
 class LtStoreFile implements LtStore
 {
 	public $cacheFileRoot = '/tmp/Lotus/LtStoreFile/';
-	public $prefix = 'Ltcache-';
+	public $prefix = 'LtStore-';
 	public $useSerialize = false;
 
 	public function init()
 	{
 		/**
-		 * 
+		 * 目录不存在和是否可写在调用add是测试
 		 * @todo detect dir is exists and writable
 		 */
-		$this->cacheFileRoot = str_replace('\\', '/', $path);
+		$this->cacheFileRoot = str_replace('\\', '/', $this->cacheFileRoot);
 		$this->cacheFileRoot = rtrim($this->cacheFileRoot, '\\/') . '/';
 	}
 
@@ -103,7 +103,7 @@ class LtStoreFile implements LtStore
 					$value = substr($str, 23);
 					if ($this->useSerialize)
 					{
-						$value = serialize($value);
+						$value = unserialize($value);
 					}
 					return $value;
 				}

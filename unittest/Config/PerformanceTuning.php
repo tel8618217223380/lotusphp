@@ -24,14 +24,13 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 	public function testPerformance()
 	{
 		/**
-		 * 初始化LtCache，LtConfig用LtCache作存储层的时候性能才会提高
+		 * 用LtStoreFile作存储层提升性能
 		 */
-		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/config/"));
-		LtCache::$servers = $ccb->getServers();
-		$cache = new LtCache;
-		$cache->init();
-		$cacheHandle = $cache->getTDG('unittest-config'); 
+		$cacheHandle = new LtStoreFile;
+		$cacheHandle->cacheFileRoot = '/tmp/Lotus/unittest/autoloader-performance/';
+		$cacheHandle->prefix = 'Lotus-unittest-';
+		$cacheHandle->useSerialize = true;
+		$cacheHandle->init(); 
 		// 准备confif_file
 		$config_file = dirname(__FILE__) . "/test_data/conf.php";
 
