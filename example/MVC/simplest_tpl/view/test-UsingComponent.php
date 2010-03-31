@@ -3,14 +3,7 @@
 
 <div style="width: 25%; float: right;">
 
-<?php
-$dispatcher = new LtDispatcher;
-$dispatcher->viewDir = "./simplest_tpl/view/";
-$this->context->companyName = 'IBM';
-$dispatcher->dispatchComponent("stock", "Price", $this->context);
-$this->data = array_merge($this->data,$dispatcher->data);
-?>
-
+<?php $this->context->companyName = 'IBM';?>
 {component stock Price}
 </div>
 
@@ -19,12 +12,8 @@ $this->data = array_merge($this->data,$dispatcher->data);
 {component stock Price}
 </div>
 
-<?php
-$this->context->companyName = 'DELL';
-$dispatcher->dispatchComponent("stock", "Price", $this->context);
-$this->data = array_merge($this->data,$dispatcher->data);
-?>
 
 <div style="margin:0 auto;width:300px;">
+<?php $this->context->companyName = 'DELL';?>
 {component stock Price}
 </div>
