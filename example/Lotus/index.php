@@ -1,35 +1,18 @@
 <?php
 $lotusHome = substr(dirname(__FILE__), 0, strpos(__FILE__, "example"));
 include $lotusHome . 'runtime/Lotus.php';
-/**
- * 初始化Lotus类
- */
+
 $lotus = new Lotus();
-/**
- * 项目目录
- */
+
 $lotus->option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
-/**
- * 临时目录,默认是proj_dir/tmp/
- * 开发模式下的Autoloader 和 MVC的模板引擎 及 文件类型Cache
- */
+$lotus->option['app_name'] = 'app_name1';
 $lotus->option['app_tmp'] = '/tmp/Lotus/';
 
-/**
- * 应用名称对项目目录下的子目录名称
- */
-$lotus->option['app_name'] = 'app_name1';
-/**
- * 默认使用MVC
- * $lotus->mvcMode = true;
- */
-
-/**
- * 使用cache可以提升性能
- */
-$lotus->option["app_cache"] = array("adapter" => "phps", "host" => "/tmp/Lotus/lotus/proj_dir/app_name1/");
-
+// $lotus->mvcMode = true;
+// $lotus->devMode = false;
 $lotus->init();
+
+
 /**
  * 使用xdebug测试性能
  */
