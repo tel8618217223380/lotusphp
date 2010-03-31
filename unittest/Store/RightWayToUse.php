@@ -29,7 +29,6 @@ class RightWayToUseStore extends PHPUnit_Framework_TestCase
 	public function testMostUsedWayLtStoreFile()
 	{
 		$storeHandle = new LtStoreFile;
-		$storeHandle->setFileRoot('/tmp/Lotus/unittest/Store/');
 
 		$this->assertTrue($storeHandle->add("test_key", "test_value"));
 		$this->assertEquals("test_value", $storeHandle->get("test_key"));

@@ -1,18 +1,18 @@
 <?php
 class LtStoreFile implements LtStore
 {
-	protected $cacheFileRoot = '/tmp/Lotus/LtStoreFile/';
-	protected $prefix = '';
+	public $cacheFileRoot = '/tmp/Lotus/LtStoreFile/';
+	public $prefix = 'Ltcache-';
+	public $useSerialize = false;
 
-	public function setFileRoot($path, $prefix = 'Ltcache-')
+	public function init()
 	{
 		/**
 		 * 
-		 * @todo detect dir is esists and writable
+		 * @todo detect dir is exists and writable
 		 */
 		$this->cacheFileRoot = str_replace('\\', '/', $path);
 		$this->cacheFileRoot = rtrim($this->cacheFileRoot, '\\/') . '/';
-		$this->prefix = $prefix;
 	}
 
 	/**
@@ -42,6 +42,10 @@ class LtStoreFile implements LtStore
 			}
 		}
 		$expireTime = (0 == $ttl) ? '0000000000' : (time() + $ttl);
+		if ($this->useSerialize)
+		{
+			$value = serialize($value);
+		}
 		$length = file_put_contents($file, '<?php exit;?>' . $expireTime . $value);
 		return $length > 0 ? true : false;
 	}
@@ -96,7 +100,12 @@ class LtStoreFile implements LtStore
 				else
 				{ 
 					// return file_get_contents($file, false, null, 23);
-					return substr($str, 23);
+					$value = substr($str, 23);
+					if ($this->useSerialize)
+					{
+						$value = serialize($value);
+					}
+					return $value;
 				}
 			}
 		}
@@ -118,6 +127,10 @@ class LtStoreFile implements LtStore
 		else
 		{
 			$expireTime = (0 == $ttl) ? '0000000000' : (time() + $ttl);
+			if ($this->useSerialize)
+			{
+				$value = serialize($value);
+			}
 			$length = file_put_contents($file, '<?php exit;?>' . $expireTime . $value);
 			return $length > 0 ? true : false;
 		}
