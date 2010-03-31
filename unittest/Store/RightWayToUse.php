@@ -6,7 +6,6 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseStore extends PHPUnit_Framework_TestCase
 {
-
 	public function testMostUsedWayLtStoreMemory()
 	{
 		$storeHandle = new LtStoreMemory;
@@ -24,11 +23,27 @@ class RightWayToUseStore extends PHPUnit_Framework_TestCase
 		$this->assertTrue($storeHandle->add("key1", "value1"));
 		$this->assertFalse($storeHandle->add("key1", "value1"));
 		$storeHandle->del("key1");
+		echo "\n--test LtStoreMemory ttl --\n"; 
+		// 测试TTL功能
+		$this->assertTrue($storeHandle->add("test_key", "test_value", 2));
+		sleep(1);
+		$this->assertEquals("test_value", $storeHandle->get("test_key"));
+		sleep(2);
+		$this->assertFalse($storeHandle->get("test_key")); 
+		// 测试TTL过期后可以再次add相同的key
+		$this->assertTrue($storeHandle->add("test_key", "test_value", 1));
+		sleep(2);
+		$this->assertTrue($storeHandle->add("test_key", "test_value", 1));
+		sleep(2);
+		$this->assertFalse($storeHandle->get("test_key"));
 	}
 
 	public function testMostUsedWayLtStoreFile()
 	{
 		$storeHandle = new LtStoreFile;
+		$storeHandle->cacheFileRoot = '/tmp/Lotus/unittest/store-file/';
+		$storeHandle->prefix = 'store-unittest-';
+		$storeHandle->useSerialize = true;
 
 		$this->assertTrue($storeHandle->add("test_key", "test_value"));
 		$this->assertEquals("test_value", $storeHandle->get("test_key"));
@@ -43,8 +58,52 @@ class RightWayToUseStore extends PHPUnit_Framework_TestCase
 		$this->assertTrue($storeHandle->add("key1", "value1"));
 		$this->assertFalse($storeHandle->add("key1", "value1"));
 		$storeHandle->del("key1");
+		echo "\n--test LtStoreFile ttl --\n"; 
+		// 测试TTL功能
+		$this->assertTrue($storeHandle->add("test_key", "test_value", 2));
+		sleep(1);
+		$this->assertEquals("test_value", $storeHandle->get("test_key"));
+		sleep(2);
+		$this->assertFalse($storeHandle->get("test_key")); 
+		// 测试TTL过期后可以再次add相同的key
+		$this->assertTrue($storeHandle->add("test_key", "test_value", 1));
+		sleep(2);
+		$this->assertTrue($storeHandle->add("test_key", "test_value", 1));
+		sleep(2);
+		$this->assertFalse($storeHandle->get("test_key"));
 	}
+	/**
+	 * 测试数据类型支持情况
+	 */
+	public function testKeyValueLtStoreFile()
+	{
+		$data = array(
+			// $key => value
+			array(1, 2),
+			array(1.1, null),
+			array(-1, ""),
+			array("string", "test_value_string"),
+			array("array", array(1, 2, 4)),
+			array("object", new LtStoreFile)
+			);
 
+		$sh = new LtStoreFile;
+		$sh->cacheFileRoot = '/tmp/Lotus/unittest/store-file/';
+		$sh->prefix = 'store-keyval-';
+		$sh->useSerialize = true;
+
+		foreach ($data as $set)
+		{
+			$this->assertTrue($sh->add($set[0], $set[1]));
+			$this->assertEquals($sh->get($set[0]), $set[1]);
+			$this->assertTrue($sh->update($set[0], 0));
+			$this->assertEquals($sh->get($set[0]), 0);
+			$this->assertTrue($sh->update($set[0], $set[1]));
+			$this->assertEquals($sh->get($set[0]), $set[1]);
+			$this->assertTrue($sh->del($set[0]));
+			$this->assertFalse($sh->get($set[0]));
+		}
+	}
 
 	protected function setUp()
 	{
