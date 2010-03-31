@@ -63,13 +63,13 @@ class LtTemplateView
 
 		if ($islayout)
 		{
-			$tplfile = $this->layoutDir . $this->layout . '.view.php';
-			$objfile = $this->compiledDir . 'layout/' . $this->layout . '@' . $this->template . '.view.php';
+			$tplfile = $this->layoutDir . $this->layout . '.php';
+			$objfile = $this->compiledDir . 'layout/' . $this->layout . '@' . $this->template . '.php';
 		}
 		else
 		{
-			$tplfile = $this->templateDir . $this->template . '.view.php';
-			$objfile = $this->compiledDir . $this->template . '.view.php';
+			$tplfile = $this->templateDir . $this->template . '.php';
+			$objfile = $this->compiledDir . $this->template . '.php';
 		}
 		if (is_file($objfile))
 		{
@@ -162,9 +162,9 @@ class LtTemplateView
 		$str = preg_replace("/\{loop\s+(\S+)\s+(\S+)\s+(\S+)\}/e", "\$this->addquote('<?php if(isset(\\1) && is_array(\\1)) foreach(\\1 as \\2=>\\3) { ?>')", $str);
 		$str = preg_replace("/\{\/loop\}/", "<?php } ?>", $str); 
 		// url生成
-		$str = preg_replace("/\{url\(([^}]+)\)\}/", "<?php echo C('LtUrl')->generate(\\1);?>", $str); 
+		$str = preg_replace("/\{url\(([^}]+)\)\}/", "<?php echo LtObjectUtil::singleton('LtUrl')->generate(\\1);?>", $str); 
 		// config读取
-		$str = preg_replace("/\{conf\(([^}]+)\)\}/", "<?php echo C('LtConfig')->get(\\1);?>", $str); 
+		$str = preg_replace("/\{conf\(([^}]+)\)\}/", "<?php echo LtObjectUtil::singleton('LtConfig')->get(\\1);?>", $str); 
 		// 函数
 		$str = preg_replace("/\{([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\s*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{\\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\(([^{}]*)\))\}/", "<?php echo \$\\1;?>", $str); 
@@ -299,9 +299,9 @@ class LtTemplateView
 	 * 解析多个{include path/file}合并成一个文件
 	 * 
 	 * @example {include 'debug_info'}
-	 * {include 'debug_info.view.php'}
+	 * {include 'debug_info.php'}
 	 * {include "debug_info"}
-	 * {include "debug_info.view.php"}
+	 * {include "debug_info.php"}
 	 * {include $this->templateDir . $this->template}
 	 */
 	private function parseInclude($str)
@@ -316,17 +316,17 @@ class LtTemplateView
 				{
 					$findfile = $subfile;
 				}
-				else if (is_file($subfile . '.view.php'))
+				else if (is_file($subfile . '.php'))
 				{
-					$findfile = $subfile . '.view.php';
+					$findfile = $subfile . '.php';
 				}
 				else if (is_file($this->templateDir . $subfile))
 				{
 					$findfile = $this->templateDir . $subfile;
 				}
-				else if (is_file($this->templateDir . $subfile . '.view.php'))
+				else if (is_file($this->templateDir . $subfile . '.php'))
 				{
-					$findfile = $this->templateDir . $subfile . '.view.php';
+					$findfile = $this->templateDir . $subfile . '.php';
 				}
 				else
 				{
@@ -361,7 +361,7 @@ class LtTemplateView
 			$i = 0;
 			while ($i < $countCom)
 			{
-				$comfile = $this->templateDir . $tvar[1][$i] . '-' . $tvar[2][$i] . '.view.php';
+				$comfile = $this->templateDir . "component/" . $tvar[1][$i] . '-' . $tvar[2][$i] . '.php';
 				if (is_file($comfile))
 				{
 					$subTpl = file_get_contents($comfile);
