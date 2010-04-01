@@ -11,11 +11,8 @@ abstract class LtComponent
 	 */
 	public $context;
 
-	/**
-	 * The context object
-	 * 
-	 * @var object 
-	 */
+	public $configHandle;
+
 	public $viewDir;
 	public $viewTplDir;
 	public $viewTplAutoCompile;
@@ -94,6 +91,7 @@ abstract class LtComponent
 				{
 					$this->view = new LtTemplateView;
 				}
+				$this->view->configHandle = $this->configHandle;
 				$this->view->component = true; // ÊÇ·ñ×é¼ş
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
@@ -119,6 +117,7 @@ abstract class LtComponent
 				{
 					$this->view = new LtView;
 				}
+				$this->view->configHandle = $this->configHandle;
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;

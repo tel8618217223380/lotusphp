@@ -4,6 +4,8 @@
  */
 class LtView
 {
+	public $configHandle;
+
 	public $layoutDir;
 
 	public $templateDir;
@@ -22,5 +24,17 @@ class LtView
 		{
 			include($this->templateDir . $this->template . '.php');
 		}
+	}
+
+	public function get()
+	{
+		$numargs = func_num_args();
+		$argList = func_get_args();
+		$out = $this->configHandle->get($argList[0]);
+		for ($i = 1; $i < $numargs; $i++)
+		{
+			$out = $out[$argList[$i]];
+		}
+		return $out;
 	}
 }

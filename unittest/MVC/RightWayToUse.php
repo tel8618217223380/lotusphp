@@ -170,7 +170,7 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 				"{url('Admin', 'DoLogout', array('a'=>1, 'b'=>2))}",
 				), 
 			// config读取
-			array("<?php echo LtObjectUtil::singleton('LtConfig')->get('baseurl');?>",
+			array("<?php echo \$this->get('baseurl');?>",
 				"{conf('baseurl')}",
 				), 
 			// 删除html注释

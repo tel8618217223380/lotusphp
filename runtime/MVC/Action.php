@@ -193,6 +193,7 @@ abstract class LtAction
 				{
 					$this->view = new LtTemplateView;
 				}
+				$this->view->configHandle = $this->configHandle;
 				$this->view->component = false; // ÊÇ·ñ×é¼ş
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
@@ -218,6 +219,7 @@ abstract class LtAction
 				{
 					$this->view = new LtView;
 				}
+				$this->view->configHandle = $this->configHandle;
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;
