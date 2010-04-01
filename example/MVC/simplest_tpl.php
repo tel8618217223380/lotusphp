@@ -34,7 +34,7 @@ include $appDir . "action/test-UsingTitle.Action.php";
 /**
  * 实例化
  */
-$dispatcher = new LtDispatcher;
+$dispatcher = LtObjectUtil::singleton('LtDispatcher');
 $dispatcher->viewDir = "./simplest_tpl/view/";
 /**
  * 保存模板编译后的文件目录,
