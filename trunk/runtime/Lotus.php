@@ -16,6 +16,7 @@ class Lotus
 	protected $app_tmp;
 	protected $lotusRuntimeDir;
 	protected $coreCacheHandle;
+	protected $configHandle;
 
 	public function __construct()
 	{
@@ -114,7 +115,7 @@ class Lotus
 
 	protected function prepareConfig()
 	{
-		$conf = LtObjectUtil::singleton("LtConfig");
+		$this->configHandle = LtObjectUtil::singleton("LtConfig");
 		if (!$this->devMode)
 		{
 			$configFile = $this->app_dir . 'conf/conf.php'; 
@@ -124,8 +125,8 @@ class Lotus
 		{
 			$configFile = $this->app_dir . 'conf/conf_dev.php';
 		}
-		$conf->init();
-		$conf->loadConfigFile($configFile);
+		$this->configHandle->init();
+		$this->configHandle->loadConfigFile($configFile);
 	}
 
 	protected function runMVC()
@@ -135,6 +136,7 @@ class Lotus
 		$url = LtObjectUtil::singleton('LtUrl');
 		$url->init();
 		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
+		$dispatcher->configHandle = $this->configHandle;
 		$dispatcher->viewDir = $this->app_dir . 'view/';
 		$dispatcher->viewTplDir = $this->app_tmp . 'templateView/' . $this->app_name . '/';
 		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;

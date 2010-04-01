@@ -11,14 +11,11 @@ abstract class LtAction
 	 */
 	public $context;
 
-	/**
-	 * The context object
-	 * 
-	 * @var object 
-	 */
 	public $viewDir;
 	public $viewTplDir;
 	public $viewTplAutoCompile;
+
+	public $configHandle;
 
 	/**
 	 * The dtd config for validator
@@ -125,6 +122,7 @@ abstract class LtAction
 		if (!empty($this->dtds) && class_exists('LtValidator'))
 		{
 			$validator = new LtValidator;
+			LtValidator::$configHandle = $this->configHandle;
 			$validator->init();
 			foreach ($this->dtds as $variable => $dtd)
 			{
