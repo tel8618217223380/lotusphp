@@ -15,8 +15,6 @@ abstract class LtAction
 	public $viewTplDir;
 	public $viewTplAutoCompile;
 
-	public $configHandle;
-
 	/**
 	 * The dtd config for validator
 	 * 
@@ -122,7 +120,6 @@ abstract class LtAction
 		if (!empty($this->dtds) && class_exists('LtValidator'))
 		{
 			$validator = new LtValidator;
-			LtValidator::$configHandle = $this->configHandle;
 			$validator->init();
 			foreach ($this->dtds as $variable => $dtd)
 			{
@@ -161,7 +158,6 @@ abstract class LtAction
 			$action = $this->context->uri["action"];
 			$roles = array_merge(array("*"), $this->roles);
 			$rbac = new LtRbac();
-			LtRbac::$configHandle = $this->configHandle;
 			$rbac->init();
 			$allow = $rbac->checkAcl($roles, "$module/$action");
 		}
@@ -194,12 +190,11 @@ abstract class LtAction
 				{
 					$this->view = new LtTemplateView;
 				}
-				$this->view->configHandle = $this->configHandle;
 				$this->view->component = false; // ÊÇ·ñ×é¼þ
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;
-				$this->view->data = $this->data;
+				$this->view->data = & $this->data;
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
@@ -220,11 +215,10 @@ abstract class LtAction
 				{
 					$this->view = new LtView;
 				}
-				$this->view->configHandle = $this->configHandle;
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;
-				$this->view->data = $this->data;
+				$this->view->data = & $this->data;
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
