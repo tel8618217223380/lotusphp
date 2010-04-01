@@ -25,9 +25,15 @@ class RightWayToUseRBAC extends PHPUnit_Framework_TestCase
 		$acl['allow']['Users'][] = 'User/DoSignin';
 
 		$acl['deny']['Users'][] = 'User/AddUser'; 
-		// RBAC
+
+		$configHandle = new LtConfig;
+		$configHandle->addConfig(array('rbac.acl'=>$acl));
+
+
 		$rbac = new LtRbac();
-		$rbac->acl = $acl;
+		LtRbac::$configHandle = $configHandle;
+		$rbac->init();
+
 		$this->assertTrue($rbac->checkAcl($roles, 'admin/test'));
 		$this->assertFalse($rbac->checkAcl($roles, 'User/AddUser'));
 	}

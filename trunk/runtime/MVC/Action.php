@@ -155,13 +155,14 @@ abstract class LtAction
 	protected function checkPrivilege()
 	{
 		$allow = true;
-		$module = $this->context->uri["module"];
-		$action = $this->context->uri["action"];
-		$roles = array_merge(array("*"), $this->roles);
-		if (!empty($this->acl) && class_exists('LtRbac'))
+		if (!empty($this->roles) && class_exists('LtRbac'))
 		{
+			$module = $this->context->uri["module"];
+			$action = $this->context->uri["action"];
+			$roles = array_merge(array("*"), $this->roles);
 			$rbac = new LtRbac();
-			$rbac->acl = $this->acl;
+			LtRbac::$configHandle = $this->configHandle;
+			$rbac->init();
 			$allow = $rbac->checkAcl($roles, "$module/$action");
 		}
 		return $allow;

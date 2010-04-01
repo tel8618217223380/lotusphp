@@ -1,29 +1,21 @@
 <?php
-/**
-* The RBAC class
-*/
 class LtRbac {
-	protected $acl; // accessControl
+
+	public static $configHandle;
+
+	protected $acl; 
 
 	public function __construct()
 	{
 	}
 
-	private function __set($p,$v)
+	public function init()
 	{
-		$this->$p = $v;
-	}
-
-	private function __get($p)
-	{
-		if(isset($this->$p))
+		if (empty(self::$configHandle))
 		{
-			return($this->$p);
+			self::$configHandle = new LtConfig;
 		}
-		else
-		{
-			return(NULL);
-		}
+		$this->acl = self::$configHandle->get('rbac.acl');
 	}
 
 	public function checkAcl($roles, $resource)
@@ -67,4 +59,22 @@ class LtRbac {
 		}
 		return $allow;
 	}
+/*
+	private function __set($p,$v)
+	{
+		$this->$p = $v;
+	}
+
+	private function __get($p)
+	{
+		if(isset($this->$p))
+		{
+			return($this->$p);
+		}
+		else
+		{
+			return(NULL);
+		}
+	}
+*/
 }
