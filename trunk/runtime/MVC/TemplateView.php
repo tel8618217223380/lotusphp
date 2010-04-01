@@ -3,7 +3,6 @@ class LtTemplateView
 {
 	public $layout;
 	public $layoutDir;
-	public $configHandle;
 
 	public $template;
 	public $templateDir;
@@ -49,17 +48,6 @@ class LtTemplateView
 		}
 	}
 
-	public function get()
-	{
-		$numargs = func_num_args();
-		$argList = func_get_args();
-		$out = $this->configHandle->get($argList[0]);
-		for ($i = 1; $i < $numargs; $i++)
-		{
-			$out = $out[$argList[$i]];
-		}
-		return $out;
-	}
 	/**
 	 * 返回编译后的模板路径, 如果不存在则编译生成并返回路径. 
 	 * 如果文件存在且允许自动编译, 则对比模板文件和编译后的文件修改时间 
@@ -176,8 +164,7 @@ class LtTemplateView
 		$str = preg_replace("/\{\/loop\}/", "<?php } ?>", $str); 
 		// url生成
 		$str = preg_replace("/\{url\(([^}]+)\)\}/", "<?php echo LtObjectUtil::singleton('LtUrl')->generate(\\1);?>", $str); 
-		// config读取
-		$str = preg_replace("/\{conf\(([^}]+)\)\}/", "<?php echo \$this->get(\\1);?>", $str); 
+
 		// 函数
 		$str = preg_replace("/\{([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\s*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{\\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\(([^{}]*)\))\}/", "<?php echo \$\\1;?>", $str); 

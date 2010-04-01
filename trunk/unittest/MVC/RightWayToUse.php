@@ -169,10 +169,6 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 			array("<?php echo LtObjectUtil::singleton('LtUrl')->generate('Admin', 'DoLogout', array('a'=>1, 'b'=>2));?>",
 				"{url('Admin', 'DoLogout', array('a'=>1, 'b'=>2))}",
 				), 
-			// config读取
-			array("<?php echo \$this->get('baseurl');?>",
-				"{conf('baseurl')}",
-				), 
 			// 删除html注释
 			array("{z}",
 				"<!-- {z} -->",

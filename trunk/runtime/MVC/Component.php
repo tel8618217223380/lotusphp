@@ -11,8 +11,6 @@ abstract class LtComponent
 	 */
 	public $context;
 
-	public $configHandle;
-
 	public $viewDir;
 	public $viewTplDir;
 	public $viewTplAutoCompile;
@@ -91,12 +89,11 @@ abstract class LtComponent
 				{
 					$this->view = new LtTemplateView;
 				}
-				$this->view->configHandle = $this->configHandle;
 				$this->view->component = true; // ÊÇ·ñ×é¼þ
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;
-				$this->view->data = $this->data;
+				$this->view->data = & $this->data;
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir . "component/";
@@ -117,11 +114,10 @@ abstract class LtComponent
 				{
 					$this->view = new LtView;
 				}
-				$this->view->configHandle = $this->configHandle;
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;
-				$this->view->data = $this->data;
+				$this->view->data = & $this->data;
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir . "component/";

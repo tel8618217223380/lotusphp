@@ -144,7 +144,6 @@ class Lotus
 		$url = LtObjectUtil::singleton('LtUrl');
 		$url->init();
 		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
-		$dispatcher->configHandle = $this->configHandle;
 		$dispatcher->viewDir = $this->app_dir . 'view/';
 		$dispatcher->viewTplDir = $this->app_tmp . 'templateView/' . $this->app_name . '/';
 		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
