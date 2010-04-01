@@ -30,10 +30,6 @@ class LtTemplateView
 		{
 			$this->compiledDir = dirname($this->templateDir) . "/viewTpl/";
 		}
-		if (empty($this->autoCompile))
-		{
-			$this->autoCompile = true;
-		}
 		if (!empty($this->layout))
 		{
 			include $this->template(true);

@@ -146,7 +146,14 @@ class Lotus
 		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
 		$dispatcher->viewDir = $this->app_dir . 'view/';
 		$dispatcher->viewTplDir = $this->app_tmp . 'templateView/' . $this->app_name . '/';
-		$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
+		if (!$this->devMode)
+		{
+			$dispatcher->viewTplAutoCompile = false;
+		}
+		else
+		{
+			$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
+		}
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}
 }
