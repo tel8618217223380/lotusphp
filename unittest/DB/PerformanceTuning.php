@@ -24,41 +24,16 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 	public function testPerformance()
 	{
 		/**
-		 * 初始化LtCache，LtDb用LtCache作存储层的时候性能才会提高
-		 */
-		/**
-		 * 构造缓存配置
-		 */
-		$ccb = new LtCacheConfigBuilder;
-		$ccb->addSingleHost(array("adapter" => "phps",
-				"host" => "/tmp/Lotus/unittest/dbPerformance/",
-				"key_prefix" => "dbPerformance"
-				));
-		LtCache::$servers = $ccb->getServers();
-		/**
-		 * 实例化组件入口类
-		 */
-		$cache = new LtCache;
-		$cache->init(); 
-
-		/**
 		 * 配置数据库连接信息
 		 */
 		$dcb = new LtDbConfigBuilder;
 		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
-		/**
-		@todo 性能没有提升反而下降 ?
-		*/
-		//LtDb::$storeHandle = new LtDbStore;
-		LtDb::$storeHandle = $cache->getTDG('unittest-db');
-		if(!LtDb::$storeHandle->get("servers"))
-		{
-			LtDb::$storeHandle->add("servers", $dcb->getServers(), 0);
-		}		
+
 		/**
 		 * 实例化组件入口类
 		 */
 		$db = new LtDb;
+		LtDb::$configHandle->addConfig(array("db.servers" => $dcb->getServers()));
 		$db->init();
 
 		/**

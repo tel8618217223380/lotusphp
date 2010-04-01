@@ -8,9 +8,14 @@ class LtDbHandle
 	public $connectionResource;
 	public $sqlAdapter;
 	protected $connectionManager;
+	private $servers;
 
 	public function __construct()
 	{
+		if(empty($this->servers))
+		{
+			$this->servers = LtDb::$configHandle->get("db.servers");
+		}
 		$this->connectionManager = new LtDbConnectionManager;
 	}
 
@@ -66,8 +71,7 @@ class LtDbHandle
 		switch ($queryType)
 		{
 			case "SELECT":
-				$servers = LtDb::$configHandle->get("db.servers");
-				if (!$forceUseMaster && isset($servers[$this->group][$this->node]["slave"]))
+				if (!$forceUseMaster && isset($this->servers[$this->group][$this->node]["slave"]))
 				{
 					$this->role = "slave";
 				}
@@ -144,9 +148,8 @@ class LtDbHandle
 	protected function getCurrentSqlAdapter()
 	{
 		$factory = new LtDbAdapterFactory;
-		$servers = LtDb::$configHandle->get("db.servers");
-		$host = key($servers[$this->group][$this->node][$this->role]);
-		return $factory->getSqlAdapter($servers[$this->group][$this->node][$this->role][$host]["sql_adapter"]);
+		$host = key($this->servers[$this->group][$this->node][$this->role]);
+		return $factory->getSqlAdapter($this->servers[$this->group][$this->node][$this->role][$host]["sql_adapter"]);
 	}
 
 	protected function select($sql, $connResource)
