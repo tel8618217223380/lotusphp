@@ -6,6 +6,7 @@ require_once $lotusHome . "runtime/MVC/Context.php";
 require_once $lotusHome . "runtime/MVC/Dispatcher.php";
 require_once $lotusHome . "runtime/MVC/TemplateView.php";
 require_once $lotusHome . "runtime/MVC/View.php";
+require_once $lotusHome . "runtime/ObjectUtil/ObjectUtil.php";
 
 
 /**

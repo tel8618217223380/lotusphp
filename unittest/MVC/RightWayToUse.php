@@ -91,6 +91,9 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 			array('<?php echo $var[$key];?>',
 				'{$var[$key]}',
 				),
+			array('totalTime: <?php echo $totalTime;?>s  memoryUsage: <?php echo $memory_usage;?>',
+				'totalTime: {$totalTime}s  memoryUsage: {$memory_usage}',
+				),
 			// 数字不加引号 
 			array('<?php echo $var[0];?>',
 				'{$var[0]}',
@@ -111,11 +114,6 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 			array('<?php if (isset($this->code)) echo $this->code;?>',
 				'{$code}',
 				),
-
-			array('totalTime: <?php echo $totalTime;?>s  memoryUsage: <?php echo $memory_usage;?>',
-				'totalTime: {$totalTime}s  memoryUsage: {$memory_usage}',
-				),
-
 			array('<?php if (isset($this->message)) echo $this->message;?>',
 				'{$message}',
 				),
@@ -181,6 +179,12 @@ class RightWayToUseMVC extends PHPUnit_Extensions_OutputTestCase
 				), 
 			array("",
 				"<!--  -->",
+				), 
+			array("{z}",
+				"<!--{z}-->",
+				), 
+			array("",
+				"<!---->",
 				), 
 			// 删除单行注释
 //			array("<script type=\"text/javascript\">\r\n</script>",
