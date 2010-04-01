@@ -48,10 +48,12 @@ class RightWayToUseValidator extends PHPUnit_Framework_TestCase
 			'required' => '%s is empty',
 			'equal_to' => '%s is not equal to %s',
 			);
+		$configHandle = new LtConfig;
+		$configHandle->addConfig($config);
 
 		$validator = new LtValidator;
-		// 缓存配置项 使用时从缓存读取
-		LtValidator::$configHandle->addConfig($config);
+
+		LtValidator::$configHandle = $configHandle;
 
 		$validator->init();
 

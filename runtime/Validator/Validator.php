@@ -2,15 +2,18 @@
 class LtValidator
 {
 	public static $configHandle;
-	public $errorMessages;
+	protected $errorMessages;
 
 	public function __construct()
 	{
-		self::$configHandle = new LtConfig;
 	}
 
 	public function init()
 	{
+		if (empty(self::$configHandle))
+		{
+			self::$configHandle = new LtConfig;
+		}
 		$this->errorMessages = self::$configHandle->get('validator.error_messages');
 	}
 
@@ -40,7 +43,7 @@ class LtValidator
 					{
 						if (!$method($value, $dtd->rules[$key]))
 						{
-							if (empty($messages[$key]) && isset($this->errorMessages[$key]))
+							if (isset($this->errorMessages[$key]))
 							{
 								$messages[$key] = $this->errorMessages[$key];
 							}
@@ -69,7 +72,7 @@ class LtValidator
 						}
 						if (!$ret)
 						{
-							if (empty($messages[$key]) && isset($this->errorMessages[$key]))
+							if (isset($this->errorMessages[$key]))
 							{
 								$messages[$key] = $this->errorMessages[$key];
 							}
@@ -87,13 +90,16 @@ class LtValidator
 				$validateFunction = '_' . $key;
 				if ((is_bool($dtd->rules[$key]) || 0 < strlen($dtd->rules[$key])) && !$this->$validateFunction($value, $dtd->rules[$key]))
 				{
-					if (empty($messages[$key]) && isset($this->errorMessages[$key]))
+					if (empty($messages[$key]))
 					{
-						$messages[$key] = $this->errorMessages[$key];
-					}
-					else
-					{
-						$messages[$key] = "validator.error_messages[$key] empty";
+						if (isset($this->errorMessages[$key]))
+						{
+							$messages[$key] = $this->errorMessages[$key];
+						}
+						else
+						{
+							$messages[$key] = "validator.error_messages[$key] empty";
+						}
 					}
 					$errorMessages[$key] = sprintf($messages[$key], $label, $dtd->rules[$key]);
 				}
