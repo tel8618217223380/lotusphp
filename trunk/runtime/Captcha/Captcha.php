@@ -19,7 +19,7 @@ class LtCaptcha
 			$seedFileRoot = self::$configHandle->get("captcha.seed_file_root");
 			self::$storeHandle->cacheFileRoot = $seedFileRoot;
 			self::$storeHandle->prefix = 'LtCaptcha-seed-';
-			self::$storeHandle->cacheFileRoot->init();
+			self::$storeHandle->init();
 		}
 	}
 
