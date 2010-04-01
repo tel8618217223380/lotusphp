@@ -44,10 +44,6 @@ class LtValidator
 							{
 								$messages[$key] = $this->errorMessages[$key];
 							}
-							else
-							{
-								$messages[$key] = 'no messages';
-							}
 							$errorMessages[$key] = sprintf($messages[$key], $label, $dtd->rules[$key]);
 						}
 						continue;
@@ -73,10 +69,6 @@ class LtValidator
 							{
 								$messages[$key] = $this->errorMessages[$key];
 							}
-							else
-							{
-								$messages[$key] = 'no messages';
-							}
 							$errorMessages[$key] = sprintf($messages[$key], $label, $dtd->rules[$key]);
 						}
 						continue;
@@ -90,10 +82,6 @@ class LtValidator
 					if (empty($messages[$key]) && isset($this->errorMessages[$key]))
 					{
 						$messages[$key] = $this->errorMessages[$key];
-					}
-					else
-					{
-						$messages[$key] = 'no messages';
 					}
 					$errorMessages[$key] = sprintf($messages[$key], $label, $dtd->rules[$key]);
 				}
