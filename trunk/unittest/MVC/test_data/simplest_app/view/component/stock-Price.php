@@ -1,6 +1,6 @@
 <fieldset>
-	<legend>Stock price of <em>{$data['companyName']}</em></legend>
-	Last Trade: {$data['stockPrice'][0]}
+	<legend>Stock price of <em>{$comdata['companyName']}</em></legend>
+	Last Trade: {$comdata['stockPrice'][0]}
 	<br />
-	52wk Range: {$data['stockPrice'][1]}-{$data['stockPrice'][2]}
+	52wk Range: {$comdata['stockPrice'][1]}-{$comdata['stockPrice'][2]}
 </fieldset>
