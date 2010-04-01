@@ -8,6 +8,7 @@ $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "example")) . '/';
 include $lotusHome . "runtime/Config.php";
 include $lotusHome . "runtime/Store.php";
 include $lotusHome . "runtime/StoreMemory.php";
+include $lotusHome . "runtime/ObjectUtil/ObjectUtil.php";
 
 include $lotusHome . "runtime/MVC/Dispatcher.php";
 include $lotusHome . "runtime/MVC/Action.php";
@@ -18,6 +19,7 @@ include $lotusHome . "runtime/MVC/View.php";
 include $lotusHome . "runtime/Validator/Validator.php";
 include $lotusHome . "runtime/Validator/ValidatorDtd.php";
 
+
 /**
  * 加载Action类文件
  */
@@ -27,6 +29,6 @@ include $appDir . "action/User-Signin.Action.php";
 /**
  * 实例化
  */
-$dispatcher = new LtDispatcher;
+$dispatcher = LtObjectUtil::singleton('LtDispatcher');
 $dispatcher->viewDir = "./simplest_app/view/";
 $dispatcher->dispatchAction("User", "Signin");
