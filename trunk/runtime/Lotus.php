@@ -63,7 +63,7 @@ class Lotus
 			$this->coreCacheHandle = new LtStoreFile;
 			$this->coreCacheHandle->cacheFileRoot = $this->app_tmp . 'coreCache/';
 			$prefix = sprintf("%u", crc32(serialize($this->app_dir)));
-			$this->coreCacheHandle->prefix = 'Lotus-'.$prefix.'-';
+			$this->coreCacheHandle->prefix = 'Lotus-' . $prefix . '-';
 			$this->coreCacheHandle->useSerialize = true;
 			$this->coreCacheHandle->init();
 		}
@@ -91,12 +91,20 @@ class Lotus
 	 */
 	protected function prepareAutoloader()
 	{
-		$autoloadDirs = array($this->lotusRuntimeDir);
-		$autoloadDirs[] = $this->proj_dir . 'lib';
-		$autoloadDirs[] = $this->app_dir . 'action';
-		$autoloadDirs[] = $this->app_dir . 'lib';
-		$autoloader = LtObjectUtil::singleton('LtAutoloader');
-		$autoloader->autoloadPath = $autoloadDirs;
+		$autoloader = new LtAutoloader;
+		if (isset($this->option["runtime_filemap"]))
+		{
+			$autoloader->useFileMap = true; 
+			// runtime目录的类文件映射保存在$coreFileMapping中。
+			$autoloader->fileMapPath[] = $this->lotusRuntimeDir;
+		}
+		else
+		{
+			$autoloader->autoloadPath[] = $this->lotusRuntimeDir;
+		}
+		$autoloader->autoloadPath[] = $this->proj_dir . 'lib';
+		$autoloader->autoloadPath[] = $this->app_dir . 'action';
+		$autoloader->autoloadPath[] = $this->app_dir . 'lib';
 		/**
 		 * 开发模式下缓存分析结果, 当修改源文件后重新生成缓存 
 		 * 源文件没有修改直接取缓存数据
@@ -107,7 +115,7 @@ class Lotus
 			$autoloader->conf["load_function"] = $this->option["load_function"];
 		}
 		if (!$this->devMode)
-		{ 
+		{
 			LtAutoloader::$storeHandle = $this->coreCacheHandle;
 		}
 		$autoloader->init();
@@ -118,7 +126,7 @@ class Lotus
 		$this->configHandle = LtObjectUtil::singleton("LtConfig");
 		if (!$this->devMode)
 		{
-			$configFile = $this->app_dir . 'conf/conf.php'; 
+			$configFile = $this->app_dir . 'conf/conf.php';
 			LtConfig::$storeHandle = $this->coreCacheHandle;
 		}
 		else

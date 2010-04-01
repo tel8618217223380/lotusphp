@@ -5,23 +5,26 @@ class LtAutoloader
 		/**
 		 * 是否自动加载定义了函数的文件
 		 * 
-		 * 可选项：
-		 *  # true   自动加载
-		 *  # false  跳过函数，只自动加载定义了class或者interface的文件
+		 * 可选项： 
+		 * # true   自动加载 
+		 * # false  跳过函数，只自动加载定义了class或者interface的文件
 		 */
 		"load_function" => true,
 
 		/**
 		 * 要扫描的文件类型
 		 * 
-		 * 若该属性设置为array("php","inc","php3")，则扩展名为"php","inc","php3"的文件会被扫描，其它扩展名的文件会被忽略
+		 * 若该属性设置为array("php","inc","php3")， 
+		 * 则扩展名为"php","inc","php3"的文件会被扫描， 
+		 * 其它扩展名的文件会被忽略
 		 */
 		"allow_file_extension" => array("php", "inc"),
 
 		/**
 		 * 不扫描的目录
 		 * 
-		 * 若该属性设置为array(".svn", ".setting")，则所有名为".setting"的目录也会被忽略
+		 * 若该属性设置为array(".svn", ".setting")， 
+		 * 则所有名为".setting"的目录也会被忽略
 		 */
 		"skip_dir_names" => array(".svn"),
 
@@ -29,12 +32,19 @@ class LtAutoloader
 		 * 存放临时文件的地址
 		 */
 		"mapping_file_root" => "/tmp/Lotus/autoloader-dev/",
-	);
+		);
 
 	static public $storeHandle;
 	public $autoloadPath;
 	protected $functionFileMapping;
 	protected $fileStore;
+	/**
+	 * 为了控制内存占用只将runtime目录的类文件映射保存在$coreFileMapping中。
+	 */
+	public $useFileMap = false; // 默认不使用内存保存类文件映射
+	public $fileMapPath;
+	protected $coreFileMapping;
+	private $saveMap = false;
 
 	public function init()
 	{
@@ -52,8 +62,7 @@ class LtAutoloader
 			self::$storeHandle->add(".class_total", 0);
 			self::$storeHandle->add(".function_total", 0);
 			self::$storeHandle->add(".functions", array(), 0);
-			$this->autoloadPath = $this->preparePath($this->autoloadPath);
-			$autoloadPath = $this->autoloadPath;
+			$autoloadPath = $this->preparePath($this->autoloadPath);
 			foreach($autoloadPath as $key => $path)
 			{
 				if (is_file($path))
@@ -65,12 +74,46 @@ class LtAutoloader
 			$this->scanDirs($autoloadPath);
 			unset($autoloadPath);
 		} 
+		if ($this->useFileMap)
+		{
+			$this->initFileMap();
+		}
 		// Whether loading function files
 		if ($this->conf["load_function"])
 		{
 			$this->loadFunction();
 		}
-		spl_autoload_register(array($this, "loadClass"));
+		if ($this->useFileMap)
+		{
+			spl_autoload_register(array($this, "loadClassWithFileMap"));
+		}
+		else
+		{
+			spl_autoload_register(array($this, "loadClass"));
+		}
+	}
+
+	public function initFileMap()
+	{
+		$this->coreFileMapping = array(); 
+		// 加载类文件映射
+		$this->coreFileMapping = self::$storeHandle->get(".class_filemapping");
+		if (empty($this->coreFileMapping))
+		{
+			$this->saveMap = true;
+			$autoloadPath = $this->preparePath($this->fileMapPath);
+			foreach($autoloadPath as $key => $path)
+			{
+				if (is_file($path))
+				{
+					$this->addFileMap($path);
+					unset($autoloadPath[$key]);
+				}
+			}
+			$this->scanDirs($autoloadPath);
+			unset($autoloadPath);
+			self::$storeHandle->add(".class_filemapping", $this->coreFileMapping);
+		}
 	}
 
 	public function loadFunction()
@@ -92,6 +135,18 @@ class LtAutoloader
 		}
 	}
 
+	public function loadClassWithFileMap($className)
+	{
+		$key = strtolower($className);
+		if (isset($this->coreFileMapping[$key]))
+		{
+			include $this->coreFileMapping[$key];
+		}
+		else if ($classFile = self::$storeHandle->get($key))
+		{
+			include($classFile);
+		}
+	}
 	/**
 	 * The string or an Multidimensional array into a one-dimensional array
 	 * 
@@ -237,6 +292,11 @@ class LtAutoloader
 	protected function addClass($className, $file)
 	{
 		$key = strtolower($className);
+		if ($this->saveMap)
+		{
+			$this->coreFileMapping[$key] = $file;
+			return true;
+		}
 		if ($existedClassFile = self::$storeHandle->get($key))
 		{
 			trigger_error("duplicate class [$className] found in:\n$existedClassFile\n$file\n");
