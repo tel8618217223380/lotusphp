@@ -194,7 +194,7 @@ abstract class LtAction
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;
-				$this->view->data = & $this->data;
+				$this->view->data = $this->data;
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
@@ -218,7 +218,7 @@ abstract class LtAction
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;
-				$this->view->data = & $this->data;
+				$this->view->data = $this->data;
 				$this->view->layoutDir = $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;

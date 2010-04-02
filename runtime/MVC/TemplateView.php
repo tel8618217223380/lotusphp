@@ -169,10 +169,6 @@ class LtTemplateView
 		 * 放弃支持$name.name.name
 		 * $str = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\.([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1['\\2'];?>", $str);
 		 */
-		// 内置变量 code message data
-		$str = preg_replace("/\{\\\$(code[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
-		$str = preg_replace("/\{\\\$(message[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str);
-		$str = preg_replace("/\{\\\$(data[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]*)\}/e", "\$this->addquote('<?php if (isset(\$this->\\1)) echo \$this->\\1;?>')", $str); 
 		// 其它变量
 		$str = preg_replace("/\{(\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{(\\$[a-zA-Z0-9_\.\[\]\'\"\$\x7f-\xff]+)\}/e", "\$this->addquote('<?php echo \\1;?>')", $str); 
