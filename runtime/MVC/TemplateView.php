@@ -116,12 +116,13 @@ class LtTemplateView
 			{
 				$prefix = "<?php\r\nif(isset(\$iscompile)&&true==\$iscompile)\r\nreturn " . var_export(array_unique($this->tpl_include_files), true) . ";?>";
 				$prefix = preg_replace("/([\r\n])+/", "\r\n", $prefix);
+				$postfix = "\r\n<!--Template compilation time : " . date('Y-m-d H:i:s') . "-->\r\n";
 			}
 			else
 			{
 				$prefix = '';
+				$postfix = '';
 			}
-			$postfix = "\r\n<!--Template compilation time : " . date('Y-m-d H:i:s') . "-->\r\n";
 			$str = $prefix . $str . $postfix;
 			if (!file_put_contents($objfile, $str))
 			{
