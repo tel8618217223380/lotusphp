@@ -7,13 +7,16 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class WrongWayToUseCookie extends PHPUnit_Framework_TestCase
 {
 	/**
-	 * @todo 补齐测试用例
-	 * 不设置密钥就开始使用LtCookie
 	 * 
-	 * @expectedException PHPUnit_Framework_Error 
+	 * 不设置密钥就开始使用LtCookie
+	 * @expectedException PHPUnit_Framework_Error
 	 */
 	public function testNoSecretKeySet()
 	{
+		$cookie = new LtCookie;
+		//不设置密钥 或者 密钥为空
+		LtCookie::$configHandle->addConfig(array("cookie.secret_key" => ""));
+		$cookie->init();
 	}
 
 	protected function setUp()

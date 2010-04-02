@@ -116,7 +116,7 @@ class RightWayToUseUrl extends PHPUnit_Framework_TestCase
 	{
 		$url = new LtUrl;
 		$config['router.routing_table'] = $routingTable;
-		LtUrl::$configHandle->updateConfig($config);
+		LtUrl::$configHandle->addConfig($config);
 		$url->init(); 
 
 		$this->assertEquals($userParameter, $url->reverseMatchingRoutingTable($expected));

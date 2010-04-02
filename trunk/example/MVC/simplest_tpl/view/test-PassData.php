@@ -8,7 +8,7 @@
 <fieldset>
 	<legend>Data passed by <em>$this-&gt;code</em> <em>$this-&gt;message</em></legend>
 	<pre>
-		code: {$code}
-		message: {$message}
+		code: {$this->code}
+		message: {$this->message}
 	</pre>
 </fieldset>

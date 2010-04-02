@@ -7,14 +7,11 @@ class LtRbac {
 
 	public function __construct()
 	{
+		self::$configHandle = new LtConfig;
 	}
 
 	public function init()
 	{
-		if (empty(self::$configHandle))
-		{
-			self::$configHandle = new LtConfig;
-		}
 		$this->acl = self::$configHandle->get('rbac.acl');
 	}
 

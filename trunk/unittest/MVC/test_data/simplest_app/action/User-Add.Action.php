@@ -15,5 +15,6 @@ class UserAddAction extends LtAction
 		$this->code = 200;
 		$this->message = "Welcome, please signin";
 		$this->data["username"] = "lotusphp";
+		$this->data['title'] = 'lotusphp';
 	}
 }

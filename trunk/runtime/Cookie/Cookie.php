@@ -2,6 +2,7 @@
 class LtCookie
 {
 	public static $configHandle;
+	private $secretKey;
 
 	public function __construct()
 	{
@@ -10,7 +11,11 @@ class LtCookie
 
 	public function init()
 	{ 
-		// don't remove me, I am the placeholder
+		$this->secretKey = self::$configHandle->get("cookie.secret_key");
+		if(empty($this->secretKey))
+		{
+			trigger_error("cookie.secret_key empty");
+		}
 	}
 
 	/**
@@ -21,7 +26,7 @@ class LtCookie
 	 */
 	protected function decrypt($encryptedText)
 	{
-		$key = self::$configHandle->get("cookie.secret_key");
+		$key = $this->secretKey;
 		$cryptText = base64_decode($encryptedText);
 		$ivSize = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
 		$iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
@@ -37,7 +42,7 @@ class LtCookie
 	 */
 	protected function encrypt($plainText)
 	{
-		$key = self::$configHandle->get("cookie.secret_key");
+		$key = $this->secretKey;
 		$ivSize = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
 		$iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
 		$encryptText = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $plainText, MCRYPT_MODE_ECB, $iv);

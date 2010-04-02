@@ -40,9 +40,9 @@ class RightWayToUseCookie extends PHPUnit_Framework_TestCase
 	public function testEncrypt()
 	{
 		$cp = new CookieProxy;
+		LtCookie::$configHandle->addConfig(array("cookie.secret_key" => "KY(!@$(#*"));
 		$cp->init();
 
-		LtCookie::$configHandle->addConfig(array("cookie.secret_key" => "KY(!@$(#*"));
 		$encrypted = $cp->encrypt("lotusphp");
 		$this->assertEquals("lotusphp", $cp->decrypt($encrypted));
 	}

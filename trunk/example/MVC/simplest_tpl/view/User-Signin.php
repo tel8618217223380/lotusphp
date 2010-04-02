@@ -7,21 +7,19 @@
 	</head>
 <body>
 
-<h1>{$code} - {$message}</h1>
+<h1>{$this->code} - {$this->message}</h1>
 
 <form>
 	<input type="hidden" name="module" value="User" />
 	<input type="hidden" name="action" value="Signin" />
-	<input type="text" name="username" value="{$data[username]}" />
+	<input type="text" name="username" value="<?php 
+	if (isset($this->data['username'])) echo $this->data['username'];?>" />
 </form>
 
 <p><a href="simplest_tpl.php">返回 go back</a></p>
 
 <pre>
 	<?php print_r($this->data);?>
-
-
-
 
 </pre>
 

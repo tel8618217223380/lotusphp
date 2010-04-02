@@ -10,6 +10,7 @@ class testPassDataAction extends LtAction
 		$this->code = 200;
 		$this->message = "Welcome";
 		$this->data["username"] = "lotusphp";
+		$this->data['title'] = "Welcome Lotusphp ";
 
 		$this->data['ip'] = $_SERVER['REMOTE_ADDR'];
 		$this->data['time'] = time();
