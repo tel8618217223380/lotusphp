@@ -76,6 +76,7 @@ abstract class LtAction
 		if (!$this->constructed)
 		{
 			//DebugHelper::debug('SUBCLASS_NOT_CALL_PARENT_CONSTRUCTOR', array('class' => $actionClassName));
+			trigger_error('SUBCLASS_NOT_CALL_PARENT_CONSTRUCTOR');
 		}
 		$this->afterConstruct();
 		$validateResult = $this->validateInput();
@@ -96,7 +97,7 @@ abstract class LtAction
 		{
 			$this->code = 407;
 			$this->message = "Invalid input";
-			$this->data = $validateResult["error_messages"];
+			$this->data['error_messages'] = $validateResult["error_messages"];
 		}
 		$this->writeResponse();
 	}
