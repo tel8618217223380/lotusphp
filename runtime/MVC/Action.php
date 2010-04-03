@@ -138,7 +138,7 @@ abstract class LtAction
 				if (!empty($error_messages))
 				{
 					$validateResult['error_total'] ++;
-					$validateResult['error_messages'][] = $error_messages;
+					$validateResult['error_messages'][$variable] = $error_messages;
 				}
 			}
 		}
