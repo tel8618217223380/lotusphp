@@ -1,9 +1,9 @@
 <?php
 $projHome = substr(__FILE__, 0, strpos(__FILE__, "app_name1"));
 
-$config = include($projHome . "/conf/conf.php");
+$config = include($projHome . "/conf/conf_dev.php");
 
-foreach(glob(dirname(__FILE__) . '/standard/*.php') as $confFile)
+foreach(glob(dirname(__FILE__) . '/dev/*.php') as $confFile)
 {
 	if (__FILE__ != $confFile)
 	{
