@@ -5,45 +5,42 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 	public function testPerformance()
 	{
 		/**
-		 * 初始化Lotus类
-		 */
-		$lotus = new Lotus();
-		/**
+		 * 注意: 修改配置后请手工删除临时目录文件
+		 * 
+		 * 
 		 * 项目目录, 按照约定的目录结构,自动加载配置文件,自动加载类
 		 */
-		$lotus->option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
+		$option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
 		/**
 		 * 临时目录,默认是proj_dir/tmp/
 		 * 开发模式下的Autoloader 和 MVC的模板引擎
 		 */
-		$lotus->option['app_tmp'] = '/tmp/Lotus/unittest/lotus-appname2';
+		$option['app_tmp'] = '/tmp/Lotus/unittest/lotus-appname2';
 
 		/**
 		 * 应用名称对项目目录下的子目录名称
 		 */
-		$lotus->option['app_name'] = 'app_name2';
+		$option['app_name'] = 'app_name2';
 		/**
 		 * 禁止加载函数文件, 防止测试过程中函数冲突
 		 */
-		$lotus->option['load_function'] = false;
-
+		$option['load_function'] = false;
 		/**
-		 * 生产环境下禁用可以提升性能
+		 * 配置LtAutoloader组件是否将runtime目录的类文件映射保存到局部变量内,
+		 * 启用后Autoloader的自动加载方法先查找局部变量,然后再到storeHandle查找.
+		 * 
+		 * 这是可选的, 如不需要, 请不要设置,
+		 * Lotus.php内使用isset($this->option["runtime_filemap"])判断
+		 * 
+		 * 使用后初始化时间会稍大,内存占用会稍高,
+		 * 减少的是创建类实例时每个文件读一次取文件路径的时间.
 		 */ 
-		// $lotus->option['view_tpl_auto_compile'] = false;
+		// $option['runtime_filemap'] = true;
 		/**
-		 * 默认MVC模式 true
+		 * 初始化Lotus类
 		 */
-		$lotus->mvcMode = true;
-		/**
-		 * 默认开发模式 false
-		 * 关闭开发模式会在临时目录缓存autoloader和config来提升性能
-		 */
-		$lotus->devMode = false;
-
-		/**
-		 * 开始工作
-		 */
+		$lotus = new Lotus();
+		$lotus->option = $option;
 		$lotus->init();
 
 		/**
@@ -60,7 +57,10 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 
 		for($i = 0; $i < $times; $i++)
 		{
+			$lotus = new Lotus();
+			$lotus->option = $option;
 			$lotus->init();
+			LtConfig::$storeHandle = null;
 		}
 
 		$endTime = microtime(true);

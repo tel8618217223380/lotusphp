@@ -52,7 +52,7 @@ class Lotus
 		require_once $this->lotusRuntimeDir . "Store.php";
 		require_once $this->lotusRuntimeDir . "StoreMemory.php";
 		require_once $this->lotusRuntimeDir . "StoreFile.php";
-		require_once $this->lotusRuntimeDir . "ObjectUtil/ObjectUtil.php";
+
 		require_once $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
 
 		if (!$this->devMode)
@@ -123,7 +123,7 @@ class Lotus
 
 	protected function prepareConfig()
 	{
-		$this->configHandle = LtObjectUtil::singleton("LtConfig");
+		$this->configHandle = new LtConfig;
 		if (!$this->devMode)
 		{
 			$configFile = $this->app_dir . 'conf/conf.php';
@@ -139,20 +139,18 @@ class Lotus
 
 	protected function runMVC()
 	{
-		$router = LtObjectUtil::singleton('LtRouter');
+		$router = new LtRouter;
 		$router->init();
-		$url = LtObjectUtil::singleton('LtUrl');
-		$url->init();
-		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
-		$dispatcher->viewDir = $this->app_dir . 'view/';
-		$dispatcher->viewTplDir = $this->app_tmp . 'templateView/' . $this->app_name . '/';
+		$dispatcher = new LtDispatcher;
+		LtDispatcher::$viewDir = $this->app_dir . 'view/';
+		LtDispatcher::$viewTplDir = $this->app_tmp . 'templateView/' . $this->app_name . '/';
 		if (!$this->devMode)
 		{
-			$dispatcher->viewTplAutoCompile = false;
+			LtDispatcher::$viewTplAutoCompile = false;
 		}
 		else
 		{
-			$dispatcher->viewTplAutoCompile = isset($this->option['view_tpl_auto_compile'])?$this->option['view_tpl_auto_compile']:true;
+			LtDispatcher::$viewTplAutoCompile = true;
 		}
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}

@@ -4,9 +4,9 @@
  */
 class LtDispatcher
 {
-	public $viewDir;
-	public $viewTplDir;
-	public $viewTplAutoCompile;
+	public static $viewDir;
+	public static $viewTplDir;
+	public static $viewTplAutoCompile;
 	public $data;
 
 	public function __construct()
@@ -37,9 +37,9 @@ class LtDispatcher
 			$newContext->uri[strtolower($classType)] = $action;
 			$actionInstance = new $actionClassName();
 			$actionInstance->context = $newContext;
-			$actionInstance->viewDir = $this->viewDir;
-			$actionInstance->viewTplDir = $this->viewTplDir; // 模板编译目录
-			$actionInstance->viewTplAutoCompile = $this->viewTplAutoCompile;
+			$actionInstance->viewDir = self::$viewDir;
+			$actionInstance->viewTplDir = self::$viewTplDir; // 模板编译目录
+			$actionInstance->viewTplAutoCompile = self::$viewTplAutoCompile;
 			$actionInstance->executeChain();
 			$this->data = $actionInstance->data;
 		}

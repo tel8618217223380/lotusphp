@@ -1,7 +1,5 @@
 <?php
-$projHome = substr(__FILE__, 0, strpos(__FILE__, "app_name1"));
-
-$config = include($projHome . "/conf/conf.php");
+$config = array();
 
 foreach(glob(dirname(__FILE__) . '/standard/*.php') as $confFile)
 {
