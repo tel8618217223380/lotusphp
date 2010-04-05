@@ -1,11 +1,12 @@
 <?php
-$config["validator.error_messages.ban"]          = '%s 包含违禁词';
-$config["validator.error_messages.mask"]         = '%s 不符合指定的格式';
-$config["validator.error_messages.max_length"]   = '%s 多于  %s 个字';
-$config["validator.error_messages.min_length"]   = '%s 少于  %s 个字';
-$config["validator.error_messages.max_value"]    = '%s 超过了  %s';
-$config["validator.error_messages.min_value"]    = '%s 不足 %s';
-$config["validator.error_messages.max_selected"] = '%s 选得太多';
-$config["validator.error_messages.min_selected"] = '%s 选得太少';
-$config["validator.error_messages.required"]     = '%s 为空';
-$config["validator.error_messages.equal_to"]     = '%s 不等于  %s';
+$config['validator.error_messages'] = array('ban' => '%s contain banned words',
+	'mask' => '%s does not match the given format',
+	'max_length' => '%s is longer than %s',
+	'min_length' => '%s is shorter than %s',
+	'max_value' => '%s is bigger than %s',
+	'min_value' => '%s is smaller than %s',
+	'max_selected' => '%s is too much',
+	'min_selected' => '%s is too few',
+	'required' => '%s is empty',
+	'equal_to' => '%s is not equal to %s',
+	);
