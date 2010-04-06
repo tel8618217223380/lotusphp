@@ -7,26 +7,23 @@ class LtUrl
 
 	public function __construct()
 	{
+		$this->routingTable = array('pattern' => ":module/:action/*",
+			'default' => array('module' => 'default', 'action' => 'index'),
+			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+',
+				'action' => '[a-zA-Z0-9\.\-_]+'
+				),
+			'varprefix' => ':',
+			'delimiter' => '/',
+			'postfix' => '',
+			'protocol' => 'PATH_INFO', // REWRITE STANDARD
+			);
 		self::$configHandle = new LtConfig;
 	}
 	public function init()
 	{
-		if (empty($this->routingTable))
+		if ($tmp = self::$configHandle->get("router.routing_table"))
 		{
-			$this->routingTable = self::$configHandle->get("router.routing_table");
-		}
-		if (empty($this->routingTable))
-		{
-			$this->routingTable = array('pattern' => ":module/:action/*",
-				'default' => array('module' => 'default', 'action' => 'index'),
-				'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+',
-					'action' => '[a-zA-Z0-9\.\-_]+'
-					),
-				'varprefix' => ':',
-				'delimiter' => '/',
-				'postfix' => '',
-				'protocol' => 'PATH_INFO', // REWRITE STANDARD
-				);
+			$this->routingTable = $tmp;
 		}
 		$protocol = strtoupper($this->routingTable['protocol']);
 		if ('REWRITE' == $protocol)
@@ -69,7 +66,7 @@ class LtUrl
 
 		$pattern = explode($delimiter, trim($this->routingTable['pattern'], $delimiter));
 
-		foreach($pattern as $v)
+		foreach($pattern as $k => $v)
 		{
 			if ($v[0] == $varprefix)
 			{ 
