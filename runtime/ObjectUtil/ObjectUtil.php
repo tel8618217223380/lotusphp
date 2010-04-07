@@ -3,7 +3,7 @@ class LtObjectUtil
 {
 	static $instances;
 
-	static public function singleton($className)
+	static public function singleton($className, $autoInited = true)
 	{
 		if (empty($className))
 		{
@@ -17,23 +17,17 @@ class LtObjectUtil
 		}
 		else if (class_exists($className))
 		{
-			self::$instances[$key] = new $className;
-			return self::$instances[$key];
+			$newInstance =  new $className;
+			if ($autoInited)
+			{
+				$newInstance->init();
+			}
+			self::$instances[$key] = $newInstance;
+			return $newInstance;
 		}
 		else
 		{
 			return false;
-		}
-	}
-
-	static public function setProperties($object, $propArray)
-	{
-		foreach ($object as $propName)
-		{
-			if (array_key_exists($propName, $propArray))
-			{
-				$object->$propName = $propArray[$propName];
-			}
 		}
 	}
 }
