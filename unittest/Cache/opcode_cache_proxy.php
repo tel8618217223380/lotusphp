@@ -13,12 +13,12 @@ $ccb = new LtCacheConfigBuilder;
 $ccb->addSingleHost(array(
 	"adapter" => $opcodeCacheAdapter,'host'=>'/tmp/Lotus/unittest/opcache/',
 ));
-LtCache::$servers = $ccb->getServers();
 
 /**
  * 实例化组件入口类
  */
 $cache = new LtCache;
+LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 $cache->init();
 
 /**

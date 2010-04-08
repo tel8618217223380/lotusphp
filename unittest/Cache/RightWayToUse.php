@@ -132,10 +132,11 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		{
 			$opcodeCacheAdapters[] = "apc";
 		}
-		if (extension_loaded('eaccelerator'))
-		{
-			$opcodeCacheAdapters[] = "eaccelerator";
-		}
+// 新版eAccelerator已经取消了相关功能
+//		if (extension_loaded('eaccelerator'))
+//		{
+//			$opcodeCacheAdapters[] = "eaccelerator";
+//		}
 		if (extension_loaded('xcache'))
 		{
 			$opcodeCacheAdapters[] = "xcache";
@@ -391,11 +392,9 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 
 	protected function setUp()
 	{
-		LtCache::$configHandle = null;
 	}
 
 	protected function tearDown()
 	{
-		LtConfig::$storeHandle = null;	
 	}
 }
