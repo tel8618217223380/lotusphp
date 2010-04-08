@@ -1,31 +1,31 @@
 <?php
 class LtSession
 {
-	public static $saveHandle;
-	public static $configHandle;
+	public $storeHandle;
+	public $configHandle;
 
 	public function __construct()
 	{
-		if (! self::$configHandle instanceof LtConfig)
+		if (! $this->configHandle instanceof LtConfig)
 		{
 			if (class_exists("LtObjectUtil", false))
 			{
-				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+				$this->configHandle = LtObjectUtil::singleton("LtConfig");
 			}
 			else
 			{
-				self::$configHandle = new LtConfig;
+				$this->configHandle = new LtConfig;
 			}
 		}
 	}
 
 	public function init()
 	{
-		if(!$sessionSavePath = self::$configHandle->get("session.save_path"))
+		if(!$sessionSavePath = $this->configHandle->get("session.save_path"))
 		{
 			$sessionSavePath = '/tmp/Lotus/session/';
 		}
-		if (!is_object(self::$saveHandle))
+		if (!is_object($this->storeHandle))
 		{
 			ini_set('session.save_handler', 'files');
 			if (!is_dir($sessionSavePath))
@@ -39,15 +39,15 @@ class LtSession
 		}
 		else
 		{
-			self::$saveHandle->conf = self::$configHandle->get("session.conf");
-			self::$saveHandle->init();
+			$this->storeHandle->conf = $this->configHandle->get("session.conf");
+			$this->storeHandle->init();
 			session_set_save_handler(
-				array(&self::$saveHandle, 'open'), 
-				array(&self::$saveHandle, 'close'),
-				array(&self::$saveHandle, 'read'), 
-				array(&self::$saveHandle, 'write'), 
-				array(&self::$saveHandle, 'destroy'), 
-				array(&self::$saveHandle, 'gc')
+				array(&$this->storeHandle, 'open'), 
+				array(&$this->storeHandle, 'close'),
+				array(&$this->storeHandle, 'read'), 
+				array(&$this->storeHandle, 'write'), 
+				array(&$this->storeHandle, 'destroy'), 
+				array(&$this->storeHandle, 'gc')
 				);
 		}
 		//session_start();

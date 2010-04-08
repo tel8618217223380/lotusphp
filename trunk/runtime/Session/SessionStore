@@ -1,5 +1,5 @@
 <?php
-Interface LtSessionSaveHandle
+Interface LtSessionStore
 {
     public function open($save_path, $name);
     public function close();
