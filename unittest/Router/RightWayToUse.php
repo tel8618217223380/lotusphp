@@ -30,7 +30,7 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 		 * LtRouter 使用方法
 		 */
 		$router = new LtRouter;
-		LtRouter::$configHandle->addConfig($config);
+		$router->configHandle->addConfig($config);
 		$router->init();
 		/**
 		 * 解析后的变量放 $_GET
@@ -196,7 +196,5 @@ class RightWayToUseRouter extends PHPUnit_Framework_TestCase
 	}
 	protected function tearDown()
 	{
-		LtRouter::$configHandle = null;
-		LtConfig::$storeHandle = null;
 	}
 }

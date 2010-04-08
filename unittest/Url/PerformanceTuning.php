@@ -40,7 +40,7 @@ class PerformanceTuningUrl extends PHPUnit_Framework_TestCase
 		
 		// 初始化LtUrl
 		$url = new LtUrl;
-		LtUrl::$configHandle->addConfig($config);
+		$url->configHandle->addConfig($config);
 		$url->init(); 
 		// 初始化结束
 		// 测试生成超链接
@@ -74,12 +74,8 @@ class PerformanceTuningUrl extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
-		LtUrl::$configHandle = null;
-		LtConfig::$storeHandle = null;
 	}
 	protected function tearDown()
 	{
-		LtUrl::$configHandle = null;
-		LtConfig::$storeHandle = null;
 	}
 }

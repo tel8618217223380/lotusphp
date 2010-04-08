@@ -127,7 +127,7 @@ class Lotus
 		if (!$this->devMode)
 		{
 			$configFile = $this->app_dir . 'conf/conf.php';
-			LtConfig::$storeHandle = $this->coreCacheHandle;
+			$this->configHandle->storeHandle = $this->coreCacheHandle;
 		}
 		else
 		{
