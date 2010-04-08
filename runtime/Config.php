@@ -1,14 +1,14 @@
 <?php
 class LtConfig
 {
-	public static $storeHandle;
+	public $storeHandle;
 	protected $conf;
 
 	public function __construct()
 	{
-		if (!is_object(self::$storeHandle))
+		if (!is_object($this->storeHandle))
 		{
-			self::$storeHandle = new LtStoreMemory;
+			$this->storeHandle = new LtStoreMemory;
 		}
 	}
 
@@ -19,7 +19,7 @@ class LtConfig
 
 	public function get($key)
 	{
-		$storedConfig = self::$storeHandle->get($key);
+		$storedConfig = $this->storeHandle->get($key);
 		if ($storedConfig instanceof LtConfigExpression)
 		{
 			$str = $storedConfig->__toString();
@@ -46,7 +46,7 @@ class LtConfig
 	 */
 	public function loadConfigFile($configFile)
 	{
-		if (0 == self::$storeHandle->get(".config_total"))
+		if (0 == $this->storeHandle->get(".config_total"))
 		{
 			if (null === $configFile || !is_file($configFile))
 			{
@@ -59,9 +59,9 @@ class LtConfig
 			}
 			elseif (!empty($this->conf))
 			{
-				if (0 == self::$storeHandle->get(".config_total"))
+				if (0 == $this->storeHandle->get(".config_total"))
 				{
-					self::$storeHandle->add(".config_total", 0);
+					$this->storeHandle->add(".config_total", 0);
 				}
 				$this->addConfig($this->conf);
 			}
@@ -72,11 +72,11 @@ class LtConfig
 	{
 		foreach($configArray as $key => $value)
 		{
-			if (!self::$storeHandle->update($key, $value))
+			if (!$this->storeHandle->update($key, $value))
 			{
-				if (self::$storeHandle->add($key, $value))
+				if ($this->storeHandle->add($key, $value))
 				{
-					self::$storeHandle->update(".config_total", self::$storeHandle->get(".config_total") + 1, 0);
+					$this->storeHandle->update(".config_total", $this->storeHandle->get(".config_total") + 1, 0);
 				}
 			}
 		}

@@ -34,11 +34,9 @@ class WrongWayToUseConfig extends PHPUnit_Framework_TestCase
 
 	protected function setUp()
 	{
-		LtConfig::$storeHandle = null;
 	}
 
 	protected function tearDown()
 	{
-		LtConfig::$storeHandle = null;
 	}
 }

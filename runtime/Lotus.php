@@ -116,7 +116,7 @@ class Lotus
 		}
 		if (!$this->devMode)
 		{
-			LtAutoloader::$storeHandle = $this->coreCacheHandle;
+			$autoloader->storeHandle = $this->coreCacheHandle;
 		}
 		$autoloader->init();
 	}
