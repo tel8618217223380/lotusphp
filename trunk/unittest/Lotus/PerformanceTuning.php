@@ -60,7 +60,7 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 			$lotus = new Lotus();
 			$lotus->option = $option;
 			$lotus->init();
-			LtConfig::$storeHandle = null;
+			unset($lotus);
 		}
 
 		$endTime = microtime(true);
