@@ -15,7 +15,7 @@ class WrongWayToUseCookie extends PHPUnit_Framework_TestCase
 	{
 		$cookie = new LtCookie;
 		//不设置密钥 或者 密钥为空
-		LtCookie::$configHandle->addConfig(array("cookie.secret_key" => ""));
+		$cookie->configHandle->addConfig(array("cookie.secret_key" => ""));
 		$cookie->init();
 	}
 

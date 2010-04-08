@@ -1,35 +1,35 @@
 <?php
 class LtCaptcha
 {
-	public static $configHandle;
-	public static $storeHandle;
+	public $configHandle;
+	public $storeHandle;
 
 	public $imageEngine;
 
 	public function __construct()
 	{
-		if (! self::$configHandle instanceof LtConfig)
+		if (! $this->configHandle instanceof LtConfig)
 		{
 			if (class_exists("LtObjectUtil", false))
 			{
-				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+				$this->configHandle = LtObjectUtil::singleton("LtConfig");
 			}
 			else
 			{
-				self::$configHandle = new LtConfig;
+				$this->configHandle = new LtConfig;
 			}
 		}
 	}
 
 	public function init()
 	{
-		if (!is_object(self::$storeHandle))
+		if (!is_object($this->storeHandle))
 		{
-			self::$storeHandle = new LtStoreFile;
-			$seedFileRoot = self::$configHandle->get("captcha.seed_file_root");
-			self::$storeHandle->cacheFileRoot = $seedFileRoot;
-			self::$storeHandle->prefix = 'LtCaptcha-seed-';
-			self::$storeHandle->init();
+			$this->storeHandle = new LtStoreFile;
+			$seedFileRoot = $this->configHandle->get("captcha.seed_file_root");
+			$this->storeHandle->cacheFileRoot = $seedFileRoot;
+			$this->storeHandle->prefix = 'LtCaptcha-seed-';
+			$this->storeHandle->init();
 		}
 	}
 
@@ -42,12 +42,12 @@ class LtCaptcha
 		}
 		if (!is_object($this->imageEngine))
 		{
-			if ($imageEngine = self::$configHandle->get("captcha.image_engine"))
+			if ($imageEngine = $this->configHandle->get("captcha.image_engine"))
 			{
 				if (class_exists($imageEngine))
 				{
 					$this->imageEngine = new $imageEngine;
-					$this->imageEngine->conf = self::$configHandle->get("captcha.image_engine_conf");
+					$this->imageEngine->conf = $this->configHandle->get("captcha.image_engine_conf");
 				}
 				else
 				{
@@ -61,15 +61,15 @@ class LtCaptcha
 			}
 		}
 		$word = $this->generateRandCaptchaWord($seed);
-		self::$storeHandle->add($seed, $word);
+		$this->storeHandle->add($seed, $word);
 		return $this->imageEngine->drawImage($word);
 	}
 
 	public function verify($seed, $userInput)
 	{
-		if ($word = self::$storeHandle->get($seed))
+		if ($word = $this->storeHandle->get($seed))
 		{
-			self::$storeHandle->del($seed);
+			$this->storeHandle->del($seed);
 			return $userInput === $word;
 		}
 		else
@@ -80,8 +80,8 @@ class LtCaptcha
 
 	protected function generateRandCaptchaWord()
 	{
-		$allowChars = self::$configHandle->get("captcha.allow_chars");
-		$length = self::$configHandle->get("captcha.length");
+		$allowChars = $this->configHandle->get("captcha.allow_chars");
+		$length = $this->configHandle->get("captcha.length");
 		$allowedSymbolsLength = strlen($allowChars) - 1;
 		$captchaWord = "";
 		for ($i = 0; $i < $length; $i ++)

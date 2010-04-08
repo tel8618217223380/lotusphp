@@ -9,7 +9,7 @@ $operation = $_REQUEST["operation"];
 // 1. 实例化
 $cookie = new LtCookie; 
 // 2. 设置属性
-LtCookie::$configHandle->addConfig(array("cookie.secret_key" => "dsds@#$%^&*(werewt"));
+$cookie->configHandle->addConfig(array("cookie.secret_key" => "dsds@#$%^&*(werewt"));
 // 3. 调init()方法
 $cookie->init();
 

@@ -16,8 +16,6 @@ class LtValidatorProxy extends LtValidator
 	public function __construct()
 	{
 		parent::__construct();
-		
-		$this->conf = new LtValidatorConfig;
 	}
 	
 	public function __get($prop)

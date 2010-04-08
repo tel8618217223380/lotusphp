@@ -1,27 +1,27 @@
 <?php
 class LtPagination
 {
-	public static $configHandle;
+	public $configHandle;
 	public $conf;
 
 	public function __construct()
 	{
-		if (! self::$configHandle instanceof LtConfig)
+		if (! $this->configHandle instanceof LtConfig)
 		{
 			if (class_exists("LtObjectUtil", false))
 			{
-				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+				$this->configHandle = LtObjectUtil::singleton("LtConfig");
 			}
 			else
 			{
-				self::$configHandle = new LtConfig;
+				$this->configHandle = new LtConfig;
 			}
 		}
 	}
 
 	public function init()
 	{
-		$this->conf = self::$configHandle->get("pagination.pager");
+		$this->conf = $this->configHandle->get("pagination.pager");
 		if (empty($this->conf))
 		{
 			$this->conf['per_page'] = 25; //每个页面中希望展示的项目数量 
