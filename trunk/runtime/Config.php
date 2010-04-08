@@ -33,7 +33,10 @@ class LtConfig
 				return $str;
 			}
 		}
-		return self::$storeHandle->get($key);
+		else
+		{
+			return $storedConfig;
+		}
 	}
 
 	/**
