@@ -12,7 +12,7 @@ class LtAutoloaderProxy extends LtAutoloader
 {
 	public function __construct()
 	{
-		parent::$storeHandle = new LtStoreMemory;
+		$this->storeHandle = new LtStoreMemory;
 	}
 	public function __get($prop)
 	{

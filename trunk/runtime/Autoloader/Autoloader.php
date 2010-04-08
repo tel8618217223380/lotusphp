@@ -34,7 +34,7 @@ class LtAutoloader
 		"mapping_file_root" => "/tmp/Lotus/autoloader-dev/",
 		);
 
-	static public $storeHandle;
+	public $storeHandle;
 	public $autoloadPath;
 	protected $functionFileMapping;
 	protected $fileStore;
@@ -48,20 +48,20 @@ class LtAutoloader
 
 	public function init()
 	{
-		if (!is_object(self::$storeHandle))
+		if (!is_object($this->storeHandle))
 		{
-			self::$storeHandle = new LtStoreMemory;
+			$this->storeHandle = new LtStoreMemory;
 			$this->fileStore = new LtStoreFile;
 			$this->fileStore->cacheFileRoot = $this->conf["mapping_file_root"];
 			$this->fileStore->prefix = 'LtAutoloader-dev-';
 			$this->fileStore->init();
 		} 
 		// Whether scanning directory
-		if (0 == self::$storeHandle->get(".class_total") && 0 == self::$storeHandle->get(".function_total"))
+		if (0 == $this->storeHandle->get(".class_total") && 0 == $this->storeHandle->get(".function_total"))
 		{
-			self::$storeHandle->add(".class_total", 0);
-			self::$storeHandle->add(".function_total", 0);
-			self::$storeHandle->add(".functions", array(), 0);
+			$this->storeHandle->add(".class_total", 0);
+			$this->storeHandle->add(".function_total", 0);
+			$this->storeHandle->add(".functions", array(), 0);
 			$autoloadPath = $this->preparePath($this->autoloadPath);
 			foreach($autoloadPath as $key => $path)
 			{
@@ -97,7 +97,7 @@ class LtAutoloader
 	{
 		$this->coreFileMapping = array(); 
 		// 加载类文件映射
-		$this->coreFileMapping = self::$storeHandle->get(".class_filemapping");
+		$this->coreFileMapping = $this->storeHandle->get(".class_filemapping");
 		if (empty($this->coreFileMapping))
 		{
 			$this->saveMap = true;
@@ -112,13 +112,13 @@ class LtAutoloader
 			}
 			$this->scanDirs($autoloadPath);
 			unset($autoloadPath);
-			self::$storeHandle->add(".class_filemapping", $this->coreFileMapping);
+			$this->storeHandle->add(".class_filemapping", $this->coreFileMapping);
 		}
 	}
 
 	public function loadFunction()
 	{
-		if ($functionFiles = self::$storeHandle->get(".functions"))
+		if ($functionFiles = $this->storeHandle->get(".functions"))
 		{
 			foreach ($functionFiles as $functionFile)
 			{
@@ -129,7 +129,7 @@ class LtAutoloader
 
 	public function loadClass($className)
 	{
-		if ($classFile = self::$storeHandle->get(strtolower($className)))
+		if ($classFile = $this->storeHandle->get(strtolower($className)))
 		{
 			include($classFile);
 		}
@@ -142,7 +142,7 @@ class LtAutoloader
 		{
 			include $this->coreFileMapping[$key];
 		}
-		else if ($classFile = self::$storeHandle->get($key))
+		else if ($classFile = $this->storeHandle->get($key))
 		{
 			include($classFile);
 		}
@@ -297,15 +297,15 @@ class LtAutoloader
 			$this->coreFileMapping[$key] = $file;
 			return true;
 		}
-		if ($existedClassFile = self::$storeHandle->get($key))
+		if ($existedClassFile = $this->storeHandle->get($key))
 		{
 			trigger_error("duplicate class [$className] found in:\n$existedClassFile\n$file\n");
 			return false;
 		}
 		else
 		{
-			self::$storeHandle->add($key, $file);
-			self::$storeHandle->update(".class_total", self::$storeHandle->get(".class_total") + 1);
+			$this->storeHandle->add($key, $file);
+			$this->storeHandle->update(".class_total", $this->storeHandle->get(".class_total") + 1);
 			return true;
 		}
 	}
@@ -322,8 +322,8 @@ class LtAutoloader
 		else
 		{
 			$this->functionFileMapping[$functionName] = $file;
-			self::$storeHandle->update(".functions", array_unique(array_values($this->functionFileMapping)));
-			self::$storeHandle->update(".function_total", count($this->functionFileMapping));
+			$this->storeHandle->update(".functions", array_unique(array_values($this->functionFileMapping)));
+			$this->storeHandle->update(".function_total", count($this->functionFileMapping));
 			return true;
 		}
 	}

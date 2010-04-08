@@ -44,7 +44,7 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		 * 这是为了证明：使用LtCache作为LtAutoloader的存储，功能是正常的
 		 */
 		$autoloader = new LtAutoloader;
-		LtAutoloader::$storeHandle = $cacheHandle;
+		$autoloader->storeHandle = $cacheHandle;
 		$autoloader->conf["load_function"] = false;
 		$autoloader->autoloadPath = $autoloadPath;
 		$autoloader->init();
@@ -59,7 +59,7 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		for($i = 0; $i < $times; $i++)
 		{
 			$autoloader = new LtAutoloader;
-			LtAutoloader::$storeHandle = $cacheHandle;
+			$autoloader->storeHandle = $cacheHandle;
 			$autoloader->conf["load_function"] = false;
 			$autoloader->autoloadPath = $autoloadPath;
 			$autoloader->init();
@@ -81,7 +81,6 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
-		LtAutoloader::$storeHandle = null;
 	}
 	protected function tearDown()
 	{
