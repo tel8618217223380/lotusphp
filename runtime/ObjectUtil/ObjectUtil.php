@@ -18,7 +18,7 @@ class LtObjectUtil
 		else if (class_exists($className))
 		{
 			$newInstance = new $className;
-			if (method_exists($newInstance, 'init'))
+			if ($autoInited && method_exists($newInstance, 'init'))
 			{
 				$newInstance->init();
 			}
