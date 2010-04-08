@@ -1,27 +1,27 @@
 <?php
 class LtUrl
 {
-	public static $configHandle;
+	public $configHandle;
 	public $routingTable;
 	public $baseUrl;
 
 	public function __construct()
 	{
-		if (! self::$configHandle instanceof LtConfig)
+		if (! $this->configHandle instanceof LtConfig)
 		{
 			if (class_exists("LtObjectUtil", false))
 			{
-				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+				$this->configHandle = LtObjectUtil::singleton("LtConfig");
 			}
 			else
 			{
-				self::$configHandle = new LtConfig;
+				$this->configHandle = new LtConfig;
 			}
 		}
 	}
 	public function init()
 	{
-		$this->routingTable = self::$configHandle->get("router.routing_table");
+		$this->routingTable = $this->configHandle->get("router.routing_table");
 		if (empty($this->routingTable))
 		{
 			$this->routingTable = array('pattern' => ":module/:action/*",

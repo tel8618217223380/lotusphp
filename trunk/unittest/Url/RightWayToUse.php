@@ -35,7 +35,7 @@ class RightWayToUseUrl extends PHPUnit_Framework_TestCase
 
 		// 初始化LtUrl
 		$url = new LtUrl;
-		LtUrl::$configHandle->addConfig($config);
+		$url->configHandle->addConfig($config);
 		$url->init(); 
 		// 初始化结束
 		// 测试生成超链接
@@ -116,17 +116,15 @@ class RightWayToUseUrl extends PHPUnit_Framework_TestCase
 	{
 		$url = new LtUrl;
 		$config['router.routing_table'] = $routingTable;
-		LtUrl::$configHandle->addConfig($config);
+		$url->configHandle->addConfig($config);
 		$url->init(); 
 
 		$this->assertEquals($userParameter, $url->reverseMatchingRoutingTable($expected));
 	}
 	protected function setUp()
 	{
-		LtUrl::$configHandle = null;
 	}
 	protected function tearDown()
 	{
-		LtUrl::$configHandle = null;
 	}
 }
