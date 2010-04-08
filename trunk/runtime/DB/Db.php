@@ -9,11 +9,17 @@ class LtDb
 
 	public function __construct()
 	{
-		if (class_exists("LtObjectUtil"))
+		if (! self::$configHandle instanceof LtConfig)
 		{
-			self::$configHandle = LtObjectUtil::singleton("LtConfig");
+			if (class_exists("LtObjectUtil", false))
+			{
+				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+			}
+			else
+			{
+				self::$configHandle = new LtConfig;
+			}
 		}
-		self::$configHandle = new LtConfig;		
 	}
 
 	public function init()

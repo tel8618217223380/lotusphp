@@ -123,7 +123,7 @@ class Lotus
 
 	protected function prepareConfig()
 	{
-		$this->configHandle = new LtConfig;
+		$this->configHandle = LtObjectUtil::singleton('LtConfig');
 		if (!$this->devMode)
 		{
 			$configFile = $this->app_dir . 'conf/conf.php';
@@ -139,19 +139,18 @@ class Lotus
 
 	protected function runMVC()
 	{
-		$router = new LtRouter;
-		$router->init();
-		LtObjectUtil::singleton('LtUrl')->init();
-		$dispatcher = new LtDispatcher;
-		LtDispatcher::$viewDir = $this->app_dir . 'view/';
-		LtDispatcher::$viewTplDir = $this->app_tmp . 'templateView/' . $this->app_name . '/';
+		$router = LtObjectUtil::singleton('LtRouter');
+		LtObjectUtil::singleton('LtUrl');
+		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
+		$dispatcher->viewDir = $this->app_dir . 'view/';
+		$dispatcher->viewTplDir = $this->app_tmp . 'templateView/' . $this->app_name . '/';
 		if (!$this->devMode)
 		{
-			LtDispatcher::$viewTplAutoCompile = false;
+			$dispatcher->viewTplAutoCompile = false;
 		}
 		else
 		{
-			LtDispatcher::$viewTplAutoCompile = true;
+			$dispatcher->viewTplAutoCompile = true;
 		}
 		$dispatcher->dispatchAction($router->module, $router->action);
 	}
