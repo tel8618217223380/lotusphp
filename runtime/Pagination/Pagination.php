@@ -6,48 +6,56 @@ class LtPagination
 
 	public function __construct()
 	{
-		$this->conf['per_page'] = 25; //每个页面中希望展示的项目数量 
-		$this->conf['num_links_show'] = 9; //数字链接显示数量 
-		$this->conf['num_point_start_end'] = 2; //“点”前边和后边的链接数量
-		$this->conf['show_first'] = true;
-		$this->conf['show_prev'] = true;
-		$this->conf['show_next'] = true;
-		$this->conf['show_last'] = true;
-		$this->conf['show_goto'] = false;
-		$this->conf['show_info'] = false;
-		$this->conf['show_point'] = true;
-		$this->conf['show_empty_button'] = false;
-
-		$this->conf['first_text'] = 'First';
-		$this->conf['prev_text'] = 'Prev';
-		$this->conf['next_text'] = 'Next';
-		$this->conf['last_text'] = 'Last';
-		$this->conf['point_text'] = '...';
-
-		$this->conf['full_tag_open'] = '<div class="pages">';
-		$this->conf['full_tag_close'] = '</div>';
-		$this->conf['num_tag_open'] = '';
-		$this->conf['num_tag_close'] = '';
-		$this->conf['link_tag_open'] = '<a href=":url">';
-		$this->conf['link_tag_close'] = '</a>';
-		$this->conf['link_tag_cur_open'] = '<strong>';
-		$this->conf['link_tag_cur_close'] = '</strong>';
-		$this->conf['button_tag_open'] = '<a href=":url" style="font-weight:bold">';
-		$this->conf['button_tag_close'] = '</a>';
-		$this->conf['button_tag_empty_open'] = '<span>';
-		$this->conf['button_tag_empty_close'] = '</span>';
-		$this->conf['point_tag_open'] = '<span>';
-		$this->conf['point_tag_close'] = '</span>';
-
-		self::$configHandle = new LtConfig;
+		if (! self::$configHandle instanceof LtConfig)
+		{
+			if (class_exists("LtObjectUtil", false))
+			{
+				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+			}
+			else
+			{
+				self::$configHandle = new LtConfig;
+			}
+		}
 	}
 
 	public function init()
 	{
-		$conf = self::$configHandle->get("pagination.pager");
-		if (!empty($conf))
+		$this->conf = self::$configHandle->get("pagination.pager");
+		if (empty($this->conf))
 		{
-			$this->conf = $conf;
+			$this->conf['per_page'] = 25; //每个页面中希望展示的项目数量 
+			$this->conf['num_links_show'] = 9; //数字链接显示数量 
+			$this->conf['num_point_start_end'] = 2; //“点”前边和后边的链接数量
+			$this->conf['show_first'] = true;
+			$this->conf['show_prev'] = true;
+			$this->conf['show_next'] = true;
+			$this->conf['show_last'] = true;
+			$this->conf['show_goto'] = false;
+			$this->conf['show_info'] = false;
+			$this->conf['show_point'] = true;
+			$this->conf['show_empty_button'] = false;
+
+			$this->conf['first_text'] = 'First';
+			$this->conf['prev_text'] = 'Prev';
+			$this->conf['next_text'] = 'Next';
+			$this->conf['last_text'] = 'Last';
+			$this->conf['point_text'] = '...';
+
+			$this->conf['full_tag_open'] = '<div class="pages">';
+			$this->conf['full_tag_close'] = '</div>';
+			$this->conf['num_tag_open'] = '';
+			$this->conf['num_tag_close'] = '';
+			$this->conf['link_tag_open'] = '<a href=":url">';
+			$this->conf['link_tag_close'] = '</a>';
+			$this->conf['link_tag_cur_open'] = '<strong>';
+			$this->conf['link_tag_cur_close'] = '</strong>';
+			$this->conf['button_tag_open'] = '<a href=":url" style="font-weight:bold">';
+			$this->conf['button_tag_close'] = '</a>';
+			$this->conf['button_tag_empty_open'] = '<span>';
+			$this->conf['button_tag_empty_close'] = '</span>';
+			$this->conf['point_tag_open'] = '<span>';
+			$this->conf['point_tag_close'] = '</span>';
 		}
 	}
 

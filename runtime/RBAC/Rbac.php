@@ -7,7 +7,17 @@ class LtRbac {
 
 	public function __construct()
 	{
-		self::$configHandle = new LtConfig;
+		if (! self::$configHandle instanceof LtConfig)
+		{
+			if (class_exists("LtObjectUtil", false))
+			{
+				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+			}
+			else
+			{
+				self::$configHandle = new LtConfig;
+			}
+		}
 	}
 
 	public function init()
