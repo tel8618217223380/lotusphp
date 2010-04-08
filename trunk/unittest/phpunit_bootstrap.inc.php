@@ -1,4 +1,34 @@
 <?php
+// 检测是否可以创建并且删除子目录
+if (is_dir('/tmp/Lotus/tmpdir'))
+{
+	if (!rmdir('/tmp/Lotus/tmpdir'))
+	{
+		exit('can not rmdir');
+	}
+}
+if (!mkdir('/tmp/Lotus/tmpdir', 0777, true))
+{
+	exit('can not mkdir');
+}
+if (!rmdir('/tmp/Lotus/tmpdir'))
+{
+	exit('can not rmdir');
+}
+// 检测是否可以创建并且删除文件
+if(!file_put_contents('/tmp/Lotus/tmpfile', 'Lotusphp'))
+{
+	exit('can not file_put_contents');
+}
+// chmod('/tmp/Lotus/tmpfile', 0777);
+if(is_file('/tmp/Lotus/tmpfile'))
+{
+	if(!unlink('/tmp/Lotus/tmpfile'))
+	{
+		exit('can not unlink');
+	}
+}
+
 /**
  * 修改以下配置为你实际环境的值
 如果你修改了这两个常量的值，请不要svn commit

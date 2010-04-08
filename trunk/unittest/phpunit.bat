@@ -1,14 +1,14 @@
-@ECHO OFF
+ECHO OFF
 
-REM 濡傛灉鎮ㄦ病鏈夊湪绯荤粺Path鍙橀噺涓坊鍔爌hp.exe ,鍙互鍦ㄦ璁剧疆php.exe鏂囦欢璺緞 
+REM 如果您没有在系统Path变量中添加php.exe ,可以在此设置php.exe文件路径 
 SET PHPDir=D:/kiss/PHP
 
-REM 杩藉姞鍒扮郴缁烶ath鍙橀噺
+REM 追加到系统Path变量
 SET Path=%PATH%;%PHPDir%
 
-REM 閲婃斁鑷畾涔夌殑PHPDir鍙橀噺
+REM 释放自定义的PHPDir变量
 SET PHPDir=
 
-@ECHO ON
-@REM example: php.exe TestHelper.php --verbose Autoloader\PerformanceTuning.php
+REM example: php.exe TestHelper.php --verbose Autoloader\PerformanceTuning.php
+ECHO ON
 php.exe TestHelper.php --verbose %*
