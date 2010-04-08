@@ -19,6 +19,20 @@ class LtConfig
 
 	public function get($key)
 	{
+		$storedConfig = self::$storeHandle->get($key);
+		if ($storedConfig instanceof LtConfigExpression)
+		{
+			$str = $storedConfig->__toString();
+			if ($storedConfig->autoRetrived)
+			{
+				eval("\$value=$str;");
+				return $value;
+			}
+			else
+			{
+				return $str;
+			}
+		}
 		return self::$storeHandle->get($key);
 	}
 
