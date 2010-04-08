@@ -31,7 +31,7 @@ class RightWayToUseRBAC extends PHPUnit_Framework_TestCase
 
 
 		$rbac = new LtRbac();
-		LtRbac::$configHandle = $configHandle;
+		$rbac->configHandle = $configHandle;
 		$rbac->init();
 
 		$this->assertTrue($rbac->checkAcl($roles, 'admin/test'));

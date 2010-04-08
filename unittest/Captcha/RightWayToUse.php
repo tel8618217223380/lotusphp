@@ -55,7 +55,7 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 		/**
 		 * 生产环境中配置已经通过LtCache缓存
 		 */
-		LtCaptcha::$configHandle->addConfig($config);
+		$captcha->configHandle->addConfig($config);
 
 		$captcha->init();
 		/**
@@ -80,23 +80,17 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 			'height' => 80,
 			'max_rotation' => 4,
 			);
-		LtCaptcha::$configHandle->addConfig($config);
+		$cp->configHandle->addConfig($config);
 		$cp->init();
 		$seed = md5(uniqid());
 		$cp->getImageResource($seed);
-		$word = LtCaptcha::$storeHandle->get($seed);
+		$word = $cp->storeHandle->get($seed);
 		$this->assertTrue($cp->verify($seed, $word));
 	}
 	protected function setUp()
 	{
-		LtCaptcha::$configHandle = null;
-		LtCaptcha::$storeHandle = null;
-		LtConfig::$storeHandle = null;
 	}
 	protected function tearDown()
 	{
-		LtCaptcha::$configHandle = null;
-		LtCaptcha::$storeHandle = null;
-		LtConfig::$storeHandle = null;
 	}
 }

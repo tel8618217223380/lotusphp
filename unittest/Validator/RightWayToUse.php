@@ -53,7 +53,7 @@ class RightWayToUseValidator extends PHPUnit_Framework_TestCase
 
 		$validator = new LtValidator;
 
-		LtValidator::$configHandle = $configHandle;
+		$validator->configHandle = $configHandle;
 
 		$validator->init();
 

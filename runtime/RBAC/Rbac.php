@@ -1,28 +1,28 @@
 <?php
 class LtRbac {
 
-	public static $configHandle;
+	public $configHandle;
 
 	protected $acl; 
 
 	public function __construct()
 	{
-		if (! self::$configHandle instanceof LtConfig)
+		if (! $this->configHandle instanceof LtConfig)
 		{
 			if (class_exists("LtObjectUtil", false))
 			{
-				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+				$this->configHandle = LtObjectUtil::singleton("LtConfig");
 			}
 			else
 			{
-				self::$configHandle = new LtConfig;
+				$this->configHandle = new LtConfig;
 			}
 		}
 	}
 
 	public function init()
 	{
-		$this->acl = self::$configHandle->get('rbac.acl');
+		$this->acl = $this->configHandle->get('rbac.acl');
 	}
 
 	public function checkAcl($roles, $resource)

@@ -23,7 +23,7 @@ class WrongWayToUseCaptcha extends PHPUnit_Framework_TestCase
 			'height' => 80,
 			'max_rotation' => 4,
 			);
-		LtCaptcha::$configHandle->addConfig($config);
+		$captcha->configHandle->addConfig($config);
 		$captcha->init();
 		$im = $captcha->getImageResource("");
 	}

@@ -63,7 +63,7 @@ class RightWayToUsePagination extends PHPUnit_Framework_TestCase
 		/**
 		 * 配置保存在文件中, 生产环境下自动从缓存读取配置, 不需要下一行代码
 		 */
-		LtPagination::$configHandle->addConfig($conf);
+		$pagination->configHandle->addConfig($conf);
 		/**
 		 * 初始化
 		 */

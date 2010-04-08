@@ -1,27 +1,27 @@
 <?php
 class LtCookie
 {
-	public static $configHandle;
+	public $configHandle;
 	private $secretKey;
 
 	public function __construct()
 	{
-		if (! self::$configHandle instanceof LtConfig)
+		if (! $this->configHandle instanceof LtConfig)
 		{
 			if (class_exists("LtObjectUtil", false))
 			{
-				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+				$this->configHandle = LtObjectUtil::singleton("LtConfig");
 			}
 			else
 			{
-				self::$configHandle = new LtConfig;
+				$this->configHandle = new LtConfig;
 			}
 		}
 	}
 
 	public function init()
 	{ 
-		$this->secretKey = self::$configHandle->get("cookie.secret_key");
+		$this->secretKey = $this->configHandle->get("cookie.secret_key");
 		if(empty($this->secretKey))
 		{
 			trigger_error("cookie.secret_key empty");
