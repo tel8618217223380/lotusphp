@@ -1,10 +1,5 @@
 <?php
-/**
- * $session = new LtSession;
- * LtSession::$saveHandle = new LtSessionSqlite;
- * $session->init();
- */
-class LtSessionSqlite implements LtSessionSaveHandle
+class LtSessionSqlite implements LtSessionStore
 {
 	public $conf;
 
