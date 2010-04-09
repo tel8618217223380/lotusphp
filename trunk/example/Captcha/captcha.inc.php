@@ -27,5 +27,5 @@ $config['captcha.image_engine_conf'] = array('blur' => false,
 	'height' => 80,
 	'max_rotation' => 4,
 	);
-LtCaptcha::$configHandle->addConfig($config);
+$captcha->configHandle->addConfig($config);
 $captcha->init();
