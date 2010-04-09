@@ -27,7 +27,7 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 		 * 配置数据库连接信息
 		 */
 		$dcb = new LtDbConfigBuilder;
-		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
+		$dcb->addSingleHost(array("adapter" => "mysql", "username"=>"test", "password" => "", "dbname" => "test"));
 
 		/**
 		 * 实例化组件入口类

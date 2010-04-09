@@ -23,7 +23,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * 配置数据库连接信息
 		 */
 		$dcb = new LtDbConfigBuilder;
-		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
+		$dcb->addSingleHost(array("adapter" => "mysql", "username"=>"test", "password" => "", "dbname" => "test"));
 
 		/**
 		 * 实例化组件入口类
@@ -112,7 +112,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * 配置数据库连接信息
 		 */
 		$dcb = new LtDbConfigBuilder;
-		$dcb->addSingleHost(array("adapter" => "mysql", "password" => "123456", "dbname" => "test"));
+		$dcb->addSingleHost(array("adapter" => "mysql", "username"=>"test", "password" => "", "dbname" => "test"));
 
 		/**
 		 * 实例化组件入口类
@@ -129,7 +129,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 	 */
 	public function testMysql()
 	{
-		$host = array("password" => "123456", "dbname" => "test");
+		$host = array("username"=>"test", "password" => "", "dbname" => "test");
 		foreach (array("mysql", "mysqli", "pdo_mysql") as $adapter)
 		{
 			$host["adapter"] = $adapter;
@@ -188,7 +188,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * 配置系统数据组
 		 * 一个节点， 一主零从
 		 */
-		$dcb->addHost("sys_group", "sys_node_1", "master", array("password" => "123456", "dbname" => "sys_data", "adapter" => "mysql"));
+		$dcb->addHost("sys_group", "sys_node_1", "master", array("username"=>"test", "password" => "", "dbname" => "sys_data", "adapter" => "mysql"));
 
 		/**
 		 * 配置用户数据组
@@ -196,7 +196,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * 每个节点一主零从
 		 * 都在同一台机器上，不同节点数据库名不同
 		 */
-		$dcb->addHost("user_group", "user_node_1", "master", array("password" => "123456", "dbname" => "member_1", "adapter" => "mysql"));
+		$dcb->addHost("user_group", "user_node_1", "master", array("username"=>"test", "password" => "", "dbname" => "member_1", "adapter" => "mysql"));
 		$dcb->addHost("user_group", "user_node_2", "master", array("dbname" => "member_2"));
 
 		/**
