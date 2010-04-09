@@ -39,7 +39,7 @@ $conf['pagination.pager']['point_tag_open'] = '<li>';
 $conf['pagination.pager']['point_tag_close'] = '</li>';
 
 $pagination = new LtPagination;
-LtPagination::$configHandle->addConfig($conf);
+$pagination->configHandle->addConfig($conf);
 $pagination->init();
 $pager = $pagination->pager($page, 1000, '?page=:page');
 

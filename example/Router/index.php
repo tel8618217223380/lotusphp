@@ -18,7 +18,7 @@ $config['router.routing_table'] = array('pattern' => ":module-:action-*",
 	'protocol' => 'rewrite', // REWRITE STANDARD PATH_INFO 
 	);
 
-LtRouter::$configHandle->addConfig($config);
+$router->configHandle->addConfig($config);
 $router->init();
 
 echo "<pre>\n";

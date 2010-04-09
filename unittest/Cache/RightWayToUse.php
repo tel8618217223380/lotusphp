@@ -45,7 +45,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 初始化完毕, 测试其效果, 使用不同的tableName防止key冲突
 		 */
 		$ch = $cache->getTDG("test");
-
 		$this->assertTrue($ch->add("test_key", "test_value"));
 		$this->assertEquals("test_value", $ch->get("test_key"));
 		$this->assertTrue($ch->update("test_key", "new_value"));
@@ -84,7 +83,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 测试其它适配器add(), get(), del(), update()接口
 		 */
 		$ccb->addHost("group_phps", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
-		//$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
+		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
 		if (extension_loaded('memcache'))
 		{
 			$ccb->addHost("group_memcache", "node_0", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
@@ -137,10 +136,11 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 //		{
 //			$opcodeCacheAdapters[] = "eaccelerator";
 //		}
-		if (extension_loaded('xcache'))
-		{
-			$opcodeCacheAdapters[] = "xcache";
-		}
+// 暂时取消测试
+//		if (extension_loaded('xcache'))
+//		{
+//			$opcodeCacheAdapters[] = "xcache";
+//		}
 		foreach($opcodeCacheAdapters as $adapter)
 		{
 			echo "\n--testOpcodeCacheAdapter--" . $adapter . "--callWeb--\n";
@@ -392,6 +392,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 
 	protected function setUp()
 	{
+		LtCache::$configHandle=null;
 	}
 
 	protected function tearDown()
