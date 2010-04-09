@@ -26,8 +26,6 @@ class AllTest
     public static function suite()
     {
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit_Framework');
-
-        $suite->addTestSuite('LotusAllTest');
         $suite->addTestSuite('AutoloaderAllTest');
         $suite->addTestSuite('CacheAllTest');
         $suite->addTestSuite('CaptchaAllTest');
@@ -42,6 +40,7 @@ class AllTest
         $suite->addTestSuite('StoreAllTest');
         $suite->addTestSuite('UrlAllTest');
         $suite->addTestSuite('ValidatorAllTest');
+        $suite->addTestSuite('LotusAllTest');
 
         return $suite;
     }
