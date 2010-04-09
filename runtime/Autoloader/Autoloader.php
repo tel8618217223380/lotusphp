@@ -158,7 +158,8 @@ class LtAutoloader
 		$ret = array();
 		if (!is_array($var))
 		{
-			$path = rtrim(realpath($var), '\\/');
+			$path = str_replace("\\", "/", $var);
+			$path = rtrim(realpath($path), '\\/');
 			if (preg_match("/\s/i", $path))
 			{
 				trigger_error("Directory is invalid: {$path}");
@@ -172,7 +173,8 @@ class LtAutoloader
 			{
 				if (!is_array($var[$i]))
 				{
-					$path = rtrim(realpath($var[$i]), '\\/');
+					$path = str_replace("\\", "/", $var[$i]);
+					$path = rtrim(realpath($path), '\\/');
 					if (preg_match("/\s/i", $path))
 					{
 						trigger_error("Directory is invalid: {$path}");
