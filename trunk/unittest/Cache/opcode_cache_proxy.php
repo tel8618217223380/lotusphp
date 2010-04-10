@@ -32,6 +32,7 @@ switch ($operation)
 		$value = $_REQUEST['value'];
 		if (isset($_REQUEST['ttl']))
 		{
+			$ttl = $_REQUEST['ttl'];
 			$result = $ch->$operation($key, $value, $ttl);
 		}
 		else
@@ -42,14 +43,6 @@ switch ($operation)
 	case 'get':
 	case 'del':
 		$result = $ch->$operation($key);
-		break;
-	case 'ttl-add':
-		$value = $_REQUEST['value'];
-		$ttl = $_REQUEST['ttl'];
-		$result = $ch->add($key, $value, $ttl);
-		break;
-	case 'ttl-get':
-		$result = $ch->get($key);
 		break;
 }
 echo serialize($result);
