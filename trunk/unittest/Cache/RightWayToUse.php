@@ -136,11 +136,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 //		{
 //			$opcodeCacheAdapters[] = "eaccelerator";
 //		}
-// 暂时取消测试
-//		if (extension_loaded('xcache'))
-//		{
-//			$opcodeCacheAdapters[] = "xcache";
-//		}
+		if (extension_loaded('xcache'))
+		{
+			$opcodeCacheAdapters[] = "xcache";
+		}
 		foreach($opcodeCacheAdapters as $adapter)
 		{
 			echo "\n--testOpcodeCacheAdapter--" . $adapter . "--callWeb--\n";
