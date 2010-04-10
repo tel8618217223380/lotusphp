@@ -1,24 +1,23 @@
 <?php
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'common.inc.php';
 
-$opcodeCacheAdapter = $_REQUEST["adapter"];
-$operation = $_REQUEST["operation"];
-$tableName = $_REQUEST["table_name"];
-$key = $_REQUEST["key"];
+$opcodeCacheAdapter = $_REQUEST['adapter'];
+$operation = $_REQUEST['operation'];
+$tableName = $_REQUEST['table_name'];
+$key = $_REQUEST['key'];
 
 /**
  * 构造缓存配置
  */
 $ccb = new LtCacheConfigBuilder;
-$ccb->addSingleHost(array(
-	"adapter" => $opcodeCacheAdapter,'host'=>'/tmp/Lotus/unittest/opcache/',
-));
+$ccb->addSingleHost(array('adapter' => $opcodeCacheAdapter, 'host' => '/tmp/Lotus/unittest/opcache/',
+		));
 
 /**
  * 实例化组件入口类
  */
 $cache = new LtCache;
-LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+LtCache::$configHandle->addConfig(array('cache.servers' => $ccb->getServers()));
 $cache->init();
 
 /**
@@ -28,10 +27,10 @@ $ch = $cache->getTDG($tableName);
 
 switch ($operation)
 {
-	case "add":
-	case "update":
-		$value = $_REQUEST["value"];
-		if (isset($_REQUEST["ttl"]))
+	case 'add':
+	case 'update':
+		$value = $_REQUEST['value'];
+		if (isset($_REQUEST['ttl']))
 		{
 			$result = $ch->$operation($key, $value, $ttl);
 		}
@@ -40,9 +39,17 @@ switch ($operation)
 			$result = $ch->$operation($key, $value);
 		}
 		break;
-	case "get":
-	case "del":
+	case 'get':
+	case 'del':
 		$result = $ch->$operation($key);
+		break;
+	case 'ttl-add':
+		$value = $_REQUEST['value'];
+		$ttl = $_REQUEST['ttl'];
+		$result = $ch->add($key, $value, $ttl);
+		break;
+	case 'ttl-get':
+		$result = $ch->get($key);
 		break;
 }
 echo serialize($result);

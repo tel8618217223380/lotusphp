@@ -122,7 +122,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	}
 	/**
 	 * 
-	 * @todo ttl测试
+	 * 通过callWeb测试不能工作在cli的cache
 	 */
 	public function testOpcodeCacheAdapter()
 	{
@@ -143,6 +143,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		foreach($opcodeCacheAdapters as $adapter)
 		{
 			echo "\n--testOpcodeCacheAdapter--" . $adapter . "--callWeb--\n";
+
 			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
 					"operation" => "add",
 					"key" => "test_key",
@@ -178,7 +179,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 					"key" => "test_key",
 					"table_name" => "test"
 					));
-			$this->assertEquals("test_value", unserialize($result));
+			$this->assertTrue(unserialize($result));
 
 			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
 					"operation" => "get",
@@ -186,6 +187,27 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 					"table_name" => "test"
 					));
 			$this->assertFalse(unserialize($result));
+			/**
+			测试ttl, xcache在同一请求内不会过期, 因此拆成两个请求测试,
+			第一次请求设置过期时间为一秒, 延时2秒后读取返回结果
+			*/
+			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
+					"operation" => "ttl-add",
+					"key" => "test_key",
+					"table_name" => "test",
+					"value" => "test_ttl_value",
+					'ttl'=> 1
+					));
+			$this->assertTrue(unserialize($result));
+			sleep(2);
+			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
+					"operation" => "ttl-get",
+					"key" => "test_key",
+					"table_name" => "test",
+					"value" => "test_ttl_value"
+					));
+			$this->assertFalse(unserialize($result));
+
 		}
 	}
 
