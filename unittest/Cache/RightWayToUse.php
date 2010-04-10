@@ -192,7 +192,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			第一次请求设置过期时间为一秒, 延时2秒后读取返回结果
 			*/
 			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
-					"operation" => "ttl-add",
+					"operation" => "add",
 					"key" => "test_key",
 					"table_name" => "test",
 					"value" => "test_ttl_value",
@@ -201,10 +201,9 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$this->assertTrue(unserialize($result));
 			sleep(2);
 			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
-					"operation" => "ttl-get",
+					"operation" => "get",
 					"key" => "test_key",
 					"table_name" => "test",
-					"value" => "test_ttl_value"
 					));
 			$this->assertFalse(unserialize($result));
 
