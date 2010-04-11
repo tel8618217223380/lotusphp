@@ -131,11 +131,14 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		{
 			$opcodeCacheAdapters[] = "apc";
 		}
-// 新版eAccelerator已经取消了相关功能
-//		if (extension_loaded('eaccelerator'))
-//		{
-//			$opcodeCacheAdapters[] = "eaccelerator";
-//		}
+		if (extension_loaded('eaccelerator'))
+		{
+			// eAccelerator 0.9.6 取消了相关功能
+			if(function_exists('eaccelerator_put') && function_exists('eaccelerator_get'))
+			{
+				$opcodeCacheAdapters[] = "eaccelerator";
+			}
+		}
 		if (extension_loaded('xcache'))
 		{
 			$opcodeCacheAdapters[] = "xcache";
