@@ -31,7 +31,7 @@ function callWeb($url, $post = null, $header = null, $returnHeader = false)
 	$header[] = "Expect:";//阻止lighttpd返回417错误
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 
-	$reponse = curl_exec($ch);
+	echo $reponse = curl_exec($ch);
 	curl_close($ch);
 	return $reponse;
 }
