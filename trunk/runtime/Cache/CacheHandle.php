@@ -1,6 +1,7 @@
 <?php
 class LtCacheHandle
 {
+	public $configHandle;
 	public $group;
 	public $node;
 	public $role = "master";
@@ -10,7 +11,12 @@ class LtCacheHandle
 
 	public function __construct()
 	{
+	}
+
+	public function init()
+	{
 		$this->connectionManager = new LtCacheConnectionManager;
+		$this->connectionManager->configHandle =$this->configHandle;
 	}
 
 	public function add($key, $value, $ttl = 0, $tableName)

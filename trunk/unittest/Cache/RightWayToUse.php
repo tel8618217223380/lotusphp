@@ -38,7 +38,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 */
 		$cache = new LtCache;
 
-		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$cache->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 
 		$cache->init();
 		/**
@@ -97,8 +97,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
-		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
-		$servers = LtCache::$configHandle->get("cache.servers");
+		$cache->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$servers = $cache->configHandle->get("cache.servers");
 		foreach($servers as $group => $iDotCare)
 		{
 			$cache->group = $group;
@@ -237,8 +237,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
-		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
-		$servers = LtCache::$configHandle->get("cache.servers");
+		$cache->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$servers = $cache->configHandle->get("cache.servers");
 		foreach($servers as $k => $v)
 		{
 			
@@ -296,7 +296,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		/**
 		LtCache 创建实例后初始化$configHandle
 		*/
-		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$cache1->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 		$cache1->group = "phps_cache_1";
 		$cache1->init();
 
@@ -313,6 +313,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * trade_info也用了key_1这个 键，但他并不会跟prod_info的key_1冲突，因为他们的host是不一样的
 		 */
 		$cache2 = new LtCache;
+		$cache2->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 		$cache2->group = "phps_cache_2";
 		$cache2->init();
 
@@ -415,7 +416,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 
 	protected function setUp()
 	{
-		LtCache::$configHandle=null;
 	}
 
 	protected function tearDown()
