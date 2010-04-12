@@ -32,8 +32,14 @@ class LtCacheAdapterEAccelerator implements LtCacheAdapter
 
 	public function update($key, $value, $ttl = 0, $tableName, $connectionResource)
 	{
-		$value = serialize($value);
-		return eaccelerator_put($this->getRealKey($tableName, $key), $value, $ttl);
+		if ($this->del($key, $tableName, $connectionResource))
+		{
+			return $this->add($key, $value, $ttl, $tableName, $connectionResource);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	protected function getRealKey($tableName, $key)
