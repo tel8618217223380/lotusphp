@@ -10,12 +10,12 @@ class LtCacheAdapterMemcached implements LtCacheAdapter
 
 	public function add($key, $value, $ttl=0, $tableName, $connectionResource)
 	{
-		return $connectionResource->add($this->getRealKey($tableName, $key), $value, false, $ttl);
+		return $connectionResource->add($this->getRealKey($tableName, $key), $value, $ttl);
 	}
 
 	public function del($key, $tableName, $connectionResource)
 	{
-		return $connectionResource->delete($this->getRealKey($tableName, $key), 0);
+		return $connectionResource->delete($this->getRealKey($tableName, $key));
 	}
 
 	public function get($key, $tableName, $connectionResource)
@@ -25,7 +25,7 @@ class LtCacheAdapterMemcached implements LtCacheAdapter
 
 	public function update($key, $value, $ttl = 0, $tableName, $connectionResource)
 	{
-		return $connectionResource->replace($this->getRealKey($tableName, $key), $value, false, $ttl);
+		return $connectionResource->replace($this->getRealKey($tableName, $key), $value, $ttl);
 	}
 
 	protected function getRealKey($tableName, $key)
