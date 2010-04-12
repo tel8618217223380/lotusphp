@@ -21,7 +21,7 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 		 */
 		$cache = new LtCache;
 
-		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$cache->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 
 		$cache->init(); 
 		// 初始化完毕，测试其效果

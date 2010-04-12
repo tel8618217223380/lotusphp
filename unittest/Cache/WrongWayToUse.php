@@ -23,7 +23,7 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
-		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$cache->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 		$cache->init();
 		$ch = $cache->getTDG('test');
 		$ch->add("test_key", "test_value");
@@ -44,7 +44,7 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
-		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$cache->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 		$cache->init();
 		$ch = $cache->getTDG('test');
 		$ch->add("test_key", "test_value");
@@ -66,7 +66,7 @@ class WrongWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 实例化组件入口类
 		 */
 		$cache = new LtCache;
-		LtCache::$configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$cache->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 		$cache->init();
 		$ch = $cache->getTDG('test');
 		$ch->add("test_key", "test_value");
