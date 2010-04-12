@@ -1,7 +1,7 @@
 <?php
 class LtCache
 {
-	static public $configHandle;
+	public $configHandle;
 
 	public $group;
 	public $node;
@@ -10,15 +10,15 @@ class LtCache
 
 	public function __construct()
 	{
-		if (! self::$configHandle instanceof LtConfig)
+		if (! $this->configHandle instanceof LtConfig)
 		{
 			if (class_exists("LtObjectUtil", false))
 			{
-				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+				$this->configHandle = LtObjectUtil::singleton("LtConfig");
 			}
 			else
 			{
-				self::$configHandle = new LtConfig;
+				$this->configHandle = new LtConfig;
 			}
 		}
 	}
@@ -26,6 +26,8 @@ class LtCache
 	public function init()
 	{
 		$this->ch = new LtCacheHandle;
+		$this->ch->configHandle = $this->configHandle;
+		$this->ch->init();
 		$this->ch->group = $this->getGroup();
 		$this->ch->node = $this->getNode();
 	}
@@ -50,7 +52,7 @@ class LtCache
 		{
 			return $this->group;
 		}
-		$servers = self::$configHandle->get("cache.servers");
+		$servers = $this->configHandle->get("cache.servers");
 		if (1 == count($servers))
 		{
 			return key($servers);
@@ -64,7 +66,7 @@ class LtCache
 		{
 			return $this->node;
 		}
-		$servers = self::$configHandle->get("cache.servers");
+		$servers = $this->configHandle->get("cache.servers");
 		if (1 == count($servers[$this->getGroup()]))
 		{
 			return key($servers[$this->getGroup()]);
