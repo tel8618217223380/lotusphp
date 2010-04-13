@@ -6,6 +6,7 @@
  */
 class LtDbTableDataGateway
 {
+	public $configHandle;
 	public $dbh;
 	/**
 	 * The created field name
@@ -54,14 +55,14 @@ class LtDbTableDataGateway
 		{
 			return true;
 		}
-		$servers = LtDb::$configHandle->get('db.servers');
+		$servers = $this->configHandle->get('db.servers');
 		$group = $this->dbh->group;
 		$node = $this->dbh->node;
 		$role = $this->dbh->role;
 		$table = $this->tableName;
 		$host = key($servers[$group][$node][$role]);
 		$key = md5($group . $node . $role . $table . $host . $table);
-		if (!$value = LtDb::$configHandle->get($key))
+		if (!$value = $this->configHandle->get($key))
 		{
 			$sql = $this->dbh->sqlAdapter->showFields($this->tableName);
 			$rs = $this->dbh->query($sql);
@@ -77,7 +78,7 @@ class LtDbTableDataGateway
 
 			$value['fields'] = $this->fields;
 			$value['primaryKey'] = $this->primaryKey;
-			LtDb::$configHandle->addConfig(array($key => $value));
+			$this->configHandle->addConfig(array($key => $value));
 		}
 		else
 		{

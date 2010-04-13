@@ -29,7 +29,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * 实例化组件入口类
 		 */
 		$db = new LtDb;
-		LtDb::$configHandle->addConfig(array("db.servers" => $dcb->getServers()));
+		$db->configHandle->addConfig(array("db.servers" => $dcb->getServers()));
 		$db->init();
 
 		/**
@@ -84,7 +84,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		// 准备测试数据
 		$dbh->query("INSERT INTO `test_user` (`name`,`age`) VALUE ('SqlMapClient',33)");
 		// 实际使用时是从配置文件里获取 sql
-		LtDb::$configHandle->addConfig(array($dbh->group . '.getName' => array("sql"=>"SELECT `name` FROM `test_user` WHERE `age`=33","force_use_master"=>false)));
+		$db->configHandle->addConfig(array($dbh->group . '.getName' => array("sql"=>"SELECT `name` FROM `test_user` WHERE `age`=33","force_use_master"=>false)));
 		$this->assertEquals(array(0 => array("name" => "SqlMapClient")), $smc->execute("getName"));
 
 		// ====================为下面的测试准备数据====================
@@ -118,7 +118,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * 实例化组件入口类
 		 */
 		$db = new LtDb;
-		LtDb::$configHandle->addConfig(array("db.servers" => $dcb->getServers()));
+		$db->configHandle->addConfig(array("db.servers" => $dcb->getServers()));
 		$db->init();
 		$tg = $db->getTDG("test_user");
 		$tg->fetch(1); // ===========第一次是fetch操作出错=================
@@ -143,7 +143,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 			 * 实例化组件入口类
 			 */
 			$db = new LtDb;
-			LtDb::$configHandle->addConfig(array("db.servers" => $dcb->getServers()));
+			$db->configHandle->addConfig(array("db.servers" => $dcb->getServers()));
 			$db->init();
 
 			$dbh = $db->getDbHandle();
@@ -203,7 +203,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * ========== LtDb的第一个实例，仅用于操作sys_group ==========
 		 */
 		$db1 = new LtDb;
-		LtDb::$configHandle->addConfig(array("db.servers" => $dcb->getServers()));
+		$db1->configHandle->addConfig(array("db.servers" => $dcb->getServers()));
 		$db1->group = "sys_group";
 		$db1->init();
 
@@ -228,7 +228,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$smc1 = $db1->getSqlMapClient();
 
 		// 实际使用时是从配置文件里获取 sql
-		LtDb::$configHandle->addConfig(array($dbh1->group . '.sys.getSysCateTotal' => array("sql"=>"SELECT count(`id`) as 'category_total' FROM `sys_category`","force_use_master"=>false)));
+		$db1->configHandle->addConfig(array($dbh1->group . '.sys.getSysCateTotal' => array("sql"=>"SELECT count(`id`) as 'category_total' FROM `sys_category`","force_use_master"=>false)));
 
 		$this->assertEquals(array(0 => array("category_total" => 1)), $smc1->execute("sys.getSysCateTotal"));
 
@@ -236,6 +236,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		 * ========== LtDb的第二个实例，仅用于操作user_group ==========
 		 */
 		$db2 = new LtDb;
+		$db2->configHandle->addConfig(array("db.servers" => $dcb->getServers()));
 		$db2->group = "user_group";
 		$db2->node = "user_node_1";
 		$db2->init();
@@ -620,10 +621,8 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
-		LtDb::$configHandle = null;
 	}
 	protected function tearDown()
 	{
-		LtDb::$configHandle = null;
 	}
 }

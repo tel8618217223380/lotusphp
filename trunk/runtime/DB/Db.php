@@ -1,7 +1,7 @@
 <?php
 class LtDb
 {
-	static public $configHandle;
+	public $configHandle;
 
 	public $group;
 	public $node;
@@ -9,15 +9,15 @@ class LtDb
 
 	public function __construct()
 	{
-		if (! self::$configHandle instanceof LtConfig)
+		if (! $this->configHandle instanceof LtConfig)
 		{
 			if (class_exists("LtObjectUtil", false))
 			{
-				self::$configHandle = LtObjectUtil::singleton("LtConfig");
+				$this->configHandle = LtObjectUtil::singleton("LtConfig");
 			}
 			else
 			{
-				self::$configHandle = new LtConfig;
+				$this->configHandle = new LtConfig;
 			}
 		}
 	}
@@ -25,6 +25,7 @@ class LtDb
 	public function init()
 	{
 		$this->dbh = new LtDbHandle;
+		$this->dbh->configHandle = $this->configHandle;
 		$this->dbh->group = $this->getGroup();
 		$this->dbh->node = $this->getNode();
 		$this->dbh->init();
@@ -38,6 +39,7 @@ class LtDb
 	public function getTDG($tableName)
 	{
 		$tg = new LtDbTableDataGateway;
+		$tg->configHandle = $this->configHandle;
 		$tg->tableName = $tableName;
 		$tg->createdColumn = 'created';
 		$tg->modifiedColumn = 'modified';
@@ -48,6 +50,7 @@ class LtDb
 	public function getSqlMapClient()
 	{
 		$smc = new LtDbSqlMapClient;
+		$smc->configHandle = $this->configHandle;
 		$smc->dbh = $this->dbh;
 		return $smc;
 	}
@@ -64,7 +67,7 @@ class LtDb
 		{
 			return $this->group;
 		}
-		$servers = self::$configHandle->get("db.servers");
+		$servers = $this->configHandle->get("db.servers");
 		if (1 == count($servers))
 		{
 			return key($servers);
@@ -78,7 +81,7 @@ class LtDb
 		{
 			return $this->node;
 		}
-		$servers = self::$configHandle->get("db.servers");
+		$servers = $this->configHandle->get("db.servers");
 		if (1 == count($servers[$this->getGroup()]))
 		{
 			return key($servers[$this->getGroup()]);
