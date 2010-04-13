@@ -17,7 +17,7 @@ $ccb->addSingleHost(array('adapter' => $opcodeCacheAdapter, 'host' => '/tmp/Lotu
  * 实例化组件入口类
  */
 $cache = new LtCache;
-LtCache::$configHandle->addConfig(array('cache.servers' => $ccb->getServers()));
+$cache->configHandle->addConfig(array('cache.servers' => $ccb->getServers()));
 $cache->init();
 
 /**
