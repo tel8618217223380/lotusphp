@@ -1,6 +1,7 @@
 <?php
 class LtDbHandle
 {
+	public $configHandle;
 	public $group;
 	public $node;
 	public $role = "master";
@@ -12,15 +13,16 @@ class LtDbHandle
 
 	public function __construct()
 	{
-		if(empty($this->servers))
-		{
-			$this->servers = LtDb::$configHandle->get("db.servers");
-		}
-		$this->connectionManager = new LtDbConnectionManager;
 	}
 
 	public function init()
 	{
+		if(empty($this->servers))
+		{
+			$this->servers = $this->configHandle->get("db.servers");
+		}
+		$this->connectionManager = new LtDbConnectionManager;
+		$this->connectionManager->configHandle = $this->configHandle;
 		$this->sqlAdapter = $this->getCurrentSqlAdapter();
 		$connectionInfo = $this->connectionManager->getConnection($this->group, $this->node, $this->role);
 		$this->connectionAdapter = $connectionInfo["connectionAdapter"];

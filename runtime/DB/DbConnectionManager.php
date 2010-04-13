@@ -10,7 +10,8 @@ class LtDbConnectionManager
 	 * 	"charset"     => char set / encoding
 	 * )
 	 */
-	static $connectionPool;
+	static public $connectionPool;
+	public $configHandle;
 	protected $connectionAdapter;
 	protected $sqlAdapter;
 	private $servers;
@@ -19,7 +20,7 @@ class LtDbConnectionManager
 	{
 		if(empty($this->servers))
 		{
-			$this->servers = LtDb::$configHandle->get("db.servers");
+			$this->servers = $this->configHandle->get("db.servers");
 		}
 		if (($connection = $this->getNewConnection($group, $node, $role)) ||($connection = $this->getCachedConnection($group, $node, $role)))
 		{

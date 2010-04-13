@@ -33,7 +33,7 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 		 * 实例化组件入口类
 		 */
 		$db = new LtDb;
-		LtDb::$configHandle->addConfig(array("db.servers" => $dcb->getServers()));
+		$db->configHandle->addConfig(array("db.servers" => $dcb->getServers()));
 		$db->init();
 
 		/**
@@ -97,10 +97,8 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
-		LtDb::$configHandle = null;
 	}
 	protected function tearDown()
 	{
-		LtDb::$configHandle = null;
 	}
 }
