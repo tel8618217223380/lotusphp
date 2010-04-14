@@ -1,6 +1,6 @@
 <div class="area">
 <table class="listtable" border="0" cellpadding="0" cellspacing="0">
-<tr><td><a href="{url('Addressbook','Add')}">添加联系人</a> | <a href="{url('Addressbook','Addgroup')}">添加联系人分组</a></td></tr>
+<tr><td><a href="{url('Addressbook','Add')}">添加联系人</a> | <a href="{url('Groups','Index')}">分组</a></td></tr>
 </table>
 
 <form name="myform" method="post" action="">
@@ -11,7 +11,7 @@
     <tr>
       <th>选择</th>
       <th>姓名</th>
-      <th>电子邮件</th>
+      <th>分组</th>
       <th>手机</th>
       <th>电话</th>
       <th>地址</th>
@@ -23,7 +23,7 @@
     <tr>
       <td><input type="checkbox" name="ids[]" value="{$data['id']}" /></td>
       <td>{$data['firstname']} {$data['lastname']}</td>
-      <td></td>
+      <td>{$data['groupname']}</td>
       <td>{$data['mobile']}</td>
       <td>{$data['phone']}</td>
       <td>{$data['address']}</td>
