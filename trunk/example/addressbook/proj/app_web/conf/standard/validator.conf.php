@@ -1,11 +1,11 @@
 <?php
-$config["validator.error_messages.ban"]          = '%s °üº¬Î¥½û´Ê';
-$config["validator.error_messages.mask"]         = '%s ²»·ûºÏÖ¸¶¨µÄ¸ñÊ½';
-$config["validator.error_messages.max_length"]   = '%s ¶àÓÚ  %s ¸ö×Ö';
-$config["validator.error_messages.min_length"]   = '%s ÉÙÓÚ  %s ¸ö×Ö';
-$config["validator.error_messages.max_value"]    = '%s ³¬¹ýÁË  %s';
-$config["validator.error_messages.min_value"]    = '%s ²»×ã %s';
-$config["validator.error_messages.max_selected"] = '%s Ñ¡µÃÌ«¶à';
-$config["validator.error_messages.min_selected"] = '%s Ñ¡µÃÌ«ÉÙ';
-$config["validator.error_messages.required"]     = '%s Îª¿Õ';
-$config["validator.error_messages.equal_to"]     = '%s ²»µÈÓÚ  %s';
+$config["validator.error_messages.ban"]          = '%s åŒ…å«è¿ç¦è¯';
+$config["validator.error_messages.mask"]         = '%s ä¸ç¬¦åˆæŒ‡å®šçš„æ ¼å¼';
+$config["validator.error_messages.max_length"]   = '%s å¤šäºŽ  %s ä¸ªå­—';
+$config["validator.error_messages.min_length"]   = '%s å°‘äºŽ  %s ä¸ªå­—';
+$config["validator.error_messages.max_value"]    = '%s è¶…è¿‡äº†  %s';
+$config["validator.error_messages.min_value"]    = '%s ä¸è¶³ %s';
+$config["validator.error_messages.max_selected"] = '%s é€‰å¾—å¤ªå¤š';
+$config["validator.error_messages.min_selected"] = '%s é€‰å¾—å¤ªå°‘';
+$config["validator.error_messages.required"]     = '%s ä¸ºç©º';
+$config["validator.error_messages.equal_to"]     = '%s ä¸ç­‰äºŽ  %s';

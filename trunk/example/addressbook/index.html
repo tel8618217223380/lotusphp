@@ -1,39 +1,41 @@
+<!doctype html>
 <html>
- <head>
-  <title> addressbook </title>
-  <meta name="generator" content="lotusphp" />
-  <meta name="author" content="" />
-  <meta name="keywords" content="" />
-  <meta name="description" content="" />
- </head>
- <body>
+<head>
+<meta charset="utf-8" />
+<title> addressbook </title>
+<meta name="generator" content="lotusphp" />
+<meta name="author" content="" />
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+</head>
+<body>
 <div style="width:640px; margin:0 auto;">
-<p>�û�ע�ỹû��, <a href="web">ʹ��user��½,����123456</a></p>
+<p>用户注册还没做, <a href="web">使用user登陆,密码123456</a></p>
 
 
-<p>��ϵ�˹����Ĺ��ߣ���sqlite���ݿ⣬�������⣬һ��proj������app</p>
+<p>联系人管理的工具，用sqlite数据库，单机单库，一个proj，两个app</p>
 
 <p>
-���û��� ��<br />
-<a href="web">��һ��app</a>���Ǵ�ͳWeb MIS���棬ʵ�֣�<br />
-ͨѶ¼ӵ���˵ĵ�¼��ע����ע�ᣨע�����ֻҪ�ֻ��ź���������ѡ�<br />
-��ϵ�˵��������༭��ɾ��������
+多用户版 的<br />
+<a href="web">第一个app</a>就是传统Web MIS界面，实现：<br />
+通讯录拥有人的登录、注销、注册（注册可以只要手机号和密码两个选项）<br />
+联系人的搜索、编辑、删除、添加
 </p>
 
 <p>
-<a href="wap">�ڶ���APP</a>��WAP����<br />
-ʵ�֣�<br />
-ͨѶ¼ӵ���˵�¼<br />
-�������༭������
+<a href="wap">第二个APP</a>是WAP界面<br />
+实现：<br />
+通讯录拥有人登录<br />
+搜索、编辑、添加
 </p>
 
 <p>
-����пջ�������������app��crontab��̨����<br />
-��ʱȥ�ֻ�֮�Ҳ�ѯ�ֻ������ڵأ������µ����ݿ���
+如果有空还可以做第三个app，crontab后台程序<br />
+定时去手机之家查询手机号所在地，并更新到数据库中
 </p>
 
-<p>�����ж��APP�������߼��������ã�����lib�У�action�м���û���߼�
-���˲��漰�ֲ�ʽ��DB��Cache�����ʾ����Ŀ������lotus���е����������һ��</p>
+<p>由于有多个APP，所有逻辑尽量共用，封在lib中，action中几乎没有逻辑
+除了不涉及分布式的DB和Cache，这个示范项目基本把lotus现有的组件都用了一遍</p>
 </div>
- </body>
+</body>
 </html>

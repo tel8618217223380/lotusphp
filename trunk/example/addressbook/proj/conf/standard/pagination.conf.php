@@ -1,13 +1,13 @@
 <?php
 $config['page_size'] = 10;
 /**
- * ·ÖÒ³
+ * åˆ†é¡µ
  */
-$config['pagination.pager']['per_page'] = 10; //Ã¿¸öÒ³ÃæÖÐÏ£ÍûÕ¹Ê¾µÄÏîÄ¿ÊýÁ¿ 
-$config['pagination.pager']['num_links_show'] = 9; //Êý×ÖÁ´½ÓÏÔÊ¾ÊýÁ¿ 
-$config['pagination.pager']['num_point_start_end'] = 2; //¡°µã¡±Ç°±ßºÍºó±ßµÄÁ´½ÓÊýÁ¿
+$config['pagination.pager']['per_page'] = 10; //æ¯ä¸ªé¡µé¢ä¸­å¸Œæœ›å±•ç¤ºçš„é¡¹ç›®æ•°é‡ 
+$config['pagination.pager']['num_links_show'] = 9; //æ•°å­—é“¾æŽ¥æ˜¾ç¤ºæ•°é‡ 
+$config['pagination.pager']['num_point_start_end'] = 2; //â€œç‚¹â€å‰è¾¹å’ŒåŽè¾¹çš„é“¾æŽ¥æ•°é‡
 /**
- * ÊÇ·ñÏÔÊ¾ÉÏÒ»Ò³,ÏÂÒ»Ò³...
+ * æ˜¯å¦æ˜¾ç¤ºä¸Šä¸€é¡µ,ä¸‹ä¸€é¡µ...
  */
 $config['pagination.pager']['show_first'] = true;
 $config['pagination.pager']['show_prev'] = true;
@@ -18,15 +18,15 @@ $config['pagination.pager']['show_info'] = false;
 $config['pagination.pager']['show_point'] = true;
 $config['pagination.pager']['show_empty_button'] = false;
 /**
- * ÉÏÒ»Ò³,ÏÂÒ»Ò³...µÄÏÔÊ¾ÎÄ×ÖÄÚÈÝ
+ * ä¸Šä¸€é¡µ,ä¸‹ä¸€é¡µ...çš„æ˜¾ç¤ºæ–‡å­—å†…å®¹
  */
-$config['pagination.pager']['first_text'] = 'Ê×Ò³';
-$config['pagination.pager']['prev_text'] = 'ÉÏÒ»Ò³';
-$config['pagination.pager']['next_text'] = 'ÏÂÒ»Ò³';
-$config['pagination.pager']['last_text'] = 'Î²Ò³';
+$config['pagination.pager']['first_text'] = 'é¦–é¡µ';
+$config['pagination.pager']['prev_text'] = 'ä¸Šä¸€é¡µ';
+$config['pagination.pager']['next_text'] = 'ä¸‹ä¸€é¡µ';
+$config['pagination.pager']['last_text'] = 'å°¾é¡µ';
 $config['pagination.pager']['point_text'] = '...';
 /**
- * Éú³Éhtml´úÂë²¿·Ö, :url±íÊ¾Éú³ÉÁ´½Ó
+ * ç”Ÿæˆhtmlä»£ç éƒ¨åˆ†, :urlè¡¨ç¤ºç”Ÿæˆé“¾æŽ¥
  */
 $config['pagination.pager']['full_tag_open'] = '<div class="pages">';
 $config['pagination.pager']['full_tag_close'] = '</div>';

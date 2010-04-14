@@ -26,7 +26,7 @@ class DefaultIndexAction extends MyAction
 		$this->data['data'] = $addressbook->getList($condition);
 
 		$count = $this->data['data']['count'];
-		$base_url = C('LtUrl')->generate('Default', 'Index', array('page' => ':page')); // :page»á×Ô¶¯±»Ìæ»»µô
+		$base_url = C('LtUrl')->generate('Default', 'Index', array('page' => ':page')); // :pageä¼šè‡ªåŠ¨è¢«æ›¿æ¢æ‰
 
 		$pagination = new LtPagination;
 		$pagination->init();

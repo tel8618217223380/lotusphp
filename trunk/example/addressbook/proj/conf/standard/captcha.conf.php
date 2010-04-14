@@ -1,6 +1,6 @@
 <?php
 /**
- * ÑéÖ¤Âë
+ * éªŒè¯ç 
  */
 $config['captcha.seed_file_root'] = "/tmp/Lotus/captcha/seed/";
 $config['captcha.allow_chars'] = "23456789abcdeghkmnpqsuvxyz";

@@ -13,7 +13,7 @@ class AddressbookDoDeleteAction extends MyAction
 		$addressbook = new MyAddressbook;
 		$addressbook->delete($id);
 		$this->code = 200;
-		$this->message = 'É¾³ı³É¹¦';
+		$this->message = 'åˆ é™¤æˆåŠŸ';
 		$this->data['title'] = 'addressbook';
 		$this->data['forward'] = C('LtUrl')->generate('Default', 'Index');
 		$this->data['baseurl'] = LtObjectUtil::singleton('LtConfig')->get('baseurl'); 
