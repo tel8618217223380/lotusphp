@@ -33,7 +33,7 @@ class UserDoLoginAction extends LtAction
 			 * 保存时间86400秒(一天)
 			 */
 			C("LtCookie")->setCookie('auth', $authCode, time() + 86400);
-			$this->data['forward'] = C('LtUrl')->generate('default', 'index');
+			$this->data['forward'] = C('LtUrl')->generate('Default', 'Index');
 		}
 		else
 		{
