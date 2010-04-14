@@ -1,5 +1,5 @@
 <?php
-class AddressbookAddAction extends MyAction
+class GroupsIndexAction extends MyAction
 {
 	public function __construct()
 	{
@@ -12,6 +12,7 @@ class AddressbookAddAction extends MyAction
 	{
 		$groups = new MyGroups;
 		$groups->uid = $this->data['uid'];
+
 		$this->data['groups'] = $groups->getAll();
 
 		$this->data['title'] = 'addressbook';

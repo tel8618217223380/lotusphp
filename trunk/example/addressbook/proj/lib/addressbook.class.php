@@ -3,32 +3,48 @@ class MyAddressbook
 {
 	public $uid;
 	private $addressbook;
+	private $dbh;
 
 	public function __construct()
 	{
 		$db = LtObjectUtil::singleton('LtDb');
 		$db->group = "group_0";
 		$db->node = "node_0";
-		$db->init(); 
+		$db->init();
+		$this->dbh = $db->getDbHandle();
 		$this->addressbook = $db->getTDG("addressbook");
 	}
-	public function getList($page, $page_size)
+	public function getList($limit, $offset)
 	{
-		if(empty($this->uid))
+		if (empty($this->uid))
 		{
 			$result['count'] = 0;
 			$result['rows'] = array();
 		}
 		else
 		{
-			$condition['where']['expression'] = "uid = :uid";
-			$condition['where']['value']['uid'] = $this->uid;
-			$condition['limit'] = $page_size;
-			$condition['offset'] = ($page-1) * $page_size;
-			$condition['orderby'] = 'id DESC';
-
-			$result['count'] = $this->addressbook->count($condition);
-			$result['rows'] = $this->addressbook->fetchRows($condition);
+			$tmp = $this->dbh->query("select count(*) total 
+		from addressbook a 
+		left join groups g 
+		on g.gid=a.gid 
+		where a.uid=$this->uid");
+			$result['count'] = $tmp[0]['total'];
+			$result['rows'] = $this->dbh->query("select a.id id, 
+		a.uid uid, 
+		a.gid gid,
+		a.firstname firstname,
+		a.lastname lastname,
+		a.company company, 
+		a.address address, 
+		a.mobile mobile, 
+		a.phone phone, 
+		a.created created,
+		a.modified modified,
+		g.groupname groupname from addressbook a 
+		left join groups g 
+		on a.gid=g.gid 
+		where a.uid=$this->uid 
+		limit $limit offset $offset");
 		}
 		return $result;
 	}
@@ -38,12 +54,12 @@ class MyAddressbook
 		$condition['where']['value']['id'] = $id;
 		$tmp = array();
 		$tmp = $this->addressbook->fetchRows($condition);
-		$result = $tmp ? $tmp[0] : $tmp; 
+		$result = $tmp ? $tmp[0] : $tmp;
 		return $result;
 	}
 
 	public function add($data)
-	{ 
+	{
 		$result = $this->addressbook->insert($data);
 		return $result;
 	}
@@ -66,8 +82,8 @@ class MyAddressbook
 		else
 		{
 			$condition['expression'] = "id = :id";
-			$condition['value']['id'] = $id; 
-			$this->addressbook->deleteRows($condition); 
+			$condition['value']['id'] = $id;
+			$this->addressbook->deleteRows($condition);
 		}
 	}
 }

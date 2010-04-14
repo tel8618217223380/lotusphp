@@ -5,6 +5,15 @@
       添加联系人
       </caption>
       <tbody class="stripe">
+        <tr>
+          <td>分组</td>
+          <td><select name="data[gid]">
+              <option value="0">默认</option>
+              <!--{loop $this->data['groups']['rows'] $k $v}-->
+              <option value="{$v['gid']}" {if $v['gid'] == $this->data['data']['gid']}selected="selected"{/if} >{$v['groupname']}</option>
+              <!--{/loop}-->
+            </select></td>
+        </tr>
         <tr width="60">
           <td>姓</td>
           <td><input value="{$this->data['data']['firstname']}" name="data[firstname]" type="text" size="80" maxlength="100" /></td>

@@ -21,7 +21,9 @@ class DefaultIndexAction extends MyAction
 		{
 			$page_size = 25;
 		}
-		$this->data['data'] = $addressbook->getList($page, $page_size);
+		$limit = $page_size;
+		$offset = ($page-1) * $page_size;
+		$this->data['data'] = $addressbook->getList($limit, $offset);
 
 		$count = $this->data['data']['count'];
 		$base_url = C('LtUrl')->generate('Default', 'Index', array('page' => ':page')); // :page会自动被替换掉
