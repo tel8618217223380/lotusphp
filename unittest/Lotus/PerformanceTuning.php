@@ -11,6 +11,8 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 		 * 项目目录, 按照约定的目录结构,自动加载配置文件,自动加载类
 		 */
 		$option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
+		$option['app_dir'] = dirname(__FILE__) . '/proj_dir/';
+
 		/**
 		 * 临时目录,默认是proj_dir/tmp/
 		 * 开发模式下的Autoloader 和 MVC的模板引擎

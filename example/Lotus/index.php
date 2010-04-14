@@ -5,6 +5,7 @@ include $lotusHome . 'runtime/Lotus.php';
 $lotus = new Lotus();
 
 $lotus->option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
+$lotus->option['app_dir'] = dirname(__FILE__) . '/proj_dir/';
 $lotus->option['app_name'] = 'app_name1';
 /**
  * 注意：默认是使用mvc 开发模式关闭 
