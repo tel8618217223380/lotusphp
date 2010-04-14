@@ -22,27 +22,27 @@ class UserDoLoginAction extends LtAction
 			if ($data && $data['password'] == $password)
 			{
 				$authCode = $data['uid'] . "\t" . $data['password'];
-				$this->message = "µÇÂ½³É¹¦";
+				$this->message = "ç™»é™†æˆåŠŸ";
 			}
 			else
 			{
-				$this->message = "ÕÊºÅÃÜÂë´íÎó";
+				$this->message = "å¸å·å¯†ç é”™è¯¯";
 				$authCode = '';
 			}
 			/**
-			 * ±£´æÊ±¼ä86400Ãë(Ò»Ìì)
+			 * ä¿å­˜æ—¶é—´86400ç§’(ä¸€å¤©)
 			 */
 			C("LtCookie")->setCookie('auth', $authCode, time() + 86400);
 			$this->data['forward'] = C('LtUrl')->generate('default', 'index');
 		}
 		else
 		{
-			$this->message = "ÇëÊäÈëÕÊºÅºÍÃÜÂëµÇÂ½";
+			$this->message = "è¯·è¾“å…¥å¸å·å’Œå¯†ç ç™»é™†";
 			$this->data['forward'] = C('LtUrl')->generate('User', 'Login');
 		}
 
 		$this->data['baseurl'] = LtObjectUtil::singleton('LtConfig')->get('baseurl'); 
-		$this->data['title'] = 'ÓÃ»§µÇÂ½';
+		$this->data['title'] = 'ç”¨æˆ·ç™»é™†';
 
 		$this->responseType = 'tpl';
 		$this->layout = 'result';

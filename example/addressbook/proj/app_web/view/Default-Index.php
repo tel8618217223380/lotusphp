@@ -1,22 +1,22 @@
 <div class="area">
 <table class="listtable" border="0" cellpadding="0" cellspacing="0">
-<tr><td><a href="{url('Addressbook','Add')}">Ìí¼ÓÁªÏµÈË</a> | <a href="{url('Addressbook','Addgroup')}">Ìí¼ÓÁªÏµÈË·Ö×é</a></td></tr>
+<tr><td><a href="{url('Addressbook','Add')}">æ·»åŠ è”ç³»äºº</a> | <a href="{url('Addressbook','Addgroup')}">æ·»åŠ è”ç³»äººåˆ†ç»„</a></td></tr>
 </table>
 
 <form name="myform" method="post" action="">
   <table border="0" cellpadding="0" cellspacing="0" class="listtable">
     <caption>
-    Í¨Ñ¶Â¼
+    é€šè®¯å½•
     </caption>
     <tr>
-      <th>Ñ¡Ôñ</th>
-      <th>ĞÕÃû</th>
-      <th>µç×ÓÓÊ¼ş</th>
-      <th>ÊÖ»ú</th>
-      <th>µç»°</th>
-      <th>µØÖ·</th>
-      <th>¸üĞÂÊ±¼ä</th>
-      <th>¹ÜÀí²Ù×÷</th>
+      <th>é€‰æ‹©</th>
+      <th>å§“å</th>
+      <th>ç”µå­é‚®ä»¶</th>
+      <th>æ‰‹æœº</th>
+      <th>ç”µè¯</th>
+      <th>åœ°å€</th>
+      <th>æ›´æ–°æ—¶é—´</th>
+      <th>ç®¡ç†æ“ä½œ</th>
     </tr>
 	<tbody class="stripe">
 <!--{loop $this->data['data']['rows'] $data}-->
@@ -28,12 +28,12 @@
       <td>{$data['phone']}</td>
       <td>{$data['address']}</td>
       <td>{date('Y-m-d H:i:s', $data['modified'])}</td>
-      <td><a href="{url('Addressbook', 'Edit',array('id'=>$data['id']))}">±à¼­</a> | <a href="javascript:confirmurl('{url('Addressbook', 'Dodelete',array('id'=>$data['id']))}','È·ÈÏÉ¾³ıÂğ£¿')">É¾³ı</a></td>
+      <td><a href="{url('Addressbook', 'Edit',array('id'=>$data['id']))}">ç¼–è¾‘</a> | <a href="javascript:confirmurl('{url('Addressbook', 'Dodelete',array('id'=>$data['id']))}','ç¡®è®¤åˆ é™¤å—ï¼Ÿ')">åˆ é™¤</a></td>
     </tr>
 <!--{/loop}-->
 	</tbody>
   </table>
-  <div class="button_box">¶ÔÑ¡ÖĞÏî²Ù×÷</div>
+  <div class="button_box">å¯¹é€‰ä¸­é¡¹æ“ä½œ</div>
 </form>
 {$this->data['pages']}
 </div>

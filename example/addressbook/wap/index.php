@@ -6,33 +6,33 @@ $lotusHome = substr(dirname(__FILE__), 0, strpos(__FILE__, "example"));
 
 include $lotusHome . 'runtime/Lotus.php';
 /**
- * ³õÊ¼»¯LotusÀà
+ * åˆå§‹åŒ–Lotusç±»
  */
 $lotus = new Lotus();
 /**
- * ÏîÄ¿Ä¿Â¼
+ * é¡¹ç›®ç›®å½•
  */
 $lotus->option['proj_dir'] = dirname(dirname(__FILE__)) . '/proj/';
 /**
- * ÁÙÊ±Ä¿Â¼,Ä¬ÈÏÊÇproj_dir/tmp/
- * ¿ª·¢Ä£Ê½ÏÂµÄAutoloader ºÍ MVCµÄÄ£°åÒıÇæ ¼° ÎÄ¼şÀàĞÍCache
+ * ä¸´æ—¶ç›®å½•,é»˜è®¤æ˜¯proj_dir/tmp/
+ * å¼€å‘æ¨¡å¼ä¸‹çš„Autoloader å’Œ MVCçš„æ¨¡æ¿å¼•æ“ åŠ æ–‡ä»¶ç±»å‹Cache
  */
 //$lotus->option['app_tmp'] = $_SERVER['DOCUMENT_ROOT'].'/tmp/addressbook/';
 $lotus->option['app_tmp'] = '/tmp/addressbook/';
 
 /**
- * ÊÇ·ñ×Ô¶¯¼ÓÔØº¯ÊıÎÄ¼ş, Ä¬ÈÏÎªAutoloaderConfig.phpµÄÉèÖÃ
+ * æ˜¯å¦è‡ªåŠ¨åŠ è½½å‡½æ•°æ–‡ä»¶, é»˜è®¤ä¸ºAutoloaderConfig.phpçš„è®¾ç½®
  */
 $lotus->option['load_function'] = true;
 /**
- * Ó¦ÓÃÃû³Æ¶ÔÏîÄ¿Ä¿Â¼ÏÂµÄ×ÓÄ¿Â¼Ãû³Æ
+ * åº”ç”¨åç§°å¯¹é¡¹ç›®ç›®å½•ä¸‹çš„å­ç›®å½•åç§°
  */
 $lotus->option['app_name'] = 'app_wap';
 
 $lotus->option['runtime_filemap'] = true;
 
 /**
- * ÊÇ·ñÊ¹ÓÃMVC
+ * æ˜¯å¦ä½¿ç”¨MVC
  */
 //$lotus->mvcMode = true;
 //$lotus->devMode = true;
@@ -40,7 +40,7 @@ $lotus->option['runtime_filemap'] = true;
 $lotus->init();
 
 /**
- * Ê¹ÓÃxdebug²âÊÔĞÔÄÜ
+ * ä½¿ç”¨xdebugæµ‹è¯•æ€§èƒ½
  */
 $info = '';
 if (function_exists('xdebug_time_index') && function_exists('xdebug_peak_memory_usage'))

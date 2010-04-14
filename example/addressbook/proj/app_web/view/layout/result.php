@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!--{if !empty($this->data['forward']) && $this->data['forward'] != "goback"}-->
 <meta http-equiv="refresh" content="2;URL={$this->data['forward']}" />
 <!--{/if}-->
@@ -9,29 +9,29 @@
 <link href="{$this->data['baseurl']}css/default.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<div id="top"><span style="float:right;margin-right:24px;"><a href="/">返回首页</a></span></div>
+<div id="top"><span style="float:right;margin-right:24px;"><a href="/">杩斿洖棣栭〉</a></span></div>
 <div class="messagebox">
 <div class="infobox">
 <?php 
-// 根据代码替换成中文信息
+// 鏍规嵁浠ｇ爜鏇挎崲鎴愪腑鏂囦俊鎭�
 switch ($this->code)
 {
 	case '403':
-		$this->message = '无权访问';
+		$this->message = '鏃犳潈璁块棶';
 		break;
 	case '406':
-		$this->message = '参数验证出错';
+		$this->message = '鍙傛暟楠岃瘉鍑洪敊';
 		break;
 	case '407':
-		$this->message = '无效的输入';
+		$this->message = '鏃犳晥鐨勮緭鍏�';
 		break;
 	case '200':
-		$this->message = '操作成功';
+		$this->message = '鎿嶄綔鎴愬姛';
 		break;
 }
 if(empty($this->message))
 {
-	$this->message = '提示信息';
+	$this->message = '鎻愮ず淇℃伅';
 }
 ?>
 <div>
@@ -54,9 +54,9 @@ echo '</pre>';
 </div>
 <p style="text-align:center;">
 <!--{if $this->data['forward'] == "goback"}-->
-  <a href="javascript:history.go(-1);" >[ 返回 ]</a>
+  <a href="javascript:history.go(-1);" >[ 杩斿洖 ]</a>
 <!--{elseif $this->data['forward']}-->
-  <a href="{$this->data['forward']}">[ 确定 ]</a>
+  <a href="{$this->data['forward']}">[ 纭畾 ]</a>
 <!--{/if}-->
 </p>
 </div>

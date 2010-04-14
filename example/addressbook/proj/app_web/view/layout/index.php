@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>{$this->data['title']}</title>
 <meta name="keywords" content="" />
 <meta name="description" content="" />
@@ -26,15 +26,15 @@ function confirmform(form,message)
 </script>
 </head>
 <body>
-<div id="sitenav"><span>µÇÂ½ÕÊºÅ:{$this->data['username']} <a onclick="return confirm('È·¶¨ÒªÍË³öÏµÍ³Ã´£¿');" href="{url('User', 'DoLogout')}" target="_self">ÍË³öÏµÍ³</a> <a href="javascript:void(0)">¹ØÓÚ</a></span><a href="{$this->data['baseurl']}">Ê×Ò³</a></div>
+<div id="sitenav"><span>ç™»é™†å¸å·:{$this->data['username']} <a onclick="return confirm('ç¡®å®šè¦é€€å‡ºç³»ç»Ÿä¹ˆï¼Ÿ');" href="{url('User', 'DoLogout')}" target="_self">é€€å‡ºç³»ç»Ÿ</a> <a href="javascript:void(0)">å…³äºŽ</a></span><a href="{$this->data['baseurl']}">é¦–é¡µ</a></div>
 <div id="header">
   <h1>addressbook</h1>
 </div>
 <div class="area">
   <div class="nav">
 	<ul>
-	<li><a href="{$this->data['baseurl']}">Ê×Ò³</a></li>
-	<li><a href="javascript:void(0)">¹ØÓÚ</a></li>
+	<li><a href="{$this->data['baseurl']}">é¦–é¡µ</a></li>
+	<li><a href="javascript:void(0)">å…³äºŽ</a></li>
 	</ul>
   </div>
 </div>

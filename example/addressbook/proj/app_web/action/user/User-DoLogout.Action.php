@@ -8,7 +8,7 @@ class UserDoLogoutAction extends MyAction
 		$this->data['forward'] = C('Lturl')->generate('User', 'Login');
 
 		$this->data['baseurl'] = C('LtConfig')->get('baseurl'); 
-		$this->data['title'] = 'ÍË³ö³É¹¦';
+		$this->data['title'] = 'é€€å‡ºæˆåŠŸ';
 
 		$this->responseType = 'tpl';
 		$this->layout = 'result';

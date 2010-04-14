@@ -12,16 +12,16 @@ table { border-collapse: collapse; }
 .rowbg0 { background:#F0F0F0; }
 .rowbg1 { background:#F0F8FF; }
 .rowbg2 { background:#F1F5F8; }
-/*²¼¾Ö*/
+/*å¸ƒå±€*/
 .area { margin:0 auto; padding:0; width:950px;text-align:left; }
-/*Ò³Í·Ò³½Å*/
+/*é¡µå¤´é¡µè„š*/
 #sitenav { margin:0 auto; border-bottom:1px solid #ccc; width:950px; line-height:24px;height:24px;text-align:left; }
 #sitenav span { float:right; }
 #header { margin:0 auto; padding:0; width:950px; height:60px; }
 #header h1 { float:left; line-height:60px; }
 #header h2 { float:right; line-height:60px; }
 #footer { margin:12px auto; width:950px; line-height:24px; border-top:1px solid #D8D9D9; clear:both; text-align:center; }
-/*µ¼º½*/
+/*å¯¼èˆª*/
 .nav { clear:both; background:#F8F8F8; font-size:14px; }
 .nav ul { list-style:none; width:100%; height:24px; }
 .nav ul li { float:left; line-height:24px; }
@@ -30,7 +30,7 @@ table { border-collapse: collapse; }
 .button_box { clear:both; text-align:center; padding:5px; }
 .btn { padding:2px 6px; color:#202020; background:#F3F9FF; border:1px solid #D9E6F0; height:24px; line-height:24px; }
 
-/*ÁÐ±í±í¸ñ*/
+/*åˆ—è¡¨è¡¨æ ¼*/
 .divbox { margin-bottom:6px;}
 .divtitle { color:#000; background:#F1F5F8; padding:8px; border: solid; border-color: #D8DDE5 #D8DDE5 #D8DDE5; border-width: 1px 1px 0px; font-weight:bolder; }
 
@@ -47,7 +47,7 @@ table { border-collapse: collapse; }
 .listtable p.cate, .listtable p.cate a { color: #003195; }
 .listtable .dateline { float: right; }
 .listtable .relativetags { margin: 0.1em; }
-/* ·ÖÒ³ */
+/* åˆ†é¡µ */
 .pages { margin: 5px auto; padding: 0; text-align: right; }
 .pages * { vertical-align: middle; }
 .pages a { margin:0 1px; padding:1px 4px; color: #002F79; background:#f9fcff; border:1px solid #A1C4CD; text-align: center; text-decoration: none; font:normal 12px/14px verdana; }
@@ -55,7 +55,7 @@ table { border-collapse: collapse; }
 .pages input { margin:0 1px; padding:1px 4px; border:1px solid #87C932; color:#499000; font:bold 12px/15px Verdana; }
 .pages b { padding:2px; margin: 0 3px; font:bold 10px/12px Tahoma; }
 .pages span { margin:0 1px; padding:1px 4px; color: #154BA0; background-color: #F5FBFF; border: 1px solid #86B9D6; font-weight: bold; }
-/* µÇÂ½ */
+/* ç™»é™† */
 #loginbox { margin:7em auto;padding:10px;width:320px;border:1px solid #8BB2D9;background:#F2F7FF;}
 #loginbox form { background:#FFFFFF;border:1px solid #E3EFFC; }
 #loginbox table { margin:0 auto; padding:0;width:90%; }
