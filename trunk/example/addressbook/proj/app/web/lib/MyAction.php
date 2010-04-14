@@ -29,7 +29,7 @@ class MyAction extends LtAction
 		}
 		if (!$this->data['uid'])
 		{
-			header("Location: " . C('LtUrl')->generate('user', 'login'));
+			header("Location: " . C('LtUrl')->generate('User', 'Login'));
 		} 
 	}
 }
