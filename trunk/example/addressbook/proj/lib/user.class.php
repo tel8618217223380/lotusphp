@@ -26,4 +26,20 @@ class MyUser
 		$tmp = $this->user->fetchRows($condition);
 		return $tmp ? $tmp[0]['uid'] : $tmp;
 	}
+
+	public function add($data)
+	{ 
+		$result = $this->user->insert($data);
+		return $result;
+	}
+
+	public function exists($data, $field = 'modile')
+	{
+		$condition['where']['expression'] = "$field = :$field";
+		$condition['where']['value'][$field] = $data;
+		$tmp = array();
+		$tmp = $this->user->fetchRows($condition);
+		$result = $tmp ? true : false; 
+		return $result;
+	}
 }

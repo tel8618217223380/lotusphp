@@ -6,7 +6,10 @@
 <link href="{$this->data['baseurl']}css/default.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<div id="top"><span style="float:right;margin-right:24px;"><a href="/">返回首页</a></span></div>
+<div id="top"><a href="{url('User','Register')}">注册</a> <span style="float:right;margin-right:24px;"><a href="/">返回首页</a></span></div>
+<div class="area">
+
+<div style="float:left;">
 <div id="loginbox">
   <form  action="{url('User','DoLogin')}" method="post" name="myform" id="myform">
     <h3>登陆系统</h3>
@@ -41,6 +44,28 @@
       </tbody>
     </table>
   </form>
+</div>
+</div>
+
+<div style="float:right;">
+<div class="messagebox">
+	<div class="infobox">
+		<h3>多用户通讯录</h3>
+		<p>多用户通讯录。如果你还没有注册，请 <a href="{url('User','Register')}">注册</a> 后再登陆。基于好用又强大的PHP开发框架<b>Lotusphp</b>。这是做为一个演示目的创建的应用。为了方便，使用了sqlite数据库。而实际上<b>Lotusphp</b>的Cache和Db组件都是支持分布的。</p>
+		<h3>Lotusphp说明</h3>
+		<p>做好用又强大的PHP框架</p> 
+		<p>论坛：<a href="http://bbs.lotusphp.com">bbs.lotusphp.com</a></p>
+		<p>需求：<a href="http://code.google.com/p/lotusphp/wiki/lotus_todo">code.google.com/p/lotusphp/wiki/lotus_todo</a></p>
+		<p>SVN提交动态：<a href="http://code.google.com/p/lotusphp/source/list">code.google.com/p/lotusphp/source/list</a></p>
+		<h3>kiwiphp用户看这里：</h3>
+		<p>kiwiphp官方网站：<a href="http://www.kiwiphp.com">www.kiwiphp.com</a> 推荐使用 0.2.0版本</p>
+		<p>文档：</p>
+		<p><a href="http://wiki.kiwiphp.com">wiki.kiwiphp.com</a></p>
+		<p><a href="http://manual.kiwiphp.com">manual.kiwiphp.com</a></p>
+	</div>
+</div>
+</div>
+
 </div>
 <div id="footer">&copy; 2010 <span id="debug_info"></span></div>
 <script type="text/javascript">
