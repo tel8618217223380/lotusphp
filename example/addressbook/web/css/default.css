@@ -15,6 +15,10 @@ table { border-collapse: collapse; }
 /*布局*/
 .area { margin:0 auto; padding:0; width:950px;text-align:left; }
 /*页头页脚*/
+#top { text-indent:24px; height:24px; line-height:24px; font-size:12px; background:#F3F9FF; border-bottom:2px solid #D9E6F0;color:#202020;text-align:left; }
+#top .infol { float:left; margin-left:24px;display:inline;}
+#top .infor { float:right; margin-right:24px;display:inline;}
+#top .infor a{ padding:2px 8px;background:#FFF;border:1px solid #5EBBDA; }
 #sitenav { margin:0 auto; border-bottom:1px solid #ccc; width:950px; line-height:24px;height:24px;text-align:left; }
 #sitenav span { float:right; }
 #header { margin:0 auto; padding:0; width:950px; height:60px; }
@@ -56,7 +60,7 @@ table { border-collapse: collapse; }
 .pages b { padding:2px; margin: 0 3px; font:bold 10px/12px Tahoma; }
 .pages span { margin:0 1px; padding:1px 4px; color: #154BA0; background-color: #F5FBFF; border: 1px solid #86B9D6; font-weight: bold; }
 /* 登陆 */
-#loginbox { margin:7em auto;padding:10px;width:320px;border:1px solid #8BB2D9;background:#F2F7FF;}
+#loginbox { margin:24px auto;padding:10px;width:320px;border:1px solid #8BB2D9;background:#F2F7FF;}
 #loginbox form { background:#FFFFFF;border:1px solid #E3EFFC; }
 #loginbox table { margin:0 auto; padding:0;width:90%; }
 #loginbox h3 { height:28px; line-height:28px; font-size:14px;border:2px solid #FFFFFF;background:#F2F7FF;text-indent:20px; }

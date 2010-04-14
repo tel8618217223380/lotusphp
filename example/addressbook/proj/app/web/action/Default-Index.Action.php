@@ -11,6 +11,8 @@ class DefaultIndexAction extends MyAction
 	public function execute()
 	{
 		$addressbook = new MyAddressbook;
+		$addressbook->uid = $this->data['uid'];
+
 		$page = $this->context->get('page');
 		$page = max(intval($page), 1); 
 
@@ -19,11 +21,7 @@ class DefaultIndexAction extends MyAction
 		{
 			$page_size = 25;
 		}
-		$condition['limit'] = $page_size;
-		$condition['offset'] = ($page-1) * $page_size;
-		$condition['orderby'] = 'id DESC';
-
-		$this->data['data'] = $addressbook->getList($condition);
+		$this->data['data'] = $addressbook->getList($page, $page_size);
 
 		$count = $this->data['data']['count'];
 		$base_url = C('LtUrl')->generate('Default', 'Index', array('page' => ':page')); // :page会自动被替换掉

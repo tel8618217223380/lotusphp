@@ -1,6 +1,7 @@
 <?php
 class MyAddressbook
 {
+	public $uid;
 	private $addressbook;
 
 	public function __construct()
@@ -11,10 +12,24 @@ class MyAddressbook
 		$db->init(); 
 		$this->addressbook = $db->getTDG("addressbook");
 	}
-	public function getList($condition)
+	public function getList($page, $page_size)
 	{
-		$result['count'] = $this->addressbook->count($condition);
-		$result['rows'] = $this->addressbook->fetchRows($condition);
+		if(empty($this->uid))
+		{
+			$result['count'] = 0;
+			$result['rows'] = array();
+		}
+		else
+		{
+			$condition['where']['expression'] = "uid = :uid";
+			$condition['where']['value']['uid'] = $this->uid;
+			$condition['limit'] = $page_size;
+			$condition['offset'] = ($page-1) * $page_size;
+			$condition['orderby'] = 'id DESC';
+
+			$result['count'] = $this->addressbook->count($condition);
+			$result['rows'] = $this->addressbook->fetchRows($condition);
+		}
 		return $result;
 	}
 	public function get($id)
