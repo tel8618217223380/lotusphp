@@ -13,32 +13,36 @@ $lotus = new Lotus();
  */
 $lotus->option['proj_dir'] = dirname(dirname(__FILE__)) . '/proj/';
 /**
+ * 应用目录
+ */
+$lotus->option['app_dir'] = dirname(dirname(__FILE__)) . '/proj/app/';
+/**
+ * 应用名称对项目目录下的子目录名称
+ * 如果只有一个应该可以不用设置
+ */
+$lotus->option['app_name'] = 'web';
+
+/**
  * 临时目录,默认是proj_dir/tmp/
  * 开发模式下的Autoloader 和 MVC的模板引擎 及 文件类型Cache
  */
-//$lotus->option['app_tmp'] = $_SERVER['DOCUMENT_ROOT'].'/tmp/addressbook/';
+// $lotus->option['app_tmp'] = $_SERVER['DOCUMENT_ROOT'].'/tmp/addressbook/';
 $lotus->option['app_tmp'] = '/tmp/addressbook/';
 
 /**
  * 是否自动加载函数文件, 默认为AutoloaderConfig.php的设置
  */
 $lotus->option['load_function'] = true;
-/**
- * 应用名称对项目目录下的子目录名称
- */
-$lotus->option['app_name'] = 'app_web';
 $lotus->option['runtime_filemap'] = true;
 
 /**
  * 默认 true
  */
-//$lotus->mvcMode = true;
-
+// $lotus->mvcMode = true;
 /**
  * 默认 false;
  */
 $lotus->devMode = true;
-
 
 $lotus->init();
 /**

@@ -2,7 +2,13 @@
 if (!isset($_POST["captcha_word"]))
 {
 	$seed = uniqid();
-	echo "
+	echo "<!doctype html>
+<html>
+<head>
+<meta charset=\"utf-8\" />
+<title>Captcha LotusPHP</title>
+</head>
+<body>
 <form action='simplest.php' method='post'>
 <img src='captcha_image.php?seed=$seed' />
 <input type='hidden' name='seed' value='$seed' />
@@ -10,6 +16,8 @@ if (!isset($_POST["captcha_word"]))
 请输入上图中的验证码：<input type='text' name='captcha_word' />
 <input type='submit' />
 </form>
+</body>
+</html>
 ";
 }
 else

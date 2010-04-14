@@ -29,14 +29,20 @@ class Lotus
 		{
 			trigger_error('option[\'proj_dir\'] must be set');
 		}
-		if (empty($this->option["app_name"]))
+
+		if (empty($this->option["app_dir"]))
 		{
-			trigger_error('option[\'app_name\'] must be set');
+			trigger_error('option[\'app_dir\'] must be set');
+		}
+
+		$this->app_dir = rtrim($this->option["app_dir"], '\\/') . '/';
+		if (isset($this->option["app_name"]))
+		{
+			$this->app_dir = $this->app_dir . $this->option["app_name"] . '/';
 		}
 
 		$this->proj_dir = rtrim($this->option["proj_dir"], '\\/') . '/';
-		$this->app_name = $this->option["app_name"];
-		$this->app_dir = $this->proj_dir . $this->app_name . '/';
+
 		if (empty($this->option["app_tmp"]))
 		{
 			$this->app_tmp = $this->proj_dir . 'tmp/';

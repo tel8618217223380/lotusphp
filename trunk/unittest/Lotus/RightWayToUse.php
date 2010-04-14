@@ -18,16 +18,20 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		// 下面是 必填项
 		// ---------------------------------
 		/**
-		 * 项目目录, 按照约定的目录结构,自动加载配置文件,自动加载类
+		 * 项目目录, 按照约定的目录结构,自动加载共享配置文件
 		 */
 		$lotus->option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
 		/**
-		 * 应用名称对项目目录下的子目录名称
+		 * 应用目录, 按照约定的目录结构,自动加载配置文件,自动加载类
 		 */
-		$lotus->option['app_name'] = 'app_name1';
+		$lotus->option['app_dir'] = dirname(__FILE__) . '/proj_dir/';
 		// ---------------------------------
 		// 下面是 可选项
 		// ---------------------------------
+		/**
+		 * 应用名称对应用目录下的子目录名称
+		 */
+		$lotus->option['app_name'] = 'app_name1';
 		/**
 		 * 临时目录,默认是proj_dir/tmp/
 		 * 缓存autoloader config , 保存MVC的模板编译后的文件

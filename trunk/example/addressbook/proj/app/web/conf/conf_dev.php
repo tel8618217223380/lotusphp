@@ -2,7 +2,7 @@
 /**
  * 读取项目共享配置
  */
-$projHome = substr(__FILE__, 0, strpos(__FILE__, "app_web"));
+$projHome = substr(__FILE__, 0, strpos(__FILE__, "app"));
 $config = include($projHome . "/conf/conf_dev.php");
 
 /**
