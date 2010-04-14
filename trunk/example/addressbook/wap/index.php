@@ -16,7 +16,7 @@ $lotus->option['proj_dir'] = dirname(dirname(__FILE__)) . '/proj/';
 /**
  * 应用目录
  */
-$lotus->option['app_dir'] = dirname(dirname(__FILE__)) . '/app/';
+$lotus->option['app_dir'] = dirname(dirname(__FILE__)) . '/proj/app/';
 /**
  * 应用名称对项目目录下的子目录名称
  * 如果只有一个应该可以不用设置
