@@ -1,5 +1,5 @@
 <?php
-class MyUser
+class UserDao
 {
 	private $user;
 

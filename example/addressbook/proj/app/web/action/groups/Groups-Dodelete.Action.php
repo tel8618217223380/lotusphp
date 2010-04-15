@@ -10,7 +10,7 @@ class GroupsDoDeleteAction extends MyAction
 	public function execute()
 	{
 		$gid = $this->context->get('gid');
-		$groups = new MyGroups;
+		$groups = new GroupsDao;
 		$groups->uid = $this->data['uid'];
 		$groups->delete($gid);
 

@@ -12,7 +12,7 @@ class GroupsDoEditAction extends MyAction
 	{
 		$data = $this->context->post('data');
 
-		$groups = new MyGroups;
+		$groups = new GroupsDao;
 		$groups->uid = $this->data['uid'];
 		$groups->edit($data);
 

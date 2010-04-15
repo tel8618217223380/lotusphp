@@ -7,23 +7,23 @@
       <tbody class="stripe">
         <tr width="60">
           <td>用户名</td>
-          <td><input name="data[username]" type="text" size="80" maxlength="100" /></td>
+          <td><input name="username" type="text" size="80" maxlength="100" /></td>
         </tr>
         <tr>
           <td>手机</td>
-          <td><input name="data[modile]" type="text" size="80" maxlength="100" /></td>
+          <td><input name="modile" type="text" size="80" maxlength="100" /></td>
         </tr>
         <tr>
           <td>邮箱</td>
-          <td><input name="data[email]" type="text" size="80" maxlength="100" /></td>
+          <td><input name="email" type="text" size="80" maxlength="100" /></td>
         </tr>
         <tr>
           <td>密码</td>
-          <td><input name="data[password]" type="text" size="80" maxlength="100" /></td>
+          <td><input name="password" type="text" size="80" maxlength="100" /></td>
         </tr>
         <tr>
           <td>确认密码</td>
-          <td><input name="data[repassword]" type="text" size="50" maxlength="20" /></td>
+          <td><input name="repassword" type="text" size="50" maxlength="20" /></td>
         </tr>
       </tbody>
     </table>

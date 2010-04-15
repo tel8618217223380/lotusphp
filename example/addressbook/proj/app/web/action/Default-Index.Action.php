@@ -10,7 +10,7 @@ class DefaultIndexAction extends MyAction
 
 	public function execute()
 	{
-		$addressbook = new MyAddressbook;
+		$addressbook = new AddressbookDao;
 		$addressbook->uid = $this->data['uid'];
 
 		$page = $this->context->get('page');

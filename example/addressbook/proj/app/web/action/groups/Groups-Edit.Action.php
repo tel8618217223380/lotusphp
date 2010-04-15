@@ -10,7 +10,7 @@ class GroupsEditAction extends MyAction
 
 	public function execute()
 	{
-		$groups = new MyGroups;
+		$groups = new GroupsDao;
 		$groups->uid = $this->data['uid'];
 
 		$gid = $this->context->get('gid');
