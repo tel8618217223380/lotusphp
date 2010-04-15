@@ -10,7 +10,7 @@ class AddressbookDoDeleteAction extends MyAction
 	public function execute()
 	{
 		$id = $this->context->get('id');
-		$addressbook = new MyAddressbook;
+		$addressbook = new AddressbookDao;
 		$addressbook->delete($id);
 		$this->code = 200;
 		$this->message = '删除成功';

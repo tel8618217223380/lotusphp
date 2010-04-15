@@ -7,7 +7,7 @@ class UserDoLoginAction extends LtAction
 		$username = trim($this->context->post('username'));
 		if ($username && $password)
 		{
-			$user = new MyUser;
+			$user = new UserDao;
 			$id = $user->getid($username);
 
 			if ($id)

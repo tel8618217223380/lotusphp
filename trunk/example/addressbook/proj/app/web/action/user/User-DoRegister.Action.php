@@ -29,7 +29,7 @@ class UserDoRegisterAction extends LtAction
 				"max_length" => 16,
 				"mask" => "/^[a-z0-9]+$/i",
 				"ban" => "/fuck/",
-			"equal_to"=>$_POST['data']['password'],
+			"equal_to"=>$_POST['password'],
 				),
 			array(
 				"min_length" => "%s最少%s个字符",
@@ -50,18 +50,14 @@ class UserDoRegisterAction extends LtAction
 
 	public function execute()
 	{
-		$data = $this->context->post('data');
-		$user = new MyUser;
-		if(!empty($data['password']) && $data['password'] == $data['repassword'])
-		{
-			$data['password'] = md5($data['password']);
-			unset($data['repassword']);
-			$user->add($data);
-			$this->message = "注册成功";
-		}
-
-		$this->data['forward'] = C('LtUrl')->generate('Default', 'Index');
-
+		$data['username'] = $this->context->post('username');
+		$data['modile'] = $this->context->post('modile');
+		$data['email'] = $this->context->post('email');
+		$data['password'] = md5($this->context->post('password'));
+		$user = new UserDao;
+		$user->add($data);
+		$this->message = "注册成功";
+		$this->data['forward'] = LtObjectUtil::singleton('LtUrl')->generate('Default', 'Index');
 		$this->data['title'] = 'addressbook';
 		$this->data['baseurl'] = LtObjectUtil::singleton('LtConfig')->get('baseurl');
 	}

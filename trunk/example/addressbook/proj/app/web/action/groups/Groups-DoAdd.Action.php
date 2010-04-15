@@ -12,7 +12,7 @@ class GroupsDoAddAction extends MyAction
 	{
 		$data = $this->context->post('data');
 		$data['uid'] = $this->data['uid'];
-		$groups = new MyGroups;
+		$groups = new GroupsDao;
 
 		$groups->add($data);
 

@@ -12,7 +12,7 @@ class AddressbookDoEditAction extends MyAction
 	{
 		$data = $this->context->post('data');
 		$data['uid'] = $this->data['uid'];
-		$addressbook = new MyAddressbook;
+		$addressbook = new AddressbookDao;
 
 		$addressbook->edit($data);
 

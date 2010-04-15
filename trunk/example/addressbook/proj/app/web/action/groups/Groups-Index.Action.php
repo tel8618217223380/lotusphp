@@ -10,7 +10,7 @@ class GroupsIndexAction extends MyAction
 
 	public function execute()
 	{
-		$groups = new MyGroups;
+		$groups = new GroupsDao;
 		$groups->uid = $this->data['uid'];
 
 		$this->data['groups'] = $groups->getAll();

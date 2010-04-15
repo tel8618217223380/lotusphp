@@ -10,12 +10,12 @@ class AddressbookEditAction extends MyAction
 
 	public function execute()
 	{
-		$groups = new MyGroups;
+		$groups = new GroupsDao;
 		$groups->uid = $this->data['uid'];
 		$this->data['groups'] = $groups->getAll();
 
 		$id = $this->context->get('id');
-		$addressbook = new MyAddressbook;
+		$addressbook = new AddressbookDao;
 		$this->data['data'] = $addressbook->get($id);
 
 		$this->data['title'] = 'addressbook';

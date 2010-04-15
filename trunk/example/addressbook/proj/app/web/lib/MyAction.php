@@ -13,7 +13,7 @@ class MyAction extends LtAction
 		if ($authCode)
 		{
 			list($id, $password) = explode("\t", $authCode);
-			$user = new MyUser;
+			$user = new UserDao;
 			$data = $user->get($id);
 			if ($data && $data['password'] == $password)
 			{

@@ -1,5 +1,5 @@
 <?php
-class MyAddressbook
+class AddressbookDao
 {
 	public $uid;
 	private $addressbook;

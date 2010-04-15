@@ -1,5 +1,5 @@
 <?php
-class MyGroups
+class GroupsDao
 {
 	public $uid;
 	private $groups;
