@@ -1,23 +1,23 @@
 <?php
-class GroupsDoDeleteAction extends MyAction
+class GroupsEditAction extends MyAction
 {
 	public function __construct()
 	{
 		parent::__construct();
 		$this->responseType = 'tpl';
-		$this->layout = 'result';
+		$this->layout = 'index';
 	}
+
 	public function execute()
 	{
-		$gid = $this->context->get('gid');
 		$groups = new MyGroups;
 		$groups->uid = $this->data['uid'];
-		$groups->delete($gid);
 
-		$this->code = 200;
-		$this->message = '删除成功';
+		$gid = $this->context->get('gid');
+
+		$this->data['group'] = $groups->get($gid);
+
 		$this->data['title'] = 'addressbook';
-		$this->data['forward'] = C('LtUrl')->generate('Groups', 'Index');
 		$this->data['baseurl'] = LtObjectUtil::singleton('LtConfig')->get('baseurl'); 
 	}
 }

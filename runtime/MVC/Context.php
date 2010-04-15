@@ -12,17 +12,7 @@ class LtContext
 
 	public function __construct()
 	{
-		/**
-		 * set_magic_quotes_runtime(0)
-		 */
-		if (version_compare(PHP_VERSION, '6.0.0-dev', '<') && get_magic_quotes_gpc())
-		{
-			$this->strip = true;
-		}
-		else
-		{
-			$this->strip = false;
-		}
+
 	}
 
 	/**
@@ -55,14 +45,7 @@ class LtContext
 	 */
 	public function get($name)
 	{
-		if (isset($_GET[$name]))
-		{
-			return $this->strip ? stripslashes($_GET[$name]) : $_GET[$name];
-		}
-		else
-		{
-			return null;
-		}
+		return isset($_GET[$name]) ? $_GET[$name] : null;
 	}
 
 	/**
@@ -73,14 +56,7 @@ class LtContext
 	 */
 	public function post($name)
 	{
-		if (isset($_POST[$name]))
-		{
-			return $this->strip ? stripslashes($_POST[$name]) : $_POST[$name];
-		}
-		else
-		{
-			return null;
-		}
+		return isset($_POST[$name]) ? $_POST[$name] : null;
 	}
 
 	/**

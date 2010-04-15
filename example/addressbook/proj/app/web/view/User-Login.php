@@ -9,8 +9,7 @@
 <div id="top"><a href="{url('User','Register')}">注册</a> <span style="float:right;margin-right:24px;"><a href="/">返回首页</a></span></div>
 <div class="area">
 
-<div style="float:left;">
-<div id="loginbox">
+<div id="loginbox" class="right">
   <form  action="{url('User','DoLogin')}" method="post" name="myform" id="myform">
     <h3>登陆系统</h3>
     <table border="0" cellpadding="0" cellspacing="0" summary="登陆">
@@ -45,10 +44,8 @@
     </table>
   </form>
 </div>
-</div>
 
-<div style="float:right;">
-<div class="messagebox">
+<div class="messagebox left">
 	<div class="infobox">
 		<h3>多用户通讯录</h3>
 		<p>多用户通讯录。如果你还没有注册，请 <a href="{url('User','Register')}">注册</a> 后再登陆。基于好用又强大的PHP开发框架<b>Lotusphp</b>。这是做为一个演示目的创建的应用。为了方便，使用了sqlite数据库。而实际上<b>Lotusphp</b>的Cache和Db组件都是支持分布的。</p>
@@ -64,7 +61,7 @@
 		<p><a href="http://manual.kiwiphp.com">manual.kiwiphp.com</a></p>
 	</div>
 </div>
-</div>
+
 
 </div>
 <div id="footer">&copy; 2010 <span id="debug_info"></span></div>
