@@ -50,10 +50,11 @@ class MyGroups
 		}
 		return $result;
 	}
-	public function get($id)
+	public function get($gid)
 	{
-		$condition['where']['expression'] = "id = :id";
-		$condition['where']['value']['id'] = $id;
+		$condition['where']['expression'] = "gid=:gid AND uid=:uid";
+		$condition['where']['value']['gid'] = $gid;
+		$condition['where']['value']['uid'] = $this->uid;
 		$tmp = array();
 		$tmp = $this->groups->fetchRows($condition);
 		$result = $tmp ? $tmp[0] : $tmp; 
@@ -68,10 +69,11 @@ class MyGroups
 
 	public function edit($data)
 	{
-		$id = $data['id'];
-		unset($data['id']);
-		$condition['expression'] = "id = :id";
-		$condition['value']['id'] = $id;
+		$gid = $data['gid'];
+		unset($data['gid']);
+		$condition['expression'] = "gid=:gid AND uid=:uid";
+		$condition['value']['gid'] = $gid;
+		$condition['value']['uid'] = $this->uid;
 		$this->groups->updateRows($condition, $data);
 	}
 
@@ -83,8 +85,9 @@ class MyGroups
 		}
 		else
 		{
-			$condition['expression'] = "gid = :gid";
+			$condition['expression'] = "gid=:gid AND uid=:uid";
 			$condition['value']['gid'] = $gid; 
+			$condition['value']['uid'] = $this->uid;
 			$this->groups->deleteRows($condition); 
 		}
 	}

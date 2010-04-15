@@ -61,5 +61,7 @@ echo '</pre>';
 </p>
 </div>
 </div>
+
+<div id="footer"><span id="copyright">powered by Lotusphp</span> <span id="debug_info"></span></div>
 </body>
 </html>

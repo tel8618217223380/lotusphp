@@ -1,5 +1,5 @@
 <?php
-class GroupsDoDeleteAction extends MyAction
+class GroupsDoEditAction extends MyAction
 {
 	public function __construct()
 	{
@@ -7,17 +7,19 @@ class GroupsDoDeleteAction extends MyAction
 		$this->responseType = 'tpl';
 		$this->layout = 'result';
 	}
+
 	public function execute()
 	{
-		$gid = $this->context->get('gid');
+		$data = $this->context->post('data');
+
 		$groups = new MyGroups;
 		$groups->uid = $this->data['uid'];
-		$groups->delete($gid);
+		$groups->edit($data);
 
 		$this->code = 200;
-		$this->message = '删除成功';
-		$this->data['title'] = 'addressbook';
 		$this->data['forward'] = C('LtUrl')->generate('Groups', 'Index');
-		$this->data['baseurl'] = LtObjectUtil::singleton('LtConfig')->get('baseurl'); 
+
+		$this->data['title'] = 'addressbook';
+		$this->data['baseurl'] = LtObjectUtil::singleton('LtConfig')->get('baseurl');
 	}
 }
