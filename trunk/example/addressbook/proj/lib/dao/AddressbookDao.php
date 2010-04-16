@@ -14,7 +14,7 @@ class AddressbookDao
 		$this->dbh = $db->getDbHandle();
 		$this->addressbook = $db->getTDG("addressbook");
 	}
-	public function getList($limit, $offset)
+	public function getList($limit, $offset, $where = '')
 	{
 		if (empty($this->uid))
 		{
@@ -27,7 +27,7 @@ class AddressbookDao
 		from addressbook a 
 		left join groups g 
 		on g.gid=a.gid 
-		where a.uid=$this->uid");
+		where a.uid=$this->uid $where");
 			$result['count'] = $tmp[0]['total'];
 			$result['rows'] = $this->dbh->query("select a.id id, 
 		a.uid uid, 
@@ -43,7 +43,7 @@ class AddressbookDao
 		g.groupname groupname from addressbook a 
 		left join groups g 
 		on a.gid=g.gid 
-		where a.uid=$this->uid 
+		where a.uid=$this->uid $where
 		limit $limit offset $offset");
 		}
 		return $result;
