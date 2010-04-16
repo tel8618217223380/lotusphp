@@ -185,13 +185,14 @@ abstract class LtAction
 						"message" => $this->message,
 						"data" => $this->data
 						));
+				exit; //
 				break;
 			case 'tpl':
 				if (null === $this->view)
 				{
 					$this->view = new LtTemplateView;
 				}
-				$this->view->component = false; // ÊÇ·ñ×é¼ş
+				$this->view->component = false; // æ˜¯å¦ç»„ä»¶
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;

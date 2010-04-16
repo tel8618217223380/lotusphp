@@ -8,7 +8,16 @@ class UserDoRegisterAction extends LtAction
 /**
 @todo 如何验证表单内数组变量？
 */
-
+		$this->dtds['mobile'] = new LtValidatorDtd("手机号",
+			array(
+				"mask" => "/^[0-9]+$/i",
+				"required" => true,
+				),
+			array(
+				"mask" => "%s只能由数字或字组成",
+				"required" => "手机号必填项",
+				)
+			);
 		$this->dtds['password'] = new LtValidatorDtd("密码",
 			array(
 				"min_length" => 6,
@@ -51,7 +60,7 @@ class UserDoRegisterAction extends LtAction
 	public function execute()
 	{
 		$data['username'] = $this->context->post('username');
-		$data['modile'] = $this->context->post('modile');
+		$data['mobile'] = $this->context->post('mobile');
 		$data['email'] = $this->context->post('email');
 		$data['password'] = md5($this->context->post('password'));
 		$user = new UserDao;
