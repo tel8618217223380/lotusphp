@@ -33,12 +33,13 @@ class UserDao
 		return $result;
 	}
 
-	public function exists($data, $field = 'modile')
+	public function exists($data, $field = 'mobile')
 	{
 		$condition['where']['expression'] = "$field = :$field";
 		$condition['where']['value'][$field] = $data;
 		$tmp = array();
 		$tmp = $this->user->fetchRows($condition);
+
 		$result = $tmp ? true : false; 
 		return $result;
 	}

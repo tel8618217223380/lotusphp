@@ -7,11 +7,11 @@
       <tbody class="stripe">
         <tr width="60">
           <td>用户名</td>
-          <td><input name="username" type="text" size="80" maxlength="100" /></td>
+          <td><input name="username" id="username" type="text" size="80" maxlength="100" /></td>
         </tr>
         <tr>
           <td>手机</td>
-          <td><input name="modile" type="text" size="80" maxlength="100" /></td>
+          <td><input name="mobile" id="mobile" type="text" size="80" maxlength="100" /><span id="mobile_info"></span></td>
         </tr>
         <tr>
           <td>邮箱</td>
@@ -32,3 +32,30 @@
     </div>
   </form>
 </div>
+
+<script type="text/javascript">
+
+$("#mobile").focus(function(){
+	$("#mobile_info").html("");
+	return false;
+});
+
+$("#mobile").blur(function(){
+	var mobile = $("#mobile").val();
+	if(mobile == "") { 
+		$("#mobile_info").html("请输入手机号");
+		return false;
+	}
+	if(isNaN(mobile)) {
+		$("#mobile_info").html("手机号只能是数字");
+		return false;
+	}
+
+	$("#mobile_info").html("<img src='{$this->data['baseurl']}images/loading.gif' /> 正在检测是否已经注册，请稍候...");
+	var url = "{url('User','Check')}/mobile/" + mobile;
+	$.getJSON(url,function(data){
+		$("#mobile_info").html(data.message);
+	});
+});
+
+</script>
