@@ -26,7 +26,7 @@ function confirmform(form,message)
 </script>
 </head>
 <body>
-<div id="sitenav"><span>登陆帐号:{$this->data['username']} <a onclick="return confirm('确定要退出系统么？');" href="{url('User', 'DoLogout')}" target="_self">退出系统</a> <a href="javascript:void(0)">关于</a></span><a href="{$this->data['baseurl']}">首页</a></div>
+<div id="sitenav"><?php if(!empty($this->data['uid'])) {?><span>登陆帐号:{$this->data['username']} <a onclick="return confirm('确定要退出系统么？');" href="{url('User', 'DoLogout')}" target="_self">退出系统</a><?php }?> <a href="javascript:void(0)">关于</a></span><a href="{$this->data['baseurl']}">首页</a></div>
 <div id="header">
   <h1>addressbook</h1>
 </div>
