@@ -53,8 +53,7 @@ class LtUrl
 
 	public function generate($module, $action, $args = array())
 	{
-		$args['module'] = $module;
-		$args['action'] = $action;
+		$args = array_merge(array('module' => $module, 'action' => $action), $args);
 		$url = ''; 
 		// $url = $_SERVER['SERVER_PORT'] == '443' ? 'https://' : 'http://';
 		// $url .= $_SERVER['HTTP_HOST'];
