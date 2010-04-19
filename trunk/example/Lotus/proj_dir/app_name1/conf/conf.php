@@ -1,6 +1,6 @@
 <?php
 $projHome = substr(__FILE__, 0, strpos(__FILE__, "app_name1"));
-$app1Config = include($projHome . "/conf/conf.php");
+$config = include($projHome . "/conf/conf.php");
 
 foreach(glob(dirname(__FILE__) . '/standard/*.php') as $confFile)
 {
@@ -10,4 +10,4 @@ foreach(glob(dirname(__FILE__) . '/standard/*.php') as $confFile)
 	}
 }
 
-return $app1Config;
+return $config;
