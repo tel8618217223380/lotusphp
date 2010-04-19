@@ -61,12 +61,14 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 		$memory_usage = memory_get_usage() - $base_memory_usage;
 		$averageMemory = formatSize($memory_usage / $times);
 		$memory_usage = formatSize($memory_usage);
-
-		echo "\n----------------------config-----------------------------\n";
-		echo "times      \t$times\n";
-		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
-		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
-		echo "\n---------------------------------------------------------\n";
+		if (LOTUS_UNITTEST_DEBUG)
+		{
+			echo "\n----------------------config-----------------------------\n";
+			echo "times      \t$times\n";
+			echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
+			echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
+			echo "\n---------------------------------------------------------\n";
+		}
 		$this->assertTrue(1 > $totalTime);
 	}
 	protected function setUp()

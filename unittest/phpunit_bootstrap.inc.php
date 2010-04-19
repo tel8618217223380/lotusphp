@@ -5,7 +5,7 @@
  */
 define("PEAR_PATH", "D:/kiss/PHP/PEAR");
 define("LOTUS_UNITTEST_WEB_ROOT", "http://lotus/unittest/");
-
+define('LOTUS_UNITTEST_DEBUG', false);
 /**
  * PHPUnit bootstrap
  */

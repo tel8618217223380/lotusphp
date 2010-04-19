@@ -15,7 +15,6 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 		// $ccb->addSingleHost(array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
 		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/testPerformance/")); 
 		// $ccb->addSingleHost(array("adapter" => "Xcache", "key_prefix" => "test_xcache_"));
-		
 		/**
 		 * 实例化组件入口类
 		 */
@@ -39,16 +38,16 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 		 */
 		$base_memory_usage = memory_get_usage();
 		$times = 500;
-		$startTime = microtime(true);
-		// ----------------------------测试读取 
+		$startTime = microtime(true); 
+		// ----------------------------测试读取
 		$ch->add("test_key", "test_value");
 		for($i = 0; $i < $times; $i++)
 		{
 			$ch->get("test_key");
 		}
 		$ch->update("test_key", "new_value");
-		$ch->del("test_key");
-		// ----------------------------测试完成 
+		$ch->del("test_key"); 
+		// ----------------------------测试完成
 		$endTime = microtime(true);
 		$totalTime = round(($endTime - $startTime), 6);
 		$averageTime = round(($totalTime / $times), 6);
@@ -56,12 +55,14 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 		$memory_usage = memory_get_usage() - $base_memory_usage;
 		$averageMemory = formatSize($memory_usage / $times);
 		$memory_usage = formatSize($memory_usage);
-
-		echo "\n--------------LtCache     get          -----------------\n";
-		echo "times      \t$times\n";
-		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
-		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
-		echo "\n---------------------------------------------------------\n";
+		if (LOTUS_UNITTEST_DEBUG)
+		{
+			echo "\n--------------LtCache     get          -----------------\n";
+			echo "times      \t$times\n";
+			echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
+			echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
+			echo "\n---------------------------------------------------------\n";
+		}
 		$this->assertTrue(1 > $totalTime);
 	}
 	protected function setUp()
@@ -69,6 +70,5 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 	}
 	protected function tearDown()
 	{
-
 	}
 }

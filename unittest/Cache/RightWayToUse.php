@@ -10,15 +10,15 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	 * 最常用的使用方式（推荐） 
 	 * -------------------------------------------------------------------
 	 * LtCache要求： 
-	 *           # key必须是数字或者字串，不能是数组，对象 
+	 *            # key必须是数字或者字串，不能是数组，对象 
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCache不在意：
-	 *           # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
+	 *            # value的数据类型是什么（但一般来说resource型数据是不能被缓存的） 
 	 * 
 	 * -------------------------------------------------------------------
 	 * LtCache建议（不强求）：
-	 *           # 为保证key不冲突，最好定义多个group，将不同领域的数据分开存 
+	 *            # 为保证key不冲突，最好定义多个group，将不同领域的数据分开存 
 	 * 
 	 * 本测试用例期望效果：
 	 * 能成功通过add(), get(), del(), update()接口读写数据
@@ -67,7 +67,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 	{
 		$data = array(
 			// $key => value
-			array(1,2),
+			array(1, 2),
 			array(1.1, null),
 			array(-1, ""),
 			array("string", "test_value_string"),
@@ -104,7 +104,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$cache->group = $group;
 			$cache->node = "node_0";
 			$cache->init();
-			echo "\n--testKeyValue--" . $cache->group . '--' . $cache->node . "--\n";
+			if (LOTUS_UNITTEST_DEBUG)
+			{
+				echo "\n--testKeyValue--" . $cache->group . '--' . $cache->node . "--\n";
+			}
 			$ch = $cache->getTDG("test_agdu");
 
 			foreach ($data as $set)
@@ -121,7 +124,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		}
 	}
 	/**
-	 * 
 	 * 通过callWeb测试不能工作在cli的cache
 	 */
 	public function testOpcodeCacheAdapter()
@@ -132,9 +134,9 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$opcodeCacheAdapters[] = "apc";
 		}
 		if (extension_loaded('eaccelerator'))
-		{
+		{ 
 			// eAccelerator 0.9.6 取消了相关功能
-			if(function_exists('eaccelerator_put') && function_exists('eaccelerator_get'))
+			if (function_exists('eaccelerator_put') && function_exists('eaccelerator_get'))
 			{
 				$opcodeCacheAdapters[] = "eaccelerator";
 			}
@@ -145,8 +147,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		}
 		foreach($opcodeCacheAdapters as $adapter)
 		{
-			echo "\n--testOpcodeCacheAdapter--" . $adapter . "--callWeb--\n";
-
+			if (LOTUS_UNITTEST_DEBUG)
+			{
+				echo "\n--testOpcodeCacheAdapter--" . $adapter . "--callWeb--\n";
+			}
 			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
 					"operation" => "add",
 					"key" => "test_key",
@@ -191,15 +195,15 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 					));
 			$this->assertFalse(unserialize($result));
 			/**
-			测试ttl, xcache在同一请求内不会过期, 因此拆成两个请求测试,
-			第一次请求设置过期时间为一秒, 延时2秒后读取返回结果
-			*/
+			 * 测试ttl, xcache在同一请求内不会过期, 因此拆成两个请求测试,
+			 * 第一次请求设置过期时间为一秒, 延时2秒后读取返回结果
+			 */
 			$result = callWeb("Cache/opcode_cache_proxy.php", array("adapter" => $adapter,
 					"operation" => "add",
 					"key" => "test_key",
 					"table_name" => "test",
 					"value" => "test_ttl_value",
-					'ttl'=> 1
+					'ttl' => 1
 					));
 			$this->assertTrue(unserialize($result));
 			sleep(2);
@@ -209,7 +213,6 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 					"table_name" => "test",
 					));
 			$this->assertFalse(unserialize($result));
-
 		}
 	}
 
@@ -241,13 +244,13 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$servers = $cache->configHandle->get("cache.servers");
 		foreach($servers as $k => $v)
 		{
-			
 			$cache->group = $k;
 			$cache->node = "node_0";
 			$cache->init();
-			
-			echo "\n--testOtherCacheAdapter--" . $cache->group . '--' . $cache->node . "--\n";
-
+			if (LOTUS_UNITTEST_DEBUG)
+			{
+				echo "\n--testOtherCacheAdapter--" . $cache->group . '--' . $cache->node . "--\n";
+			}
 			$ch = $cache->getTDG("test_agdu");
 			$this->assertTrue($ch->add("test_key", "test_value"));
 			$this->assertEquals("test_value", $ch->get("test_key"));
@@ -262,8 +265,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$this->assertTrue($ch->add("key2", "value1"));
 			$this->assertFalse($ch->add("key2", "value1"));
 			$ch->del("key2");
-
-			echo "\n--test ttl --\n"; 
+			if (LOTUS_UNITTEST_DEBUG)
+			{
+				echo "\n--test ttl --\n";
+			} 
 			// 测试TTL功能
 			$this->assertTrue($ch->add("test_key", "test_value", 2));
 			sleep(1);
@@ -288,14 +293,13 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$ccb->addHost("phps_cache_1", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache_files_1"));
 		$ccb->addHost("phps_cache_2", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache_files_2"));
 
-
 		/**
 		 * 操作prod_info
 		 */
 		$cache1 = new LtCache;
 		/**
-		LtCache 创建实例后初始化$configHandle
-		*/
+		 * LtCache 创建实例后初始化$configHandle
+		 */
 		$cache1->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
 		$cache1->group = "phps_cache_1";
 		$cache1->init();

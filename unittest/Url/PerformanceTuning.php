@@ -22,10 +22,9 @@ require_once $lotusHome . "runtime/Cache/QueryEngine/TableDataGateway/CacheTable
 class PerformanceTuningUrl extends PHPUnit_Framework_TestCase
 {
 	public function testPerformance()
-	{
+	{ 
 		// 不初始化路由表则使用默认配置如下
-		$config['router.routing_table'] = array(
-			'pattern' => ":module/:action/*", // 匹配模板
+		$config['router.routing_table'] = array('pattern' => ":module/:action/*", // 匹配模板
 			'default' => array('module' => 'default', // 默认值
 				'action' => 'index' // 默认值
 				),
@@ -36,8 +35,7 @@ class PerformanceTuningUrl extends PHPUnit_Framework_TestCase
 			'delimiter' => '/', // 分隔符
 			'postfix' => '', // url后缀
 			'protocol' => '', // STANDARD REWRITE PATH_INFO(默认)
-			);
-		
+			); 
 		// 初始化LtUrl
 		$url = new LtUrl;
 		$url->configHandle->addConfig($config);
@@ -64,12 +62,14 @@ class PerformanceTuningUrl extends PHPUnit_Framework_TestCase
 		$memory_usage = memory_get_usage() - $base_memory_usage;
 		$averageMemory = formatSize($memory_usage / $times);
 		$memory_usage = formatSize($memory_usage);
-
-		echo "\n----------------------Url-----------------------------\n";
-		echo "times      \t$times\n";
-		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
-		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
-		echo "\n---------------------------------------------------------\n";
+		if (LOTUS_UNITTEST_DEBUG)
+		{
+			echo "\n----------------------Url-----------------------------\n";
+			echo "times      \t$times\n";
+			echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
+			echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
+			echo "\n---------------------------------------------------------\n";
+		}
 		$this->assertTrue(1 > $totalTime);
 	}
 	protected function setUp()
