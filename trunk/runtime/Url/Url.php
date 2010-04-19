@@ -41,6 +41,10 @@ class LtUrl
 		{
 			$this->baseUrl = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME) . '/';
 		}
+		else if ('STANDARD' == $protocol)
+		{
+			$this->baseUrl = $_SERVER['PHP_SELF'];
+		}
 		else
 		{
 			$this->baseUrl = '';
@@ -74,7 +78,11 @@ class LtUrl
 		$delimiter = $this->routingTable['delimiter'];
 		$varprefix = $this->routingTable['varprefix'];
 		$postfix = $this->routingTable['postfix'];
-
+		$protocol = strtoupper($this->routingTable['protocol']);
+		if ('STANDARD' == $protocol)
+		{
+			return '?' . http_build_query($args, '', '&');
+		}
 		$pattern = explode($delimiter, trim($this->routingTable['pattern'], $delimiter));
 
 		foreach($pattern as $k => $v)
@@ -118,7 +126,6 @@ class LtUrl
 				// 静态
 			}
 		}
-		$protocol = strtoupper($this->routingTable['protocol']);
 		if ('REWRITE' == $protocol)
 		{
 			$ret = $ret . $postfix;

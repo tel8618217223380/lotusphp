@@ -5,5 +5,5 @@ $config['router.routing_table'] = array('pattern' => ":module/:action/*",
 	'varprefix' => ':',
 	'delimiter' => '/',
 	'postfix' => '',
-	'protocol' => 'path_info', // standard rewrite path_info
+	'protocol' => 'standard', // standard rewrite path_info
 	);

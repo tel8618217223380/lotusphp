@@ -71,11 +71,19 @@ class LtRouter
 						$url = explode($delimiter, trim($url, "/"));
 					}
 				}
-				else
+				else if ('PATH_INFO' == $protocol)
 				{
 					$url = substr($_SERVER['REQUEST_URI'], strlen($_SERVER['SCRIPT_NAME']));
 					$url = rtrim($url, "$postfix");
 					$url = explode($delimiter, trim($url, "/"));
+				}
+				else
+				{
+					$url = array();
+					foreach($_GET as $v)
+					{
+						$url[] = $v;
+					}
 				}
 			}
 			else
