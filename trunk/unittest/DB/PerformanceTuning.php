@@ -27,7 +27,7 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 		 * 配置数据库连接信息
 		 */
 		$dcb = new LtDbConfigBuilder;
-		$dcb->addSingleHost(array("adapter" => "mysql", "username"=>"test", "password" => "", "dbname" => "test"));
+		$dcb->addSingleHost(array("adapter" => "mysql", "username" => "test", "password" => "", "dbname" => "test"));
 
 		/**
 		 * 实例化组件入口类
@@ -38,12 +38,12 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 
 		/**
 		 * 用法 1： 直接操作数据库
-		 * 
+
 		 * 优点：学习成本低，快速入门
-		 * 
+
 		 * 适用场景：
-		 *     1. 临时写个脚本操作数据库，不想花时间学习LtDb的查询引擎
-		 *     2. 只写少量脚本，不是一个完整持续的项目，不需要SqlMap来管理SQL语句
+     1. 临时写个脚本操作数据库，不想花时间学习LtDb的查询引擎
+     2. 只写少量脚本，不是一个完整持续的项目，不需要SqlMap来管理SQL语句
 		 */
 		$dbh = $db->getDbHandle();
 		$dbh->query("DROP TABLE IF EXISTS test_user");
@@ -61,8 +61,8 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 		 * 优点：自动生成SQL语句
 		 * 
 		 * 适用场景：
-		 *     1. 对数据表进行增简单的删查改操作，尤其是单条数据的操作
-		 *     2. 简单的SELECT，动态合成WHERE子句
+     1. 对数据表进行增简单的删查改操作，尤其是单条数据的操作
+		 *      2. 简单的SELECT，动态合成WHERE子句
 		 */
 		$tg = $db->getTDG("test_user");
 
@@ -80,20 +80,21 @@ class PerformanceTuningDb extends PHPUnit_Framework_TestCase
 		$dbh->query("DROP TABLE IF EXISTS test_user");
 
 		$endTime = microtime(true);
-		$totalTime = round(($endTime-$startTime), 6);
-		$averageTime = round(($totalTime/$times), 6);
+		$totalTime = round(($endTime - $startTime), 6);
+		$averageTime = round(($totalTime / $times), 6);
 
 		$memory_usage = memory_get_usage() - $base_memory_usage;
 		$averageMemory = formatSize($memory_usage / $times);
 		$memory_usage = formatSize($memory_usage);
-
-		echo "\n----------------db getTDG insert----------------\n";
-		echo "times      \t$times\n";
-		echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
-		echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
-		echo "\n---------------------------------------------------------\n";
+		if (LOTUS_UNITTEST_DEBUG)
+		{
+			echo "\n----------------db getTDG insert----------------\n";
+			echo "times      \t$times\n";
+			echo "totalTime   \t{$totalTime}s\taverageTime   \t{$averageTime}s\n";
+			echo "memoryUsage \t{$memory_usage}\taverageMemory \t{$averageMemory}";
+			echo "\n---------------------------------------------------------\n";
+		}
 		$this->assertTrue(1 > $totalTime);
-
 	}
 	protected function setUp()
 	{
