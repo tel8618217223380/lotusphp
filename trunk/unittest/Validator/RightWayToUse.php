@@ -32,12 +32,9 @@ class RightWayToUseValidator extends PHPUnit_Framework_TestCase
 				"mask" => "密码只能由数字或字组成", 
 				// "ban" => "密码不能包含脏话"
 				)
-			);
-
-
+			); 
 		// 配置文件
-		$config['validator.error_messages'] = array(
-			'ban' => '%s contain banned words',
+		$config['validator.error_messages'] = array('ban' => '%s contain banned words',
 			'mask' => '%s does not match the given format',
 			'max_length' => '%s is longer than %s',
 			'min_length' => '%s is shorter than %s',
@@ -57,22 +54,37 @@ class RightWayToUseValidator extends PHPUnit_Framework_TestCase
 
 		$validator->init();
 
-		foreach ($dtds as $variable => $dtd)
+		$dtd = $dtds['username'];
+		foreach ($dtd->rules as $ruleKey => $ruleValue)
 		{
-			foreach ($dtd->rules as $ruleKey => $ruleValue)
+			if ($ruleValue instanceof ConfigExpression)
 			{
-				if ($ruleValue instanceof ConfigExpression)
-				{
-					eval('$_ruleValue = ' . $ruleValue->__toString());
-					$dtd->rules[$ruleKey] = $_ruleValue;
-				}
-			}
-			$error_messages = $validator->validate($$variable, $dtd);
-			if (!empty($error_messages))
-			{
-				print_r($error_messages);
+				eval('$_ruleValue = ' . $ruleValue->__toString());
+				$dtd->rules[$ruleKey] = $_ruleValue;
 			}
 		}
+		$error_messages = $validator->validate($username, $dtd);
+		$this->assertEquals(
+			array('max_length' => 'username is longer than 8',
+				'mask' => '用户名只能由数字或字组成',
+				'ban' => '用户名不能包含脏话'
+				), $error_messages);
+
+		$dtd = $dtds['password'];
+		foreach ($dtd->rules as $ruleKey => $ruleValue)
+		{
+			if ($ruleValue instanceof ConfigExpression)
+			{
+				eval('$_ruleValue = ' . $ruleValue->__toString());
+				$dtd->rules[$ruleKey] = $_ruleValue;
+			}
+		}
+		$error_messages = $validator->validate($password, $dtd);
+		$this->assertEquals(
+			array('max_length' => '密码最长8位',
+				'mask' => '密码只能由数字或字组成',
+				'ban' => 'password contain banned words'
+				), $error_messages);
 	}
 
 	protected function setUp()
