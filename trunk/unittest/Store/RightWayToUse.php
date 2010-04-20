@@ -23,7 +23,10 @@ class RightWayToUseStore extends PHPUnit_Framework_TestCase
 		$this->assertTrue($storeHandle->add("key1", "value1"));
 		$this->assertFalse($storeHandle->add("key1", "value1"));
 		$storeHandle->del("key1");
-		echo "\n--test LtStoreMemory ttl --\n"; 
+		if (LOTUS_UNITTEST_DEBUG)
+		{
+			echo "\n--test LtStoreMemory ttl --\n"; 
+		}
 		// 测试TTL功能
 		$this->assertTrue($storeHandle->add("test_key", "test_value", 2));
 		sleep(1);
@@ -58,7 +61,10 @@ class RightWayToUseStore extends PHPUnit_Framework_TestCase
 		$this->assertTrue($storeHandle->add("key1", "value1"));
 		$this->assertFalse($storeHandle->add("key1", "value1"));
 		$storeHandle->del("key1");
-		echo "\n--test LtStoreFile ttl --\n"; 
+		if (LOTUS_UNITTEST_DEBUG)
+		{
+			echo "\n--test LtStoreFile ttl --\n"; 
+		}
 		// 测试TTL功能
 		$this->assertTrue($storeHandle->add("test_key", "test_value", 2));
 		sleep(1);
