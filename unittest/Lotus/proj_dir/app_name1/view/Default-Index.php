@@ -1,3 +1,4 @@
+<?php if (!LOTUS_UNITTEST_DEBUG) return;?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

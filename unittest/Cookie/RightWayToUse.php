@@ -30,7 +30,11 @@ class RightWayToUseCookie extends PHPUnit_Framework_TestCase
 			$result2 = callWeb("Cookie/cookie_proxy.php", array("operation" => "get", "cookie_name" => "username"), array($cookieHeader));
 			$this->assertEquals("lotusphp", unserialize($result2));
 			
-			echo $result3 = callWeb("Cookie/cookie_proxy.php", array("operation" => "del", "cookie_name" => "is_the_best"), array($cookieHeader), true);
+			$result3 = callWeb("Cookie/cookie_proxy.php", array("operation" => "del", "cookie_name" => "is_the_best"), array($cookieHeader), true);
+			if (LOTUS_UNITTEST_DEBUG)
+			{
+				echo $result3;
+			}
 			$this->assertTrue(0 < strpos($result3, "is_the_best=deleted"));
 	}
 
