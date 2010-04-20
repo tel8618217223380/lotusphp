@@ -30,8 +30,12 @@ function callWeb($url, $post = null, $header = null, $returnHeader = false)
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 	$header[] = "Expect:";//阻止lighttpd返回417错误
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+	$reponse = curl_exec($ch);
 
-	echo $reponse = curl_exec($ch);
+	if (LOTUS_UNITTEST_DEBUG)
+	{
+		echo $reponse;
+	}
 	curl_close($ch);
 	return $reponse;
 }
