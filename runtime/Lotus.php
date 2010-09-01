@@ -7,8 +7,7 @@ class Lotus
 	 * @var array array();
 	 */
 	public $option;
-	public $mvcMode = true;
-	public $devMode = false;
+	public $devMode = true;
 
 	protected $proj_dir;
 	protected $app_dir;
@@ -25,31 +24,24 @@ class Lotus
 
 	public function init()
 	{
-		if (empty($this->option["proj_dir"]))
+		if (isset($this->option["proj_dir"]) && !empty($this->option["proj_dir"]))
 		{
-			trigger_error('option[\'proj_dir\'] must be set');
-		}
-
-		if (empty($this->option["app_dir"]))
-		{
-			trigger_error('option[\'app_dir\'] must be set');
-		}
-
-		$this->app_dir = rtrim($this->option["app_dir"], '\\/') . '/';
-		if (isset($this->option["app_name"]))
-		{
-			$this->app_dir = $this->app_dir . $this->option["app_name"] . '/';
-		}
-
-		$this->proj_dir = rtrim($this->option["proj_dir"], '\\/') . '/';
-
-		if (empty($this->option["app_tmp"]))
-		{
-			$this->app_tmp = $this->proj_dir . 'tmp/';
-		}
-		else
-		{
-			$this->app_tmp = rtrim($this->option["app_tmp"], '\\/') . '/';
+			$this->app_dir = rtrim($this->option["app_dir"], '\\/') . '/';
+			if (isset($this->option["app_name"]))
+			{
+				$this->app_dir = $this->app_dir . $this->option["app_name"] . '/';
+			}
+	
+			$this->proj_dir = rtrim($this->option["proj_dir"], '\\/') . '/';
+	
+			if (empty($this->option["app_tmp"]))
+			{
+				$this->app_tmp = $this->proj_dir . 'tmp/';
+			}
+			else
+			{
+				$this->app_tmp = rtrim($this->option["app_tmp"], '\\/') . '/';
+			}
 		}
 
 		/**
@@ -83,43 +75,27 @@ class Lotus
 		 * init Config
 		 */
 		$this->prepareConfig();
-
-		/**
-		 * run MVC
-		 */
-		if ($this->mvcMode)
-		{
-			$this->runMVC();
-		}
 	}
+
 	/**
 	 * Autoload all lotus components and user-defined libraries;
 	 */
 	protected function prepareAutoloader()
 	{
 		$autoloader = new LtAutoloader;
-		if (isset($this->option["runtime_filemap"]))
+		$autoloader->autoloadPath[] = $this->lotusRuntimeDir;
+		if ($this->autoloadPath)
 		{
-			$autoloader->useFileMap = true; 
-			// runtime目录的类文件映射保存在$coreFileMapping中。
-			$autoloader->fileMapPath[] = $this->lotusRuntimeDir;
+			$autoloader->autoloadPath[] = $this->autoloadPath;
 		}
-		else
+		if ($this->proj_dir)
 		{
-			$autoloader->autoloadPath[] = $this->lotusRuntimeDir;
+			$autoloader->autoloadPath[] = $this->proj_dir . 'lib';
+			$autoloader->autoloadPath[] = $this->app_dir . 'action';
+			$autoloader->autoloadPath[] = $this->app_dir . 'lib';
+			$autoloader->conf["mapping_file_root"] = $this->app_tmp . 'autoloader-dev/';
 		}
-		$autoloader->autoloadPath[] = $this->proj_dir . 'lib';
-		$autoloader->autoloadPath[] = $this->app_dir . 'action';
-		$autoloader->autoloadPath[] = $this->app_dir . 'lib';
-		/**
-		 * 开发模式下缓存分析结果, 当修改源文件后重新生成缓存 
-		 * 源文件没有修改直接取缓存数据
-		 */
-		$autoloader->conf["mapping_file_root"] = $this->app_tmp . 'autoloader-dev/';
-		if (isset($this->option["load_function"]))
-		{
-			$autoloader->conf["load_function"] = $this->option["load_function"];
-		}
+
 		if (!$this->devMode)
 		{
 			$autoloader->storeHandle = $this->coreCacheHandle;
@@ -132,15 +108,18 @@ class Lotus
 		$this->configHandle = LtObjectUtil::singleton('LtConfig');
 		if (!$this->devMode)
 		{
-			$configFile = $this->app_dir . 'conf/conf.php';
+			$configFile = 'conf/conf.php';
 			$this->configHandle->storeHandle = $this->coreCacheHandle;
 		}
 		else
 		{
-			$configFile = $this->app_dir . 'conf/conf_dev.php';
+			$configFile = 'conf/conf_dev.php';
 		}
 		$this->configHandle->init();
-		$this->configHandle->loadConfigFile($configFile);
+		if ($this->app_dir)
+		{
+			$this->configHandle->loadConfigFile($this->app_dir . $configFile);
+		}
 	}
 
 	protected function runMVC()
