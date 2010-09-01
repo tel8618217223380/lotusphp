@@ -2,49 +2,42 @@
 class LtAutoloader
 {
 	public $conf = array(
-		/**
-		 * 是否自动加载定义了函数的文件
-		 * 
-		 * 可选项： 
-		 * # true   自动加载 
-		 * # false  跳过函数，只自动加载定义了class或者interface的文件
-		 */
+	/**
+	 * 是否自动加载定义了函数的文件
+	 *
+	 * 可选项： 
+	 * # true   自动加载 
+	 * # false  跳过函数，只自动加载定义了class或者interface的文件
+	 */
 		"load_function" => true,
 
-		/**
-		 * 要扫描的文件类型
-		 * 
-		 * 若该属性设置为array("php","inc","php3")， 
-		 * 则扩展名为"php","inc","php3"的文件会被扫描， 
-		 * 其它扩展名的文件会被忽略
-		 */
+	/**
+	 * 要扫描的文件类型
+	 *
+	 * 若该属性设置为array("php","inc","php3")， 
+	 * 则扩展名为"php","inc","php3"的文件会被扫描， 
+	 * 其它扩展名的文件会被忽略
+	 */
 		"allow_file_extension" => array("php", "inc"),
 
-		/**
-		 * 不扫描的目录
-		 * 
-		 * 若该属性设置为array(".svn", ".setting")， 
-		 * 则所有名为".setting"的目录也会被忽略
-		 */
+	/**
+	 * 不扫描的目录
+	 *
+	 * 若该属性设置为array(".svn", ".setting")， 
+	 * 则所有名为".setting"的目录也会被忽略
+	 */
 		"skip_dir_names" => array(".svn"),
 
-		/**
-		 * 存放临时文件的地址
-		 */
+	/**
+	 * 存放临时文件的地址
+	 */
 		"mapping_file_root" => "/tmp/Lotus/autoloader-dev/",
-		);
+	);
 
 	public $storeHandle;
 	public $autoloadPath;
 	protected $functionFileMapping;
 	protected $fileStore;
-	/**
-	 * 为了控制内存占用只将runtime目录的类文件映射保存在$coreFileMapping中。
-	 */
-	public $useFileMap = false; // 默认不使用内存保存类文件映射
-	public $fileMapPath;
-	protected $coreFileMapping;
-	private $saveMap = false;
 
 	public function init()
 	{
@@ -55,7 +48,7 @@ class LtAutoloader
 			$this->fileStore->cacheFileRoot = $this->conf["mapping_file_root"];
 			$this->fileStore->prefix = 'LtAutoloader-dev-';
 			$this->fileStore->init();
-		} 
+		}
 		// Whether scanning directory
 		if (0 == $this->storeHandle->get(".class_total") && 0 == $this->storeHandle->get(".function_total"))
 		{
@@ -73,47 +66,13 @@ class LtAutoloader
 			}
 			$this->scanDirs($autoloadPath);
 			unset($autoloadPath);
-		} 
-		if ($this->useFileMap)
-		{
-			$this->initFileMap();
 		}
 		// Whether loading function files
 		if ($this->conf["load_function"])
 		{
 			$this->loadFunction();
 		}
-		if ($this->useFileMap)
-		{
-			spl_autoload_register(array($this, "loadClassWithFileMap"));
-		}
-		else
-		{
-			spl_autoload_register(array($this, "loadClass"));
-		}
-	}
-
-	public function initFileMap()
-	{
-		$this->coreFileMapping = array(); 
-		// 加载类文件映射
-		$this->coreFileMapping = $this->storeHandle->get(".class_filemapping");
-		if (empty($this->coreFileMapping))
-		{
-			$this->saveMap = true;
-			$autoloadPath = $this->preparePath($this->fileMapPath);
-			foreach($autoloadPath as $key => $path)
-			{
-				if (is_file($path))
-				{
-					$this->addFileMap($path);
-					unset($autoloadPath[$key]);
-				}
-			}
-			$this->scanDirs($autoloadPath);
-			unset($autoloadPath);
-			$this->storeHandle->add(".class_filemapping", $this->coreFileMapping);
-		}
+		spl_autoload_register(array($this, "loadClass"));
 	}
 
 	public function loadFunction()
@@ -135,21 +94,9 @@ class LtAutoloader
 		}
 	}
 
-	public function loadClassWithFileMap($className)
-	{
-		$key = strtolower($className);
-		if (isset($this->coreFileMapping[$key]))
-		{
-			include $this->coreFileMapping[$key];
-		}
-		else if ($classFile = $this->storeHandle->get($key))
-		{
-			include($classFile);
-		}
-	}
 	/**
 	 * The string or an Multidimensional array into a one-dimensional array
-	 * 
+	 *
 	 * @param array $ or string $var
 	 * @return array one-dimensional array
 	 */
@@ -198,9 +145,9 @@ class LtAutoloader
 	/**
 	 * Using iterative algorithm scanning subdirectories
 	 * save autoloader filemap
-	 * 
+	 *
 	 * @param array $dirs one-dimensional
-	 * @return 
+	 * @return
 	 */
 	protected function scanDirs($dirs)
 	{
@@ -225,7 +172,7 @@ class LtAutoloader
 					$this->addFileMap($currentFile);
 				}
 				else if (is_dir($currentFile))
-				{ 
+				{
 					// if $currentFile is a directory, pass through the next loop.
 					$dirs[] = $currentFile;
 				}
@@ -294,11 +241,6 @@ class LtAutoloader
 	protected function addClass($className, $file)
 	{
 		$key = strtolower($className);
-		if ($this->saveMap)
-		{
-			$this->coreFileMapping[$key] = $file;
-			return true;
-		}
 		if ($existedClassFile = $this->storeHandle->get($key))
 		{
 			trigger_error("duplicate class [$className] found in:\n$existedClassFile\n$file\n");
