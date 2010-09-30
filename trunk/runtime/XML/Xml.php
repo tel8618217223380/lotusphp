@@ -138,6 +138,24 @@ class LtXml {
 			return WRONG_MODE;
 	}
 
+	/**
+	 * 生成一个xml节点
+	 * @param string tag 标签名
+	 * @param string cdata 数据
+	 * @param array attr 属性列表
+	 * @param array sub 子标签列表
+	 */
+	public function createTag($tag, $cdata = "", $attr = array(), $sub = array()) {
+		$newTag = $this->_getArrayTemplate();
+		if (! is_string($tag)) {
+			return INTERNAL_ERR;
+		}
+
+		$newTag["tag"] = $tag;
+
+		return $newTag;
+	}
+
 	private function _getParser($encoding) {
 		if (in_array($encoding, $this->_supportedEncoding))
 			$this->_handler = xml_parser_create($encoding);
