@@ -134,8 +134,53 @@ class LtXml {
 	}
 
 	public function getString($xmlArray) {
-		if (READMODE === $this->mode)
+		if (READMODE === $this->mode) {
 			return WRONG_MODE;
+		}
+
+		if (0 === $this->_isTag) {
+			return INTERNAL_ERR;
+		}
+
+		$header = "<?xml version=\"{$this->version}\" encoding=\"{$this->encoding}\"". " ?" . ">\n";
+
+		$xmlString = $header;
+		
+		$processingTags = array($xmlArray);
+		$processedTags = array();
+		do {
+			if ($processingTags[count($processingTags) - 1]["tag"] != $processedTags[count($processedTags) - 1]) {
+				$tagArray = $processingTags[count($processingTags) - 1];
+				$tagName = $tagArray["tag"];
+				$processedTags[count($processedTags)] = $tagName;
+
+				$tag = "<{$tagName}";
+				foreach ($tagArray["attributes"] as $key => $value) {
+					$tag .= " {$key}=\"{$value}\"";
+				}
+				if (! empty($tagArray["sub"]) || ! empty($tagArray["cdata"])) {
+					$cdata = $this->_convertEntity($tagArray["cdata"]);
+					$tag .= ">\n{$cdata}\n";
+					for ($i=count($tagArray["sub"]) - 1; $i>=0; $i--) {
+						$subArray = $tagArray["sub"][$i];
+						$processingTags[count($processingTags)] = $subArray;
+					}
+				}
+				else {
+					$processingTags[count($processingTags) - 1]["type"] = "complete";
+				}
+			}
+			else {
+				$tag = (isset($processingTags[count($processingTags) - 1]["type"])) ? "/>\n" : "</{$processedTags[count($processedTags) - 1]}>\n";
+				unset($processingTags[count($processingTags) - 1]);
+				unset($processedTags[count($processedTags) - 1]);
+			}
+
+			$xmlString .= $tag;
+		} while (! empty($processedTags));
+		$xmlString = preg_replace("/\n[\t| |\n]*/", "\n", $xmlString);
+
+		return $xmlString;
 	}
 
 	/**
@@ -178,8 +223,44 @@ class LtXml {
 		return preg_replace($patterns, $replacement, $string);
 	}
 
+	private function _rConvertEntity($string) {
+		$patterns = array("/&lt;/", "/&gt;/", "/&amp;/", "/&apos;/", "/&quot;/");
+		$replacement = array("<", "<", "&", "'", "\"");
+
+		return preg_replace($patterns, $replacement, $string);
+	}
+
 	private function _getArrayTemplate() {
 		return array("tag" => "", "attributes" => array(), "sub" => array(), "cdata" => "");
+	}
+
+	/**
+	 * 检测传入的参数是否是一个合法的tag数组
+	 * @return 0 非法
+	 * @return 1 合法
+	 */
+	private function _isTag($tag) {
+		if (! is_array($tag)) {
+			return 0;
+		}
+
+		if (! isset($tag["tag"]) || ! is_string($tag["tag"]) || empty($tag["tag"])) {
+			return 0;
+		}
+
+		if (! isset($tag["attributes"]) || ! is_array($tag["attributes"])) {
+			return 0;
+		}
+
+		if (! isset($tag["sub"]) || ! is_array($tag["sub"])) {
+			return 0;
+		}
+
+		if (! isset($tag["cdata"]) || ! is_string($tag["cdata"])) {
+			return 0;
+		}
+
+		return 1;
 	}
 }
 
