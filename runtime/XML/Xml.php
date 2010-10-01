@@ -162,12 +162,11 @@ class LtXml {
 		$xmlString = $header;
 		
 		$processingTags = array($xmlArray);
-		$processedTags = array();
 		do {
-			if ($processingTags[count($processingTags) - 1]["tag"] != $processedTags[count($processedTags) - 1]) {
+			if (! isset($processingTags[count($processingTags) -1]["close"])) {
 				$tagArray = $processingTags[count($processingTags) - 1];
+				$processingTags[count($processingTags) -1]["close"] = "YES";
 				$tagName = $tagArray["tag"];
-				$processedTags[count($processedTags)] = $tagName;
 
 				$tag = "<{$tagName}";
 				foreach ($tagArray["attributes"] as $key => $value) {
@@ -182,17 +181,18 @@ class LtXml {
 					}
 				}
 				else {
-					$processingTags[count($processingTags) - 1]["type"] = "complete";
+					$processingTags[count($processingTags) - 1]["complete"] = "YES";
 				}
 			}
 			else {
-				$tag = (isset($processingTags[count($processingTags) - 1]["type"])) ? "/>\n" : "</{$processedTags[count($processedTags) - 1]}>\n";
+				$tag = (isset($processingTags[count($processingTags) - 1]["complete"]))
+					? "/>\n"
+					: "</{$processingTags[count($processingTags) - 1]["tag"]}>\n";
 				unset($processingTags[count($processingTags) - 1]);
-				unset($processedTags[count($processedTags) - 1]);
 			}
 
 			$xmlString .= $tag;
-		} while (! empty($processedTags));
+		} while (! empty($processingTags));
 		$xmlString = preg_replace("/\n[\t| |\n]*/", "\n", $xmlString);
 
 		return $xmlString;
