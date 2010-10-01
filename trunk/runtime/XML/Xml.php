@@ -15,6 +15,21 @@ define("SUCESS", 1);
 define("READMODE", 0);
 define("WRITEMODE", 1);
 
+/**
+ * @desc LtXml用于解析和生成XML文件
+ * 使用前调用 init() 方法对类进行初始化
+ *
+ * LtXml提供两个公共方法 getArray() 和 getString
+ *
+ * getArray() 方法要求传入一个规范的xml字符串，
+ * 返回一个格式化的数组
+ *
+ * getString() 方法要求传入一个格式化的数组，反
+ * 回一个规范的xml字符串
+ * 在使用getString() 方法时，传入的格式化数组可
+ * 通过 createTag() 方法获得。
+ *
+ */
 class LtXml {
 	/**
 	 * 只支持 ISO-8859-1, UTF-8 和 US-ASCII三种编码
