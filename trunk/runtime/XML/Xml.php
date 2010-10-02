@@ -68,10 +68,12 @@ class LtXml {
 
 	public function getArray($xmlString) {
 		if (WRITEMODE === $this->mode) {
+			trigger_error("LtXml is on WRITEMODE, and cannot convert XML string to array.");
 			return WRONG_MODE;
 		}
 
 		if (0 === preg_match("/version=[\"|\']([1-9]\d*\.\d*)[\"|\']/", $xmlString, $res)) {
+			trigger_error("Cannot find the version in this XML document.");
 			return INTERNAL_ERR;
 		}
 		else {
@@ -87,6 +89,7 @@ class LtXml {
 
 		$_array = $this->_stringToArray($xmlString);
 		if (NULL === $_array) {
+			trigger_error("Fail to get the tag template.");
 			return INTERNAL_ERR;
 		}
 		$currentArray = NULL;
@@ -150,11 +153,8 @@ class LtXml {
 
 	public function getString($xmlArray) {
 		if (READMODE === $this->mode) {
+			trigger_error("LtXml is on READMODE, and cannot convert array to string.");
 			return WRONG_MODE;
-		}
-
-		if (0 === $this->_isTag) {
-			return INTERNAL_ERR;
 		}
 
 		$header = "<?xml version=\"{$this->version}\" encoding=\"{$this->encoding}\"". " ?" . ">\n";
@@ -162,9 +162,15 @@ class LtXml {
 		$xmlString = $header;
 		
 		$processingTags = array($xmlArray);
-		do {
+		while (! empty($processingTags)) {
 			if (! isset($processingTags[count($processingTags) -1]["close"])) {
 				$tagArray = $processingTags[count($processingTags) - 1];
+
+				if (0 === $this->_isTag($tagArray)) {
+					trigger_error("The array do not match the format.");
+					return INTERNAL_ERR;
+				}
+
 				$processingTags[count($processingTags) -1]["close"] = "YES";
 				$tagName = $tagArray["tag"];
 
@@ -192,7 +198,7 @@ class LtXml {
 			}
 
 			$xmlString .= $tag;
-		} while (! empty($processingTags));
+		}
 		$xmlString = preg_replace("/\n[\t| |\n]*/", "\n", $xmlString);
 
 		return $xmlString;
@@ -208,6 +214,7 @@ class LtXml {
 	public function createTag($tag, $cdata = "", $attr = array(), $sub = array()) {
 		$newTag = $this->_getArrayTemplate();
 		if (! is_string($tag)) {
+			trigger_error("Cannot read the tag name.");
 			return INTERNAL_ERR;
 		}
 
