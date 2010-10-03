@@ -3,7 +3,7 @@
  * 修改以下配置为你实际环境的值
  * 如果你修改了这两个常量的值，请不要svn commit
  */
-define("PEAR_PATH", "D:/kiss/PHP/PEAR");
+define("PEAR_PATH", "/Users/jiajun/dev/");
 define("LOTUS_UNITTEST_WEB_ROOT", "http://lotus/unittest/");
 define('LOTUS_UNITTEST_DEBUG', false);
 /**
