@@ -67,7 +67,7 @@ class LtXml {
 	}
 
 	public function getArray($xmlString) {
-		if (WRITEMODE === $this->mode) {
+		if (READMODE !== $this->mode) {
 			trigger_error("LtXml is on WRITEMODE, and cannot convert XML string to array.");
 			return WRONG_MODE;
 		}
@@ -94,7 +94,7 @@ class LtXml {
 		}
 		$currentArray = NULL;
 		$openingTags = array();
-		$array = $this->_getArrayTemplate;
+		$array = $this->_getArrayTemplate();
 
 		foreach ($_array as $tag) {
 			$tag["tag"] = strtolower($tag["tag"]);
@@ -158,7 +158,7 @@ class LtXml {
 	}
 
 	public function getString($xmlArray) {
-		if (READMODE === $this->mode) {
+		if (WRITEMODE !== $this->mode) {
 			trigger_error("LtXml is on READMODE, and cannot convert array to string.");
 			return WRONG_MODE;
 		}
@@ -225,8 +225,18 @@ class LtXml {
 		}
 
 		$newTag["tag"] = $tag;
+		$newTag["cdata"] = $cdata;
+		$newTag["attributes"] = $attr;
+		$newTag["sub"] = $sub;
 
 		return $newTag;
+	}
+
+	/**
+	 * 释放xml_parser
+	 */
+	public function free() {
+		xml_parser_free($this->_handler);
 	}
 
 	private function _getParser($encoding) {
