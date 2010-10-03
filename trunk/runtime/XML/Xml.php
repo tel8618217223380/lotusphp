@@ -112,7 +112,10 @@ class LtXml {
 						&& isset($tag["tag"]) && ! empty($tag["tag"])){
 				$currentArray = $this->_getArrayTemplate();
 				$currentArray["tag"] = $tag["tag"];
-				$currentArray["cdata"] = $tag["value"];
+				$cdata = $tag["value"];
+				$cdata = preg_replace("/^\s*/", "", $cdata);
+				$cdata = preg_replace("/\s*$/", "", $cdata);
+				$currentArray["cdata"] = $cdata;
 				if (isset($tag["attributes"]) && is_array($tag["attributes"])) {
 					foreach($tag["attributes"] as $k => $v) {
 						$currentArray["attributes"][strtolower($k)] = $v;
@@ -136,7 +139,10 @@ class LtXml {
 			else if (isset($tag["type"]) && "cdata" == $tag["type"]
 					&& isset($tag["tag"]) && ! empty($tag["tag"])) {
 				if ($tag["tag"] == $openingTags[count($openingTags) - 1]["tag"]) {
-					$openingTags[count($openingTags) - 1]["cdata"] .= trim($tag["value"]);
+					$cdata = $tag["value"];
+					$cdata = preg_replace("/^\s*/", "", $cdata);
+					$cdata = preg_replace("/\s*$/", "", $cdata);
+					$openingTags[count($openingTags) - 1]["cdata"] .= $cdata;
 				}
 				else {
 					return -2;
@@ -199,7 +205,7 @@ class LtXml {
 
 			$xmlString .= $tag;
 		}
-		$xmlString = preg_replace("/\n[\t| |\n]*/", "\n", $xmlString);
+		$xmlString = preg_replace("/\n\s*/", "\n", $xmlString);
 
 		return $xmlString;
 	}
