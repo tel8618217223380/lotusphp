@@ -11,3 +11,4 @@ class LtDbSqlMapClient
 		return $this->dbh->query($sqlMap["sql"], $bind, $forceUseMaster);
 	}
 }
+

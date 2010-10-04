@@ -5,10 +5,11 @@
  */
 class LtDbSqlMapResultFactory {
 	// Filter列表
-	public $Filters;
+	public $filters;
 	public $configHandle;
 
 	public init() {
+		
 	}
 
 	/**
