@@ -8,7 +8,7 @@ class LtDbSqlMapResultFactory {
 	public $filters;
 	public $configHandle;
 
-	public init() {
+	public function init() {
 		
 	}
 
