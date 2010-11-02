@@ -16,7 +16,11 @@ class LtLogger
 			{
 				trigger_error("no log file spcified.");
 			}
-			mkdir(dirname($this->conf["log_file"]), 0777, true);
+			$logDir = dirname($this->conf["log_file"]);
+			if (!is_dir($logDir))
+			{
+				mkdir($logDir, 0777, true);
+			}
 			$this->fileHandle = fopen($this->conf["log_file"], "a");
 		}
 		return $this->fileHandle;
