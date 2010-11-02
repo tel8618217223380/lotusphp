@@ -2,6 +2,7 @@
 class LtInflector
 {
 	public $conf = array("separator" => "_");
+
 	public function camelize($uncamelized_words)
 	{
 		$uncamelized_words = $this->conf["separator"] . str_replace($this->conf["separator"] , " ", strtolower($uncamelized_words));
