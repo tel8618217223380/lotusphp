@@ -19,8 +19,8 @@ class LtStoreFile implements LtStore
 	 * 当key存在时:
 	 * 如果没有过期, 不更新值, 返回 false
 	 * 如果已经过期,   更新值, 返回 true
-	 * 
-	 * @return bool 
+	 *
+	 * @return bool
 	 */
 	public function add($key, $value, $ttl = 0)
 	{
@@ -52,8 +52,8 @@ class LtStoreFile implements LtStore
 
 	/**
 	 * 删除不存在的key返回false
-	 * 
-	 * @return bool 
+	 *
+	 * @return bool
 	 */
 	public function del($key)
 	{
@@ -71,7 +71,7 @@ class LtStoreFile implements LtStore
 	/**
 	 * 取不存在的key返回false
 	 * 已经过期返回false
-	 * 
+	 *
 	 * @return 成功返回数据,失败返回false
 	 */
 	public function get($key, $doNotModifiedSince = null)
@@ -81,41 +81,34 @@ class LtStoreFile implements LtStore
 		{
 			return false;
 		}
+		if ($doNotModifiedSince && filemtime($file) < $doNotModifiedSince)
+		{
+			return false;
+		}
+
+		$str = file_get_contents($file);
+		$ttl = substr($str, 13, 10);
+		if (0 != $ttl && time() > $ttl)
+		{
+			@unlink($file);
+			return false;
+		}
 		else
-		{ 
-			// $ttl = file_get_contents($file, false, null, 13, 10);
-			$str = file_get_contents($file);
-			$ttl = substr($str, 13, 10);
-			if (0 != $ttl && time() > $ttl)
+		{
+			$value = substr($str, 23);
+			if ($this->useSerialize)
 			{
-				@unlink($file);
-				return false;
+				$value = unserialize($value);
 			}
-			else
-			{
-				if ($doNotModifiedSince && filemtime($file) < $doNotModifiedSince)
-				{
-					return false;
-				}
-				else
-				{ 
-					// return file_get_contents($file, false, null, 23);
-					$value = substr($str, 23);
-					if ($this->useSerialize)
-					{
-						$value = unserialize($value);
-					}
-					return $value;
-				}
-			}
+			return $value;
 		}
 	}
 
 	/**
 	 * key不存在 返回false
 	 * 不管有没有过期,都更新数据
-	 * 
-	 * @return bool 
+	 *
+	 * @return bool
 	 */
 	public function update($key, $value, $ttl = 0)
 	{
