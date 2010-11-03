@@ -36,7 +36,7 @@ class LtLogger
 		{
 			$logData = implode($this->conf["separator"], $logData);
 		}
-		$logData = date("Y-m-dTH:i:s") . $this->conf["separator"] . $logData. "\n";
+		$logData = $logData. "\n";
 		fwrite($this->getFileHandle(), $logData);
 	}
 }
