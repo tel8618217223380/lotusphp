@@ -281,15 +281,14 @@ class LtAutoloader
 		$libNames = array();
 		if ($this->fileStore instanceof LtStore)
 		{
-			$key = md5($file);
-			if ($cahcedString = $this->fileStore->get($key, filemtime($file)))
+			if ($cahcedString = $this->fileStore->get($file, filemtime($file)))
 			{
 				$libNames = unserialize($cahcedString);
 			}
 			else
 			{
 				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
-				$this->fileStore->add($key, serialize($libNames));
+				$this->fileStore->add($file, serialize($libNames));
 			}
 		}
 		else
