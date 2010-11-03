@@ -47,6 +47,7 @@ class LtAutoloader
 			$this->fileStore = new LtStoreFile;
 			$this->fileStore->cacheFileRoot = $this->conf["mapping_file_root"];
 			$this->fileStore->prefix = 'LtAutoloader-dev-';
+			$this->fileStore->useSerialize = true;
 			$this->fileStore->init();
 		}
 		// Whether scanning directory
@@ -281,14 +282,10 @@ class LtAutoloader
 		$libNames = array();
 		if ($this->fileStore instanceof LtStore)
 		{
-			if ($cahcedString = $this->fileStore->get($file, filemtime($file)))
-			{
-				$libNames = unserialize($cahcedString);
-			}
-			else
+			if (!($libNames = $this->fileStore->get($file, filemtime($file))))
 			{
 				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
-				$this->fileStore->add($file, serialize($libNames));
+				$this->fileStore->add($file, $libNames);
 			}
 		}
 		else
