@@ -26,7 +26,7 @@ class LtCaptcha
 		if (!is_object($this->storeHandle))
 		{
 			$this->storeHandle = new LtStoreFile;
-			$this->storeHandle->prefix = 'Captcha-seed-';
+			$this->storeHandle->prefix = 'LtCaptcha-seed-';
 			$this->storeHandle->init();
 		}
 	}
