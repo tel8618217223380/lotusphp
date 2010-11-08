@@ -13,6 +13,7 @@ class Lotus
 	protected $app_dir;
 	protected $app_name;
 	protected $app_tmp;
+	public $autoloadPath;
 	protected $lotusRuntimeDir;
 	protected $coreCacheHandle;
 	protected $configHandle;
@@ -59,7 +60,6 @@ class Lotus
 			 * accelerate LtAutoloader, LtConfig
 			 */
 			$this->coreCacheHandle = new LtStoreFile;
-			$this->coreCacheHandle->cacheFileRoot = $this->app_tmp . 'coreCache/';
 			$prefix = sprintf("%u", crc32(serialize($this->app_dir)));
 			$this->coreCacheHandle->prefix = 'Lotus-' . $prefix . '-';
 			$this->coreCacheHandle->useSerialize = true;
@@ -93,7 +93,6 @@ class Lotus
 			$autoloader->autoloadPath[] = $this->proj_dir . 'lib';
 			$autoloader->autoloadPath[] = $this->app_dir . 'action';
 			$autoloader->autoloadPath[] = $this->app_dir . 'lib';
-			$autoloader->conf["mapping_file_root"] = $this->app_tmp . 'autoloader-dev/';
 		}
 
 		if (!$this->devMode)
@@ -116,7 +115,7 @@ class Lotus
 			$configFile = 'conf/conf_dev.php';
 		}
 		$this->configHandle->init();
-		if ($this->app_dir)
+		if ($this->app_dir && is_file($this->app_dir . $configFile))
 		{
 			$this->configHandle->loadConfigFile($this->app_dir . $configFile);
 		}
