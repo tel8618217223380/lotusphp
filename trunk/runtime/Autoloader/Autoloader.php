@@ -40,7 +40,7 @@ class LtAutoloader
 		{
 			$this->storeHandle = new LtStoreMemory;
 			$this->fileStore = new LtStoreFile;
-			$this->fileStore->prefix = 'Autoloader-token-cache';
+			$this->fileStore->prefix = 'LtAutoloader-token-cache';
 			$this->fileStore->useSerialize = true;
 			$this->fileStore->init();
 		}
