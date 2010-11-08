@@ -26,10 +26,6 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 		 */
 		$captcha = new LtCaptcha;
 		/**
-		 * 实际使用时配置是保存在配置文件中
-		 */
-		$config['captcha.seed_file_root'] = "/tmp/Lotus/captcha/seed/";
-		/**
 		 * lphabet without similar symbols (o=0, 1=l, i=j, t=f)
 		 */
 		$config['captcha.allow_chars'] = "23456789abcdeghkmnpqsuvxyz";
@@ -70,7 +66,6 @@ class RightWayToUseCaptcha extends PHPUnit_Framework_TestCase
 	public function testVerify()
 	{
 		$cp = new LtCaptcha;
-		$config['captcha.seed_file_root'] = "/tmp/Lotus/captcha/seed/";
 		$config['captcha.allow_chars'] = "23456789abcdeghkmnpqsuvxyz";
 		$config['captcha.length'] = 4;
 		$config['captcha.image_engine'] = 'LtCaptchaImageEngine';
