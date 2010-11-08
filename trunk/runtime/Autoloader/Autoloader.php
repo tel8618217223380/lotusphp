@@ -27,11 +27,6 @@ class LtAutoloader
 	 * 则所有名为".setting"的目录也会被忽略
 	 */
 		"skip_dir_names" => array(".svn"),
-
-	/**
-	 * 存放临时文件的地址
-	 */
-		"mapping_file_root" => "/tmp/Lotus/autoloader-dev/",
 	);
 
 	public $storeHandle;
@@ -45,8 +40,7 @@ class LtAutoloader
 		{
 			$this->storeHandle = new LtStoreMemory;
 			$this->fileStore = new LtStoreFile;
-			$this->fileStore->cacheFileRoot = $this->conf["mapping_file_root"];
-			$this->fileStore->prefix = 'LtAutoloader-dev-';
+			$this->fileStore->prefix = 'Autoloader-token-cache';
 			$this->fileStore->useSerialize = true;
 			$this->fileStore->init();
 		}
