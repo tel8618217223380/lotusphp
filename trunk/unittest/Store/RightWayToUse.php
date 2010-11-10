@@ -44,8 +44,6 @@ class RightWayToUseStore extends PHPUnit_Framework_TestCase
 	public function testMostUsedWayLtStoreFile()
 	{
 		$storeHandle = new LtStoreFile;
-		$storeHandle->cacheFileRoot = '/tmp/Lotus/unittest/store-file/';
-		$storeHandle->prefix = 'store-unittest-';
 		$storeHandle->useSerialize = true;
 
 		$this->assertTrue($storeHandle->add("test_key", "test_value"));
@@ -94,8 +92,6 @@ class RightWayToUseStore extends PHPUnit_Framework_TestCase
 			);
 
 		$sh = new LtStoreFile;
-		$sh->cacheFileRoot = '/tmp/Lotus/unittest/store-file/';
-		$sh->prefix = 'store-keyval-';
 		$sh->useSerialize = true;
 
 		foreach ($data as $set)

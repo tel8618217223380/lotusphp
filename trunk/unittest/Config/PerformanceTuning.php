@@ -27,8 +27,6 @@ class PerformanceTuningConfig extends PHPUnit_Framework_TestCase
 		 * 用LtStoreFile作存储层提升性能
 		 */
 		$cacheHandle = new LtStoreFile;
-		$cacheHandle->cacheFileRoot = '/tmp/Lotus/unittest/autoloader-performance/';
-		$cacheHandle->prefix = 'Lotus-unittest-';
 		$cacheHandle->useSerialize = true;
 		$cacheHandle->init(); 
 		// 准备confif_file
