@@ -3,19 +3,17 @@ class LtStoreMemory implements LtStore
 {
 	protected $stack;
 
-	public function add($key, $value, $ttl = 0)
+	public function add($key, $value)
 	{
 		if (isset($this->stack[$key]))
 		{
-			if (0 == $this->stack[$key]['ttl'] || time() < $this->stack[$key]['ttl'])
-			{
-				return false;
-			}
+			return false;
 		}
-		$this->stack[$key]['value'] = $value;
-		$this->stack[$key]['ttl'] = (0 == $ttl) ? 0 : (time() + $ttl);
-		$this->stack[$key]['modified'] = time();
-		return true;
+		else
+		{
+			$this->stack[$key] = $value;
+			return true;
+		}
 	}
 
 	public function del($key)
@@ -31,40 +29,17 @@ class LtStoreMemory implements LtStore
 		}
 	}
 
-	public function get($key, $doNotModifiedSince = null)
+	public function get($key)
 	{
-		if (!isset($this->stack[$key]))
-		{
-			return false;
-		}
-		else
-		{
-			if (0 != $this->stack[$key]['ttl'] && time() > $this->stack[$key]['ttl'])
-			{
-				unset($this->stack[$key]);
-				return false;
-			}
-			else
-			{
-				if ($doNotModifiedSince && $this->stack[$key]['modified'] < $doNotModifiedSince)
-				{
-					return false;
-				}
-				else
-				{
-					return $this->stack[$key]['value'];
-				}
-			}
-		}
+		return isset($this->stack[$key]) ? $this->stack[$key] : false;
 	}
 
 	/**
-	 * key不存在 返回false
-	 * 不管有没有过期,都更新数据
+	 * key涓嶅瓨鍦ㄨ繑鍥瀎alse
 	 * 
 	 * @return bool 
 	 */
-	public function update($key, $value, $ttl = 0)
+	public function update($key, $value)
 	{
 		if (!isset($this->stack[$key]))
 		{
@@ -72,9 +47,7 @@ class LtStoreMemory implements LtStore
 		}
 		else
 		{
-			$this->stack[$key]['value'] = $value;
-			$this->stack[$key]['ttl'] = (0 == $ttl) ? 0 : (time() + $ttl);
-			$this->stack[$key]['modified'] = time();
+			$this->stack[$key] = $value;
 			return true;
 		}
 	}

@@ -23,22 +23,6 @@ class RightWayToUseStore extends PHPUnit_Framework_TestCase
 		$this->assertTrue($storeHandle->add("key1", "value1"));
 		$this->assertFalse($storeHandle->add("key1", "value1"));
 		$storeHandle->del("key1");
-		if (LOTUS_UNITTEST_DEBUG)
-		{
-			echo "\n--test LtStoreMemory ttl --\n"; 
-		}
-		// 测试TTL功能
-		$this->assertTrue($storeHandle->add("test_key", "test_value", 2));
-		sleep(1);
-		$this->assertEquals("test_value", $storeHandle->get("test_key"));
-		sleep(2);
-		$this->assertFalse($storeHandle->get("test_key")); 
-		// 测试TTL过期后可以再次add相同的key
-		$this->assertTrue($storeHandle->add("test_key", "test_value", 1));
-		sleep(2);
-		$this->assertTrue($storeHandle->add("test_key", "test_value", 1));
-		sleep(2);
-		$this->assertFalse($storeHandle->get("test_key"));
 	}
 
 	public function testMostUsedWayLtStoreFile()
@@ -59,23 +43,8 @@ class RightWayToUseStore extends PHPUnit_Framework_TestCase
 		$this->assertTrue($storeHandle->add("key1", "value1"));
 		$this->assertFalse($storeHandle->add("key1", "value1"));
 		$storeHandle->del("key1");
-		if (LOTUS_UNITTEST_DEBUG)
-		{
-			echo "\n--test LtStoreFile ttl --\n"; 
-		}
-		// 测试TTL功能
-		$this->assertTrue($storeHandle->add("test_key", "test_value", 2));
-		sleep(1);
-		$this->assertEquals("test_value", $storeHandle->get("test_key"));
-		sleep(2);
-		$this->assertFalse($storeHandle->get("test_key")); 
-		// 测试TTL过期后可以再次add相同的key
-		$this->assertTrue($storeHandle->add("test_key", "test_value", 1));
-		sleep(2);
-		$this->assertTrue($storeHandle->add("test_key", "test_value", 1));
-		sleep(2);
-		$this->assertFalse($storeHandle->get("test_key"));
 	}
+
 	/**
 	 * 测试数据类型支持情况
 	 */

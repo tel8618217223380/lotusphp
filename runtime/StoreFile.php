@@ -1,7 +1,7 @@
 <?php
 class LtStoreFile implements LtStore
 {
-	public $cacheFileRoot = '/tmp/Lotus/LtStoreFile/';
+	public $storeDirRoot = '/tmp/Lotus/LtStoreFile/';
 	public $prefix = 'LtStore-';
 	public $useSerialize = false;
 
@@ -11,8 +11,8 @@ class LtStoreFile implements LtStore
 		 * 目录不存在和是否可写在调用add是测试
 		 * @todo detect dir is exists and writable
 		 */
-		$this->cacheFileRoot = str_replace('\\', '/', $this->cacheFileRoot);
-		$this->cacheFileRoot = rtrim($this->cacheFileRoot, '\\/') . '/';
+		$this->storeDirRoot = str_replace('\\', '/', $this->storeDirRoot);
+		$this->storeDirRoot = rtrim($this->storeDirRoot, '\\/') . '/';
 	}
 
 	/**
@@ -22,9 +22,9 @@ class LtStoreFile implements LtStore
 	 *
 	 * @return bool
 	 */
-	public function add($key, $value, $ttl = 0)
+	public function add($key, $value)
 	{
-		$file = $this->getCacheFile($key);
+		$file = $this->getFilePath($key);
 		$cachePath = pathinfo($file, PATHINFO_DIRNAME);
 		if (!is_dir($cachePath))
 		{
@@ -35,18 +35,13 @@ class LtStoreFile implements LtStore
 		}
 		if (is_file($file))
 		{
-			$existsTtl = file_get_contents($file, false, null, 13, 10);
-			if (0 == $existsTtl || time() < $existsTtl)
-			{
-				return false;
-			}
+			return false;
 		}
-		$expireTime = (0 == $ttl) ? '0000000000' : (time() + $ttl);
 		if ($this->useSerialize)
 		{
 			$value = serialize($value);
 		}
-		$length = file_put_contents($file, '<?php exit;?>' . $expireTime . $value);
+		$length = file_put_contents($file, '<?php exit;?>' . $value);
 		return $length > 0 ? true : false;
 	}
 
@@ -57,7 +52,7 @@ class LtStoreFile implements LtStore
 	 */
 	public function del($key)
 	{
-		$file = $this->getCacheFile($key);
+		$file = $this->getFilePath($key);
 		if (!is_file($file))
 		{
 			return false;
@@ -74,34 +69,20 @@ class LtStoreFile implements LtStore
 	 *
 	 * @return 成功返回数据,失败返回false
 	 */
-	public function get($key, $doNotModifiedSince = null)
+	public function get($key)
 	{
-		$file = $this->getCacheFile($key);
+		$file = $this->getFilePath($key);
 		if (!is_file($file))
 		{
 			return false;
 		}
-		if ($doNotModifiedSince && filemtime($file) < $doNotModifiedSince)
-		{
-			return false;
-		}
-
 		$str = file_get_contents($file);
-		$ttl = substr($str, 13, 10);
-		if (0 != $ttl && time() > $ttl)
+		$value = substr($str, 13);
+		if ($this->useSerialize)
 		{
-			@unlink($file);
-			return false;
+			$value = unserialize($value);
 		}
-		else
-		{
-			$value = substr($str, 23);
-			if ($this->useSerialize)
-			{
-				$value = unserialize($value);
-			}
-			return $value;
-		}
+		return $value;
 	}
 
 	/**
@@ -110,29 +91,34 @@ class LtStoreFile implements LtStore
 	 *
 	 * @return bool
 	 */
-	public function update($key, $value, $ttl = 0)
+	public function update($key, $value)
 	{
-		$file = $this->getCacheFile($key);
+		$file = $this->getFilePath($key);
 		if (!is_file($file))
 		{
 			return false;
 		}
 		else
 		{
-			$expireTime = (0 == $ttl) ? '0000000000' : (time() + $ttl);
 			if ($this->useSerialize)
 			{
 				$value = serialize($value);
 			}
-			$length = file_put_contents($file, '<?php exit;?>' . $expireTime . $value);
+			$length = file_put_contents($file, '<?php exit;?>' . $value);
 			return $length > 0 ? true : false;
 		}
 	}
 
-	protected function getCacheFile($key)
+	public function getLastModifiedTime($key)
+	{
+		$file = $this->getFilePath($key);
+		return is_file($file) ? filemtime($file) : false;
+	}
+
+	protected function getFilePath($key)
 	{
 		$token = md5($key);
-		$file = $this->cacheFileRoot . substr($token, 0, 2) . '/' . substr($token, 2, 2);
+		$file = $this->storeDirRoot . substr($token, 0, 2) . '/' . substr($token, 2, 2);
 		return $file . '/' . $this->prefix . $token . '.php';
 	}
 }
