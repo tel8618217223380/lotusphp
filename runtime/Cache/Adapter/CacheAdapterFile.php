@@ -6,8 +6,7 @@ class LtCacheAdapterFile implements LtCacheAdapter
 		$fileStore = new LtStoreFile;
 		if (isset($hostConf['host']) && is_string($hostConf['host']))
 		{
-			$fileStore->cacheFileRoot = $hostConf['host'];
-			$fileStore->prefix = 'Ltcache-file-';
+			$fileStore->prefix = 'LtCache-file-';
 			$fileStore->init();
 			return $fileStore;
 		}
