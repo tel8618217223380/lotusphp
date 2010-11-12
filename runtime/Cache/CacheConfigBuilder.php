@@ -5,7 +5,7 @@ class LtCacheConfigBuilder
 
 	protected $defaultConfig = array(
 		"adapter"    => "phps",     //apc,xcach,ea; file, phps; memcached
-	//"key_prefix" => ""
+	//"prefix"     => ""
 	//"host"       => "localhost", //some ip, hostname
 	//"port"       => 3306,
 	);
