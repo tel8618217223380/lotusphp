@@ -4,17 +4,10 @@ class LtCacheAdapterPhps implements LtCacheAdapter
 	public function connect($hostConf)
 	{
 		$fileStore = new LtStoreFile;
-		if (isset($hostConf['host']) && is_string($hostConf['host']))
-		{
-			$fileStore->prefix = 'LtCache-phps-';
-			$fileStore->init();
-			return $fileStore;
-		}
-		else
-		{
-			trigger_error("Must set [host]");
-			return false;
-		}
+		$fileStore->prefix = 'LtCache-phps-';
+		$fileStore->useSerialize = true;
+		$fileStore->init();
+		return $fileStore;
 	}
 
 	public function add($key, $value, $ttl = 0, $tableName, $connectionResource)
