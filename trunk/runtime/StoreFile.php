@@ -1,8 +1,8 @@
 <?php
 class LtStoreFile implements LtStore
 {
-	public $storeDirRoot = '/tmp/Lotus/LtStoreFile/';
-	public $prefix = 'LtStore-';
+	public $storeDirRoot = '/tmp/LtStoreFile/';
+	public $prefix = 'LtStore';
 	public $useSerialize = false;
 
 	public function init()
@@ -109,16 +109,13 @@ class LtStoreFile implements LtStore
 		}
 	}
 
-	public function getLastModifiedTime($key)
-	{
-		$file = $this->getFilePath($key);
-		return is_file($file) ? filemtime($file) : false;
-	}
-
-	protected function getFilePath($key)
+	public function getFilePath($key)
 	{
 		$token = md5($key);
-		$file = $this->storeDirRoot . substr($token, 0, 2) . '/' . substr($token, 2, 2);
-		return $file . '/' . $this->prefix . $token . '.php';
+		return $this->storeDirRoot .
+		$this->prefix . '/' .
+		substr($token, 0, 2) .'/' .
+		substr($token, 2, 2) . '/' .
+		$token . '.php';
 	}
 }

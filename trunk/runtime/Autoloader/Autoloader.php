@@ -276,11 +276,11 @@ class LtAutoloader
 		$libNames = array();
 		if ($this->fileStore instanceof LtStore)
 		{
-			$parseResultCacheTime = $this->fileStore->getLastModifiedTime($file);
-			if ($parseResultCacheTime < filemtime($file) || false === ($libNames = $this->fileStore->get($file)))
+			$cachedFile = $this->fileStore->getFilePath($file);
+			if (!is_file($cachedFile) || filemtime($cachedFile) < filemtime($file) || !is_array(($libNames = $this->fileStore->get($file))))
 			{
 				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
-				if (0 < $parseResultCacheTime)
+				if (is_file($cachedFile))
 				{
 					$this->fileStore->update($file, $libNames);
 				}
