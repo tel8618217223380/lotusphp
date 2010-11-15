@@ -10,7 +10,7 @@ $key = $_REQUEST['key'];
  * 构造缓存配置
  */
 $ccb = new LtCacheConfigBuilder;
-$ccb->addSingleHost(array('adapter' => $opcodeCacheAdapter, 'host' => '/tmp/Lotus/unittest/opcache/',
+$ccb->addSingleHost(array('adapter' => $opcodeCacheAdapter,
 		));
 
 /**

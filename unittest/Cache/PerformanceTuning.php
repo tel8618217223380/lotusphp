@@ -10,10 +10,10 @@ class PerformanceTuningCache extends PHPUnit_Framework_TestCase
 		$ccb = new LtCacheConfigBuilder; 
 		// $ccb->addSingleHost(array("adapter" => "apc"));
 		// $ccb->addSingleHost(array("adapter" => "eAccelerator"));
-		// $ccb->addSingleHost(array("adapter" => "File", "host" => "/tmp/Lotus/unittest/cache/testPerformance/"));
+		// $ccb->addSingleHost(array("adapter" => "file"));
 		// $ccb->addSingleHost(array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
 		// $ccb->addSingleHost(array("adapter" => "memcached", "host" => "localhost", "port" => 11211));
-		$ccb->addSingleHost(array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/testPerformance/")); 
+		$ccb->addSingleHost(array("adapter" => "phps")); 
 		// $ccb->addSingleHost(array("adapter" => "Xcache", "key_prefix" => "test_xcache_"));
 		/**
 		 * 实例化组件入口类

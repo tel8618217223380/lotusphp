@@ -4,22 +4,34 @@ class LtCacheAdapterFile implements LtCacheAdapter
 	public function connect($hostConf)
 	{
 		$fileStore = new LtStoreFile;
-		if (isset($hostConf['host']) && is_string($hostConf['host']))
-		{
-			$fileStore->prefix = 'LtCache-file-';
-			$fileStore->init();
-			return $fileStore;
-		}
-		else
-		{
-			trigger_error("Must set [host]");
-			return false;
-		}
+		$fileStore->prefix = 'LtCache-file';
+		$fileStore->useSerialize = true;
+		$fileStore->init();
+		return $fileStore;
 	}
 
 	public function add($key, $value, $ttl = 0, $tableName, $connectionResource)
 	{
-		return $connectionResource->add($this->getRealKey($tableName, $key), $this->valueToString($value), $ttl);
+		if (0 != $ttl)
+		{
+			$ttl += time();
+		}
+		if (true == $connectionResource->add($this->getRealKey($tableName, $key), array("ttl" => $ttl, "value" => $value)))
+		{
+			return true;
+		}
+		else
+		{
+			if ($this->get($key,$tableName,$connectionResource))
+			{
+				return false;
+			}
+			else
+			{
+				$this->del($key,$tableName,$connectionResource);
+				return $connectionResource->add($this->getRealKey($tableName, $key), array("ttl" => $ttl, "value" => $value));
+			}
+		}
 	}
 
 	public function del($key, $tableName, $connectionResource)
@@ -29,34 +41,28 @@ class LtCacheAdapterFile implements LtCacheAdapter
 
 	public function get($key, $tableName, $connectionResource)
 	{
-		return $this->stringToValue($connectionResource->get($this->getRealKey($tableName, $key)));
+		$cachedArray = $connectionResource->get($this->getRealKey($tableName, $key));
+		if (is_array($cachedArray) && (0 == $cachedArray["ttl"] || $cachedArray["ttl"] > time()))
+		{
+			return $cachedArray["value"];
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	public function update($key, $value, $ttl = 0, $tableName, $connectionResource)
 	{
-		return $connectionResource->update($this->getRealKey($tableName, $key), $this->valueToString($value), $ttl);
+		if (0 != $ttl)
+		{
+			$ttl += time();
+		}
+		return $connectionResource->update($this->getRealKey($tableName, $key), array("ttl" => $ttl, "value" => $value));
 	}
 
 	protected function getRealKey($tableName, $key)
 	{
 		return $tableName . "-" . $key;
-	}
-
-	protected function valueToString($value)
-	{
-		if (is_object($value) || is_resource($value))
-		{
-			$str = "return unserialize(\"" . addslashes(serialize($value)) . "\");";
-		}
-		else
-		{
-			$str = "return " . var_export($value, true) . ";";
-		}
-		return $str;
-	}
-
-	protected function stringToValue($str)
-	{
-		return eval("$str");
 	}
 }
