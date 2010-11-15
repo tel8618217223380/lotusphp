@@ -30,8 +30,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 */
 		$ccb = new LtCacheConfigBuilder;
 		$ccb->addSingleHost(
-			array("adapter" => "phps",
-				"host" => "/tmp/Lotus/unittest/cache/phps"
+			array("adapter" => "file",
 				));
 		/**
 		 * 实例化组件入口类
@@ -42,7 +41,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 
 		$cache->init();
 		/**
-		 * 初始化完毕, 测试其效果, 使用不同的tableName防止key冲突
+		 * 初始化完毕, 测试其效果
 		 */
 		$ch = $cache->getTDG("test");
 		$this->assertTrue($ch->add("test_key", "test_value"));
@@ -57,6 +56,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		// 添加重复的key
 		$this->assertTrue($ch->add("key1", "value1"));
 		$this->assertFalse($ch->add("key1", "value1"));
+		//清理缓存内容，防止对下一次测试产生干扰
 		$ch->del("key1");
 	}
 
@@ -82,8 +82,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		/**
 		 * 测试其它适配器add(), get(), del(), update()接口
 		 */
-		$ccb->addHost("group_phps", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
-		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
+		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file"));
 		if (extension_loaded('memcache'))
 		{
 			$ccb->addHost("group_memcache", "node_0", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
@@ -123,6 +122,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			}
 		}
 	}
+
 	/**
 	 * 通过callWeb测试不能工作在cli的cache
 	 */
@@ -226,8 +226,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		/**
 		 * 测试其它适配器add(), get(), del(), update()接口
 		 */
-		$ccb->addHost("group_phps", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache/phps_agdu/"));
-		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file", "host" => "/tmp/Lotus/unittest/cache/file_agdu/"));
+		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file"));
 		if (extension_loaded('memcache'))
 		{
 			$ccb->addHost("group_memcache", "node_0", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
@@ -257,13 +256,14 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 			$this->assertTrue($ch->update("test_key", "new_value"));
 			$this->assertEquals("new_value", $ch->get("test_key"));
 			$this->assertTrue($ch->del("test_key"));
-			$this->assertFalse($ch->get("test_key")); 
+			$this->assertFalse($ch->get("test_key"));
 			// 删除、更新不存在的key
 			$this->assertFalse($ch->del("some_key_not_exists"));
 			$this->assertFalse($ch->update("some_key_not_exists", "any value")); 
 			// 添加重复的key
 			$this->assertTrue($ch->add("key2", "value1"));
 			$this->assertFalse($ch->add("key2", "value1"));
+			//清理缓存内容，防止对下一次测试产生干扰
 			$ch->del("key2");
 			if (LOTUS_UNITTEST_DEBUG)
 			{
@@ -290,8 +290,8 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addHost("phps_cache_1", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache_files_1"));
-		$ccb->addHost("phps_cache_2", "node_0", "master", array("adapter" => "phps", "host" => "/tmp/Lotus/unittest/cache_files_2"));
+		$ccb->addHost("file_cache_1", "node_0", "master", array("adapter" => "file"));
+		$ccb->addHost("file_cache_2", "node_0", "master", array("adapter" => "file"));
 
 		/**
 		 * 操作prod_info
@@ -301,7 +301,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * LtCache 创建实例后初始化$configHandle
 		 */
 		$cache1->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
-		$cache1->group = "phps_cache_1";
+		$cache1->group = "file_cache_1";
 		$cache1->init();
 
 		$ch = $cache1->getTDG("prod_info");
@@ -318,7 +318,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 */
 		$cache2 = new LtCache;
 		$cache2->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
-		$cache2->group = "phps_cache_2";
+		$cache2->group = "file_cache_2";
 		$cache2->init();
 
 		$ch = $cache2->getTDG("trade_info");
@@ -379,7 +379,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		 * $prodStatCache = $cache->getTDG("prod_detail");
 		 * $userCardCache = $cache->getTDG("trade_detail");
 		 */
-		$ccb->addHost("local_file", "node_0", "master", array("adapter" => "phps", "host" => "/var/data/LtCache/test/phps/"));
+		$ccb->addHost("local_file", "node_0", "master", array("adapter" => "file"));
 
 		$this->assertEquals(
 			array("local_memory" => array("node_0" => array("master" => array(
@@ -407,8 +407,7 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 						),
 					),
 				"local_file" => array("node_0" => array("master" => array(
-							array("adapter" => "phps",
-								"host" => "/var/data/LtCache/test/phps/",
+							array("adapter" => "file",
 								),
 							),
 						),

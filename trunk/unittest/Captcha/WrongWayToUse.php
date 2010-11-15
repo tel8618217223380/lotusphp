@@ -13,7 +13,6 @@ class WrongWayToUseCaptcha extends PHPUnit_Framework_TestCase
 	public function testBlankSeed()
 	{
 		$captcha = new LtCaptcha;
-		$config['captcha.seed_file_root'] = "/tmp/Lotus/captcha/seed/";
 		$config['captcha.allow_chars'] = "23456789abcdeghkmnpqsuvxyz";
 		$config['captcha.length'] = 4;
 		$config['captcha.image_engine'] = 'LtCaptchaImageEngine';
