@@ -284,24 +284,74 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		}
 	}
 
+	/**
+	 * 在不同table下存储相同的key
+	 */
+	public function testMostUsedWayWithMultiTDG()
+	{
+		/**
+		 * 构造缓存配置
+		 */
+		$ccb = new LtCacheConfigBuilder;
+		$ccb->addHost("file_cache", "node_0", "master", array("adapter" => "file"));
+
+		/**
+		 * 操作第一个 table: prod_info
+		 */
+		$cache = new LtCache;
+		/**
+		 * LtCache 创建实例后初始化$configHandle
+		 */
+		$cache->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
+		$cache->group = "file_cache";
+		$cache->init();
+
+		$ch = $cache->getTDG("prod_info");
+		$this->assertTrue($ch->add("key_1", "prod_1"));
+		$this->assertEquals("prod_1", $ch->get("key_1"));
+		$this->assertTrue($ch->update("key_1", "new_value"));
+		$this->assertEquals("new_value", $ch->get("key_1"));
+		$this->assertTrue($ch->del("key_1"));
+		$this->assertFalse($ch->get("key_1"));
+
+		/**
+		 * 操作第二个 table: trade_info
+		 * trade_info也用了key_1这个 键，但他并不会跟prod_info的key_1冲突，因为他们的TDG是不一样的
+		 */
+		$ch = $cache->getTDG("trade_info");
+		$this->assertTrue($ch->add("key_1", "prod_1"));
+		$this->assertEquals("prod_1", $ch->get("key_1"));
+		$this->assertTrue($ch->update("key_1", "new_value"));
+		$this->assertEquals("new_value", $ch->get("key_1"));
+		$this->assertTrue($ch->del("key_1"));
+		$this->assertFalse($ch->get("key_1"));
+	}
+
+	/**
+	 * 在不同group下存储相同的table, key
+	 */
 	public function testMostUsedWayWithMultiGroup()
 	{
 		/**
 		 * 构造缓存配置
 		 */
 		$ccb = new LtCacheConfigBuilder;
-		$ccb->addHost("file_cache_1", "node_0", "master", array("adapter" => "file"));
-		$ccb->addHost("file_cache_2", "node_0", "master", array("adapter" => "file"));
+		$ccb->addHost("group_file", "node_0", "master", array("adapter" => "file"));
+		if (extension_loaded('memcache'))
+		{
+			$ccb->addHost("group_memo", "node_0", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
+		}
 
 		/**
-		 * 操作prod_info
+		 * 操作第一个Group: group_file
 		 */
 		$cache1 = new LtCache;
+
 		/**
 		 * LtCache 创建实例后初始化$configHandle
 		 */
 		$cache1->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
-		$cache1->group = "file_cache_1";
+		$cache1->group = "group_file";
 		$cache1->init();
 
 		$ch = $cache1->getTDG("prod_info");
@@ -313,15 +363,15 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		$this->assertFalse($ch->get("key_1"));
 
 		/**
-		 * 操作trade_info
-		 * trade_info也用了key_1这个 键，但他并不会跟prod_info的key_1冲突，因为他们的host是不一样的
+		 * 操作第二个Group: group_memo
+		 * 如下代码也用了prod_info这个table和key_1这个 键，但他并不会跟上一个group的key_1冲突，因为他们的是不同的group
 		 */
 		$cache2 = new LtCache;
 		$cache2->configHandle->addConfig(array("cache.servers" => $ccb->getServers()));
-		$cache2->group = "file_cache_2";
+		$cache2->group = "group_memo";
 		$cache2->init();
 
-		$ch = $cache2->getTDG("trade_info");
+		$ch = $cache2->getTDG("prod_info");
 		$this->assertTrue($ch->add("key_1", "prod_1"));
 		$this->assertEquals("prod_1", $ch->get("key_1"));
 		$this->assertTrue($ch->update("key_1", "new_value"));
