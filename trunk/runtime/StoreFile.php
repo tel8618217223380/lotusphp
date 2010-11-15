@@ -1,18 +1,22 @@
 <?php
 class LtStoreFile implements LtStore
 {
-	public $storeDirRoot = '/tmp/LtStoreFile/';
+	public $storeDir;
 	public $prefix = 'LtStore';
 	public $useSerialize = false;
-
+	static public $defaultStoreDir = "/tmp/LtStoreFile/";
 	public function init()
 	{
 		/**
 		 * 目录不存在和是否可写在调用add是测试
 		 * @todo detect dir is exists and writable
 		 */
-		$this->storeDirRoot = str_replace('\\', '/', $this->storeDirRoot);
-		$this->storeDirRoot = rtrim($this->storeDirRoot, '\\/') . '/';
+		if (null == $this->storeDir)
+		{
+			$this->storeDir = self::$defaultStoreDir;
+		}
+		$this->storeDir = str_replace('\\', '/', $this->storeDir);
+		$this->storeDir = rtrim($this->storeDir, '\\/') . '/';
 	}
 
 	/**
@@ -112,7 +116,7 @@ class LtStoreFile implements LtStore
 	public function getFilePath($key)
 	{
 		$token = md5($key);
-		return $this->storeDirRoot .
+		return $this->storeDir .
 		$this->prefix . '/' .
 		substr($token, 0, 2) .'/' .
 		substr($token, 2, 2) . '/' .
