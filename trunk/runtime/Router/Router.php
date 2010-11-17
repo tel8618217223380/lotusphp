@@ -37,7 +37,7 @@ class LtRouter
 				'varprefix' => ':',
 				'delimiter' => '/',
 				'postfix' => '',
-				'protocol' => 'PATH_INFO', // REWRITE STANDARD
+				'protocol' => 'standard', // REWRITE STANDARD
 				);
 		}
 
