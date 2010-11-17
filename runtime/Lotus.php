@@ -4,19 +4,20 @@ class Lotus
 	/**
 	 * Lotus Option array
 	 * 
-	 * @var array array();
+	 * @var array array(
+	 * 	"proj_dir"     =>
+	 * 	"app_name"     =>
+	 * 	"autoload_dir" =>
+	 * );
 	 */
 	public $option;
 	public $devMode = true;
 
 	protected $proj_dir;
 	protected $app_dir;
-	protected $app_name;
-	protected $app_tmp;
-	public $autoloadPath;
+	protected $data_dir;
 	protected $lotusRuntimeDir;
 	protected $coreCacheHandle;
-	protected $configHandle;
 
 	public function __construct()
 	{
@@ -25,23 +26,19 @@ class Lotus
 
 	public function init()
 	{
+		$underMVC = false;
 		if (isset($this->option["proj_dir"]) && !empty($this->option["proj_dir"]))
 		{
-			$this->app_dir = rtrim($this->option["app_dir"], '\\/') . '/';
-			if (isset($this->option["app_name"]))
-			{
-				$this->app_dir = $this->app_dir . $this->option["app_name"] . '/';
-			}
-	
 			$this->proj_dir = rtrim($this->option["proj_dir"], '\\/') . '/';
-	
-			if (empty($this->option["app_tmp"]))
+			if (isset($this->option["app_name"]) && !empty($this->option["app_name"]))
 			{
-				$this->app_tmp = $this->proj_dir . 'tmp/';
+				$this->app_dir = $this->proj_dir . "app/" . $this->option["app_name"] . "/";
+				$this->data_dir = $this->proj_dir . "data/" . $this->option["app_name"] . "/";
+				$underMVC = true;
 			}
 			else
 			{
-				$this->app_tmp = rtrim($this->option["app_tmp"], '\\/') . '/';
+				trigger_error("Lotus option [app_name] is missing.");
 			}
 		}
 
@@ -52,8 +49,6 @@ class Lotus
 		require_once $this->lotusRuntimeDir . "StoreMemory.php";
 		require_once $this->lotusRuntimeDir . "StoreFile.php";
 
-		require_once $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
-
 		if (!$this->devMode)
 		{
 			/**
@@ -61,13 +56,13 @@ class Lotus
 			 */
 			$this->coreCacheHandle = new LtStoreFile;
 			$prefix = sprintf("%u", crc32(serialize($this->app_dir)));
-			$this->coreCacheHandle->prefix = 'Lotus-' . $prefix . '-';
+			$this->coreCacheHandle->prefix = 'Lotus-' . $prefix;
 			$this->coreCacheHandle->useSerialize = true;
 			$this->coreCacheHandle->init();
 		}
 
 		/**
-		 * init Autoloader
+		 * Init Autoloader, do this before init all other lotusphp component.
 		 */
 		$this->prepareAutoloader();
 
@@ -75,6 +70,14 @@ class Lotus
 		 * init Config
 		 */
 		$this->prepareConfig();
+		
+		/**
+		 * Run dispatcher when under MVC mode
+		 */
+		if ($underMVC)
+		{
+			$this->runMVC();
+		}
 	}
 
 	/**
@@ -82,11 +85,12 @@ class Lotus
 	 */
 	protected function prepareAutoloader()
 	{
+		require_once $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
 		$autoloader = new LtAutoloader;
 		$autoloader->autoloadPath[] = $this->lotusRuntimeDir;
-		if ($this->autoloadPath)
+		if (isset($this->option["autoload_dir"]))
 		{
-			$autoloader->autoloadPath[] = $this->autoloadPath;
+			$autoloader->autoloadPath[] = $this->option["autoload_dir"];
 		}
 		if ($this->proj_dir)
 		{
@@ -124,10 +128,10 @@ class Lotus
 	protected function runMVC()
 	{
 		$router = LtObjectUtil::singleton('LtRouter');
-		LtObjectUtil::singleton('LtUrl');
+		$router->init();
 		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
 		$dispatcher->viewDir = $this->app_dir . 'view/';
-		$dispatcher->viewTplDir = $this->app_tmp . 'templateView/' . $this->app_name . '/';
+		$dispatcher->viewTplDir = $this->data_dir . 'templateView/';
 		if (!$this->devMode)
 		{
 			$dispatcher->viewTplAutoCompile = false;
