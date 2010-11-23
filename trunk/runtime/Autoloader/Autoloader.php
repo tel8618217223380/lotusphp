@@ -101,10 +101,14 @@ class LtAutoloader
 		if (!is_array($var))
 		{
 			$path = str_replace("\\", "/", $var);
+			if (!is_readable($path))
+			{
+				trigger_error("Directory is not exists/readable: {$path}");
+			}
 			$path = rtrim(realpath($path), '\\/');
 			if (preg_match("/\s/i", $path))
 			{
-				trigger_error("Directory is invalid: {$path}");
+				trigger_error("Directory contains space/tab/newline is not supported: {$path}");
 			}
 			$ret = array($path);
 		}
@@ -116,10 +120,14 @@ class LtAutoloader
 				if (!is_array($var[$i]))
 				{
 					$path = str_replace("\\", "/", $var[$i]);
+					if (!is_readable($path))
+					{
+						trigger_error("Directory is not exists/readable: {$path}");
+					}
 					$path = rtrim(realpath($path), '\\/');
 					if (preg_match("/\s/i", $path))
 					{
-						trigger_error("Directory is invalid: {$path}");
+						trigger_error("Directory contains space/tab/newline is not supported: {$path}");
 					}
 					$ret[] = $path;
 				}
