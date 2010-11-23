@@ -5,7 +5,7 @@
  * @author wuxiao
  *
  */
-class TaskResultDownloadAction extends LtAction
+class HelloWorldAction extends LtAction
 {
 	public function execute()
 	{
