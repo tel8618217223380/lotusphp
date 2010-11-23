@@ -37,7 +37,7 @@ class LtRouter
 				'varprefix' => ':',
 				'delimiter' => '/',
 				'postfix' => '',
-				'protocol' => 'standard', // REWRITE STANDARD
+				'protocol' => 'PATH_INFO', // REWRITE STANDARD
 				);
 		}
 
@@ -46,7 +46,7 @@ class LtRouter
 		$protocol = strtoupper($this->routingTable['protocol']);
 		$module = '';
 		$action = '';
-		$params = array(); 
+		$params = array();
 		// HTTP HTTPS
 		if (isset($_SERVER['SERVER_PROTOCOL']))
 		{
@@ -77,7 +77,7 @@ class LtRouter
 					$url = rtrim($url, "$postfix");
 					$url = explode($delimiter, trim($url, "/"));
 				}
-				else
+				else //STANDARD
 				{
 					$url = array();
 					foreach($_GET as $v)
@@ -119,11 +119,11 @@ class LtRouter
 				}
 				$i = $i + 2;
 			}
-		} 
+		}
 		// 如果$_GET中不存在配置的变量则添加
 		foreach($params as $k => $v)
 		{
-			!isset($_GET[$k]) && $_GET[$k] = $v;
+			//!isset($_GET[$k]) && $_GET[$k] = $v;
 		}
 		$this->module = $module;
 		$this->action = $action;
@@ -134,6 +134,8 @@ class LtRouter
 	 * 
 	 * @param  $ [string|array] $url
 	 * @return 
+	 * @todo 修复导致$_GET多出属性的BUG
+	 * @todo 如果是rewrite或者path_info模式，可能需要unset module和action两个$_GET变量
 	 */
 	public function matchingRoutingTable($url)
 	{
@@ -173,7 +175,7 @@ class LtRouter
 				}
 			}
 			else if ($v[0] == '*')
-			{ 
+			{
 				// 通配符
 				$pos = $k;
 				while (isset($url[$pos]) && isset($url[$pos + 1]))
