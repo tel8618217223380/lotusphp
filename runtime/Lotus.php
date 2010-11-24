@@ -94,9 +94,9 @@ class Lotus
 		}
 		if ($this->proj_dir)
 		{
-			$autoloader->autoloadPath[] = $this->proj_dir . 'lib';
-			$autoloader->autoloadPath[] = $this->app_dir . 'action';
-			$autoloader->autoloadPath[] = $this->app_dir . 'lib';
+			is_dir($this->proj_dir . 'lib') && $autoloader->autoloadPath[] = $this->proj_dir . 'lib';
+			is_dir($this->app_dir . 'action') && $autoloader->autoloadPath[] = $this->app_dir . 'action';
+			is_dir($this->app_dir . 'lib') && $autoloader->autoloadPath[] = $this->app_dir . 'lib';
 		}
 
 		if (!$this->devMode)
