@@ -89,6 +89,23 @@ class LtAutoloader
 		}
 	}
 
+	protected function convertPath($path)
+	{
+		$path = str_replace("\\", "/", $path);
+		if (!is_readable($path))
+		{
+			trigger_error("Directory is not exists/readable: {$path}");
+			return false;
+		}
+		$path = rtrim(realpath($path), '\\/');
+		if ("WINNT" != PHP_OS && preg_match("/\s/i", $path))
+		{
+			trigger_error("Directory contains space/tab/newline is not supported: {$path}");
+			return false;
+		}
+		return $path;
+	}
+
 	/**
 	 * The string or an Multidimensional array into a one-dimensional array
 	 *
@@ -100,47 +117,24 @@ class LtAutoloader
 		$ret = array();
 		if (!is_array($var))
 		{
-			$path = str_replace("\\", "/", $var);
-			if (!is_readable($path))
-			{
-				trigger_error("Directory is not exists/readable: {$path}");
-			}
-			$path = rtrim(realpath($path), '\\/');
-			if (preg_match("/\s/i", $path))
-			{
-				trigger_error("Directory contains space/tab/newline is not supported: {$path}");
-			}
-			$ret = array($path);
+			$var = array($var);
 		}
-		else
+		$i = 0;
+		while (isset($var[$i]))
 		{
-			$i = 0;
-			while (isset($var[$i]))
+			if (!is_array($var[$i]) && $path = $this->convertPath($var[$i]))
 			{
-				if (!is_array($var[$i]))
-				{
-					$path = str_replace("\\", "/", $var[$i]);
-					if (!is_readable($path))
-					{
-						trigger_error("Directory is not exists/readable: {$path}");
-					}
-					$path = rtrim(realpath($path), '\\/');
-					if (preg_match("/\s/i", $path))
-					{
-						trigger_error("Directory contains space/tab/newline is not supported: {$path}");
-					}
-					$ret[] = $path;
-				}
-				else
-				{
-					foreach($var[$i] as $v)
-					{
-						$var[] = $v;
-					}
-				}
-				unset($var[$i]);
-				$i ++;
+				$ret[] = $path;
 			}
+			else
+			{
+				foreach($var[$i] as $v)
+				{
+					$var[] = $v;
+				}
+			}
+			unset($var[$i]);
+			$i ++;
 		}
 		return $ret;
 	}
@@ -157,11 +151,7 @@ class LtAutoloader
 		$i = 0;
 		while (isset($dirs[$i]))
 		{
-			$dir = rtrim(realpath($dirs[$i]), '\\/');
-			if (preg_match("/\s/i", $dir))
-			{
-				trigger_error("Directory is invalid: {$dir}");
-			}
+			$dir = $dirs[$i];
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
@@ -284,11 +274,11 @@ class LtAutoloader
 		$libNames = array();
 		if ($this->fileStore instanceof LtStore)
 		{
-			$cachedFile = $this->fileStore->getFilePath($file);
-			if (!is_file($cachedFile) || filemtime($cachedFile) < filemtime($file) || !is_array(($libNames = $this->fileStore->get($file))))
-			{
+			$cachedFileLastModified = (int) filemtime($this->fileStore->getFilePath($file));
+			if ($cachedFileLastModified < filemtime($file) || !is_array(($libNames = $this->fileStore->get($file))))
+			{echo $file;
 				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
-				if (is_file($cachedFile))
+				if (0 < $cachedFileLastModified)
 				{
 					$this->fileStore->update($file, $libNames);
 				}
