@@ -109,11 +109,6 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			array(
 				"$cd/test_data/class_dir_1/GoodBye.php",
 				array("$cd" . DIRECTORY_SEPARATOR . "test_data" . DIRECTORY_SEPARATOR . "class_dir_1" . DIRECTORY_SEPARATOR . 'GoodBye.php')
-				), 
-			// 可以是空值（不推荐）
-			array(
-				'',
-				array("$cd")
 				),
 			// 去除重复目录分隔符\/
 			array(
@@ -169,7 +164,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			function test_function ()", array("class" => array("TestClass", "TestAbstractClass"), "interface" => array("TestInterface"), "function" => array("test_function"))
 			),
 			array(file_get_contents('../../runtime/Autoloader/Autoloader.php'), array("class" => array("LtAutoloader"))),
-			array(file_get_contents('../../runtime/Cache/Adapter/CacheAdapterPhps.php'), array("class" => array("LtCacheAdapterPhps"))),
+			array(file_get_contents('../../runtime/Cache/Adapter/CacheAdapterFile.php'), array("class" => array("LtCacheAdapterFile"))),
 			);
 	}
 
