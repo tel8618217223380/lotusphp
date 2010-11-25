@@ -276,7 +276,7 @@ class LtAutoloader
 		{
 			$cachedFileLastModified = (int) @filemtime($this->fileStore->getFilePath($file));
 			if ($cachedFileLastModified < filemtime($file) || !is_array(($libNames = $this->fileStore->get($file))))
-			{echo $file;
+			{
 				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
 				if (0 < $cachedFileLastModified)
 				{
