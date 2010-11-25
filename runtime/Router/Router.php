@@ -123,7 +123,7 @@ class LtRouter
 		// 如果$_GET中不存在配置的变量则添加
 		foreach($params as $k => $v)
 		{
-			//!isset($_GET[$k]) && $_GET[$k] = $v;
+			!isset($_GET[$k]) && $_GET[$k] = $v;
 		}
 		$this->module = $module;
 		$this->action = $action;
