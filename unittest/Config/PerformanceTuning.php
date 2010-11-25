@@ -15,7 +15,6 @@ require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterEAccelerator.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterFile.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterMemcache.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterMemcached.php";
-require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterPhps.php";
 require_once $lotusHome . "runtime/Cache/Adapter/CacheAdapterXcache.php";
 require_once $lotusHome . "runtime/Cache/QueryEngine/TableDataGateway/CacheTableDataGateway.php";
 

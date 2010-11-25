@@ -23,6 +23,21 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * 目录不存在
+	 * 
+	 * 不支持这样做的原因：
+	 * 出错了就应该给开发者提示，不能忽略过去
+	 * 
+	 * @expectedException PHPUnit_Framework_Error
+	 */
+	public function testDirNotExists()
+	{
+		$autoloader = new LtAutoloader;
+		$autoloader->autoloadPath = dirname(__FILE__) . "/dir_not_exists"; //这个目录不存在
+		$autoloader->init();
+	}
+
+	/**
 	 * 类或接口重名
 	 * 
 	 * 不支持这样做的原因 
