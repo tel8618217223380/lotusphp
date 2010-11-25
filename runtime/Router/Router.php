@@ -50,7 +50,7 @@ class LtRouter
 		// HTTP HTTPS
 		if (isset($_SERVER['SERVER_PROTOCOL']))
 		{
-			if (isset($_SERVER['PATH_INFO']))
+			if (isset($_SERVER['PATH_INFO']) && !empty($_SERVER['PATH_INFO']))
 			{ 
 				// 忽略后缀
 				$url = rtrim($_SERVER['PATH_INFO'], "$postfix");
