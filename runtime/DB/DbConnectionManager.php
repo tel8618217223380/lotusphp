@@ -68,7 +68,10 @@ class LtDbConnectionManager
 					$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["sql_adapter"]);
 					if ($connectionInfo["schema"] != $hostConfig["schema"])
 					{
-						$this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]), $connectionInfo["connection"]);
+						if (!$this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]), $connection))
+						{
+							trigger_error("error occured when change schema: group=$group, node=$node, role=$role, schema=" . $hostConfig["schema"], E_USER_ERROR);
+						}
 					}
 					if ($connectionInfo["charset"] != $hostConfig["charset"])
 					{
@@ -95,7 +98,10 @@ class LtDbConnectionManager
 			$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["sql_adapter"]);
 			if ($connection = $this->connectionAdapter->connect($hostConfig))
 			{
-				$this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]), $connection);
+				if (!$this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]), $connection))
+				{
+					trigger_error("error occured when change schema: group=$group, node=$node, role=$role, schema=" . $hostConfig["schema"], E_USER_ERROR);
+				}
 				$this->connectionAdapter->exec($this->sqlAdapter->setCharset($hostConfig["charset"]), $connection);
 				$this->saveConnection($hostConfig, $connection, $hostConfig["connection_ttl"]);
 				return $connection;
@@ -113,5 +119,10 @@ class LtDbConnectionManager
 			}//end else
 		}//end while
 		return false;
+	}
+
+	protected function changeSchema()
+	{
+
 	}
 }
