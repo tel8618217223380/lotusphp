@@ -67,7 +67,7 @@ class LtDbHandle
 		$sql = trim($sql);
 		if (empty($sql))
 		{
-			trigger_error('Empty the SQL statement');
+			trigger_error('the SQL statement is empty');
 		}
 		$queryType = $this->sqlAdapter->detectQueryType($sql);
 		switch ($queryType)
@@ -138,9 +138,13 @@ class LtDbHandle
 			{
 				$replacement[] = $value->__toString();
 			}
-			else
+			else if (is_string($value))
 			{
 				$replacement[] = "'" . $this->connectionAdapter->escape($value, $this->connectionResource) . "'";
+			}
+			else
+			{
+				$replacement[] = $value;
 			}
 		}
 		$sql = str_replace($find, $replacement, $sql);
