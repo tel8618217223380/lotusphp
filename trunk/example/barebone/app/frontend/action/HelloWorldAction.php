@@ -5,7 +5,7 @@
  * @author wuxiao
  *
  */
-class HelloWorldAction extends LtAction
+class HelloWorldAction extends FrontendAction
 {
 	public function execute()
 	{
