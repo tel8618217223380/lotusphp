@@ -365,6 +365,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testScanDirs($path, $classORfunction, $pathFile)
 	{
 		$ap = new LtAutoloaderProxy;
+		$path = $ap->preparePath($path);
 		$ap->scanDirs($path);
 		foreach($classORfunction as $key=>$value)
 		{
