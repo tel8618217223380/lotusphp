@@ -131,7 +131,7 @@ class LtUrl
 		}
 		else if ('PATH_INFO' == $protocol)
 		{
-			$ret = $_SERVER['SCRIPT_NAME'] . $delimiter . $ret . $postfix;
+			$ret = $_SERVER['SCRIPT_NAME'] . '/' . $ret . $postfix;
 		}
 		else
 		{
