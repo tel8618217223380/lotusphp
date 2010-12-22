@@ -46,7 +46,7 @@ class LtRouter
 		$protocol = strtoupper($this->routingTable['protocol']);
 		$module = '';
 		$action = '';
-		$params = array();
+		$params = array(); 
 		// HTTP HTTPS
 		if (isset($_SERVER['SERVER_PROTOCOL']))
 		{
@@ -77,9 +77,9 @@ class LtRouter
 					$url = rtrim($url, "$postfix");
 					$url = explode($delimiter, trim($url, "/"));
 				}
-				else //STANDARD
-				{
-					$url = array();
+				else // STANDARD
+					{
+						$url = array();
 					foreach($_GET as $v)
 					{
 						$url[] = $v;
@@ -119,7 +119,7 @@ class LtRouter
 				}
 				$i = $i + 2;
 			}
-		}
+		} 
 		// 如果$_GET中不存在配置的变量则添加
 		foreach($params as $k => $v)
 		{
@@ -175,13 +175,25 @@ class LtRouter
 				}
 			}
 			else if ($v[0] == '*')
-			{
+			{ 
 				// 通配符
 				$pos = $k;
 				while (isset($url[$pos]) && isset($url[$pos + 1]))
-				{
-					$ret[$url[$pos ++]] = urldecode($url[$pos]);
-					$pos++;
+				{ 
+					// 匹配变量
+					if (isset($reqs[$url[$pos]]))
+					{
+						$regex = "/^{$reqs[$url[$pos]]}\$/i";
+						if (preg_match($regex, $url[$pos + 1]))
+						{
+							$ret[$url[$pos]] = urldecode($url[$pos + 1]);
+						}
+					}
+					else
+					{
+						$ret[$url[$pos]] = urldecode($url[$pos + 1]);
+					}
+					$pos = $pos + 2;
 				}
 			}
 			else
