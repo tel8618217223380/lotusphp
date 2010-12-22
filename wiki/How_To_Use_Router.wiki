@@ -113,14 +113,14 @@ $config['router.routing_table'] = array(
 	);
 }}}
 
- # 此模式需要服务器配合使用，如果apache启用.htaccess文件支持，参考下边修改apache的配置
+ * 此模式需要服务器配合使用，如果apache启用.htaccess文件支持，参考下边修改apache的配置
 
 {{{
 Options Indexes FollowSymLinks ExecCGI
 AllowOverride All
 }}}
 
-可以将.htaccess文件放在框架入口文件同一目录，内容如下：
+ * 可以将.htaccess文件放在框架入口文件同一目录，内容如下：
 
 {{{
 # .htaccess文件内容
@@ -133,7 +133,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . index.php
 }}}
 
-对于nginx参考下面的修改配置
+ * 对于nginx参考下面的修改配置
 
 {{{
 location /lotusphp/example/addressbook/web/
