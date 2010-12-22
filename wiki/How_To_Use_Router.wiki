@@ -152,7 +152,8 @@ location /lotusphp/example/Router/
 }
 }}}
 = Lotus Router注意事项 =
-
+ * 建议使用url组件输出，不要直接写链接地址。
+ * url组件和router共用同一个配置。
 
 = 扩展Router类 =
 {{{
@@ -160,7 +161,7 @@ location /lotusphp/example/Router/
 
 
 = 延伸阅读：我们为什么要做Router =
-
+ * 开发环境通常使用标准链接访问，生产环境通常会启用url重写，只需要简单的修改一下配置文件，程序代码不需要更改就可以适应不同的服务器环境。
 
 == Lotus Router如何解决这些问题 ==
 
