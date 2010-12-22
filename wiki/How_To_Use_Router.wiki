@@ -68,7 +68,9 @@ $config['router.routing_table'] = array(
 	'protocol' => 'PATH_INFO',  
 	);
 }}}
+
 == 示例3：REWRITE模式用法 ==
+
 {{{
 // 美化url为一个文件
 $config['router.routing_table'] = array(
@@ -109,11 +111,14 @@ $config['router.routing_table'] = array(
 }}}
 
  # 此模式需要服务器配合使用，如果apache启用.htaccess文件支持，
+
 {{{
-    Options Indexes FollowSymLinks ExecCGI
-    AllowOverride All
+Options Indexes FollowSymLinks ExecCGI
+AllowOverride All
 }}}
-，可以将.htaccess文件放在框架入口文件同一目录，内容如下：
+
+可以将.htaccess文件放在框架入口文件同一目录，内容如下：
+
 {{{
 # .htaccess文件内容
 # 如果访问的文件或者目录不存在，rewrite到index.php文件处理
@@ -125,9 +130,24 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . index.php
 }}}
 
-对于nginx需要修改配置
+对于nginx参考下面的修改配置
 
-
+{{{
+location /lotusphp/example/addressbook/web/
+{
+	if (!-e $request_filename) 
+	{
+		rewrite ^/(.*)$ /lotusphp/example/addressbook/web/index.php last;
+	}
+}   
+location /lotusphp/example/Router/
+{   
+	if (!-e $request_filename)
+	{
+		rewrite ^/(.*)$ /lotusphp/example/Router/index.php last;
+	}
+}
+}}}
 = Lotus Router注意事项 =
 
 
