@@ -5,8 +5,8 @@
 
 == 运行lotus自带的例子 ==
  # svn checkout最新版本
- # 运行example\Router\index.php，通过Web访问[http://localhost/lotusphp/example/Router]
- # 根据不同的$config['router.routing_table']配置，输入相应的url测试，看是否能正确识别出module、action和其它参数
+ # 运行example\Router\index.php
+ # 设置不同的`$config['router.routing_table']`配置，输入url测试，看是否能正确识别出module、action和其它参数
 
 
 == 示例1：STANDARD模式的用法 ==
@@ -58,7 +58,9 @@ $config['router.routing_table'] = array(
 	'default' => array('module' => 'default', 'action' => 'index'),
 	// 对URL中的变量名字进行正则匹配，满足条件才注册此变量
 	'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 
-				'action' => '[a-zA-Z0-9\.\-_]+'),
+			'action' => '[a-zA-Z0-9\.\-_]+'),
+			'id' => '[0-9]+'), // id只能是数字
+			'page' => '[0-9]+'), // page只能是数字
 	// 标识变量的前缀，对应URL中变量名字
 	'varprefix' => ':',
 	// URL中变量的分隔符号
