@@ -2,6 +2,7 @@
  # 只支持php 5（lotusphp所有组件都要求php5环境）
 
 = 用法 =
+
 == 运行lotus自带的例子 ==
  # svn checkout最新版本
  # 运行example\Router\index.php，通过Web访问[http://localhost/lotusphp/example/Router]
@@ -110,7 +111,7 @@ $config['router.routing_table'] = array(
 	);
 }}}
 
- # 此模式需要服务器配合使用，如果apache启用.htaccess文件支持，
+ # 此模式需要服务器配合使用，如果apache启用.htaccess文件支持，参考下边修改apache的配置
 
 {{{
 Options Indexes FollowSymLinks ExecCGI
