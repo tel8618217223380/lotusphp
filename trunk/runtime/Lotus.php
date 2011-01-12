@@ -52,7 +52,14 @@ class Lotus
 
 		if ($this->defaultStoreDir)
 		{
-			LtStoreFile::$defaultStoreDir = $this->defaultStoreDir;
+			if ($defaultStoreDir = realpath($this->defaultStoreDir))
+			{
+				LtStoreFile::$defaultStoreDir = $defaultStoreDir;
+			}
+			else
+			{
+				trigger_error("invalid [default store dir]: " . $this->defaultStoreDir);
+			}
 		}
 		if (!$this->devMode)
 		{
