@@ -12,6 +12,7 @@ class Lotus
 	 */
 	public $option;
 	public $devMode = true;
+	public $defaultStoreDir;
 
 	protected $proj_dir;
 	protected $app_dir;
@@ -49,6 +50,10 @@ class Lotus
 		require_once $this->lotusRuntimeDir . "StoreMemory.php";
 		require_once $this->lotusRuntimeDir . "StoreFile.php";
 
+		if ($this->defaultStoreDir)
+		{
+			LtStoreFile::$defaultStoreDir = $this->defaultStoreDir;
+		}
 		if (!$this->devMode)
 		{
 			/**
