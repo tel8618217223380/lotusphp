@@ -1,11 +1,9 @@
 <?php
 /**
- * ¿ª·¢Ä£Ê½ÏÂÏÈ¶ÁÈ¡standardÅäÖÃ,
- * È»ºó¶ÁÈ¡devÅäÖÃ,²¢¸²¸ÇstandardµÄ²¿·ÖÅäÖÃ
+ * å¼€å‘æ¨¡å¼ä¸‹å…ˆè¯»å–standardé…ç½®,
+ * ç„¶åŽè¯»å–devé…ç½®,å¹¶è¦†ç›–standardçš„éƒ¨åˆ†é…ç½®
  */
 include(dirname(__FILE__) .'/conf.php');
-
-$config = array();
 
 foreach(glob(dirname(__FILE__) . '/dev/*.php') as $confFile)
 {
