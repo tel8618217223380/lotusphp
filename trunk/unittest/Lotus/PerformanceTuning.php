@@ -31,6 +31,8 @@ class PerformanceTuningLotus extends PHPUnit_Framework_TestCase
 		for($i = 0; $i < $times; $i++)
 		{
 			$lotus = new Lotus();
+			$lotus->devMode = false;
+			$lotus->defaultStoreDir='/tmp';
 			$lotus->option = $option;
 			$lotus->init();
 			unset($lotus);
