@@ -6,9 +6,9 @@ include $lotusHome . "runtime/StoreMemory.php";
 include $lotusHome . "runtime/Pagination/Pagination.php";
 
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
-$conf['pagination.pager']['num_links_show'] = 9; //Êı×ÖÁ´½ÓÏÔÊ¾ÊıÁ¿ 
-$conf['pagination.pager']['num_point_start_end'] = 2; //¡°µã¡±Ç°±ßºÍºó±ßµÄÁ´½ÓÊıÁ¿
-$conf['pagination.pager']['per_page'] = 25; //Ã¿¸öÒ³ÃæÖĞÏ£ÍûÕ¹Ê¾µÄÏîÄ¿ÊıÁ¿ 
+$conf['pagination.pager']['num_links_show'] = 9; //æ•°å­—é“¾æ¥æ˜¾ç¤ºæ•°é‡ 
+$conf['pagination.pager']['num_point_start_end'] = 2; //â€œç‚¹â€å‰è¾¹å’Œåè¾¹çš„é“¾æ¥æ•°é‡
+$conf['pagination.pager']['per_page'] = 25; //æ¯ä¸ªé¡µé¢ä¸­å¸Œæœ›å±•ç¤ºçš„é¡¹ç›®æ•°é‡ 
 $conf['pagination.pager']['show_first'] = true;
 $conf['pagination.pager']['show_prev'] = true;
 $conf['pagination.pager']['show_next'] = true;
