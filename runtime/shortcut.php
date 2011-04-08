@@ -1,5 +1,8 @@
 <?php
-function C($className)
+if(!function_exists("C"))
 {
-	return LtObjectUtil::singleton($className);
+	function C($className)
+	{
+		return LtObjectUtil::singleton($className);
+	}
 }
