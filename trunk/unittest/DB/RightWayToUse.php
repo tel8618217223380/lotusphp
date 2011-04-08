@@ -84,7 +84,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		// 准备测试数据
 		$dbh->query("INSERT INTO `test_user` (`name`,`age`) VALUE ('SqlMapClient',33)");
 		// 实际使用时是从配置文件里获取 sql
-		$db->configHandle->addConfig(array($dbh->group . '.getName' => array("sql"=>"SELECT `name` FROM `test_user` WHERE `age`=33","force_use_master"=>false)));
+		$db->configHandle->addConfig(array("db.sqlmap." . $dbh->group . '.getName' => array("sql"=>"SELECT `name` FROM `test_user` WHERE `age`=33","force_use_master"=>false)));
 		$this->assertEquals(array(0 => array("name" => "SqlMapClient")), $smc->execute("getName"));
 
 		// ====================为下面的测试准备数据====================
@@ -228,7 +228,7 @@ class RightWayToUseDb extends PHPUnit_Framework_TestCase
 		$smc1 = $db1->getSqlMapClient();
 
 		// 实际使用时是从配置文件里获取 sql
-		$db1->configHandle->addConfig(array($dbh1->group . '.sys.getSysCateTotal' => array("sql"=>"SELECT count(`id`) as 'category_total' FROM `sys_category`","force_use_master"=>false)));
+		$db1->configHandle->addConfig(array("db.sqlmap." . $dbh1->group . '.sys.getSysCateTotal' => array("sql"=>"SELECT count(`id`) as 'category_total' FROM `sys_category`","force_use_master"=>false)));
 
 		$this->assertEquals(array(0 => array("category_total" => 1)), $smc1->execute("sys.getSysCateTotal"));
 
