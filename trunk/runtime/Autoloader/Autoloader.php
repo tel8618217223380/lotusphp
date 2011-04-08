@@ -76,7 +76,7 @@ class LtAutoloader
 		{
 			foreach ($functionFiles as $functionFile)
 			{
-				include($functionFile);
+				include_once($functionFile);
 			}
 		}
 	}
