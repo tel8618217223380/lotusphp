@@ -341,6 +341,10 @@ class RightWayToUseCache extends PHPUnit_Framework_TestCase
 		{
 			$ccb->addHost("group_memo", "node_0", "master", array("adapter" => "memcache", "host" => "localhost", "port" => 11211));
 		}
+		else
+		{
+			$ccb->addHost("group_memo", "node_0", "master", array("adapter" => "file"));
+		}
 
 		/**
 		 * 操作第一个Group: group_file
