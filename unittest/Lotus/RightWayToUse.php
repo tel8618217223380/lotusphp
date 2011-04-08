@@ -14,47 +14,24 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 		 * 初始化Lotus类
 		 */
 		$lotus = new Lotus();
-		// ---------------------------------
-		// 下面是 必填项
-		// ---------------------------------
 		/**
 		 * 项目目录, 按照约定的目录结构,自动加载共享配置文件
 		 */
 		$lotus->option['proj_dir'] = dirname(__FILE__) . '/proj_dir/';
 		/**
-		 * 应用目录, 按照约定的目录结构,自动加载配置文件,自动加载类
-		 */
-		$lotus->option['app_dir'] = dirname(__FILE__) . '/proj_dir/';
-		// ---------------------------------
-		// 下面是 可选项
-		// ---------------------------------
-		/**
-		 * 应用名称对应用目录下的子目录名称
+		 * 应用名称
 		 */
 		$lotus->option['app_name'] = 'app_name1';
 		/**
-		 * 临时目录,默认是proj_dir/tmp/
-		 * 缓存autoloader config , 保存MVC的模板编译后的文件
+		 * 可选
 		 */
-		$lotus->option['app_tmp'] = '/tmp/Lotus/unittest/lotus-appname1/';
-		/**
-		 * 是否自动加载函数文件, 默认 true
-		 */
-		//$lotus->option['load_function'] = true;
-		/**
-		 * 配置LtAutoloader组件是否将runtime目录的类文件映射保存到局部变量内,
-		 * 启用后Autoloader的自动加载方法先查找局部变量,然后再到storeHandle查找.
-		 * 
-		 * 这是可选的, 如不需要, 请不要设置,
-		 * Lotus.php内使用isset($this->option["runtime_filemap"])判断
-		 */
-		//$lotus->option['runtime_filemap'] = '';
+		$lotus->defaultStoreDir = '/tmp';
 		/**
 		 * MVC模式 默认 true
 		 */
-		//$lotus->mvcMode = true;
+		$lotus->mvcMode = true;
 		/**
-		 * 开发模式, 默认 false 即默认为生产环境
+		 * 开发模式, 默认 true
 		 */
 		$lotus->devMode = true;
 		/**
@@ -78,6 +55,5 @@ class RightWayToUseLotus extends PHPUnit_Framework_TestCase
 
 	protected function tearDown()
 	{
-		LtObjectUtil::$instances = array();
 	}
 }
