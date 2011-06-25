@@ -1,6 +1,7 @@
 <?php
 class LtTemplateView
 {
+	public $configHandle;
 	public $layout;
 	public $layoutDir;
 
@@ -57,6 +58,7 @@ class LtTemplateView
 		$this->layoutDir = rtrim($this->layoutDir, '\\/') . '/';
 		$this->compiledDir = rtrim($this->compiledDir, '\\/') . '/';
 		$this->templateDir = rtrim($this->templateDir, '\\/') . '/';
+		$iscompile = true;
 
 		if ($islayout)
 		{
@@ -72,7 +74,6 @@ class LtTemplateView
 		{
 			if ($this->autoCompile)
 			{
-				$iscompile = true;
 				$tpl_include_files = include($objfile);
 				$last_modified_time = array();
 				foreach($tpl_include_files as $f)

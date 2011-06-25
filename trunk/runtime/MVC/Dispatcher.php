@@ -4,6 +4,7 @@
  */
 class LtDispatcher
 {
+	public $configHandle;
 	public $viewDir;
 	public $viewTplDir;
 	public $viewTplAutoCompile;
@@ -36,6 +37,7 @@ class LtDispatcher
 			$newContext->uri['module'] = $module;
 			$newContext->uri[strtolower($classType)] = $action;
 			$actionInstance = new $actionClassName();
+			$actionInstance->configHandle = $this->configHandle;
 			$actionInstance->context = $newContext;
 			$actionInstance->viewDir = $this->viewDir;
 			$actionInstance->viewTplDir = $this->viewTplDir; // 模板编译目录

@@ -4,6 +4,8 @@
  */
 class LtView
 {
+	public $configHandle;
+	
 	public $layoutDir;
 
 	public $templateDir;

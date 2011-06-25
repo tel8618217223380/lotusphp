@@ -10,7 +10,7 @@ abstract class LtAction
 	 * @var object 
 	 */
 	public $context;
-
+	public $configHandle;
 	public $viewDir;
 	public $viewTplDir;
 	public $viewTplAutoCompile;
@@ -192,6 +192,7 @@ abstract class LtAction
 				{
 					$this->view = new LtTemplateView;
 				}
+				$this->view->configHandle = $this->configHandle;
 				$this->view->component = false; // 是否组件
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
@@ -217,6 +218,7 @@ abstract class LtAction
 				{
 					$this->view = new LtView;
 				}
+				$this->view->configHandle = $this->configHandle;
 				$this->view->context = $this->context;
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;

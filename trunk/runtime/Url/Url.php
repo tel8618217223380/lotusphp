@@ -24,6 +24,7 @@ class LtUrl
 		$this->routingTable = $this->configHandle->get("router.routing_table");
 		if (empty($this->routingTable))
 		{
+			// 这个默认值要和LtRouter的默认值保持一至
 			$this->routingTable = array('pattern' => ":module/:action/*",
 				'default' => array('module' => 'default', 'action' => 'index'),
 				'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+',
@@ -31,8 +32,8 @@ class LtUrl
 					),
 				'varprefix' => ':',
 				'delimiter' => '/',
-				'postfix' => '',
-				'protocol' => 'PATH_INFO', // REWRITE STANDARD
+				'postfix' => '/',
+				'protocol' => 'STANDARD', // REWRITE PATH_INFO STANDARD
 				);
 		}
 

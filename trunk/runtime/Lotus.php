@@ -13,10 +13,12 @@ class Lotus
 	public $option;
 	public $devMode = true;
 	public $defaultStoreDir;
+	
+	public $configHandle;
 
 	protected $proj_dir;
 	protected $app_dir;
-	protected $data_dir;
+	protected $cache_dir;
 	protected $lotusRuntimeDir;
 	protected $coreCacheHandle;
 
@@ -34,7 +36,7 @@ class Lotus
 			if (isset($this->option["app_name"]) && !empty($this->option["app_name"]))
 			{
 				$this->app_dir = $this->proj_dir . "app/" . $this->option["app_name"] . "/";
-				$this->data_dir = $this->proj_dir . "data/" . $this->option["app_name"] . "/";
+				$this->cache_dir = $this->proj_dir . "cache/";
 				$underMVC = true;
 			}
 			else
@@ -70,6 +72,7 @@ class Lotus
 			$prefix = sprintf("%u", crc32(serialize($this->app_dir)));
 			$this->coreCacheHandle->prefix = 'Lotus-' . $prefix;
 			$this->coreCacheHandle->useSerialize = true;
+			$this->coreCacheHandle->storeDir = $this->cache_dir;
 			$this->coreCacheHandle->init();
 		}
 
@@ -115,6 +118,11 @@ class Lotus
 		{
 			$autoloader->storeHandle = $this->coreCacheHandle;
 		}
+		else
+		{
+			$autoloader->cacheDir = $this->cache_dir;
+		}
+		
 		$autoloader->init();
 	}
 
@@ -142,8 +150,11 @@ class Lotus
 		$router = LtObjectUtil::singleton('LtRouter');
 		$router->init();
 		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
+		$dispatcher->configHandle = $this->configHandle;
 		$dispatcher->viewDir = $this->app_dir . 'view/';
-		$dispatcher->viewTplDir = $this->data_dir . 'templateView/';
+
+		$prefix = sprintf("%u", crc32(serialize($this->app_dir)));
+		$dispatcher->viewTplDir = $this->cache_dir . 'Lotus-' . $prefix . '-tpl/';
 		if (!$this->devMode)
 		{
 			$dispatcher->viewTplAutoCompile = false;
