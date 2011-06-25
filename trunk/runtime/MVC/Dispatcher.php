@@ -15,38 +15,6 @@ class LtDispatcher
 
 	}
 
-	protected function _dispatch($module, $action, $context = null, $classType = "Action")
-	{
-		$classType = ucfirst($classType);
-		$actionClassName = $module . $action . $classType;
-		if (!class_exists($actionClassName))
-		{
-			//DebugHelper::debug("{$classType}_CLASS_NOT_FOUND", array(strtolower($classType) => $action));
-			trigger_error("{$actionClassName} CLASS NOT FOUND! module={$module} action={$action} classType={$classType}");
-		}
-		else
-		{
-			if (!($context instanceof LtContext))
-			{
-				$newContext = new LtContext;
-			}
-			else
-			{
-				$newContext = clone $context;
-			}
-			$newContext->uri['module'] = $module;
-			$newContext->uri[strtolower($classType)] = $action;
-			$actionInstance = new $actionClassName();
-			$actionInstance->configHandle = $this->configHandle;
-			$actionInstance->context = $newContext;
-			$actionInstance->viewDir = $this->viewDir;
-			$actionInstance->viewTplDir = $this->viewTplDir; // 模板编译目录
-			$actionInstance->viewTplAutoCompile = $this->viewTplAutoCompile;
-			$actionInstance->executeChain();
-			$this->data = $actionInstance->data;
-		}
-	}
-
 	/**
 	 * Disptach the module/action calling.
 	 *
@@ -72,5 +40,62 @@ class LtDispatcher
 	{
 		$cloneOfContext = clone $context;
 		$this->_dispatch($module, $component, $cloneOfContext, "Component");
+	}
+
+	protected function _dispatch($module, $action, $context = null, $classType = "Action")
+	{
+		$classType = ucfirst($classType);
+		$actionClassName = $module . $action . $classType;
+		if (!class_exists($actionClassName))
+		{
+			$this->error_404();
+			//DebugHelper::debug("{$classType}_CLASS_NOT_FOUND", array(strtolower($classType) => $action));
+			//trigger_error("{$actionClassName} CLASS NOT FOUND! module={$module} action={$action} classType={$classType}");
+		}
+		else
+		{
+			if (!($context instanceof LtContext))
+			{
+				$newContext = new LtContext;
+			}
+			else
+			{
+				$newContext = clone $context;
+			}
+			$newContext->uri['module'] = $module;
+			$newContext->uri[strtolower($classType)] = $action;
+			$actionInstance = new $actionClassName();
+			$actionInstance->configHandle = $this->configHandle;
+			$actionInstance->context = $newContext;
+			$actionInstance->viewDir = $this->viewDir;
+			$actionInstance->viewTplDir = $this->viewTplDir; // 模板编译目录
+			$actionInstance->viewTplAutoCompile = $this->viewTplAutoCompile;
+			$actionInstance->executeChain();
+			$this->data = $actionInstance->data;
+		}
+	}
+	
+	protected function error_404()
+	{
+		header("HTTP/1.0 404 Not Found");
+		header("Status: 404 Not Found");
+		if ($this->configHandle instanceof LtConfig)
+		{
+			$filename = $this->configHandle->get('error_404');
+			if(is_file($filename))
+			{
+				include $filename;
+				exit();
+			}
+		}
+		// 必需大于 512 bytes，否则404在某些浏览器中不显示
+		echo '<!DOCTYPE html ><html><head><title>Error 404</title></head><body>404 Not Found
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+            </body></html>';
+		exit();
 	}
 }
