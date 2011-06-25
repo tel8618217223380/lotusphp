@@ -31,6 +31,7 @@ class LtAutoloader
 
 	public $storeHandle;
 	public $autoloadPath;
+	public $cacheDir;
 	protected $functionFileMapping;
 	protected $fileStore;
 
@@ -40,6 +41,10 @@ class LtAutoloader
 		{
 			$this->storeHandle = new LtStoreMemory;
 			$this->fileStore = new LtStoreFile;
+			if(!empty($this->cacheDir))
+			{
+				$this->fileStore->storeDir = $this->cacheDir;
+			}
 			$this->fileStore->prefix = 'LtAutoloader-token-cache';
 			$this->fileStore->useSerialize = true;
 			$this->fileStore->init();

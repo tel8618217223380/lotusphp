@@ -29,16 +29,17 @@ class LtRouter
 		$this->routingTable = $this->configHandle->get("router.routing_table");
 		if (empty($this->routingTable))
 		{
+			// 这个默认值要和LtUrl的默认值保持一至
 			$this->routingTable = array('pattern' => ":module/:action/*",
-				'default' => array('module' => 'default', 'action' => 'index'),
+				'default' => array('module' => 'Default', 'action' => 'Index'),
 				'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+',
 					'action' => '[a-zA-Z0-9\.\-_]+'
 					),
 				'varprefix' => ':',
 				'delimiter' => '/',
-				'postfix' => '',
-				'protocol' => 'PATH_INFO', // REWRITE STANDARD
-				);
+				'postfix' => '/',
+				'protocol' => 'STANDARD', // REWRITE PATH_INFO STANDARD
+					);
 		}
 
 		$delimiter = $this->routingTable['delimiter'];
@@ -46,12 +47,12 @@ class LtRouter
 		$protocol = strtoupper($this->routingTable['protocol']);
 		$module = '';
 		$action = '';
-		$params = array(); 
+		$params = array();
 		// HTTP HTTPS
 		if (isset($_SERVER['SERVER_PROTOCOL']))
 		{
 			if (isset($_SERVER['PATH_INFO']) && !empty($_SERVER['PATH_INFO']))
-			{ 
+			{
 				// 忽略后缀
 				$url = rtrim($_SERVER['PATH_INFO'], "$postfix");
 				$url = explode($delimiter, trim($url, "/"));
@@ -78,8 +79,8 @@ class LtRouter
 					$url = explode($delimiter, trim($url, "/"));
 				}
 				else // STANDARD
-					{
-						$url = array();
+				{
+					$url = array();
 					foreach($_GET as $v)
 					{
 						$url[] = $v;
@@ -99,7 +100,7 @@ class LtRouter
 			$action = $params['action'];
 		}
 		else
-		{ 
+		{
 			// CLI
 			$i = 0;
 			while (isset($_SERVER['argv'][$i]) && isset($_SERVER['argv'][$i + 1]))
@@ -119,7 +120,7 @@ class LtRouter
 				}
 				$i = $i + 2;
 			}
-		} 
+		}
 		// 如果$_GET中不存在配置的变量则添加
 		foreach($params as $k => $v)
 		{
@@ -131,9 +132,9 @@ class LtRouter
 
 	/**
 	 * url 匹配路由表
-	 * 
+	 *
 	 * @param  $ [string|array] $url
-	 * @return 
+	 * @return
 	 * @todo 修复导致$_GET多出属性的BUG
 	 * @todo 如果是rewrite或者path_info模式，可能需要unset module和action两个$_GET变量
 	 */
@@ -158,9 +159,9 @@ class LtRouter
 		foreach($pattern as $k => $v)
 		{
 			if ($v[0] == $varprefix)
-			{ 
+			{
 				// 变量
-				$varname = substr($v, 1); 
+				$varname = substr($v, 1);
 				// 匹配变量
 				if (isset($url[$k]))
 				{
@@ -175,11 +176,11 @@ class LtRouter
 				}
 			}
 			else if ($v[0] == '*')
-			{ 
+			{
 				// 通配符
 				$pos = $k;
 				while (isset($url[$pos]) && isset($url[$pos + 1]))
-				{ 
+				{
 					// 匹配变量
 					if (isset($reqs[$url[$pos]]))
 					{
@@ -197,7 +198,7 @@ class LtRouter
 				}
 			}
 			else
-			{ 
+			{
 				// 静态
 			}
 		}
