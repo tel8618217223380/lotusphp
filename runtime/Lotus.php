@@ -154,13 +154,16 @@ class Lotus
 		$dispatcher->viewDir = $this->app_dir . 'view/';
 
 		$prefix = sprintf("%u", crc32(serialize($this->app_dir)));
-		$dispatcher->viewTplDir = $this->cache_dir . 'Lotus-' . $prefix . '-tpl/';
 		if (!$this->devMode)
 		{
+			// 生产环境下，修改模板文件后，必需手工删除模板引擎编译后的文件
+			$dispatcher->viewTplDir = $this->cache_dir . 'Lotus-' . $prefix . '-tpl/';
 			$dispatcher->viewTplAutoCompile = false;
 		}
 		else
 		{
+			// 开发模式下模板引擎比较源文件编译后的文件日期来决定是否重新编译
+			$dispatcher->viewTplDir = $this->cache_dir . 'Lotus-' . $prefix . '-tpl-dev/';
 			$dispatcher->viewTplAutoCompile = true;
 		}
 		$dispatcher->dispatchAction($router->module, $router->action);
