@@ -36,7 +36,7 @@ class LtLogger
 		{
 			$logData = implode($this->conf["separator"], $logData);
 		}
-		$logData = $logData. "\n";
+		$logData = $logData . PHP_EOL;
 		fwrite($this->getFileHandle(), $logData);
 	}
 }
