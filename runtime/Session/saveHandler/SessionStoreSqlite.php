@@ -1,5 +1,5 @@
 <?php
-class LtSessionSqlite implements LtSessionStore
+class LtSessionSqlite
 {
 	public $conf;
 
@@ -8,10 +8,6 @@ class LtSessionSqlite implements LtSessionStore
 	private $dbName;
 	private $tableName;
 
-	public function __construct()
-	{ 
-		// --
-	}
 	public function init()
 	{
 		if (isset($this->conf['gc_maxlifetime']))
@@ -44,6 +40,14 @@ class LtSessionSqlite implements LtSessionStore
 			trigger_error('session sqlite db error');
 			return false;
 		}
+		session_set_save_handler(
+			array(&$this, 'open'),
+			array(&$this, 'close'),
+			array(&$this, 'read'),
+			array(&$this, 'write'),
+			array(&$this, 'destroy'),
+			array(&$this, 'gc')
+		);
 		return true;
 	}
 
