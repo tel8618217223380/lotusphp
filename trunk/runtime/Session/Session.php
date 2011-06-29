@@ -3,6 +3,7 @@ class LtSession
 {
 	public $storeHandle;
 	public $configHandle;
+	protected static $started = false;
 
 	public function __construct()
 	{
@@ -21,36 +22,27 @@ class LtSession
 
 	public function init()
 	{
-		if(!$sessionSavePath = $this->configHandle->get("session.save_path"))
+		$sessionSaveHandle = $this->configHandle->get('session.save_handler');
+		if(empty($sessionSaveHandle))
 		{
-			$sessionSavePath = '/tmp/Lotus/session/';
+			$sessionSaveHandle = 'files';
 		}
-		if (!is_object($this->storeHandle))
+		if(!self::$started)
 		{
-			ini_set('session.save_handler', 'files');
-			if (!is_dir($sessionSavePath))
+			$sessionClass = 'LtSession'.ucfirst($sessionSaveHandle);
+			if(!class_exists($sessionClass))
 			{
-				if (!@mkdir($sessionSavePath, 0777, true))
-				{
-					trigger_error("Can not create $sessionSavePath");
-				}
+				trigger_error("$sessionClass Not Found!");
 			}
-			session_save_path($sessionSavePath);
+			else
+			{
+				$session = new $sessionClass();
+				$session->sessionSavePath = $this->configHandle->get('session.save_path');
+				//session.name
+				//session.gc_maxlifetime
+				$session->init();
+				self::$started = true;
+			}
 		}
-		else
-		{
-			$this->storeHandle->conf = $this->configHandle->get("session.conf");
-			$this->storeHandle->init();
-			session_set_save_handler(
-				array(&$this->storeHandle, 'open'), 
-				array(&$this->storeHandle, 'close'),
-				array(&$this->storeHandle, 'read'), 
-				array(&$this->storeHandle, 'write'), 
-				array(&$this->storeHandle, 'destroy'), 
-				array(&$this->storeHandle, 'gc')
-				);
-		}
-		//session_start();
-		//header("Cache-control: private"); // to overcome/fix a bug in IE 6.x
 	}
 }
