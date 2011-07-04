@@ -98,11 +98,19 @@ class LtDbConnectionManager
 			$this->sqlAdapter = $dbFactory->getSqlAdapter($hostConfig["sql_adapter"]);
 			if ($connection = $this->connectionAdapter->connect($hostConfig))
 			{
-				if (false === $this->connectionAdapter->exec($this->sqlAdapter->setSchema($hostConfig["schema"]), $connection))
+				$sql = $this->sqlAdapter->setSchema($hostConfig["schema"]);
+				if(!empty($sql))
 				{
-					trigger_error("error occured when change schema: group=$group, node=$node, role=$role, schema=" . $hostConfig["schema"], E_USER_ERROR);
+					if (false === $this->connectionAdapter->exec($sql, $connection))
+					{
+						trigger_error("error occured when change schema: group=$group, node=$node, role=$role, schema=" . $hostConfig["schema"], E_USER_ERROR);
+					}
 				}
-				$this->connectionAdapter->exec($this->sqlAdapter->setCharset($hostConfig["charset"]), $connection);
+				$sql = $this->sqlAdapter->setCharset($hostConfig["charset"]);
+				if(!empty($sql))
+				{
+					$this->connectionAdapter->exec($sql, $connection);
+				}
 				$this->saveConnection($hostConfig, $connection, $hostConfig["connection_ttl"]);
 				return $connection;
 			}
