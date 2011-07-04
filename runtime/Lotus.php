@@ -52,16 +52,9 @@ class Lotus
 		require_once $this->lotusRuntimeDir . "StoreMemory.php";
 		require_once $this->lotusRuntimeDir . "StoreFile.php";
 
-		if ($this->defaultStoreDir)
+		if (!empty($this->defaultStoreDir))
 		{
-			if ($defaultStoreDir = realpath($this->defaultStoreDir))
-			{
-				LtStoreFile::$defaultStoreDir = $defaultStoreDir;
-			}
-			else
-			{
-				trigger_error("invalid [default store dir]: " . $this->defaultStoreDir);
-			}
+			$this->cache_dir = $this->defaultStoreDir;
 		}
 		if (!$this->devMode)
 		{
