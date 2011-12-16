@@ -40,7 +40,7 @@ class LtUrl
 		$protocol = strtoupper($this->routingTable['protocol']);
 		if ('REWRITE' == $protocol)
 		{
-			$this->baseUrl = pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME) . '/';
+			$this->baseUrl = trim(pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME), '\\/') . '/';
 		}
 		else if ('STANDARD' == $protocol)
 		{
