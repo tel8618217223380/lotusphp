@@ -92,8 +92,14 @@ class LtPagination
 		$baseurl = urldecode($baseurl);
 		$pager = $this->conf['num_tag_open'];
 
+		if ($this->conf['show_first'])
+		{
 		$pager .= $this->renderButton('first', $pagenumber, $pagecount, $baseurl);
-		$pager .= $this->renderButton('prev', $pagenumber, $pagecount, $baseurl);
+		}
+		if ($this->conf['show_prev'])
+		{
+			$pager .= $this->renderButton('prev', $pagenumber, $pagecount, $baseurl);
+		}
 
 		$startPoint = 1;
 		$endPoint = $this->conf['num_links_show'];
@@ -157,8 +163,14 @@ class LtPagination
 			}
 		}
 		$pager .= $currentButton;
-		$pager .= $this->renderButton('next', $pagenumber, $pagecount, $baseurl);
-		$pager .= $this->renderButton('last', $pagenumber, $pagecount, $baseurl);
+		if ($this->conf['show_next'])
+		{
+			$pager .= $this->renderButton('next', $pagenumber, $pagecount, $baseurl);
+		}
+		if ($this->conf['show_last'])
+		{
+			$pager .= $this->renderButton('last', $pagenumber, $pagecount, $baseurl);
+		}
 		$pager .= $this->conf['num_tag_close'];
 
 		return $pager;
