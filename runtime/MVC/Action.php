@@ -204,8 +204,11 @@ abstract class LtAction
 				$this->view->compiledDir = $this->viewTplDir;
 				$this->view->autoCompile = $this->viewTplAutoCompile;
 				if (empty($this->template))
-				{
-					$this->template = $this->context->uri["module"] . "-" . $this->context->uri["action"];
+				{/*
+				  * 兼容end-user手工输入的大小写不区分的module和action名字
+				  * 如module=User&action=Login, module=user&action=login都会对应到user-login这个view template
+				  */
+					$this->template = strtolower($this->context->uri["module"]) . "-" . strtolower($this->context->uri["action"]);
 				}
 				$this->view->template = $this->template;
 				$this->view->render();
@@ -228,7 +231,7 @@ abstract class LtAction
 				$this->view->templateDir = $this->viewDir;
 				if (empty($this->template))
 				{
-					$this->template = $this->context->uri["module"] . "-" . $this->context->uri["action"];
+					$this->template = $this->template = strtolower($this->context->uri["module"]) . "-" . strtolower($this->context->uri["action"]);;
 				}
 				$this->view->template = $this->template;
 				$this->view->render();
