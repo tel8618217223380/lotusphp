@@ -14,6 +14,7 @@ abstract class LtAction
 	public $viewDir;
 	public $viewTplDir;
 	public $viewTplAutoCompile;
+	public $layoutDir;
 	
 	public $appDir;
 	public $projDir;
@@ -201,7 +202,7 @@ abstract class LtAction
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;
 				$this->view->data = $this->data;
-				$this->view->layoutDir = $this->viewDir . "layout/";
+				$this->view->layoutDir = !empty($this->layoutDir) ? $this->layoutDir : $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
 				$this->view->compiledDir = $this->viewTplDir;
@@ -229,7 +230,7 @@ abstract class LtAction
 				$this->view->code = $this->code;
 				$this->view->message = $this->message;
 				$this->view->data = $this->data;
-				$this->view->layoutDir = $this->viewDir . "layout/";
+				$this->view->layoutDir = !empty($this->layoutDir) ? $this->layoutDir : $this->viewDir . "layout/";
 				$this->view->layout = $this->layout;
 				$this->view->templateDir = $this->viewDir;
 				if (empty($this->template))
