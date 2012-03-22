@@ -78,7 +78,7 @@ class LtTemplateView
 				$last_modified_time = array();
 				foreach($tpl_include_files as $f)
 				{
-					$last_modified_time[] = filemtime($f);
+					$last_modified_time[] = is_file($f) ? filemtime($f) : time();
 				}
 				if (filemtime($objfile) == max($last_modified_time))
 				{
@@ -325,12 +325,13 @@ class LtTemplateView
 				else
 				{
 					$findfile = '';
-				} 
+				}
+				
+				$this->tpl_include_files[] = $findfile;
 				
 				if (!empty($findfile))
 				{
 					$subTpl = file_get_contents($findfile);
-					$this->tpl_include_files[] = $findfile;
 				}
 				else
 				{ 
@@ -356,10 +357,11 @@ class LtTemplateView
 			while ($i < $countCom)
 			{
 				$comfile = $this->templateDir . "component/" . $tvar[1][$i] . '-' . $tvar[2][$i] . '.php';
+				$this->tpl_include_files[] = $comfile;
+				
 				if (is_file($comfile))
 				{
 					$subTpl = file_get_contents($comfile);
-					$this->tpl_include_files[] = $comfile;
 				}
 				else
 				{
