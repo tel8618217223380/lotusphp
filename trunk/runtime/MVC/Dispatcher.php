@@ -9,10 +9,13 @@ class LtDispatcher
 	public $viewTplDir;
 	public $viewTplAutoCompile;
 	public $data;
+	
+	public $appDir;
+	public $projDir;
+
 
 	public function __construct()
 	{
-
 	}
 
 	/**
@@ -70,6 +73,8 @@ class LtDispatcher
 			$actionInstance->viewDir = $this->viewDir;
 			$actionInstance->viewTplDir = $this->viewTplDir; // 模板编译目录
 			$actionInstance->viewTplAutoCompile = $this->viewTplAutoCompile;
+			$actionInstance->appDir = $this->appDir;
+			$actionInstance->projDir = $this->projDir;
 			$actionInstance->executeChain();
 			$this->data = $actionInstance->data;
 		}
