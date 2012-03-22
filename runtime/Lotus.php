@@ -145,6 +145,8 @@ class Lotus
 		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
 		$dispatcher->configHandle = $this->configHandle;
 		$dispatcher->viewDir = $this->app_dir . 'view/';
+		$dispatcher->projDir = $this->proj_dir;
+		$dispatcher->appDir = $this->app_dir;
 
 		$prefix = sprintf("%u", crc32(serialize($this->app_dir)));
 		if (!$this->devMode)

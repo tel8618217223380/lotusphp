@@ -14,6 +14,9 @@ abstract class LtAction
 	public $viewDir;
 	public $viewTplDir;
 	public $viewTplAutoCompile;
+	
+	public $appDir;
+	public $projDir;
 
 	/**
 	 * The dtd config for validator
