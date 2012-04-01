@@ -7,7 +7,7 @@ abstract class LtAction
 	/**
 	 * The context object
 	 * 
-	 * @var object 
+	 * @var LtContext 
 	 */
 	public $context;
 	public $configHandle;

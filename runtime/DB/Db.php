@@ -31,11 +31,22 @@ class LtDb
 		$this->dbh->init();
 	}
 
+	/**
+	 * 
+	 * 
+	 * @return LtDbHandle
+	 */
 	public function getDbHandle()
 	{
 		return $this->dbh;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param string $tableName
+	 * @return LtDbTableDataGateway
+	 */
 	public function getTDG($tableName)
 	{
 		$tg = new LtDbTableDataGateway;
@@ -47,6 +58,11 @@ class LtDb
 		return $tg;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @return LtDbSqlMapClient
+	 */
 	public function getSqlMapClient()
 	{
 		$smc = new LtDbSqlMapClient;
