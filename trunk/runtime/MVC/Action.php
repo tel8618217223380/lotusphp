@@ -10,6 +10,12 @@ abstract class LtAction
 	 * @var LtContext 
 	 */
 	public $context;
+	
+	/**
+	 * 
+	 * 
+	 * @var LtConfig
+	 */
 	public $configHandle;
 	public $viewDir;
 	public $viewTplDir;
