@@ -79,13 +79,16 @@ class LtValidator
 						}
 						if (!$ret)
 						{
-							if (isset($this->errorMessages[$key]))
+							if (empty($messages[$key]))
 							{
-								$messages[$key] = $this->errorMessages[$key];
-							}
-							else
-							{
-								$messages[$key] = "validator.error_messages[$key] empty";
+								if (isset($this->errorMessages[$key]))
+								{
+									$messages[$key] = $this->errorMessages[$key];
+								}
+								else
+								{
+									$messages[$key] = "validator.error_messages[$key] empty";
+								}
 							}
 							$errorMessages[$key] = sprintf($messages[$key], $label, $dtd->rules[$key]);
 						}
