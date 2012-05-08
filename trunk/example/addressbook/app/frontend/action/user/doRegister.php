@@ -63,8 +63,8 @@ class UserDoRegisterAction extends LtAction
 		$data['mobile'] = $this->context->post('mobile');
 		$data['email'] = $this->context->post('email');
 		$data['password'] = md5($this->context->post('password'));
-		$user = new UserDao;
-		$user->add($data);
+		$addressbookService = new AddressBookService();
+		$addressbookService->addUser($data);
 		$this->message = "注册成功";
 		$this->data['forward'] = LtObjectUtil::singleton('LtUrl')->generate('Default', 'Index');
 		$this->data['title'] = 'addressbook';

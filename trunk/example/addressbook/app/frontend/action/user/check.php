@@ -1,18 +1,12 @@
 <?php
 class UserCheckAction extends LtAction
 {
-	public function __construct()
-	{
-		parent::__construct();
-		$this->responseType = 'json';
-	}
-
 	public function execute()
 	{
 		$mobile = $this->context->get('mobile');
 
-		$user = new UserDao;
-		if($user->exists($mobile, 'mobile'))
+		$addressbookService = new AddressBookService();
+		if($addressbookService->isMobileExists($mobile))
 		{
 			$this->message = "手机号已经注册";
 		}
@@ -20,5 +14,7 @@ class UserCheckAction extends LtAction
 		{
 			$this->message = "可以使用";
 		}
+		
+		$this->responseType = 'json'; // 返回json类型
 	}
 }
