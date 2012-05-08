@@ -10,31 +10,6 @@ class DefaultIndexAction extends MyAction
 
 	public function execute()
 	{
-		// limit, offset, where
-		$where = '';
-		$op = $this->context->get('op');
-		if ($op == 'search')
-		{
-			$gid = $this->context->post('gid');
-			if (-1 != $gid)
-			{
-				$where .= " AND a.gid=$gid";
-			}
-			$q = $this->context->post('q');
-			if ($q)
-			{
-				$field = $this->context->post('field');
-				switch ($field)
-				{
-					case 'name':
-						$where .= " AND a.firstname like '%$q%'";
-						break;
-					case 'mobile':
-						$where .= " AND a.mobile='$q'";
-						break;
-				}
-			}
-		}
 		$page = $this->context->get('page');
 		$page = max(intval($page), 1);
 		$page_size = $this->configHandle->get('page_size');
@@ -42,23 +17,23 @@ class DefaultIndexAction extends MyAction
 		{
 			$page_size = 25;
 		}
-		$limit = $page_size;
-		$offset = ($page-1) * $page_size;
+		$param['limit'] = $page_size;
+		$param['offset'] = ($page-1) * $page_size;
+		
+		$param['op'] = $this->context->get('op');
+		$param['gid'] = $this->context->post('gid');
+		$param['q'] = $this->context->post('q');
+		$param['field'] = $this->context->post('field');
+		
 		// userid
 		$uid = $this->data['uid'];
-		// ----
+
 		$addressBookService = new AddressBookService();
 		
 		// 取当前用户通讯录的所有分组
 		$this->data['groups'] = $addressBookService->getAllGroups($uid);
 
-		/**
-		 * 取当前用户通讯录的列表
-		 * 
-		 * $result['count']
-		 * $result['rows']
-		 */
-		$this->data['data'] = $addressBookService->getAddressBookListByUserId($uid, $limit, $offset, $where);
+		$this->data['data'] = $addressBookService->getAddressBookListByUserId($uid, $param);
 		$count = $this->data['data']['count'];
 
 		// 分页  :page 会自动被替换掉
