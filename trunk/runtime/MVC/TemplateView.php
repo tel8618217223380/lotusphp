@@ -237,10 +237,10 @@ class LtTemplateView
 		// 删除 {} 前后的 html 注释 <!--  -->
 		$str = preg_replace("/\<\!\-\-\s*\{(.+?)\}\s*\-\-\>/s", "{\\1}", $str);
 		$str = preg_replace("/\<\!\-\-\s*\-\-\>/s", "", $str); 
-		// 删除 html注释 存在 < { 就不删除
-		$str = preg_replace("/\<\!\-\-\s*[^\<\{]*\s*\-\-\>/s", "", $str);
 		if ($clear)
 		{
+			// 删除 html注释 存在 < { 就不删除
+			$str = preg_replace("/\<\!\-\-\s*[^\<\{]*\s*\-\-\>/s", "", $str);
 			$str = $this->clear($str);
 		}
 		return $str;
