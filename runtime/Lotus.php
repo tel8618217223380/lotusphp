@@ -109,7 +109,8 @@ class Lotus
 
 		if (!$this->devMode)
 		{
-			$autoloader->storeHandle = $this->coreCacheHandle;
+			$autoloader->storeHandle = clone $this->coreCacheHandle;
+			$autoloader->storeHandle->prefix = $this->coreCacheHandle->prefix.'-cls';
 		}
 		else
 		{
@@ -125,7 +126,8 @@ class Lotus
 		if (!$this->devMode)
 		{
 			$configFile = 'conf/conf.php';
-			$this->configHandle->storeHandle = $this->coreCacheHandle;
+			$this->configHandle->storeHandle = clone $this->coreCacheHandle;
+			$this->configHandle->storeHandle->prefix = $this->coreCacheHandle->prefix.'-conf';
 		}
 		else
 		{
