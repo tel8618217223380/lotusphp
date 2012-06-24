@@ -122,7 +122,7 @@ class Lotus
 
 	protected function prepareConfig()
 	{
-		$this->configHandle = LtObjectUtil::singleton('LtConfig');
+		$this->configHandle = LtObjectUtil::singleton('LtConfig', false);
 		if (!$this->devMode)
 		{
 			$configFile = 'conf/conf.php';
@@ -142,9 +142,9 @@ class Lotus
 
 	protected function runMVC()
 	{
-		$router = LtObjectUtil::singleton('LtRouter');
+		$router = LtObjectUtil::singleton('LtRouter', false);
 		$router->init();
-		$dispatcher = LtObjectUtil::singleton('LtDispatcher');
+		$dispatcher = LtObjectUtil::singleton('LtDispatcher',false);
 		$dispatcher->configHandle = $this->configHandle;
 		$dispatcher->viewDir = $this->app_dir . 'view/';
 		$dispatcher->projDir = $this->proj_dir;
