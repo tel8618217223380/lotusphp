@@ -80,20 +80,16 @@ class LtRouter
 				}
 				else // STANDARD
 				{
-					$url = array();
-					foreach($_GET as $v)
-					{
-						$url[] = $v;
-					}
+					$this->module = $_GET['module'];
+					$this->action = $_GET['action'];
+					return;
 				}
 			}
 			else
 			{
-				$url = array();
-				foreach($_GET as $v)
-				{
-					$url[] = $v;
-				}
+				$this->module = $_GET['module'];
+				$this->action = $_GET['action'];
+				return;
 			}
 			$params = $this->matchingRoutingTable($url);
 			$module = $params['module'];
