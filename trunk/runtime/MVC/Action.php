@@ -21,6 +21,7 @@ abstract class LtAction
 	public $viewTplDir;
 	public $viewTplAutoCompile;
 	public $layoutDir;
+	public $template;
 	
 	public $appDir;
 	public $projDir;
