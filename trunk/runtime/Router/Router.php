@@ -80,15 +80,15 @@ class LtRouter
 				}
 				else // STANDARD
 				{
-					$this->module = $_GET['module'];
-					$this->action = $_GET['action'];
+					$this->module = isset($_GET['module']) ? $_GET['module'] : $this->routingTable['default']['module'];
+					$this->action = isset($_GET['action']) ? $_GET['action'] : $this->routingTable['default']['action'];
 					return;
 				}
 			}
 			else
 			{
-				$this->module = $_GET['module'];
-				$this->action = $_GET['action'];
+				$this->module = isset($_GET['module']) ? $_GET['module'] : $this->routingTable['default']['module'];
+				$this->action = isset($_GET['action']) ? $_GET['action'] : $this->routingTable['default']['action'];
 				return;
 			}
 			$params = $this->matchingRoutingTable($url);
