@@ -185,7 +185,6 @@ class LtPagination
 	 */
 	public function renderButton($buttonLabel, $pagenumber, $pagecount, $baseurl = '?page=:page')
 	{
-		$baseurl = urldecode($baseurl);
 		$destPage = 1;
 		if ('goto' == $buttonLabel)
 		{
