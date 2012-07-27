@@ -22,13 +22,6 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 {
 	public function testPerformance()
 	{
-		/**
-		 * 用LtStoreFile作存储层提升性能
-		 */
-		$cacheHandle = new LtStoreFile;
-		$cacheHandle->prefix = "LtAutoloader-perf-test";
-		$cacheHandle->useSerialize = true;
-		$cacheHandle->init(); 
 		// 准备autoloadPath
 		$autoloadPath = array(
 			dirname(__FILE__) . "/test_data/class_dir_1",
@@ -36,12 +29,20 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 			dirname(__FILE__) . "/test_data/function_dir_1",
 			dirname(__FILE__) . "/test_data/function_dir_2",
 			);
-
+		/**
+		 * 用LtStoreFile作存储层提升性能
+		 */
+		$cacheHandle = new LtStoreFile;
+		$prefix = sprintf("%u", crc32(serialize($autoloadPath)));
+		$cacheHandle->prefix = 'Lotus-' . $prefix;
+		$cacheHandle->useSerialize = true;
+		$cacheHandle->init(); 
 		/**
 		 * 运行autoloader成功加载一个类
 		 * 这是为了证明：使用LtCache作为LtAutoloader的存储，功能是正常的
 		 */
 		$autoloader = new LtAutoloader;
+		$autoloader->devMode = false; // 关闭开发模式
 		$autoloader->storeHandle = $cacheHandle;
 		$autoloader->conf["load_function"] = false;
 		$autoloader->autoloadPath = $autoloadPath;
@@ -49,18 +50,20 @@ class PerformanceTuningAutoloader extends PHPUnit_Framework_TestCase
 		$this->assertTrue(class_exists("HelloWorld"));
 
 		/**
-		 * 运行500次，要求在1秒内运行完
+		 * 运行1500次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
-		$times = 500;
+		$times = 1500;
 		$startTime = microtime(true);
 		for($i = 0; $i < $times; $i++)
 		{
 			$autoloader = new LtAutoloader;
+			$autoloader->devMode = false; // 关闭开发模式
 			$autoloader->storeHandle = $cacheHandle;
 			$autoloader->conf["load_function"] = false;
 			$autoloader->autoloadPath = $autoloadPath;
 			$autoloader->init();
+			unset($autoloader);
 		}
 		$endTime = microtime(true);
 		$totalTime = round(($endTime - $startTime), 6);
