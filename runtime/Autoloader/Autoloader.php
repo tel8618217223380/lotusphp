@@ -31,29 +31,30 @@ class LtAutoloader
 
 	public $storeHandle;
 	public $autoloadPath;
-	public $cacheDir;
-	protected $functionFileMapping;
-	protected $fileStore;
+	public $devMode = true;
+	
+	private $functionFileMapping;
+	private $classFileMapping;
+	private $lastFileTime;
+	private $currFileTime;
+	private $failFileMap;
+	private $functionFiles;
 
 	public function init()
 	{
 		if (!is_object($this->storeHandle))
 		{
-			$this->storeHandle = new LtStoreMemory;
-			$this->fileStore = new LtStoreFile;
-			if(!empty($this->cacheDir))
-			{
-				$this->fileStore->storeDir = $this->cacheDir;
-			}
-			$this->fileStore->prefix = 'LtAutoloader-token-cache';
-			$this->fileStore->useSerialize = true;
-			$this->fileStore->init();
+			$this->storeHandle = new LtStoreFile;
+			$prefix = sprintf("%u", crc32(serialize($this->autoloadPath)));
+			$this->storeHandle->prefix = 'Lotus-' . $prefix;
+			$this->storeHandle->useSerialize = true;
+			$this->storeHandle->storeDir = '/tmp/LtAutoloader';
+			$this->storeHandle->init();
 		}
+		$this->lastFileTime = intval($this->storeHandle->get('.last_file_time'));
 		// Whether scanning directory
-		if (0 == $this->storeHandle->get(".class_total") && 0 == $this->storeHandle->get(".function_total"))
+		if ($this->devMode || $this->lastFileTime == 0)
 		{
-			$this->storeHandle->add(".class_total", 0);
-			$this->storeHandle->add(".function_total", 0);
 			$this->storeHandle->add(".functions", array(), 0);
 			$autoloadPath = $this->preparePath($this->autoloadPath);
 			foreach($autoloadPath as $key => $path)
@@ -153,6 +154,25 @@ class LtAutoloader
 	 */
 	protected function scanDirs($dirs)
 	{
+		// 如果函数文件已经删除，将它从自动加载函数列表中剔除
+		$this->functionFiles = $this->storeHandle->get(".functions");
+		if (is_array($this->functionFiles))
+		{
+			foreach ($this->functionFiles as $key => $functionFile)
+			{
+				if ( ! is_file($functionFile) )
+				{
+					unset($this->functionFiles[$key]);
+				}
+			}
+		}
+		else
+		{
+			$this->functionFiles = array();
+		}
+		
+		$this->currFileTime = $this->lastFileTime;
+		$this->failFileMap = false;
 		$i = 0;
 		while (isset($dirs[$i]))
 		{
@@ -182,6 +202,17 @@ class LtAutoloader
 			unset($dirs[$i]);
 			$i ++;
 		} //end while
+
+		if ($this->lastFileTime == 0)
+		{
+			$this->storeHandle->add('.last_file_time', $this->currFileTime);
+		}
+		if ($this->failFileMap == false)
+		{
+			$this->storeHandle->update('.last_file_time', $this->currFileTime);
+		}
+		$this->functionFiles = array();
+		$this->classFileMapping = array();
 	}
 
 	protected function parseLibNames($src)
@@ -239,15 +270,23 @@ class LtAutoloader
 	protected function addClass($className, $file)
 	{
 		$key = strtolower($className);
-		if ($existedClassFile = $this->storeHandle->get($key))
+		$existedClassFile = $this->storeHandle->get($key);
+		if (is_file($existedClassFile) && $existedClassFile != $file)
 		{
 			trigger_error("duplicate class [$className] found in:\n$existedClassFile\n$file\n");
 			return false;
 		}
 		else
 		{
+			if (isset($this->classFileMapping[$key]))
+			{
+				$existedClassFile = $this->classFileMapping[$key];
+				trigger_error("duplicate class [$key] found in:\n$existedClassFile\n$file\n");
+				return false;
+			}
+			$this->classFileMapping[$key] = $file;
 			$this->storeHandle->add($key, $file);
-			$this->storeHandle->update(".class_total", $this->storeHandle->get(".class_total") + 1);
+			$this->storeHandle->update($key, $file);
 			return true;
 		}
 	}
@@ -264,8 +303,13 @@ class LtAutoloader
 		else
 		{
 			$this->functionFileMapping[$functionName] = $file;
-			$this->storeHandle->update(".functions", array_unique(array_values($this->functionFileMapping)));
-			$this->storeHandle->update(".function_total", count($this->functionFileMapping));
+			// 无需在添加时判断函数名冲突，扫描完成后加载所有函数文件时，PHP会自动报告冲突。
+			if ( ! is_array($this->functionFiles) )
+			{
+				$this->functionFiles = array();
+			}
+			$this->functionFiles = array_unique( array_merge($this->functionFiles , array($file) ), SORT_STRING);
+			$this->storeHandle->update('.functions', $this->functionFiles);
 			return true;
 		}
 	}
@@ -277,33 +321,43 @@ class LtAutoloader
 			return false;
 		}
 		$libNames = array();
-		if ($this->fileStore instanceof LtStore)
+		$currFileTime = filemtime($file);
+		if ($this->lastFileTime < $currFileTime)
 		{
-			$cachedFileLastModified = (int) @filemtime($this->fileStore->getFilePath($file));
-			if ($cachedFileLastModified < filemtime($file) || !is_array(($libNames = $this->fileStore->get($file))))
+			$this->currFileTime = max($currFileTime, $this->currFileTime);
+			$libNames = $this->parseLibNames(trim(file_get_contents($file)));
+			// 如果文件不再有函数定义，将它从自动加载函数文件中剔除。
+			if (! array_key_exists('function', $libNames) )
 			{
-				$libNames = $this->parseLibNames(trim(file_get_contents($file)));
-				if (0 < $cachedFileLastModified)
+				if (is_array($this->functionFiles))
 				{
-					$this->fileStore->update($file, $libNames);
-				}
-				else
-				{
-					$this->fileStore->add($file, $libNames);
+					if ($_key = array_search($file, $this->functionFiles))
+					{
+						unset($this->functionFiles[$_key]);
+					}
 				}
 			}
-		}
-		else
-		{
-			$libNames = $this->parseLibNames(trim(file_get_contents($file)));
-		}
-
-		foreach ($libNames as $libType => $libArray)
-		{
-			$method = "function" == $libType ? "addFunction" : "addClass";
-			foreach ($libArray as $libName)
+			foreach ($libNames as $libType => $libArray)
 			{
-				$this->$method($libName, $file);
+				// 同一文件内的类、接口、函数重复定义
+				$_lib = array_count_values($libArray);
+				foreach ($_lib as $_k => $_v)
+				{
+					if ($_v > 1)
+					{
+						trigger_error("duplicate $libType [$_k] found in:$file\n");
+						$this->failFileMap = true;
+					}
+				}
+				
+				$method = "function" == $libType ? "addFunction" : "addClass";
+				foreach ($libArray as $libName)
+				{
+					if(! $this->$method($libName, $file))
+					{
+						$this->failFileMap = true;
+					}
+				}
 			}
 		}
 		return true;
