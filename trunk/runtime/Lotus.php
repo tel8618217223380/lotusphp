@@ -56,18 +56,16 @@ class Lotus
 		{
 			$this->cache_dir = $this->defaultStoreDir;
 		}
-		if (!$this->devMode)
-		{
-			/**
-			 * accelerate LtAutoloader, LtConfig
-			 */
-			$this->coreCacheHandle = new LtStoreFile;
-			$prefix = sprintf("%u", crc32(serialize($this->app_dir)));
-			$this->coreCacheHandle->prefix = 'Lotus-' . $prefix;
-			$this->coreCacheHandle->useSerialize = true;
-			$this->coreCacheHandle->storeDir = $this->cache_dir;
-			$this->coreCacheHandle->init();
-		}
+
+		/**
+		 * accelerate LtAutoloader, LtConfig
+		 */
+		$this->coreCacheHandle = new LtStoreFile;
+		$prefix = sprintf("%u", crc32(serialize($this->app_dir)));
+		$this->coreCacheHandle->prefix = 'Lotus-' . $prefix;
+		$this->coreCacheHandle->useSerialize = true;
+		$this->coreCacheHandle->storeDir = $this->cache_dir;
+		$this->coreCacheHandle->init();
 
 		/**
 		 * Init Autoloader, do this before init all other lotusphp component.
@@ -95,6 +93,8 @@ class Lotus
 	{
 		require_once $this->lotusRuntimeDir . "Autoloader/Autoloader.php";
 		$autoloader = new LtAutoloader;
+		// 设置工作模式
+		$autoloader->devMode = $this->devMode;
 		$autoloader->autoloadPath[] = $this->lotusRuntimeDir;
 		if (isset($this->option["autoload_dir"]))
 		{
@@ -107,15 +107,8 @@ class Lotus
 			is_dir($this->app_dir . 'lib') && $autoloader->autoloadPath[] = $this->app_dir . 'lib';
 		}
 
-		if (!$this->devMode)
-		{
-			$autoloader->storeHandle = clone $this->coreCacheHandle;
-			$autoloader->storeHandle->prefix = $this->coreCacheHandle->prefix.'-cls';
-		}
-		else
-		{
-			$autoloader->cacheDir = $this->cache_dir;
-		}
+		$autoloader->storeHandle = clone $this->coreCacheHandle;
+		$autoloader->storeHandle->prefix = $this->coreCacheHandle->prefix.'-cls';
 		
 		$autoloader->init();
 	}
