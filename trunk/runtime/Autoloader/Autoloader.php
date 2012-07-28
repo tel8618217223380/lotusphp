@@ -303,7 +303,6 @@ class LtAutoloader
 		else
 		{
 			$this->functionFileMapping[$functionName] = $file;
-			// 无需在添加时判断函数名冲突，扫描完成后加载所有函数文件时，PHP会自动报告冲突。
 			if ( ! is_array($this->functionFiles) )
 			{
 				$this->functionFiles = array();
