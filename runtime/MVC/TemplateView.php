@@ -74,7 +74,9 @@ class LtTemplateView
 		{
 			if ($this->autoCompile)
 			{
-				$tpl_include_files = include($objfile);
+				$str = file_get_contents($objfile);
+				$str = substr($str, 8, strpos($str, '?>')-8);
+				$tpl_include_files = explode('|', $str);
 				$last_modified_time = array();
 				foreach($tpl_include_files as $f)
 				{
@@ -115,7 +117,7 @@ class LtTemplateView
 			$str = $this->parse($str);
 			if ($this->autoCompile)
 			{
-				$prefix = "<?php\r\nif(isset(\$iscompile)&&true==\$iscompile)\r\nreturn " . var_export(array_unique($this->tpl_include_files), true) . ";?>";
+				$prefix = "<?php //" . implode('|', $this->tpl_include_files) . "?>";
 				$prefix = preg_replace("/([\r\n])+/", "\r\n", $prefix);
 				$postfix = "\r\n<!--Template compilation time : " . date('Y-m-d H:i:s') . "-->\r\n";
 			}
