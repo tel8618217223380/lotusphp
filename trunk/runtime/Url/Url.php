@@ -2,8 +2,14 @@
 class LtUrl
 {
 	public $configHandle;
-	public $routingTable;
-	public $baseUrl;
+	public $baseUrl = ''; // 例如 $baseUrl=http://www.example.com
+    public $withPath = true; // 默认包含相对路径
+	
+    // module action 的默认值
+	private $default = array('module'=>'default', 'action'=>'index');
+	private $delimiter = '-';// 分隔符
+	private $postfix = '.html';  // 后缀
+	private $protocol = 'STANDARD'; // REWRITE PATH_INFO STANDARD
 
 	public function __construct()
 	{
@@ -21,123 +27,102 @@ class LtUrl
 	}
 	public function init()
 	{
-		$this->routingTable = $this->configHandle->get("router.routing_table");
-		if (empty($this->routingTable))
+		$routingTable = $this->configHandle->get("router.routing_table");
+
+		if (!empty($routingTable))
 		{
-			// 这个默认值要和LtRouter的默认值保持一至
-			$this->routingTable = array('pattern' => ":module/:action/*",
-				'default' => array('module' => 'default', 'action' => 'index'),
-				'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+',
-					'action' => '[a-zA-Z0-9\.\-_]+'
-					),
-				'varprefix' => ':',
-				'delimiter' => '/',
-				'postfix' => '/',
-				'protocol' => 'STANDARD', // REWRITE PATH_INFO STANDARD
-				);
+			if (isset($routingTable['default']))
+			{
+				$this->default = $routingTable['default'];
+			}
+			if (isset($routingTable['delimiter']))
+			{
+				$this->delimiter = $routingTable['delimiter'];
+			}
+			if (isset($routingTable['postfix']))
+			{
+				$this->postfix = $routingTable['postfix'];
+			}
+			if (isset($routingTable['protocol']))
+			{
+				$this->protocol = $routingTable['protocol'];
+			}
 		}
 
-		$protocol = strtoupper($this->routingTable['protocol']);
-		if ('REWRITE' == $protocol)
-		{
-			$this->baseUrl = rtrim(pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME), '\\/') . '/';
-		}
-		else if ('STANDARD' == $protocol)
-		{
-			$this->baseUrl = $_SERVER['PHP_SELF'];
-		}
-		else
-		{
-			$this->baseUrl = '';
-		}
+		$this->protocol = strtoupper($this->protocol);
+	}
+	
+	public function getLink($module, $action, $args = array(), $baseUrl = null)
+	{
+		return $this->generate($module, $action, $args, $baseUrl, 'STANDARD');
 	}
 
-	public function generate($module, $action, $args = array())
+	public function generate($module, $action, $args = array(), $baseUrl = null, $protocol = null)
 	{
-		$args = array_merge(array('module' => $module, 'action' => $action), $args);
-		$url = ''; 
-		// $url = $_SERVER['SERVER_PORT'] == '443' ? 'https://' : 'http://';
-		// $url .= $_SERVER['HTTP_HOST'];
-		// $url .= $_SERVER['SERVER_PORT'] == '80' ? '' : ':'.$_SERVER['SERVER_PORT'];
-		$url .= $this->baseUrl;
-		$url .= $this->reverseMatchingRoutingTable($args);
-		return $url;
+		if ($baseUrl)
+		{
+			$this->baseUrl = $baseUrl;
+		}
+		$protocol = $protocol ? strtoupper($protocol) : $this->protocol;
+		$url = '';
+		switch ($protocol)
+		{
+			case 'REWRITE':
+				$url = $this->withPath ? rtrim(pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME), '\\/') . '/' : '';
+				$url .= $module . $this->delimiter . $action;
+				$url .= $this->build_url($args);
+				break;
+			case 'PATH_INFO':
+				$url = $this->withPath ? $_SERVER['SCRIPT_NAME'] . '/' : '';
+				$old_delimiter = $this->delimiter;
+				$this->delimiter = '/';
+				$url .= $module . '/' . $action;
+				$url .= $this->build_url($args);
+				$this->delimiter = $old_delimiter;
+				break;
+			default :
+				$url = $this->withPath ? $_SERVER['PHP_SELF'] . '?' : '?';
+				$old_delimiter = $this->delimiter;
+				$this->delimiter = '';
+				$old_postfix = $this->postfix;
+				$this->postfix = '';
+				if (!is_array($args))
+				{
+					$args = array();
+				}
+				$arr = array_merge(array('module' => $module, 'action' => $action), $args);
+				$url .= $this->standard_build_url($arr);
+				$this->delimiter = $old_delimiter;
+				$this->postfix = $old_postfix;
+				break;
+		}
+		return $this->baseUrl . $url;
 	}
 
-	/**
-	 * 将变量反向匹配路由表, 返回匹配后的url
-	 * 
-	 * @param array $params 
-	 * @return string 
-	 */
-	public function reverseMatchingRoutingTable($args)
+	private function standard_build_url($arr)
 	{
-		$ret = $this->routingTable['pattern'];
-		$default = $this->routingTable['default'];
-		$reqs = $this->routingTable['reqs'];
-		$delimiter = $this->routingTable['delimiter'];
-		$varprefix = $this->routingTable['varprefix'];
-		$postfix = $this->routingTable['postfix'];
-		$protocol = strtoupper($this->routingTable['protocol']);
-		if ('STANDARD' == $protocol)
+		$url = '';
+		foreach ($arr AS $key=>$value)
 		{
-			return '?' . http_build_query($args, '', '&');
+			$url .= rawurlencode($key) . '=' . rawurlencode($value) . '&';
 		}
-		$pattern = explode($delimiter, trim($this->routingTable['pattern'], $delimiter));
+		return rtrim($url, '&');
+	}
 
-		foreach($pattern as $k => $v)
+	private function build_url($arr)
+	{
+		$url = '';
+		if (!empty($arr) && is_array($arr))
 		{
-			if ($v[0] == $varprefix)
-			{ 
-				// 变量
-				$varname = substr($v, 1); 
-				// 匹配变量
-				if (isset($args[$varname]))
-				{
-					$regex = "/^{$reqs[$varname]}\$/i";
-					if (preg_match($regex, $args[$varname]))
-					{
-						$ret = str_replace($v, $args[$varname], $ret);
-						unset($args[$varname]);
-					}
-				}
-				else if (isset($default[$varname]))
-				{
-					$ret = str_replace($v, $default[$varname], $ret);
-				}
+			foreach ($arr AS $key=>$value)
+			{
+				$key = str_replace($this->delimiter, '%FF', $key);
+				$value = rawurlencode($value);
+				$value = str_replace(rawurlencode($this->delimiter), '%FF', $value);
+				$url .= $key . $this->delimiter . $value . $this->delimiter;
 			}
-			else if ($v[0] == '*')
-			{ 
-				// 通配符
-				$tmp = '';
-				foreach($args as $key => $value)
-				{
-					if (!isset($default[$key]))
-					{
-						$tmp .= $key . $delimiter . rawurlencode($value) . $delimiter;
-					}
-				}
-				$tmp = rtrim($tmp, $delimiter);
-				$ret = str_replace($v, $tmp, $ret);
-				$ret = rtrim($ret, $delimiter);
-			}
-			else
-			{ 
-				// 静态
-			}
+			$url = $this->delimiter . substr($url, 0, -1);
 		}
-		if ('REWRITE' == $protocol)
-		{
-			$ret = $ret . $postfix;
-		}
-		else if ('PATH_INFO' == $protocol)
-		{
-			$ret = $_SERVER['SCRIPT_NAME'] . '/' . $ret . $postfix;
-		}
-		else
-		{
-			$ret = $ret . $postfix;
-		}
-		return $ret;
+		return $url . $this->postfix;
 	}
 }

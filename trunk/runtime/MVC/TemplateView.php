@@ -163,7 +163,8 @@ class LtTemplateView
 		$str = preg_replace("/\{loop\s+(\S+)\s+(\S+)\s+(\S+)\}/e", "\$this->addquote('<?php if(isset(\\1) && is_array(\\1)) foreach(\\1 as \\2=>\\3) { ?>')", $str);
 		$str = preg_replace("/\{\/loop\}/", "<?php } ?>", $str); 
 		// url生成
-		$str = preg_replace("/\{url\(([^}]+)\)\}/", "<?php echo LtObjectUtil::singleton('LtUrl')->generate(\\1);?>", $str); 
+		$str = preg_replace("/\{url\(([^}]+)\)\}/", "<?php echo LtObjectUtil::singleton('LtUrl')->generate(\\1);?>", $str);
+		$str = preg_replace("/\{link\(([^}]+)\)\}/", "<?php echo LtObjectUtil::singleton('LtUrl')->getLink(\\1);?>", $str);
 
 		// 函数
 		$str = preg_replace("/\{([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\s*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str);

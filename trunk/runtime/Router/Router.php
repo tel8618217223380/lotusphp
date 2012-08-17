@@ -4,10 +4,17 @@
  */
 class LtRouter
 {
+	/**
+	 * @var LtConfig
+	 */
 	public $configHandle;
-	public $routingTable;
 	public $module;
 	public $action;
+
+	private $default = array('module'=>'default', 'action'=>'index'); // module action 的默认值
+	private $delimiter = '-';    // 分隔符
+	private $postfix = '.html';  // 后缀
+	private $protocol = 'STANDARD'; // REWRITE PATH_INFO STANDARD
 
 	public function __construct()
 	{
@@ -26,178 +33,182 @@ class LtRouter
 
 	public function init()
 	{
-		$this->routingTable = $this->configHandle->get("router.routing_table");
-		if (empty($this->routingTable))
+		$routingTable = $this->configHandle->get("router.routing_table");
+
+		if (!empty($routingTable))
 		{
-			// 这个默认值要和LtUrl的默认值保持一至
-			$this->routingTable = array('pattern' => ":module/:action/*",
-				'default' => array('module' => 'Default', 'action' => 'Index'),
-				'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+',
-					'action' => '[a-zA-Z0-9\.\-_]+'
-					),
-				'varprefix' => ':',
-				'delimiter' => '/',
-				'postfix' => '/',
-				'protocol' => 'STANDARD', // REWRITE PATH_INFO STANDARD
-					);
+			if (isset($routingTable['default']))
+			{
+				$this->default = $routingTable['default'];
+			}
+			if (isset($routingTable['delimiter']))
+			{
+				$this->delimiter = $routingTable['delimiter'];
+			}
+			if (isset($routingTable['postfix']))
+			{
+				$this->postfix = $routingTable['postfix'];
+			}
+			if (isset($routingTable['protocol']))
+			{
+				$this->protocol = $routingTable['protocol'];
+			}
 		}
 
-		$delimiter = $this->routingTable['delimiter'];
-		$postfix = $this->routingTable['postfix'];
-		$protocol = strtoupper($this->routingTable['protocol']);
-		$module = '';
-		$action = '';
-		$params = array();
-		// HTTP HTTPS
-		if (isset($_SERVER['SERVER_PROTOCOL']))
+		$this->protocol = strtoupper($this->protocol);
+		$this->module = $this->default['module'];
+		$this->action = $this->default['action'];
+
+		if (isset($_SERVER['SERVER_PROTOCOL'])) // HTTP HTTPS
 		{
-			if (isset($_SERVER['PATH_INFO']) && !empty($_SERVER['PATH_INFO']))
-			{
-				// 忽略后缀
-				$url = rtrim($_SERVER['PATH_INFO'], "$postfix");
-				$url = explode($delimiter, trim($url, "/"));
-			}
-			else if (isset($_SERVER['REQUEST_URI']))
-			{
-				if ('REWRITE' == $protocol)
+			$this->routeFromWeb();
+		}
+		else // CLI
+		{
+			$this->routeFromCli();
+		}
+	}
+
+	private function routeFromWeb()
+	{
+		switch ($this->protocol)
+		{
+			case 'REWRITE':
+				if (! $this->isStandardUrl())
 				{
-					if (0 == strcmp($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME']))
-					{
-						$url = array();
-					}
-					else
-					{
-						$url = substr($_SERVER['REQUEST_URI'], strlen(pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME)));
-						$url = rtrim($url, "$postfix");
-						$url = explode($delimiter, trim($url, "/"));
-					}
+					$url = $this->getRewriteUrl();
+					$this->setUrlToGet($url);
 				}
-				else if ('PATH_INFO' == $protocol)
+				break;
+			case 'PATH_INFO':
+				if (! $this->isStandardUrl())
 				{
-					$url = substr($_SERVER['REQUEST_URI'], strlen($_SERVER['SCRIPT_NAME']));
-					$url = rtrim($url, "$postfix");
-					$url = explode($delimiter, trim($url, "/"));
+					$this->delimiter = '/';
+					$url = $this->getPathInfoUrl();
+					$this->setUrlToGet($url);
 				}
-				else // STANDARD
-				{
-					$this->module = isset($_GET['module']) ? $_GET['module'] : $this->routingTable['default']['module'];
-					$this->action = isset($_GET['action']) ? $_GET['action'] : $this->routingTable['default']['action'];
-					return;
-				}
-			}
-			else
-			{
-				$this->module = isset($_GET['module']) ? $_GET['module'] : $this->routingTable['default']['module'];
-				$this->action = isset($_GET['action']) ? $_GET['action'] : $this->routingTable['default']['action'];
-				return;
-			}
-			$params = $this->matchingRoutingTable($url);
-			$module = $params['module'];
-			$action = $params['action'];
+				break;
+			default :
+				$this->delimiter = '';
+				$this->postfix = '';
+				break;
+		}
+		if (isset($_GET['module']))
+		{
+			$this->module = $_GET['module'];
 		}
 		else
 		{
-			// CLI
-			$i = 0;
-			while (isset($_SERVER['argv'][$i]) && isset($_SERVER['argv'][$i + 1]))
-			{
-				if (("-m" == $_SERVER['argv'][$i] || "--module" == $_SERVER['argv'][$i]))
-				{
-					$module = $_SERVER['argv'][$i + 1];
-				}
-				else if (("-a" == $_SERVER['argv'][$i] || "--action" == $_SERVER['argv'][$i]))
-				{
-					$action = $_SERVER['argv'][$i + 1];
-				}
-				else
-				{
-					$key = $_SERVER['argv'][$i];
-					$params[$key] = $_SERVER['argv'][$i + 1];
-				}
-				$i = $i + 2;
-			}
+			$_GET['module'] = $this->module;
 		}
-		// 如果$_GET中不存在配置的变量则添加
-		foreach($params as $k => $v)
+		if (isset($_GET['action']))
 		{
-			!isset($_GET[$k]) && $_GET[$k] = $v;
+			$this->action = $_GET['action'];
 		}
-		$this->module = $module;
-		$this->action = $action;
+		else
+		{
+			$_GET['action'] = $this->action;
+		}
 	}
 
-	/**
-	 * url 匹配路由表
-	 *
-	 * @param  $ [string|array] $url
-	 * @return
-	 * @todo 修复导致$_GET多出属性的BUG
-	 * @todo 如果是rewrite或者path_info模式，可能需要unset module和action两个$_GET变量
-	 */
-	public function matchingRoutingTable($url)
+	private function isStandardUrl()
 	{
-		$ret = $this->routingTable['default']; //初始化返回值为路由默认值
-		$reqs = $this->routingTable['reqs'];
-		$delimiter = $this->routingTable['delimiter'];
-		$varprefix = $this->routingTable['varprefix'];
-		$postfix = $this->routingTable['postfix'];
-		$pattern = explode($delimiter, trim($this->routingTable['pattern'], $delimiter));
-
-		/**
-		 * 预处理url
-		 */
-		if (is_string($url))
+		if (strpos($_SERVER['REQUEST_URI'], '.php?module=') || strpos($_SERVER['REQUEST_URI'], '/?module='))
 		{
-			$url = rtrim($url, $postfix); //忽略后缀
-			$url = explode($delimiter, trim($url, $delimiter));
+			return true;
+		}
+		return false;
+	}
+
+	private function getRewriteUrl()
+	{
+		if (strcmp($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME']))
+		{
+			return substr($_SERVER['REQUEST_URI'], strlen(pathinfo($_SERVER['SCRIPT_NAME'], PATHINFO_DIRNAME)));
+		}
+		return '';
+	}
+
+	/*
+	 * 不使用$_SERVER['PATH_INFO']是因为多个//自动合并成一个/
+	 */
+	private function getPathInfoUrl()
+	{
+		return substr($_SERVER['REQUEST_URI'], strlen($_SERVER['SCRIPT_NAME']));
+	}
+
+	private function setUrlToGet($url)
+	{
+		if (empty($url))
+		{
+			return false;
 		}
 
-		foreach($pattern as $k => $v)
+		$url = str_replace($this->postfix, '', $url);
+		$url = str_replace(array("?", "&", "="), $this->delimiter, $url);
+
+		$arr = explode($this->delimiter, ltrim($url, "/"));
+
+		if (count($arr) > 1)
 		{
-			if ($v[0] == $varprefix)
-			{
-				// 变量
-				$varname = substr($v, 1);
-				// 匹配变量
-				if (isset($url[$k]))
-				{
-					if (isset($reqs[$varname]))
-					{
-						$regex = "/^{$reqs[$varname]}\$/i";
-						if (preg_match($regex, $url[$k]))
-						{
-							$ret[$varname] = $url[$k];
-						}
-					}
-				}
-			}
-			else if ($v[0] == '*')
-			{
-				// 通配符
-				$pos = $k;
-				while (isset($url[$pos]) && isset($url[$pos + 1]))
-				{
-					// 匹配变量
-					if (isset($reqs[$url[$pos]]))
-					{
-						$regex = "/^{$reqs[$url[$pos]]}\$/i";
-						if (preg_match($regex, $url[$pos + 1]))
-						{
-							$ret[$url[$pos]] = urldecode($url[$pos + 1]);
-						}
-					}
-					else
-					{
-						$ret[$url[$pos]] = urldecode($url[$pos + 1]);
-					}
-					$pos = $pos + 2;
-				}
-			}
-			else
-			{
-				// 静态
-			}
+			$this->module = array_shift($arr);
+			$this->action = array_shift($arr);
+			$_GET['module'] = $this->module;
+			$_GET['action'] = $this->action;
+			$this->setValueToGet($arr);
 		}
-		return $ret;
+		return true;
+	}
+
+	private function setValueToGet($arr, $start = 0)
+	{
+		$i = $start;
+		while (isset($arr[$i]) && isset($arr[$i + 1]))
+		{
+			$key = $arr[$i];
+			if ($key !== '')
+			{
+				$arr[$i + 1] = str_replace('%FF', rawurlencode($this->delimiter), $arr[$i + 1]);
+				$key = str_replace('%FF', $this->delimiter, $key);
+				$_GET[$key] = rawurldecode($arr[$i + 1]);
+			}
+			$i = $i + 2;
+		}
+	}
+
+	private function routeFromCli()
+	{
+		$arr = $_SERVER['argv'];
+		array_shift($arr);
+		$i = 0;
+		while (isset($arr[$i]) && isset($arr[$i + 1]))
+		{
+			$key = rawurldecode(ltrim($arr[$i], '-'));
+			$_GET[$key] = rawurldecode($arr[$i + 1]);
+			$i = $i + 2;
+		}
+
+		if (isset($_GET['m']))
+		{
+			$this->module = $_GET['m'];
+		}
+		elseif (isset($_GET['module']))
+		{
+			$this->module = $_GET['module'];
+		}
+
+		if (isset($_GET['a']))
+		{
+			$this->action = $_GET['a'];
+		}
+		elseif (isset($_GET['action']))
+		{
+			$this->action = $_GET['action'];
+		}
+	}
+
+	public function __toString()
+	{
+		return $this->module.'/'.$this->action;
 	}
 }
