@@ -22,19 +22,7 @@ class PerformanceTuningUrl extends PHPUnit_Framework_TestCase
 {
 	public function testPerformance()
 	{ 
-		// 不初始化路由表则使用默认配置如下
-		$config['router.routing_table'] = array('pattern' => ":module/:action/*", // 匹配模板
-			'default' => array('module' => 'default', // 默认值
-				'action' => 'index' // 默认值
-				),
-			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', // 正则匹配
-				'action' => '[a-zA-Z0-9\.\-_]+' // 正则匹配
-				),
-			'varprefix' => ':', // 识别变量的前缀
-			'delimiter' => '/', // 分隔符
-			'postfix' => '', // url后缀
-			'protocol' => '', // STANDARD REWRITE PATH_INFO(默认)
-			); 
+		$config['router.routing_table']['protocol'] = 'rewrite';
 		// 初始化LtUrl
 		$url = new LtUrl;
 		$url->configHandle->addConfig($config);
@@ -42,13 +30,13 @@ class PerformanceTuningUrl extends PHPUnit_Framework_TestCase
 		// 初始化结束
 		// 测试生成超链接
 		$href = $url->generate('news', 'list', array('catid' => 4, 'page' => 10));
-		$this->assertEquals('news/list/catid/4/page/10', $href);
+		$this->assertEquals('/news-list-catid-4-page-10.html', $href);
 
 		/**
-		 * 运行10000次，要求在1秒内运行完
+		 * 运行 10,000 次，要求在1秒内运行完
 		 */
 		$base_memory_usage = memory_get_usage();
-		$times = 1000;
+		$times = 10000;
 		$startTime = microtime(true);
 		for($i = 0; $i < $times; $i++)
 		{
@@ -73,6 +61,8 @@ class PerformanceTuningUrl extends PHPUnit_Framework_TestCase
 	}
 	protected function setUp()
 	{
+		$_SERVER['SCRIPT_NAME'] = '/index.php';
+		$_SERVER['PHP_SELF'] = '/index.php';
 	}
 	protected function tearDown()
 	{
