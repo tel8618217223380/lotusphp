@@ -6,133 +6,117 @@
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "common.inc.php";
 class RightWayToUseUrl extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * 路由表说明
-	 * $routingTable['pattern'] = 匹配模板 
-	 * $routingTable['default'] = 默认值 
-	 * $routingTable['reqs'] = 默认值的正则匹配 
-	 * $routingTable['varprefix'] = 识别变量的前缀 
-	 * $routingTable['delimiter'] = 分隔符 
-	 * $routingTable['postfix'] = url后缀
-	 * $routingTable['protocol'] = STANDARD REWRITE PATH_INFO
-	 */
+
 	public function testMostUsedWay()
-	{ 
-		// 不初始化路由表则使用默认配置如下
-		$config['router.routing_table'] = array(
-			'pattern' => ":module/:action/*", // 匹配模板
-			'default' => array('module' => 'default', // 默认值
-				'action' => 'index' // 默认值
-				),
-			'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', // 正则匹配
-				'action' => '[a-zA-Z0-9\.\-_]+' // 正则匹配
-				),
-			'varprefix' => ':', // 识别变量的前缀
-			'delimiter' => '/', // 分隔符
-			'postfix' => '', // url后缀
-			'protocol' => '', // STANDARD REWRITE PATH_INFO(默认)
-			);
+	{
+		// 默认的module和action的名字
+		$config['router.routing_table']['default'] = array('module' => 'default', 'action' => 'index');
+		// URL中变量的分隔符号
+		$config['router.routing_table']['delimiter'] = '-';
+		// 后缀，常用来将URL模拟成单个文件
+		$config['router.routing_table']['postfix'] = '.html';
+		// REWRITE STANDARD PATH_INFO 三种模式，不分大小写
+		$config['router.routing_table']['protocol'] = 'standard';
+		$configHandle = new LtConfig();
+		$configHandle->addConfig($config);
 
 		// 初始化LtUrl
 		$url = new LtUrl;
-		$url->configHandle->addConfig($config);
+		$url->configHandle = $configHandle;
 		$url->init(); 
 		// 初始化结束
 		// 测试生成超链接
 		$href = $url->generate('news', 'list', array('catid' => 4, 'page' => 10));
-		$this->assertEquals('news/list/catid/4/page/10', $href);
+		$this->assertEquals('/index.php?module=news&action=list&catid=4&page=10', $href);
 	}
-
-	/**
-	 * ============================================================
-	 * 下面是内部接口的测试用例,是给开发者保证质量用的,使用者可以不往下看
-	 * ============================================================
-	 */
-	/**
-	 * 测试解析路由表
-	 * $routingTable['pattern'] = 匹配模板 
-	 * $routingTable['default'] = 默认值 
-	 * $routingTable['reqs'] = 默认值的正则匹配 
-	 * $routingTable['varprefix'] = 识别变量的前缀 
-	 * $routingTable['delimiter'] = 分隔符 
-	 * $routingTable['postfix'] = url后缀 
-	 * 
-	 * 
-	 * 添加新的测试条请增加一个数组 
-	 * array('url', params, routingTable)
-	 */
-	public static function matchDataProvider()
-	{
-		return array(
-			array('news/list/catid/4/page/15',
-				array('module' => 'news', 'action' => 'list', 'catid' => 4, 'page' => 15),
-				array('pattern' => ":module/:action/*",
-					'default' => array('module' => 'default', 'action' => 'index'),
-					'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-					'varprefix' => ':',
-					'delimiter' => '/',
-					'postfix' => '',
-					'protocol' => '',
-					),),
-			array('news-list-catid-5-page-11.html',
-				array('module' => 'news', 'action' => 'list', 'catid' => 5, 'page' => 11),
-				array('pattern' => ":module-:action-*",
-					'default' => array('module' => 'default', 'action' => 'index'),
-					'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-					'varprefix' => ':',
-					'delimiter' => '-',
-					'postfix' => '.html',
-					'protocol' => '',
-					),),
-			array('default/index',
-				array('module' => 'default', 'action' => 'index'),
-				array('pattern' => ":module/:action/*",
-					'default' => array('module' => 'default', 'action' => 'index'),
-					'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-					'varprefix' => ':',
-					'delimiter' => '/',
-					'postfix' => '',
-					'protocol' => '',
-					),),
-			array('default-index.htm',
-				array('module' => 'default', 'action' => 'index'),
-				array('pattern' => ":module-:action-*",
-					'default' => array('module' => 'default', 'action' => 'index'),
-					'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-					'varprefix' => ':',
-					'delimiter' => '-',
-					'postfix' => '.htm',
-					'protocol' => '',
-					),),
-			array('?module=default&action=index',
-				array('module' => 'default', 'action' => 'index'),
-				array('pattern' => ":module-:action-*",
-					'default' => array('module' => 'default', 'action' => 'index'),
-					'reqs' => array('module' => '[a-zA-Z0-9\.\-_]+', 'action' => '[a-zA-Z0-9\.\-_]+'),
-					'varprefix' => ':',
-					'delimiter' => '-',
-					'postfix' => '.htm',
-					'protocol' => 'STANDARD',
-					),),
-			// ADD other
-			);
-	}
-	/**
-	 * 路由反向解析出url
-	 * 
-	 * @dataProvider matchDataProvider
-	 */
-	public function testReverseMatch($userParameter, $expected, $routingTable)
+	
+	public function testOther()
 	{
 		$url = new LtUrl;
-		$config['router.routing_table'] = $routingTable;
-		$url->configHandle->addConfig($config);
-		$url->init(); 
-
-		$this->assertEquals($userParameter, $url->reverseMatchingRoutingTable($expected));
+		$url->init();
+		$params = array(
+				'id' => 123456,
+				'page' => '12',
+				//'void' => null,
+				'q-/key' => '空 -/格',
+				//'empty' => '',
+		);
+		$baseUrl = 'http://localhost';
+		$link = $url->generate('goods', 'detail', $params, $baseUrl, 'rewrite');
+		$this->assertEquals('http://localhost/goods-detail-id-123456-page-12-q%FF/key-%E7%A9%BA%20%FF%2F%E6%A0%BC.html', $link);
+	
+		$baseUrl = 'http://127.0.0.1';
+		$link = $url->generate('goods', 'detail', $params, $baseUrl, 'rewrite');
+		$this->assertEquals('http://127.0.0.1/goods-detail-id-123456-page-12-q%FF/key-%E7%A9%BA%20%FF%2F%E6%A0%BC.html', $link);
+		
+		$link = $url->generate('goods', 'detail', $params, $baseUrl, 'path_info');
+		$this->assertEquals('http://127.0.0.1/index.php/goods/detail/id/123456/page/12/q-%FFkey/%E7%A9%BA%20-%FF%E6%A0%BC.html', $link);
+		
+		$link = $url->generate('goods', 'detail', $params, $baseUrl, 'standard');
+		$this->assertEquals('http://127.0.0.1/index.php?module=goods&action=detail&id=123456&page=12&q-%2Fkey=%E7%A9%BA%20-%2F%E6%A0%BC', $link);
+		
+		$link2 = $url->getLink('goods', 'detail', $params, $baseUrl);
+		$this->assertEquals($link, $link2);
 	}
+
+	public function testPathinfo()
+	{
+		$config['router.routing_table']['protocol'] = 'PATH_INFO';
+		$configHandle = new LtConfig();
+		$configHandle->addConfig($config);
+	
+		$url = new LtUrl;
+		$url->configHandle = $configHandle;
+		$url->init();
+		
+		$params = array(
+				'id' => 123456,
+				'page' => '12',
+				//'void' => null,
+				'q-/key' => '空 -/格',
+				//'empty' => '',
+		);
+		$url->baseUrl = 'http://localhost';
+		$link = $url->generate('goods', 'detail', $params);
+		$this->assertEquals('http://localhost/index.php/goods/detail/id/123456/page/12/q-%FFkey/%E7%A9%BA%20-%FF%E6%A0%BC.html', $link);
+
+		$url->baseUrl = 'http://127.0.0.1';
+		$link = $url->generate('goods', 'detail', $params);
+		$this->assertEquals('http://127.0.0.1/index.php/goods/detail/id/123456/page/12/q-%FFkey/%E7%A9%BA%20-%FF%E6%A0%BC.html', $link);
+		
+	}
+	
+	public function testRewrite()
+	{
+		$config['router.routing_table']['protocol'] = 'REWRITE';
+		$configHandle = new LtConfig();
+		$configHandle->addConfig($config);
+	
+		$url = new LtUrl;
+		$url->configHandle = $configHandle;
+		$url->init();
+	
+		$params = array(
+				'id' => 123456,
+				'page' => '12',
+				//'void' => null,
+				'q-/key' => '空 -/格',
+				//'empty' => '',
+		);
+		$url->baseUrl = 'http://localhost';
+		$link = $url->generate('goods', 'detail', $params);
+		$this->assertEquals('http://localhost/goods-detail-id-123456-page-12-q%FF/key-%E7%A9%BA%20%FF%2F%E6%A0%BC.html', $link);
+	
+		$url->baseUrl = 'http://127.0.0.1';
+		$link = $url->generate('goods', 'detail', $params);
+		$this->assertEquals('http://127.0.0.1/goods-detail-id-123456-page-12-q%FF/key-%E7%A9%BA%20%FF%2F%E6%A0%BC.html', $link);
+	
+	}
+
 	protected function setUp()
 	{
+		$_SERVER['SCRIPT_NAME'] = '/index.php';
+		$_SERVER['PHP_SELF'] = '/index.php';
 	}
 	protected function tearDown()
 	{
