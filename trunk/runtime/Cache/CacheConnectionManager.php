@@ -1,9 +1,32 @@
 <?php
+/**
+ * Cache ConnectionManager
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * 缓存 连接管理器
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Cache
+ */
 class LtCacheConnectionManager
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var LtCacheAdapter 链接适配器实例 */
 	protected $connectionAdapter;
 
+	/**
+	 * 返回适配器名称和连接资源
+	 * @param string $group
+	 * @param string $node
+	 * @param string $role
+	 * @return boolean|array
+	 */
 	public function getConnection($group, $node, $role)
 	{
 		if ($connection = $this->getNewConnection($group, $node, $role))
@@ -20,6 +43,13 @@ class LtCacheConnectionManager
 		}
 	}
 
+	/**
+	 * get new connection
+	 * @param string $group
+	 * @param string $node
+	 * @param string $role
+	 * @return boolean|resource
+	 */
 	protected function getNewConnection($group, $node, $role)
 	{
 		$servers = $this->configHandle->get("cache.servers");

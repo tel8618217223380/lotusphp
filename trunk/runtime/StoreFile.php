@@ -1,10 +1,43 @@
 <?php
+/**
+ * StoreFile
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * LtStore File
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package Lotusphp\Store
+ */
 class LtStoreFile implements LtStore
 {
+	/**
+	 * 存储路径
+	 * @var string
+	 */
 	public $storeDir;
+	/**
+	 * 前缀
+	 * @var string
+	 */
 	public $prefix = 'LtStore';
+	/**
+	 * 是否使用序列化
+	 * @var boolean
+	 */
 	public $useSerialize = false;
+	/**
+	 * 默认存储路径
+	 * @var string
+	 */
 	static public $defaultStoreDir = "/tmp/LtStoreFile/";
+	
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		/**
@@ -23,8 +56,9 @@ class LtStoreFile implements LtStore
 	 * 当key存在时:
 	 * 如果没有过期, 不更新值, 返回 false
 	 * 如果已经过期,   更新值, 返回 true
-	 *
-	 * @return bool
+	 * @param type $key
+	 * @param type $value
+	 * @return boolean
 	 */
 	public function add($key, $value)
 	{
@@ -51,8 +85,8 @@ class LtStoreFile implements LtStore
 
 	/**
 	 * 删除不存在的key返回false
-	 *
-	 * @return bool
+	 * @param string $key
+	 * @return boolean
 	 */
 	public function del($key)
 	{
@@ -70,8 +104,9 @@ class LtStoreFile implements LtStore
 	/**
 	 * 取不存在的key返回false
 	 * 已经过期返回false
-	 *
-	 * @return 成功返回数据,失败返回false
+	 * 成功返回数据,失败返回false
+	 * @param string $key
+	 * @return boolean 
 	 */
 	public function get($key)
 	{
@@ -92,8 +127,9 @@ class LtStoreFile implements LtStore
 	/**
 	 * key不存在 返回false
 	 * 不管有没有过期,都更新数据
-	 *
-	 * @return bool
+	 * @param string $key
+	 * @param string|array|obj $value
+	 * @return boolean
 	 */
 	public function update($key, $value)
 	{
@@ -113,6 +149,11 @@ class LtStoreFile implements LtStore
 		}
 	}
 
+	/**
+	 * 目录哈希
+	 * @param string $key
+	 * @return string
+	 */
 	public function getFilePath($key)
 	{
 		$token = md5($key);

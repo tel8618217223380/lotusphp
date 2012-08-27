@@ -1,14 +1,35 @@
 <?php
+
 /**
+ * LtDbSqlMapResultFactory
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * LtDbSqlMapResultFactory
  * 用于加工DB句柄query方法返回的数组
  * 开发者在一次会话中可配置多个Filter
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\DB\QueryEngine
+ * @subpackage SqlMap
  */
-class LtDbSqlMapResultFactory {
-	// Filter列表
+class LtDbSqlMapResultFactory
+{
+
+	/** @var array Filter列表 */
 	public $filters;
+
+	/** @var LtConfig config handle */
 	public $configHandle;
 
-	public function init() {
+	/**
+	 * init
+	 */
+	public function init()
+	{
 		
 	}
 
@@ -18,7 +39,10 @@ class LtDbSqlMapResultFactory {
 	 * LtAbstractSqlMapFilterObject.process()方法
 	 * 可配置多个process方法
 	 */
-	public function run() {
+	public function run()
+	{
+		
 	}
+
 }
 

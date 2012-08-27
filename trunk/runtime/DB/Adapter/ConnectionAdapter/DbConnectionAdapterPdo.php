@@ -1,6 +1,25 @@
 <?php
+/**
+ * DB Adapter ConnectionAdapter
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * PDO LtDbConnectionAdapter
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\DB\Adapter
+ * @subpackage ConnectionAdapter
+ */
 class LtDbConnectionAdapterPdo implements LtDbConnectionAdapter
 {
+	/**
+	 * connect
+	 * @param array $connConf
+	 * @return \PDO
+	 */
 	public function connect($connConf)
 	{
 		// $option = array(PDO::ATTR_PERSISTENT => true);
@@ -38,25 +57,45 @@ class LtDbConnectionAdapterPdo implements LtDbConnectionAdapter
 		return new PDO($dsn, $connConf['username'], $connConf['password'], $option);
 	}
 
+	/**
+	 * exec
+	 * @param string $sql
+	 * @param resource $connResource
+	 * @return boolean|array|int
+	 */
 	public function exec($sql, $connResource)
 	{
 		return $connResource->exec($sql);
 	}
 
+	/**
+	 * query
+	 * @param string $sql
+	 * @param resource $connResource
+	 * @return array
+	 */
 	public function query($sql, $connResource)
 	{
 		return $connResource->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 	}
 
 	/**
-	 * 
+	 * lasst insert id
 	 * @todo pgsql support
+	 * @param resource $connResource
+	 * @return int
 	 */
 	public function lastInsertId($connResource)
 	{
 		return $connResource->lastInsertId();
 	}
 
+	/**
+	 * escape
+	 * @param string $sql
+	 * @param resource $connResource
+	 * @return string
+	 */
 	public function escape($sql, $connResource)
 	{ 
 		// quote返回值带最前面和最后面的单引号, 这里去掉, DbHandler中加

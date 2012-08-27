@@ -1,32 +1,77 @@
 <?php
+/**
+ * Lotus
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * 胶水代码
+ * @package Lotusphp\Lotus
+ * @category runtime
+ */
 class Lotus
 {
 	/**
-	 * Lotus Option array
-	 * 
-	 * @var array array(
-	 * 	"proj_dir"     =>
-	 * 	"app_name"     =>
-	 * 	"autoload_dir" =>
-	 * );
+	 * Lotus Option
+	 * array("proj_dir"=>string, "app_name"=>string, "autoload_dir"=>array|string)
+	 * @var array 
 	 */
 	public $option;
+	/**
+	 * 是否开发模式
+	 * @var boolean
+	 */
 	public $devMode = true;
+	/**
+	 * 缓存目录
+	 * @var string 
+	 */
 	public $defaultStoreDir;
-	
+	/**
+	 * LtConfig实例句柄
+	 * @var LtConfig
+	 */
 	public $configHandle;
 
+	/**
+	 * 项目目录
+	 * @var string
+	 */
 	protected $proj_dir;
+	/**
+	 * 应用目录
+	 * @var string
+	 */
 	protected $app_dir;
+	/**
+	 * 缓存目录
+	 * @var string
+	 */
 	protected $cache_dir;
+	/**
+	 * lotus框架runtime目录
+	 * @var string
+	 */
 	protected $lotusRuntimeDir;
+	/**
+	 * 缓存类实例句柄
+	 * @var LtStoreFile
+	 */
 	protected $coreCacheHandle;
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 		$this->lotusRuntimeDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	}
 
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		$underMVC = false;
@@ -113,6 +158,9 @@ class Lotus
 		$autoloader->init();
 	}
 
+	/**
+	 * prepare config
+	 */
 	protected function prepareConfig()
 	{
 		$this->configHandle = LtObjectUtil::singleton('LtConfig', false);
@@ -133,6 +181,9 @@ class Lotus
 		}
 	}
 
+	/**
+	 * run mvc
+	 */
 	protected function runMVC()
 	{
 		$router = LtObjectUtil::singleton('LtRouter', false);

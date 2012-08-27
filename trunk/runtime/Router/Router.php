@@ -1,21 +1,43 @@
 <?php
 /**
  * The Router class
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The Router class
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Router
  */
 class LtRouter
 {
-	/**
-	 * @var LtConfig
-	 */
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var string module */
 	public $module;
+	
+	/** @var string action */
 	public $action;
 
-	private $default = array('module'=>'default', 'action'=>'index'); // module action 的默认值
-	private $delimiter = '-';    // 分隔符
-	private $postfix = '.html';  // 后缀
-	private $protocol = 'STANDARD'; // REWRITE PATH_INFO STANDARD
+	/** @var array default module action */
+	private $default = array('module'=>'default', 'action'=>'index');
+	
+	/** @var string delimiter */
+	private $delimiter = '-';
+	
+	/** @var string postfix */
+	private $postfix = '.html';
+	
+	/** @var string For example REWRITE PATH_INFO STANDARD */
+	private $protocol = 'STANDARD';
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 		if (! $this->configHandle instanceof LtConfig)
@@ -31,6 +53,9 @@ class LtRouter
 		}
 	}
 
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		$routingTable = $this->configHandle->get("router.routing_table");
@@ -69,6 +94,9 @@ class LtRouter
 		}
 	}
 
+	/**
+	 * route from http https
+	 */
 	private function routeFromWeb()
 	{
 		switch ($this->protocol)
@@ -111,6 +139,10 @@ class LtRouter
 		}
 	}
 
+	/**
+	 * is standard url
+	 * @return boolean
+	 */
 	private function isStandardUrl()
 	{
 		if (strpos($_SERVER['REQUEST_URI'], '.php?module=') || strpos($_SERVER['REQUEST_URI'], '/?module='))
@@ -120,6 +152,10 @@ class LtRouter
 		return false;
 	}
 
+	/**
+	 * get rewrite url
+	 * @return string
+	 */
 	private function getRewriteUrl()
 	{
 		if (strcmp($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME']))
@@ -129,14 +165,22 @@ class LtRouter
 		return '';
 	}
 
-	/*
+	/**
+	 * get path_info url
 	 * 不使用$_SERVER['PATH_INFO']是因为多个//自动合并成一个/
+	 * 
+	 * @return string
 	 */
 	private function getPathInfoUrl()
 	{
 		return substr($_SERVER['REQUEST_URI'], strlen($_SERVER['SCRIPT_NAME']));
 	}
 
+	/**
+	 * set url to $_GET
+	 * @param string $url
+	 * @return boolean
+	 */
 	private function setUrlToGet($url)
 	{
 		if (empty($url))
@@ -160,6 +204,11 @@ class LtRouter
 		return true;
 	}
 
+	/**
+	 * set value to $_GET
+	 * @param array $arr
+	 * @param int $start
+	 */
 	private function setValueToGet($arr, $start = 0)
 	{
 		$i = $start;
@@ -176,6 +225,9 @@ class LtRouter
 		}
 	}
 
+	/**
+	 * route from cli
+	 */
 	private function routeFromCli()
 	{
 		$arr = $_SERVER['argv'];
@@ -207,6 +259,10 @@ class LtRouter
 		}
 	}
 
+	/**
+	 * return module/action
+	 * @return string
+	 */
 	public function __toString()
 	{
 		return $this->module.'/'.$this->action;

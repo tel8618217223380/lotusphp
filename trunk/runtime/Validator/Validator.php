@@ -1,9 +1,28 @@
 <?php
+/**
+ * validator
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * validator
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Validator
+ */
 class LtValidator
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var array error message */
 	protected $errorMessages;
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 		if (! $this->configHandle instanceof LtConfig)
@@ -19,6 +38,9 @@ class LtValidator
 		}
 	}
 
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		$this->errorMessages = $this->configHandle->get('validator.error_messages');
@@ -118,51 +140,111 @@ class LtValidator
 		return $errorMessages;
 	}
 
+	/**
+	 * ban
+	 * @param string $value
+	 * @param string $ruleValue
+	 * @return boolean
+	 */
 	protected function _ban($value, $ruleValue)
 	{
 		return !preg_match($ruleValue, $value);
 	}
 
+	/**
+	 * mask
+	 * @param string $value
+	 * @param string $ruleValue
+	 * @return boolean
+	 */
 	protected function _mask($value, $ruleValue)
 	{
 		return preg_match($ruleValue, $value);
 	}
 
+	/**
+	 * equal
+	 * @param string $value
+	 * @param string $ruleValue
+	 * @return boolean
+	 */
 	protected function _equal_to($value, $ruleValue)
 	{
 		return $value === $ruleValue;
 	}
 
+	/**
+	 * max length
+	 * @param string $value
+	 * @param string $ruleValue
+	 * @return boolean
+	 */
 	protected function _max_length($value, $ruleValue)
 	{
 		return mb_strlen($value) <= $ruleValue;
 	}
 
+	/**
+	 * min length
+	 * @param string $value
+	 * @param string $ruleValue
+	 * @return boolean
+	 */
 	protected function _min_length($value, $ruleValue)
 	{
 		return mb_strlen($value) >= $ruleValue;
 	}
 
+	/**
+	 * max value
+	 * @param int $value
+	 * @param int $ruleValue
+	 * @return boolean
+	 */
 	protected function _max_value($value, $ruleValue)
 	{
 		return $value <= $ruleValue;
 	}
 
+	/**
+	 * min value
+	 * @param int $value
+	 * @param int $ruleValue
+	 * @return boolean
+	 */
 	protected function _min_value($value, $ruleValue)
 	{
 		return $value >= $ruleValue;
 	}
 
+	/**
+	 * min selected
+	 * @param array $value
+	 * @param int $ruleValue
+	 * @return boolean
+	 */
 	protected function _min_selected($value, $ruleValue)
 	{
 		return count($value) >= $ruleValue;
 	}
 
+	/**
+	 * max selected
+	 * @param array $value
+	 * @param int $ruleValue
+	 * @return boolean
+	 */
 	protected function _max_selected($value, $ruleValue)
 	{
 		return count($value) <= $ruleValue;
 	}
 
+	/**
+	 * required
+	 * @param array|string $value
+	 * @param boolean $ruleValue
+	 * @return boolean
+	 */
 	protected function _required($value, $ruleValue)
 	{
 		if (false == $ruleValue)

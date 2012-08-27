@@ -1,13 +1,35 @@
 <?php
+/**
+ * Cache
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * 缓存
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Cache
+ */
 class LtCache
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
 
+	/** @var string group */
 	public $group;
+	
+	/**  @var string node */
 	public $node;
 
+	/** @var LtCacheHandle cache handle */
 	protected $ch;
 
+	/**
+	 * construct
+	 * @return void 
+	 */
 	public function __construct()
 	{
 		if (! $this->configHandle instanceof LtConfig)
@@ -23,6 +45,10 @@ class LtCache
 		}
 	}
 
+	/**
+	 * init
+	 * @return void 
+	 */
 	public function init()
 	{
 		$this->ch = new LtCacheHandle;
@@ -32,6 +58,11 @@ class LtCache
 		$this->ch->node = $this->getNode();
 	}
 
+	/**
+	 * 表数据入口
+	 * @param string $tableName
+	 * @return \LtCacheTableDataGateway
+	 */
 	public function getTDG($tableName)
 	{
 		$tdg = new LtCacheTableDataGateway;
@@ -40,12 +71,20 @@ class LtCache
 		return $tdg;
 	}
 
+	/**
+	 * 变更节点
+	 * @param string $node
+	 */
 	public function changeNode($node)
 	{
 		$this->node = $node;
 		$this->dbh->node = $node;
 	}
 
+	/**
+	 * 查询当前 组 名称
+	 * @return boolean
+	 */
 	protected function getGroup()
 	{
 		if ($this->group)
@@ -60,6 +99,10 @@ class LtCache
 		return false;
 	}
 
+	/**
+	 * 查询当前 节点 名称
+	 * @return boolean
+	 */
 	protected function getNode()
 	{
 		if ($this->node)

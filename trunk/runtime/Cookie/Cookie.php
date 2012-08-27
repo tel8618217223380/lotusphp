@@ -1,9 +1,28 @@
 <?php
+/**
+ * cookie
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * cookie
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com> Yi Zhao <zhao5908@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Cookie
+ */
 class LtCookie
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var string secret key */
 	private $secretKey;
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 		if (! $this->configHandle instanceof LtConfig)
@@ -19,6 +38,9 @@ class LtCookie
 		}
 	}
 
+	/**
+	 * init
+	 */
 	public function init()
 	{ 
 		$this->secretKey = $this->configHandle->get("cookie.secret_key");
@@ -62,8 +84,9 @@ class LtCookie
 	/**
 	 * Set cookie value to deleted with $name
 	 * 
-	 * @param array $args 
-	 * @return boolean 
+	 * @param string $name
+	 * @param sstring $path
+	 * @param string $domain
 	 */
 	public function delCookie($name, $path = '/', $domain = null)
 	{
@@ -87,7 +110,7 @@ class LtCookie
 	 * Get cookie value with $name
 	 * 
 	 * @param string $name 
-	 * @return mixed 
+	 * @return string|array 
 	 */
 	public function getCookie($name)
 	{
@@ -114,8 +137,12 @@ class LtCookie
 	/**
 	 * Set cookie
 	 * 
-	 * @param array $args 
-	 * @return boolean 
+	 * @param string $name
+	 * @param string|array $value
+	 * @param int $expire
+	 * @param string $path
+	 * @param string $domain
+	 * @param int $secure
 	 */
 	public function setCookie($name, $value = '', $expire = null, $path = '/', $domain = null, $secure = 0)
 	{

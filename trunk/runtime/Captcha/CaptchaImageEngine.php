@@ -1,36 +1,40 @@
 <?php
 /**
- * Lotus Captcha component is inspired by "cool-php-captcha" project
- * http://code.google.com/p/cool-php-captcha
+ * captcha
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * 验证码 图像生成引擎
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Captcha
  */
 class LtCaptchaImageEngine
 {
+	/** @var array config */
 	public $conf;
 
+    /** @var int max word length */
     protected $maxWordLength = 9;
 
-    /**
-     * * Background color in RGB-array
-     */
+    /** @var array Background color in RGB-array */
     protected $backgroundColor = array(255, 255, 255);
 
-    /**
-     * * Foreground colors in RGB-array
-     */
+    /** @var array Foreground colors in RGB-array */
     protected $colors = array(
         array(27, 78, 181), // blue
         array(22, 163, 35), // green
         array(214, 36, 7), // red
         );
 
-    /**
-     * * Shadow color in RGB-array or null
-     */
+    /** @var null|array Shadow color in RGB-array or null */
     protected $shadowColor = null; //array(0, 0, 0);
     
     /**
-     * Font configuration
-     * 
+     * @var array Font configuration
      * - font: TTF file
      * - spacing: relative pixel space between character
      * - minSize: min font size
@@ -46,19 +50,26 @@ class LtCaptchaImageEngine
         'VeraSans' => array('spacing' => -1, 'minSize' => 20, 'maxSize' => 28, 'font' => 'VeraSansBold.ttf'),
         );
 
-    /**
-     * * Wave configuracion in X and Y axes
-     */
+    /** @var int Wave configuracion in X and Y axes */
     protected $Yperiod = 12;
+    
+    /** @var int yamplitude */
     protected $Yamplitude = 14;
+    
+    /** @var int xperiod */
     protected $Xperiod = 11;
+    
+    /** @var int xamplitude */
     protected $Xamplitude = 5;
 
-    /**
-     * * GD image
-     */
+    /** @var resource GD image */
     protected $im;
 
+    /**
+     * draw image
+     * @param string $text
+     * @return resource
+     */
     public function drawImage($text)
     {
         /**
@@ -116,6 +127,8 @@ class LtCaptchaImageEngine
 
     /**
      * Text insertion
+     * @param string $text
+     * @param array $fontcfg
      */
     protected function WriteText($text, $fontcfg = array())
     {

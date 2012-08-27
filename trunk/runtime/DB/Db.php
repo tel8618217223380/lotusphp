@@ -1,12 +1,34 @@
 <?php
+/**
+ * DB
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * Distributed database module
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\DB
+ */
 class LtDb
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
-
+	
+	/** @var string group */
 	public $group;
+	
+	/** @var string node */
 	public $node;
+	
+	/** @var LtDbHandle db handle */
 	protected $dbh;
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 		if (! $this->configHandle instanceof LtConfig)
@@ -22,6 +44,9 @@ class LtDb
 		}
 	}
 
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		$this->dbh = new LtDbHandle;
@@ -32,8 +57,7 @@ class LtDb
 	}
 
 	/**
-	 * 
-	 * 
+	 * get db handle
 	 * @return LtDbHandle
 	 */
 	public function getDbHandle()
@@ -42,8 +66,7 @@ class LtDb
 	}
 
 	/**
-	 * 
-	 * 
+	 * get table data gateway
 	 * @param string $tableName
 	 * @return LtDbTableDataGateway
 	 */
@@ -59,8 +82,7 @@ class LtDb
 	}
 
 	/**
-	 * 
-	 * 
+	 * get sql map client
 	 * @return LtDbSqlMapClient
 	 */
 	public function getSqlMapClient()
@@ -71,12 +93,20 @@ class LtDb
 		return $smc;
 	}
 
+	/**
+	 * change node
+	 * @param string $node
+	 */
 	public function changeNode($node)
 	{
 		$this->node = $node;
 		$this->dbh->node = $node;
 	}
 
+	/**
+	 * get group
+	 * @return boolean
+	 */
 	protected function getGroup()
 	{
 		if ($this->group)
@@ -91,6 +121,10 @@ class LtDb
 		return false;
 	}
 
+	/**
+	 * get node
+	 * @return boolean
+	 */
 	protected function getNode()
 	{
 		if ($this->node)

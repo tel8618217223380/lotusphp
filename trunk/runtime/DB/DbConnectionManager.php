@@ -1,8 +1,21 @@
 <?php
+/**
+ * DB connection mamager
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * connection mamager
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\DB
+ */
 class LtDbConnectionManager
 {
-	/**
-	 * Connection management
+	/** 
+	 * @var array Connection management
 	 * array(
 	 * 	"connection"  => connection resource id,
 	 * 	"expire_time" => expire time,
@@ -11,11 +24,26 @@ class LtDbConnectionManager
 	 * )
 	 */
 	static public $connectionPool;
+	
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var LtDbConnectionAdapter connection adapter */
 	protected $connectionAdapter;
+	
+	/** @var LtDbSqlAdapter sql adapter */
 	protected $sqlAdapter;
+	
+	/** @var array servers */
 	private $servers;
 
+	/**
+	 * get connection
+	 * @param string $group
+	 * @param string $node
+	 * @param string $role
+	 * @return boolean
+	 */
 	public function getConnection($group, $node, $role = "master")
 	{
 		if(empty($this->servers))
@@ -36,11 +64,22 @@ class LtDbConnectionManager
 		}
 	}
 
+	/**
+	 * get connection key
+	 * @param array $connConf
+	 * @return string
+	 */
 	protected function getConnectionKey($connConf)
 	{
 		return $connConf['adapter'] . $connConf['host'] . $connConf['port'] . $connConf['username'] . $connConf['dbname'];
 	}
 
+	/**
+	 * save connection
+	 * @param array $connConf
+	 * @param resource $connection
+	 * @param int $ttl
+	 */
 	protected function saveConnection($connConf, $connection, $ttl)
 	{
 		$connectionInfo = array(
@@ -52,6 +91,13 @@ class LtDbConnectionManager
 		self::$connectionPool[$this->getConnectionKey($connConf)] = $connectionInfo;
 	}
 
+	/**
+	 * get cached connection
+	 * @param string $group
+	 * @param string $node
+	 * @param string $role
+	 * @return boolean
+	 */
 	protected function getCachedConnection($group, $node, $role)
 	{
 		foreach($this->servers[$group][$node][$role] as $hostConfig)
@@ -85,6 +131,13 @@ class LtDbConnectionManager
 		return false;
 	}
 
+	/**
+	 * get new connection
+	 * @param string $group
+	 * @param string $node
+	 * @param string $role
+	 * @return boolean
+	 */
 	protected function getNewConnection($group, $node, $role)
 	{
 		$hostTotal = count($this->servers[$group][$node][$role]);
@@ -129,6 +182,9 @@ class LtDbConnectionManager
 		return false;
 	}
 
+	/**
+	 * change schema
+	 */
 	protected function changeSchema()
 	{
 

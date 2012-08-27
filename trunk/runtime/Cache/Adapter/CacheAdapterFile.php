@@ -1,6 +1,24 @@
 <?php
+/**
+ * CacheAdapterFile
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * 缓存 适配器 File
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Cache\Adapter
+ */
 class LtCacheAdapterFile implements LtCacheAdapter
 {
+	/**
+	 * connect
+	 * @param array $hostConf
+	 * @return \LtStoreFile
+	 */
 	public function connect($hostConf)
 	{
 		$fileStore = new LtStoreFile;
@@ -14,7 +32,16 @@ class LtCacheAdapterFile implements LtCacheAdapter
 		return $fileStore;
 	}
 
-	public function add($key, $value, $ttl = 0, $tableName, $connectionResource)
+	/**
+	 * add
+	 * @param string $key
+	 * @param string|array|object $value
+	 * @param int $ttl
+	 * @param string $tableName
+	 * @param resource $connectionResource
+	 * @return boolean
+	 */
+	public function add($key, $value, $ttl = 0, $tableName = '', $connectionResource = null)
 	{
 		if (0 != $ttl)
 		{
@@ -38,11 +65,25 @@ class LtCacheAdapterFile implements LtCacheAdapter
 		}
 	}
 
+	/**
+	 * del
+	 * @param string $key
+	 * @param string $tableName
+	 * @param resource $connectionResource
+	 * @return type
+	 */
 	public function del($key, $tableName, $connectionResource)
 	{
 		return $connectionResource->del($this->getRealKey($tableName, $key));
 	}
 
+	/**
+	 * get
+	 * @param string $key
+	 * @param string $tableName
+	 * @param resource $connectionResource
+	 * @return boolean
+	 */
 	public function get($key, $tableName, $connectionResource)
 	{
 		$cachedArray = $connectionResource->get($this->getRealKey($tableName, $key));
@@ -56,7 +97,16 @@ class LtCacheAdapterFile implements LtCacheAdapter
 		}
 	}
 
-	public function update($key, $value, $ttl = 0, $tableName, $connectionResource)
+	/**
+	 * update
+	 * @param string $key
+	 * @param string|array|object $value
+	 * @param int $ttl
+	 * @param string $tableName
+	 * @param resource $connectionResource
+	 * @return boolean
+	 */
+	public function update($key, $value, $ttl = 0, $tableName = '', $connectionResource = null)
 	{
 		if (0 != $ttl)
 		{
@@ -65,6 +115,12 @@ class LtCacheAdapterFile implements LtCacheAdapter
 		return $connectionResource->update($this->getRealKey($tableName, $key), array("ttl" => $ttl, "value" => $value));
 	}
 
+	/**
+	 * hash
+	 * @param string $tableName
+	 * @param string $key
+	 * @return string
+	 */
 	protected function getRealKey($tableName, $key)
 	{
 		return $tableName . "-" . $key;

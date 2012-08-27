@@ -1,19 +1,47 @@
 <?php
+
+/**
+ * The Url class
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The Url class
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Url
+ */
 class LtUrl
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
-	public $baseUrl = ''; // 例如 $baseUrl=http://www.example.com
-    public $withPath = true; // 默认包含相对路径
 	
-    // module action 的默认值
-	private $default = array('module'=>'default', 'action'=>'index');
-	private $delimiter = '-';// 分隔符
-	private $postfix = '.html';  // 后缀
-	private $protocol = 'STANDARD'; // REWRITE PATH_INFO STANDARD
+	/** @var string for example $baseUrl=http://www.example.com */
+	public $baseUrl = '';
+	
+	/** @var boolean whether contains relative path,default true */
+	public $withPath = true;
+	
+	/** @var array default module action value */
+	private $default = array('module' => 'default', 'action' => 'index');
+	
+	/** @var string delimiter url */
+	private $delimiter = '-';
+	
+	/** @var string postfix url */
+	private $postfix = '.html';
+	
+	/** @var string for example REWRITE PATH_INFO STANDARD */
+	private $protocol = 'STANDARD';
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
-		if (! $this->configHandle instanceof LtConfig)
+		if (!$this->configHandle instanceof LtConfig)
 		{
 			if (class_exists("LtObjectUtil", false))
 			{
@@ -25,6 +53,10 @@ class LtUrl
 			}
 		}
 	}
+
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		$routingTable = $this->configHandle->get("router.routing_table");
@@ -51,12 +83,29 @@ class LtUrl
 
 		$this->protocol = strtoupper($this->protocol);
 	}
-	
+
+	/**
+	 * get STANDARD url
+	 * @param string $module
+	 * @param string $action
+	 * @param array $args
+	 * @param string $baseUrl
+	 * @return string
+	 */
 	public function getLink($module, $action, $args = array(), $baseUrl = null)
 	{
 		return $this->generate($module, $action, $args, $baseUrl, 'STANDARD');
 	}
 
+	/**
+	 * get REWRITE PATH_INFO STANDARD url
+	 * @param string $module
+	 * @param string $action
+	 * @param array $args
+	 * @param string $baseUrl
+	 * @param string $protocol
+	 * @return string
+	 */
 	public function generate($module, $action, $args = array(), $baseUrl = null, $protocol = null)
 	{
 		if ($baseUrl)
@@ -99,22 +148,32 @@ class LtUrl
 		return $this->baseUrl . $url;
 	}
 
+	/**
+	 * standard build url
+	 * @param array $arr
+	 * @return string
+	 */
 	private function standard_build_url($arr)
 	{
 		$url = '';
-		foreach ($arr AS $key=>$value)
+		foreach ($arr AS $key => $value)
 		{
 			$url .= rawurlencode($key) . '=' . rawurlencode($value) . '&';
 		}
 		return rtrim($url, '&');
 	}
 
+	/**
+	 * build url
+	 * @param array $arr
+	 * @return string
+	 */
 	private function build_url($arr)
 	{
 		$url = '';
 		if (!empty($arr) && is_array($arr))
 		{
-			foreach ($arr AS $key=>$value)
+			foreach ($arr AS $key => $value)
 			{
 				$key = str_replace($this->delimiter, '%FF', $key);
 				$value = rawurlencode($value);
@@ -125,4 +184,5 @@ class LtUrl
 		}
 		return $url . $this->postfix;
 	}
+
 }

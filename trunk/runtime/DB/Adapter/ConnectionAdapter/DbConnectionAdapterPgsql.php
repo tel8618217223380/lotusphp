@@ -1,6 +1,25 @@
 <?php
+/**
+ * DB Adapter ConnectionAdapter
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * PostgreSQL LtDbConnectionAdapter
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\DB\Adapter
+ * @subpackage ConnectionAdapter
+ */
 class LtDbConnectionAdapterPgsql implements LtDbConnectionAdapter
 {
+	/**
+	 * connect
+	 * @param array $connConf
+	 * @return resource
+	 */
 	public function connect($connConf)
 	{
 		if (isset($connConf['pconnect']) && true == $connConf['pconnect'])
@@ -14,12 +33,24 @@ class LtDbConnectionAdapterPgsql implements LtDbConnectionAdapter
 		return $func("host={$connConf['host']} port={$connConf['port']} user={$connConf['username']} password={$connConf['password']}");
 	}
 
+	/**
+	 * exec
+	 * @param string $sql
+	 * @param resource $connResource
+	 * @return array|boolean|int
+	 */
 	public function exec($sql, $connResource)
 	{
 		$result = pg_query($connResource, $sql);
 		return pg_affected_rows($result);
 	}
 
+	/**
+	 * query
+	 * @param string $sql
+	 * @param resource $connResource
+	 * @return array
+	 */
 	public function query($sql, $connResource)
 	{
 		$result = pg_query($connResource, $sql);
@@ -32,6 +63,11 @@ class LtDbConnectionAdapterPgsql implements LtDbConnectionAdapter
 	// CREATE FUNCTION last_insert_id() RETURNS bigint AS $$
 	// SELECT lastval();
 	// $$ LANGUAGE SQL VOLATILE;
+	/**
+	 * last insert id
+	 * @param resource $connResource
+	 * @return int
+	 */
 	public function lastInsertId($connResource)
 	{
 		$result = pg_query($connResource, "SELECT lastval()");
@@ -39,6 +75,12 @@ class LtDbConnectionAdapterPgsql implements LtDbConnectionAdapter
 		return $row[0];
 	}
 
+	/**
+	 * escape
+	 * @param string $sql
+	 * @param resource $connResource
+	 * @return string
+	 */
 	public function escape($sql, $connResource)
 	{
 		return pg_escape_string($sql);

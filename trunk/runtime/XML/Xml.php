@@ -1,22 +1,46 @@
 <?php
+
+/**
+ * LtXml用于解析和生成XML文件
+ * 
+ * @author JiaJun Gao <gaosboy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ * @package Lotusphp\XML
+ */
+
 /**
  *返回码定义
  */
-/* 扩展内部错误 */
+/** 
+ * 扩展内部错误 
+ * @package Lotusphp\XML
+ */
 define("INTERNAL_ERR", -1);
-/* 当前模式下不允许执行该函数 */
+/**
+ *  当前模式下不允许执行该函数 
+ * @package Lotusphp\XML
+ */
 define("WRONG_MODE", 0);
-/* 成功 */
+/**
+ * 成功 
+ * @package Lotusphp\XML
+ */
 define("SUCESS", 1);
 
 /**
  * 模式定义
+ * @package Lotusphp\XML
  */
 define("READMODE", 0);
+/**
+ * 模式定义
+ * @package Lotusphp\XML
+ */
 define("WRITEMODE", 1);
 
 /**
- * @desc LtXml用于解析和生成XML文件
+ * LtXml用于解析和生成XML文件
  * 使用前调用 init() 方法对类进行初始化
  *
  * LtXml提供两个公共方法 getArray() 和 getString
@@ -29,6 +53,9 @@ define("WRITEMODE", 1);
  * 在使用getString() 方法时，传入的格式化数组可
  * 通过 createTag() 方法获得。
  *
+ * @author JiaJun Gao <gaosboy@gmail.com>
+ * @category runtime
+ * @package Lotusphp\XML
  */
 class LtXml {
 	/**
@@ -57,6 +84,12 @@ class LtXml {
 	 */
 	public $version;
 
+	/**
+	 * init
+	 * @param int $mode
+	 * @param string $encoding
+	 * @param string $version
+	 */
 	public function init($mode = 0, $encoding = "UTF-8", $version = "1.0") {
 		$this->mode = $mode;
 
@@ -66,6 +99,11 @@ class LtXml {
 		$this->_getParser($encoding);
 	}
 
+	/**
+	 * get array
+	 * @param string $xmlString
+	 * @return string
+	 */
 	public function getArray($xmlString) {
 		if (READMODE !== $this->mode) {
 			trigger_error("LtXml is on WRITEMODE, and cannot convert XML string to array.");
@@ -157,6 +195,11 @@ class LtXml {
 		return $array;
 	}
 
+	/**
+	 * get string
+	 * @param array $xmlArray
+	 * @return string
+	 */
 	public function getString($xmlArray) {
 		if (WRITEMODE !== $this->mode) {
 			trigger_error("LtXml is on READMODE, and cannot convert array to string.");
@@ -216,6 +259,7 @@ class LtXml {
 	 * @param string cdata 数据
 	 * @param array attr 属性列表
 	 * @param array sub 子标签列表
+	 * @return string
 	 */
 	public function createTag($tag, $cdata = "", $attr = array(), $sub = array()) {
 		$newTag = $this->_getArrayTemplate();
@@ -239,6 +283,10 @@ class LtXml {
 		xml_parser_free($this->_handler);
 	}
 
+	/**
+	 * get parser
+	 * @param string $encoding
+	 */
 	private function _getParser($encoding) {
 		if (in_array($encoding, $this->_supportedEncoding))
 			$this->_handler = xml_parser_create($encoding);
@@ -246,6 +294,11 @@ class LtXml {
 			$this->_handler = NULL;
 	}
 
+	/**
+	 * string to array
+	 * @param string $xmlString
+	 * @return null
+	 */
 	private function _stringToArray($xmlString) {
 		$res = xml_parse_into_struct($this->_handler, $xmlString, $array);
 		if (1 === $res)
@@ -254,6 +307,11 @@ class LtXml {
 			return NULL;
 	}
 
+	/**
+	 * convert entity
+	 * @param string $string
+	 * @return string
+	 */
 	private function _convertEntity($string) {
 		$patterns = array("/</", "/</", "/&/", "/'/", "/\"/");
 		$replacement = array("&lt;", "&gt;", "&amp;", "&apos;", "&quot;");
@@ -261,6 +319,11 @@ class LtXml {
 		return preg_replace($patterns, $replacement, $string);
 	}
 
+	/**
+	 * rconvert entity
+	 * @param string $string
+	 * @return string
+	 */
 	private function _rConvertEntity($string) {
 		$patterns = array("/&lt;/", "/&gt;/", "/&amp;/", "/&apos;/", "/&quot;/");
 		$replacement = array("<", "<", "&", "'", "\"");
@@ -268,14 +331,18 @@ class LtXml {
 		return preg_replace($patterns, $replacement, $string);
 	}
 
+	/**
+	 * get array template
+	 * @return array
+	 */
 	private function _getArrayTemplate() {
 		return array("tag" => "", "attributes" => array(), "sub" => array(), "cdata" => "");
 	}
 
 	/**
 	 * 检测传入的参数是否是一个合法的tag数组
-	 * @return 0 非法
-	 * @return 1 合法
+	 * @param array $tag
+	 * @return \0|int 0 非法 1 合法
 	 */
 	private function _isTag($tag) {
 		if (! is_array($tag)) {

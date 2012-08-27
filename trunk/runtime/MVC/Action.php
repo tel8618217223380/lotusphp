@@ -1,77 +1,76 @@
 <?php
+
 /**
  * The Action class
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The Action class
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\MVC
+ * @abstract
  */
 abstract class LtAction
 {
-	/**
-	 * The context object
-	 * 
-	 * @var LtContext 
-	 */
+	/** @var LtContext The context object */
 	public $context;
 	
-	/**
-	 * 
-	 * 
-	 * @var LtConfig
-	 */
+	/** @var LtConfig config handle*/
 	public $configHandle;
+	
+	/** @var string view dir */
 	public $viewDir;
+	
+	/** @var string view template dir */
 	public $viewTplDir;
+	
+	/** @var boolean is view template auto compile */
 	public $viewTplAutoCompile;
+	
+	/** @var string layour dir */
 	public $layoutDir;
+	
+	/** @var string template name */
 	public $template;
 	
+	/** @var string application dir */
 	public $appDir;
+	
+	/** @var string project dir */
 	public $projDir;
 
-	/**
-	 * The dtd config for validator
-	 * 
-	 * @var array 
-	 */
+	/** @var array The dtd config for validator */
 	protected $dtds = array();
 
-	/**
-	 * The Access Control List
-	 * 
-	 * @var array 
-	 */
+	/** @var array The Access Control List */
 	protected $acl;
 
-	/**
-	 * The current user's roles
-	 * 
-	 * @var array 
-	 */
+	/** @var array The current user's roles */
 	protected $roles = array();
 
-	/**
-	 * A flag to indicate if subclass call LtAction::__construct()
-	 * 
-	 * @var boolean 
-	 */
+	/** @var boolean A flag to indicate if subclass call LtAction::__construct() */
 	protected $constructed = false;
 
-	/**
-	 * The response type
-	 * 
-	 * @var string 
-	 */
+	/** @var string The response type */
 	protected $responseType = "html";
 
-	/**
-	 * Result properties
-	 */
+	/** @var int code */
 	protected $code;
 
+	/** @var string message */
 	protected $message;
 
+	/** @var array data */
 	public $data;
 
+	/** @var LtView|LtTemplateView view instance */
 	protected $view;
 
+	/** @var string layout name */
 	protected $layout;
 
 	/**
@@ -82,6 +81,9 @@ abstract class LtAction
 		$this->constructed = true;
 	}
 
+	/**
+	 * execute chain
+	 */
 	public function executeChain()
 	{
 		if (!$this->constructed)
@@ -183,10 +185,16 @@ abstract class LtAction
 	{
 	}
 
+	/**
+	 * execute
+	 */
 	protected function execute()
 	{
 	}
 
+	/**
+	 * write response
+	 */
 	protected function writeResponse()
 	{
 		switch ($this->responseType)

@@ -1,10 +1,26 @@
 <?php
+/**
+ * DB config builder
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * db config builder
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\DB
+ */
 class LtDbConfigBuilder
 {
+	/** @var array servers */
 	protected $servers = array();
 
+	/** @var array tables */
 	protected $tables = array();
 
+	/** @var array adapters */
 	protected $adapters = array(
 	  //"php_ext"  => array("connection_adapter" => "",        "sql_adapter" => "")
 		"pgsql"      => array("connection_adapter" => "pgsql",   "sql_adapter" => "pgsql"),
@@ -21,6 +37,7 @@ class LtDbConfigBuilder
 		"pdo_sqlite" => array("connection_adapter" => "pdo",     "sql_adapter" => "sqlite"),
 	);
 
+	/** @var array default config */
 	protected $defaultConfig = array(
 		"host"               => "localhost",          //some ip, hostname
 	//"port"             => 3306,
@@ -36,6 +53,7 @@ class LtDbConfigBuilder
 		"sql_adapter"        => null,
 	);
 
+	/** @var array default adapter configs */
 	protected $defaultAdapterConfigs = array(
 		"pgsql" => array(
 			"port"           => 5432,
@@ -53,11 +71,22 @@ class LtDbConfigBuilder
 		),
 	);
 
+	/**
+	 * add single host
+	 * @param array $hostConfig
+	 */
 	public function addSingleHost($hostConfig)
 	{
 		$this->addHost("group_0", "node_0", "master", $hostConfig);
 	}
 
+	/**
+	 * add host
+	 * @param string $groupId
+	 * @param string $nodeId
+	 * @param string $role
+	 * @param array $hostConfig
+	 */
 	public function addHost($groupId, $nodeId = "node_0", $role = "master", $hostConfig)
 	{
 		if (isset($this->servers[$groupId][$nodeId][$role]))
@@ -91,16 +120,27 @@ class LtDbConfigBuilder
 		$this->servers[$groupId][$nodeId][$role][] = $conf;
 	}
 
+	/**
+	 * get servers
+	 * @return array
+	 */
 	public function getServers()
 	{
 		return $this->servers;
 	}
 
+	/**
+	 * get tables
+	 * @return array
+	 */
 	public function getTables()
 	{
 		return $this->tables;
 	}
 
+	/**
+	 * build tables config
+	 */
 	public function buildTablesConfig()
 	{
 
@@ -108,7 +148,9 @@ class LtDbConfigBuilder
 
 	/**
 	 * Convert dbname to schema for: FrontBase, MySQL, mSQL, MS SQL Server, MaxDB, Sybase
-	 * See: http://www.php.net/manual-lookup.php?pattern=_select_db
+	 * @link http://www.php.net/manual-lookup.php?pattern=_select_db
+	 * @param array $conf
+	 * @return array
 	 */
 	protected function convertDbnameToSchema($conf)
 	{

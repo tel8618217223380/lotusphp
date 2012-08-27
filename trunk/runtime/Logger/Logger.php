@@ -1,13 +1,32 @@
 <?php
+/**
+ * Logger
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * Logger
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Logger
+ */
 class LtLogger
 {
+	/** @var array config */
 	public $conf = array(
 		"separator" => "\t",
 		"log_file" => ""
 	);
 
+	/** @var resourc file handle */
 	private $fileHandle;
 
+	/**
+	 * get file handle
+	 * @return resource
+	 */
 	protected function getFileHandle()
 	{
 		if (null === $this->fileHandle)
@@ -26,6 +45,11 @@ class LtLogger
 		return $this->fileHandle;
 	}
 
+	/**
+	 * log
+	 * @param array|string $logData
+	 * @return boolean
+	 */
 	public function log($logData)
 	{
 		if ("" == $logData || array() == $logData)
