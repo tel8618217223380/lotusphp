@@ -51,4 +51,14 @@ class LtAutoloaderProxy extends LtAutoloader
 	{
 		return parent::scanDirs($dir);
 	}
+
+	public function loadFunction()
+	{
+		return parent::loadFunction();
+	}
+
+	public function loadClass($className)
+	{
+		return parent::loadClass($className);
+	}
 }

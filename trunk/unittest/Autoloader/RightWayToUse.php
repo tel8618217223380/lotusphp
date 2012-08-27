@@ -315,7 +315,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testAllowedFile($extArray, $filename, $expected)
 	{
 		$ap = new LtAutoloaderProxy;
-		$ap->conf["allow_file_extension"] = $extArray;
+		$ap->allowFileExtension = $extArray;
 		$this->assertEquals($expected, $ap->addFileMap($filename));
 	}
 
@@ -329,7 +329,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	public function testSkippedDir($dirBlackListArray, $dir, $expected)
 	{
 		$ap = new LtAutoloaderProxy;
-		$ap->conf["skip_dir_names"] = $dirBlackListArray;
+		$ap->skipDirNames = $dirBlackListArray;
 		$ap->scanDirs($dir);
 		$isSkip = $ap->storeHandle->get('hellolotus', $ap->namespace) ? false : true;
 		$this->assertEquals($expected, $isSkip);
@@ -346,9 +346,9 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		// for update
 		$ap->storeHandle->add(".function_total", 0);
 		$ap->storeHandle->add(".functions", array(), 0);
-		$ap->conf["load_function"] = $isLoadFunction;
+		$ap->isLoadFunction = $isLoadFunction;
 		$ap->addFileMap($pathfile);
-		if($ap->conf["load_function"])
+		if($ap->isLoadFunction)
 		{
 			$ap->loadFunction();
 		}
