@@ -1,43 +1,52 @@
 <?php
+
 /**
  * The Component class
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The Component class
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\MVC
+ * @abstract
  */
 abstract class LtComponent
 {
-	/**
-	 * The context object
-	 * 
-	 * @var object 
-	 */
+	/** @var object The context object */
 	public $context;
 
+	/** @var string view dir */
 	public $viewDir;
+	
+	/** @var string view template dir */
 	public $viewTplDir;
+	
+	/** @var boolean is view template auto compile */
 	public $viewTplAutoCompile;
-	/**
-	 * A flag to indicate if subclass call LtComponent::__construct()
-	 * 
-	 * @var boolean 
-	 */
+	
+	/** @var boolean A flag to indicate if subclass call LtComponent::__construct() */
 	public $constructed = false;
-	/**
-	 * The response type
-	 * 
-	 * @var string 
-	 */
+	
+	/** @var string The response type */
 	protected $responseType = "html";
 
-	/**
-	 * Result properties
-	 */
+	/** @var int code Result properties */
 	protected $code;
 
+	/** @var string message */
 	protected $message;
 
+	/** @var array data */
 	public $data;
 
+	/** @var LtView|LtTemplateView view instance */
 	protected $view;
 
+	/** @var string layour name */
 	protected $layout;
 
 	/**
@@ -47,6 +56,10 @@ abstract class LtComponent
 	{
 		$this->constructed = true;
 	}
+	
+	/**
+	 * execute chain
+	 */
 	public function executeChain()
 	{
 		if (!$this->constructed)
@@ -59,6 +72,9 @@ abstract class LtComponent
 		$this->writeResponse();
 	}
 
+	/**
+	 * after construct
+	 */
 	protected function afterConstruct()
 	{
 
@@ -70,10 +86,16 @@ abstract class LtComponent
 	{
 	}
 
+	/**
+	 * execute
+	 */
 	protected function execute()
 	{
 	}
 
+	/**
+	 * write response
+	 */
 	protected function writeResponse()
 	{
 		switch ($this->responseType)

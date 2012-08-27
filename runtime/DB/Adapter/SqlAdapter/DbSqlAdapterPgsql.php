@@ -1,32 +1,81 @@
 <?php
+/**
+ * DB Adapter SqlAdapter
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * PostgreSQL LtDbSqlAdapter
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\DB\Adapter
+ * @subpackage SqlAdapter
+ */
 class LtDbSqlAdapterPgsql implements LtDbSqlAdapter
 {
+	/**
+	 * set charset
+	 * @param string $charset
+	 * @return string
+	 */
 	public function setCharset($charset)
 	{
 		return "SET client_encoding TO '$charset'";
 	}
+	
+	/**
+	 * set schema
+	 * @param string $schema
+	 * @return string
+	 */
 	public function setSchema($schema)
 	{
 		return "SET search_path TO $schema";
 	}
 
+	/**
+	 * begin transaction
+	 * @return string
+	 */
 	public function beginTransaction()
 	{
 		return "";
 	}
+	
+	/**
+	 * commit
+	 * @return string
+	 */
 	public function commit()
 	{
 		return "";
 	}
+	
+	/**
+	 * rollback
+	 * @return string
+	 */
 	public function rollBack()
 	{
 		return "";
 	}
 
+	/**
+	 * show schemas
+	 * @param type $database
+	 */
 	public function showSchemas($database)
 	{
 
 	}
+	
+	/**
+	 * show tables
+	 * @param string $schema
+	 * @return string
+	 */
 	public function showTables($schema)
 	{
 		return "SELECT case when n.nspname='public' then c.relname else n.nspname||'.'||c.relname end as relname 
@@ -37,6 +86,12 @@ class LtDbSqlAdapterPgsql implements LtDbSqlAdapter
 					AND n.nspname NOT LIKE 'pg_toast%'
 				ORDER BY relname";
 	}
+	
+	/**
+	 * show fields
+	 * @param string $table
+	 * @return string
+	 */
 	public function showFields($table)
 	{
 		return "SELECT a.attnum, a.attname AS field, t.typname AS type, 
@@ -57,23 +112,48 @@ class LtDbSqlAdapterPgsql implements LtDbSqlAdapter
 				ORDER BY a.attnum";
 	}
 
+	/**
+	 * limit
+	 * @param int $limit
+	 * @param int $offset
+	 * @return string
+	 */
 	public function limit($limit, $offset)
 	{
 		return " LIMIT $limit OFFSET $offset";
 	}
 
+	/**
+	 * get schemas
+	 * @param type $queryResult
+	 */
 	public function getSchemas($queryResult)
 	{
 		
 	}
+	
+	/**
+	 * get tables
+	 * @param type $queryResult
+	 */
 	public function getTables($queryResult)
 	{
 		
 	}
+	
+	/**
+	 * get fields
+	 * @param type $queryResult
+	 */
 	public function getFields($queryResult)
 	{
 		
 	}
+	
+	/**
+	 * detect query type
+	 * @param type $sql
+	 */
 	public function detectQueryType($sql)
 	{
 		

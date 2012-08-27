@@ -1,18 +1,49 @@
 <?php
+/**
+ * The TemplateView class
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The TemplateView class
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\MVC
+ */
 class LtTemplateView
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var string layout name */
 	public $layout;
+	
+	/** @var string layout dir */
 	public $layoutDir;
 
+	/** @var string template name is module-action */
 	public $template;
+	
+	/** @var string template dir */
 	public $templateDir;
+	
+	/** @var string template dir */
 	public $compiledDir;
 
-	public $autoCompile; // bool
-	public $component; // bool
+	/** @var boolean true 自动编译模板 */
+	public $autoCompile;
+	
+	/** @var boolean 是否是视图中的组件 */
+	public $component;
+	
+	/** @var array 所有的模板包含文件 */
 	private $tpl_include_files;
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 		/**
@@ -25,6 +56,10 @@ class LtTemplateView
 		$this->component = false;
 	}
 
+	/**
+	 * render
+	 * @return null;
+	 */
 	public function render()
 	{
 		if (empty($this->compiledDir))
@@ -209,6 +244,8 @@ class LtTemplateView
 	/**
 	 * 变量加上单引号 
 	 * 如果是数字就不加单引号, 如果已经加上单引号或者双引号保持不变
+	 * @param string $var
+	 * @return string
 	 */
 	protected function addquote($var)
 	{
@@ -230,6 +267,9 @@ class LtTemplateView
 	/**
 	 * 模板中第一行可以写exit函数防止浏览
 	 * 删除行首尾空白, html javascript css注释
+	 * @param string $str
+	 * @param boolean $clear 是否删除注释
+	 * @return string
 	 */
 	protected function removeComments($str, $clear = false)
 	{
@@ -251,6 +291,8 @@ class LtTemplateView
 	/**
 	 * 清除一部分 style script内的注释
 	 * 多行注释内部存在 / 字符就不会清除
+	 * @param string $str
+	 * @return string
 	 */
 	protected function clear($str)
 	{
@@ -273,8 +315,10 @@ class LtTemplateView
 		return $str;
 	}
 	/**
-	 * 
+	 * parse include component
 	 * @todo 注意相互引用的模板嵌套会导致死循环
+	 * @param string $str
+	 * @return string
 	 */
 	protected function parseIncludeComponent($str)
 	{
@@ -300,6 +344,9 @@ class LtTemplateView
 	 * {include "debug_info"}
 	 * {include "debug_info.php"}
 	 * {include $this->templateDir . $this->template}
+	 * 
+	 * @param string $str
+	 * @return string
 	 */
 	private function parseInclude($str)
 	{
@@ -350,6 +397,9 @@ class LtTemplateView
 
 	/**
 	 * 解析多个{component module action}合并成一个文件
+	 *
+	 * @param string $str
+	 * @return string
 	 */
 	private function parseComponent($str)
 	{

@@ -1,9 +1,28 @@
 <?php
+/**
+ * The Pagination class
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The Pagination class
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Pagination
+ */
 class LtPagination
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var array config */
 	public $conf;
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 		if (! $this->configHandle instanceof LtConfig)
@@ -19,6 +38,9 @@ class LtPagination
 		}
 	}
 
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		$this->conf = $this->configHandle->get("pagination.pager");
@@ -60,10 +82,11 @@ class LtPagination
 	}
 
 	/**
-	 * 
-	 * @param  $page int 当前页
-	 * @param  $count int 这个数值是你查询数据库得到的数据总量
-	 * @param  $url string 字串中使用 :page 表示页参数 不在意位置 如/a/:page/c/e
+	 * 输出html格式分布代码
+	 * @param int $page 当前页
+	 * @param int $count 总数，例如你查询数据库得到的数据总量
+	 * @param string $url baseurl使用 :page 表示页参数 不在意位置 如/a/:page/c/e
+	 * @return string
 	 */
 	public function pager($page, $count, $url)
 	{
@@ -82,12 +105,13 @@ class LtPagination
 	}
 
 	/**
-	 * 
-	 * @param  $pagenumber int 当前页
-	 * @param  $pagecount int 总页数
-	 * @return string 
+	 * render pager
+	 * @param int $pagenumber
+	 * @param int $pagecount
+	 * @param string $baseurl
+	 * @return string
 	 */
-	public function renderPager($pagenumber, $pagecount, $baseurl = '?page=:page')
+	private function renderPager($pagenumber, $pagecount, $baseurl = '?page=:page')
 	{
 		$baseurl = urldecode($baseurl);
 		$pager = $this->conf['num_tag_open'];
@@ -177,11 +201,12 @@ class LtPagination
 	}
 
 	/**
-	 * 
-	 * @param  $buttonLabel string 显示文字
-	 * @param  $pagenumber int 当前页
-	 * @param  $pagecount int 总页数
-	 * @return string 
+	 * render button
+	 * @param string $buttonLabel 显示文字
+	 * @param int $pagenumber 当前页
+	 * @param int $pagecount 总页数
+	 * @param type $baseurl
+	 * @return string
 	 */
 	public function renderButton($buttonLabel, $pagenumber, $pagecount, $baseurl = '?page=:page')
 	{

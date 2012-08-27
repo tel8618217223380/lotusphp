@@ -1,47 +1,44 @@
 <?php
+
 /**
- * Database Table abstract
- * 
+ * LtDbTableDataGaateway
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * LtDbTableDataGaateway
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\DB\QueryEngine
+ * @subpackage TableDataGateway
  * @todo pretty join support
  */
 class LtDbTableDataGateway
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var LtDbHandle db handle */
 	public $dbh;
-	/**
-	 * The created field name
-	 * 
-	 * @var string 
-	 */
+
+	/** @var string The created field name */
 	public $createdColumn;
 
-	/**
-	 * The modified field name
-	 * 
-	 * @var string 
-	 */
+	/** @var string The modified field name */
 	public $modifiedColumn;
 
-	/**
-	 * The table name
-	 * 
-	 * @var string 
-	 */
+	/** @var string The table name */
 	public $tableName;
 
-	/**
-	 * The fields array
-	 * 
-	 * @var array 
-	 */
+	/** @var array The fields array */
 	protected $fields;
 
-	/**
-	 * The primary key
-	 * 
-	 * @var string 
-	 */
+	/** @var string The primary key */
 	protected $primaryKey;
+	
+	/** @var array servers */
 	protected $servers;
 
 	/**
@@ -67,7 +64,7 @@ class LtDbTableDataGateway
 			$sql = $this->dbh->sqlAdapter->showFields($this->tableName);
 			$rs = $this->dbh->query($sql);
 			$this->fields = $this->dbh->sqlAdapter->getFields($rs);
-			foreach($this->fields as $field)
+			foreach ($this->fields as $field)
 			{
 				if ($field['primary'] == 1)
 				{
@@ -197,7 +194,7 @@ class LtDbTableDataGateway
 		$insertTemplate = 'INSERT INTO %s (%s) VALUES (%s)';
 		$fields = array();
 		$placeHolders = array();
-		foreach($args as $field => $value)
+		foreach ($args as $field => $value)
 		{
 			if (isset($this->fields[$field]))
 			{
@@ -256,7 +253,7 @@ class LtDbTableDataGateway
 		$fields = array();
 		$bindParameters = array();
 		$placeholderStyle = isset($where['value']) && array_key_exists(0, $where['value']) ? 'questionMark' : 'named';
-		foreach($args as $field => $value)
+		foreach ($args as $field => $value)
 		{
 			if (isset($this->fields[$field]))
 			{
@@ -297,4 +294,5 @@ class LtDbTableDataGateway
 		$sql = sprintf($updateTemplate, $this->tableName, implode(",", $fields), $whereCause);
 		return $this->dbh->query($sql, $bind);
 	}
+
 }

@@ -1,11 +1,31 @@
 <?php
+/**
+ * captcha
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * 验证码
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Captcha
+ */
 class LtCaptcha
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var LtStore store handle */
 	public $storeHandle;
 
+	/** @var LtCaptchaImageEngine or other your defined */
 	public $imageEngine;
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 		if (! $this->configHandle instanceof LtConfig)
@@ -21,6 +41,9 @@ class LtCaptcha
 		}
 	}
 
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		if (!is_object($this->storeHandle))
@@ -31,6 +54,11 @@ class LtCaptcha
 		}
 	}
 
+	/**
+	 * get image resource
+	 * @param string $seed
+	 * @return boolean
+	 */
 	public function getImageResource($seed)
 	{
 		if (empty($seed))
@@ -40,7 +68,9 @@ class LtCaptcha
 		}
 		if (!is_object($this->imageEngine))
 		{
-			if ($imageEngine = $this->configHandle->get("captcha.image_engine"))
+			/** @var string */
+			$imageEngine = $this->configHandle->get("captcha.image_engine");
+			if ($imageEngine)
 			{
 				if (class_exists($imageEngine))
 				{
@@ -63,9 +93,17 @@ class LtCaptcha
 		return $this->imageEngine->drawImage($word);
 	}
 
+	/**
+	 * verify
+	 * @param string $seed
+	 * @param string $userInput
+	 * @return boolean
+	 */
 	public function verify($seed, $userInput)
 	{
-		if ($word = $this->storeHandle->get($seed))
+		/** @var string */
+		$word = $this->storeHandle->get($seed);
+		if ($word)
 		{
 			$this->storeHandle->del($seed);
 			return $userInput === $word;
@@ -76,6 +114,10 @@ class LtCaptcha
 		}
 	}
 
+	/**
+	 * generate rand captcha word
+	 * @return string
+	 */
 	protected function generateRandCaptchaWord()
 	{
 		$allowChars = $this->configHandle->get("captcha.allow_chars");

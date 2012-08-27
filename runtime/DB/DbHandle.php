@@ -1,20 +1,56 @@
 <?php
+/**
+ * DB handle
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * db handle
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\DB
+ */
 class LtDbHandle
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var string group */
 	public $group;
+	
+	/** @var string node */
 	public $node;
+	
+	/** @var string role master or slave */
 	public $role = "master";
+	
+	/** @var LtDbConnectionAdapter db connection adapter */
 	public $connectionAdapter;
+	
+	/** @var resource connection resource */
 	public $connectionResource;
+	
+	/** @var LtDbSqlAdapter sql adapter */
 	public $sqlAdapter;
+	
+	/** @var LtDbConnectionManager db connection manager */
 	protected $connectionManager;
+	
+	/** @var array servers */
 	private $servers;
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 	}
 
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		if(empty($this->servers))
@@ -37,23 +73,31 @@ class LtDbHandle
 		return $this->connectionAdapter->exec($this->sqlAdapter->beginTransaction(), $this->connectionResource);
 	}
 
+	/**
+	 * commit
+	 * @return boolean|int
+	 */
 	public function commit()
 	{
 		return $this->connectionAdapter->exec($this->sqlAdapter->commit(), $this->connectionResource);
 	}
 
+	/**
+	 * rollback
+	 * @return boolean|int
+	 */
 	public function rollBack()
 	{
 		return $this->connectionAdapter->exec($this->sqlAdapter->rollBack(), $this->connectionResource);
 	}
 
 	/**
-	 * Execute an sql query
+	 * Execute an sql query 每次只能执行一条SQL
 	 * 
 	 * @param  $sql 
 	 * @param  $bind 
 	 * @param  $forceUseMaster 
-	 * @return false on query failed
+	 * @return bool|array|int false on query failed
 	 *           --sql type--                         --return value--
 	 *           SELECT, SHOW, DESECRIBE, EXPLAIN     rowset or NULL when no record found
 	 *           INSERT                               the ID generated for an AUTO_INCREMENT column
@@ -107,6 +151,8 @@ class LtDbHandle
 	}
 	/**
 	 * function posted by renlu
+	 * @param string $str
+	 * @return string
 	 */
 	public function escape($str)
 	{
@@ -122,8 +168,8 @@ class LtDbHandle
 	/**
 	 * Generate complete sql from sql template (with placeholder) and parameter
 	 * 
-	 * @param  $sql 
-	 * @param  $parameter 
+	 * @param string $sql 
+	 * @param string $parameter 
 	 * @return string 
 	 * @todo 兼容pgsql等其它数据库，pgsql的某些数据类型不接受单引号引起来的值
 	 */
@@ -151,6 +197,10 @@ class LtDbHandle
 		return $sql;
 	}
 
+	/**
+	 * get current sql adapter
+	 * @return LtDbSqlAdapter
+	 */
 	protected function getCurrentSqlAdapter()
 	{
 		$factory = new LtDbAdapterFactory;
@@ -158,6 +208,12 @@ class LtDbHandle
 		return $factory->getSqlAdapter($this->servers[$this->group][$this->node][$this->role][$host]["sql_adapter"]);
 	}
 
+	/**
+	 * select
+	 * @param string $sql
+	 * @param resource $connResource
+	 * @return null|array
+	 */
 	protected function select($sql, $connResource)
 	{
 		$result = $this->connectionAdapter->query($sql, $connResource);
@@ -171,6 +227,12 @@ class LtDbHandle
 		}
 	}
 
+	/**
+	 * insert
+	 * @param string $sql
+	 * @param LtDbConnectionAdapter $connResource
+	 * @return int|boolean
+	 */
 	protected function insert($sql, $connResource)
 	{
 		if ($result = $this->connectionAdapter->exec($sql, $connResource))
@@ -183,20 +245,35 @@ class LtDbHandle
 		}
 	}
 
+	/**
+	 * change rows
+	 * @param string $sql
+	 * @param LtDbConnectionAdapter $connResource
+	 * @return boolean|int
+	 */
 	protected function changeRows($sql, $connResource)
 	{
 		return $this->connectionAdapter->exec($sql, $connResource);
 	}
 
 	/**
-	 * 
+	 * set session var
 	 * @todo 更新连接缓存
+	 * @param string $sql
+	 * @param LtDbConnectionAdapter $connResource
+	 * @return boolean
 	 */
 	protected function setSessionVar($sql, $connResource)
 	{
 		return false === $this->connectionAdapter->exec($sql, $connResource) ? false : true;
 	}
 
+	/**
+	 * other
+	 * @param string $sql
+	 * @param LtDbConnectionAdapter $connResource
+	 * @return boolean
+	 */
 	protected function other($sql, $connResource)
 	{
 		return false === $this->connectionAdapter->exec($sql, $connResource) ? false : true;

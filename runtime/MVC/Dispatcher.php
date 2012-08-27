@@ -1,19 +1,44 @@
 <?php
+
 /**
  * The Dispatcher class
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The Dispatcher class
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\MVC
  */
 class LtDispatcher
 {
+	/** @var LtConfig config handle */
 	public $configHandle;
+	
+	/** @var string view dir */
 	public $viewDir;
+	
+	/** @var string view template dir */
 	public $viewTplDir;
+	
+	/** @var boolean is view template auto compile */
 	public $viewTplAutoCompile;
+	
+	/** @var array data */
 	public $data;
 	
+	/** @var string application dir */
 	public $appDir;
+	
+	/** @var string project dir */
 	public $projDir;
 
-
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 	}
@@ -21,8 +46,9 @@ class LtDispatcher
 	/**
 	 * Disptach the module/action calling.
 	 *
-	 * @param $module string
-	 * @param $action string
+	 * @param string $module
+	 * @param string $action
+	 * @param LtContext $context
 	 * @return void
 	 * @todo allow one action dispatch another action
 	 */
@@ -34,9 +60,9 @@ class LtDispatcher
 	/**
 	 * Disptach the module/component calling.
 	 *
-	 * @param $module string
-	 * @param $component string
-	 * @param $data mixed
+	 * @param string $module
+	 * @param string $component
+	 * @param LtContext $context
 	 * @return void
 	 */
 	public function dispatchComponent($module, $component, $context = null)
@@ -45,6 +71,13 @@ class LtDispatcher
 		$this->_dispatch($module, $component, $cloneOfContext, "Component");
 	}
 
+	/**
+	 * dispatch
+	 * @param string $module
+	 * @param string $action
+	 * @param LtContext $context
+	 * @param string $classType
+	 */
 	protected function _dispatch($module, $action, $context = null, $classType = "Action")
 	{
 		$classType = ucfirst($classType);
@@ -80,6 +113,9 @@ class LtDispatcher
 		}
 	}
 	
+	/**
+	 * error 404
+	 */
 	protected function error_404()
 	{
 		header("HTTP/1.0 404 Not Found");

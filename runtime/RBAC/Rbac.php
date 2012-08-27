@@ -1,10 +1,28 @@
 <?php
+/**
+ * The Rbac class
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The Rbac class
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\RBAC
+ */
 class LtRbac {
 
+	/** @var LtConfig config handle */
 	public $configHandle;
 
+	/** @var array acl */
 	protected $acl; 
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 		if (! $this->configHandle instanceof LtConfig)
@@ -20,11 +38,20 @@ class LtRbac {
 		}
 	}
 
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		$this->acl = $this->configHandle->get('rbac.acl');
 	}
 
+	/**
+	 * check acl
+	 * @param string $roles
+	 * @param string $resource
+	 * @return boolean
+	 */
 	public function checkAcl($roles, $resource)
 	{
 		$allow = false;

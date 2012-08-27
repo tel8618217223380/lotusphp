@@ -1,15 +1,28 @@
 <?php
+/**
+ * The Context class
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The Context class
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\MVC
+ */
 class LtContext
 {
-	/**
-	 * The uri property
-	 * 
-	 * @var array 
-	 */
+	/** @var array The uri property */
 	public $uri;
 
+	/** @var boolean strip */
 	protected $strip;
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 

@@ -1,13 +1,39 @@
 <?php
+/**
+ * The Session sqlite
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The Session sqlite
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\Session
+ * @subpackage saveHandler
+ */
 class LtSessionSqlite
 {
+	/** @var array config */
 	public $conf;
 
+	/** @var int life time */
 	private $lifeTime; //session.gc_maxlifetime
+	
+	/** @var resource db handle */
 	private $dbHandle;
+	
+	/** @var string db name */
 	private $dbName;
+	
+	/** @var string teble name */
 	private $tableName;
 
+	/**
+	 * init
+	 * @return boolean
+	 */
 	public function init()
 	{
 		if (isset($this->conf['gc_maxlifetime']))
@@ -51,17 +77,32 @@ class LtSessionSqlite
 		return true;
 	}
 
+	/**
+	 * open
+	 * @param string $savePath
+	 * @param string $sessName
+	 * @return boolean
+	 */
 	public function open($savePath, $sessName)
 	{
 		return true;
 	}
 
+	/**
+	 * close
+	 * @return boolean
+	 */
 	public function close()
 	{
 		$this->gc($this->lifeTime);
 		return @sqlite_close($this->dbHandle);
 	}
 
+	/**
+	 * read
+	 * @param string $sessID
+	 * @return string
+	 */
 	public function read($sessID)
 	{
 		$res = sqlite_query("SELECT session_data AS d FROM $this->tableName
@@ -77,6 +118,12 @@ class LtSessionSqlite
 		}
 	}
 
+	/**
+	 * write
+	 * @param string $sessID
+	 * @param string|array|object $sessData
+	 * @return boolean
+	 */
 	public function write($sessID, $sessData)
 	{
 		$newExp = time() + $this->lifeTime;
@@ -111,6 +158,11 @@ class LtSessionSqlite
 		return false;
 	}
 
+	/**
+	 * destroy
+	 * @param string $sessID
+	 * @return boolean
+	 */
 	public function destroy($sessID)
 	{
 		sqlite_exec("DELETE FROM $this->tableName WHERE session_id = '$sessID'", $this->dbHandle);
@@ -121,12 +173,21 @@ class LtSessionSqlite
 		return false;
 	}
 
+	/**
+	 * gc
+	 * @param int $sessMaxLifeTime
+	 * @return boolean
+	 */
 	public function gc($sessMaxLifeTime)
 	{
 		sqlite_exec("DELETE FROM $this->tableName WHERE session_expires < " . time(), $this->dbHandle);
 		return sqlite_changes($this->dbHandle);
 	}
 
+	/**
+	 * run once
+	 * @return boolean
+	 */
 	public function runOnce()
 	{
 		$sql = "SELECT name FROM sqlite_master WHERE type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' AND name='" . $this->tableName . "'";

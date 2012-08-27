@@ -1,8 +1,27 @@
 <?php
+/**
+ * The View class
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * The View class
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\ObjectUtil
+ */
 class LtObjectUtil
 {
+	/** @var object some class instance */
 	static $instances;
-
+	/**
+	 * singleton
+	 * @param string $className
+	 * @param boolean $autoInited Whether init() method call
+	 * @return boolean|\className
+	 */
 	static public function singleton($className, $autoInited = true)
 	{
 		if (empty($className))

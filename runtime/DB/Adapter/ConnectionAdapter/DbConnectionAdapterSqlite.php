@@ -1,13 +1,25 @@
 <?php
 /**
- * Sqlite 预定义了类 SQLiteDatabase 本实现没有使用。 
- * 这里使用的全部是过程函数。 
- * 无论是函数还是类，本实现只支持sqlite的2.x系列版本。 
- * php5.3新增扩展sqlite3用来支持3.x版本。 
- * PDO则同时支持2.x和3.x版本。
+ * DB Adapter ConnectionAdapter
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * sqlite 2 LtDbConnectionAdapter
+ * @author Yi Zhao <zhao5908@gmail.com>
+ * @category runtime
+ * @package   Lotusphp\DB\Adapter
+ * @subpackage ConnectionAdapter
  */
 class LtDbConnectionAdapterSqlite implements LtDbConnectionAdapter
 {
+	/**
+	 * connect
+	 * @param array $connConf
+	 * @return resource
+	 */
 	public function connect($connConf)
 	{
 		if (isset($connConf['pconnect']) && true == $connConf['pconnect'])
@@ -38,6 +50,12 @@ class LtDbConnectionAdapterSqlite implements LtDbConnectionAdapter
 		} 
 	} 
 
+	/**
+	 * exec
+	 * @param string $sql
+	 * @param resource $connResource
+	 * @return int
+	 */
 	public function exec($sql, $connResource)
 	{
 		if(empty($sql))
@@ -54,17 +72,34 @@ class LtDbConnectionAdapterSqlite implements LtDbConnectionAdapter
 		return sqlite_changes($connResource);
 	} 
 
+	/**
+	 * query
+	 * @param string $sql
+	 * @param resource $connResource
+	 * @return array|boolean
+	 */
 	public function query($sql, $connResource)
 	{
 		$result = sqlite_query($connResource, $sql, SQLITE_ASSOC);
 		return sqlite_fetch_all($result, SQLITE_ASSOC);
 	} 
 
+	/**
+	 * last insert id
+	 * @param resource $connResource
+	 * @return int
+	 */
 	public function lastInsertId($connResource)
 	{
 		return sqlite_last_insert_rowid($connResource);
 	} 
 
+	/**
+	 * escape
+	 * @param string $sql
+	 * @param resource $connResource
+	 * @return string
+	 */
 	public function escape($sql, $connResource)
 	{
 		return sqlite_escape_string($sql);

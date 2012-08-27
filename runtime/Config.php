@@ -1,9 +1,33 @@
 <?php
+/**
+ * Config
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @license http://opensource.org/licenses/BSD-3-Clause New BSD License
+ * @version svn:$Id$
+ */
+
+/**
+ * 配置类
+ * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
+ * @category runtime
+ * @package Lotusphp\Config
+ */
 class LtConfig
 {
+	/**
+	 * LtStore接口实例句柄
+	 * @var LtStore
+	 */
 	public $storeHandle;
+	/**
+	 * 配置信息
+	 * @var array
+	 */
 	protected $conf;
 
+	/**
+	 * construct
+	 */
 	public function __construct()
 	{
 		if (!is_object($this->storeHandle))
@@ -12,11 +36,19 @@ class LtConfig
 		}
 	}
 
+	/**
+	 * init
+	 */
 	public function init()
 	{
 		//don't removeme, I am the placeholder
 	}
 
+	/**
+	 * 根据名称读取配置内容
+	 * @param type $key
+	 * @return \LtConfigExpression | value |string
+	 */
 	public function get($key)
 	{
 		$storedConfig = $this->storeHandle->get($key);
@@ -43,6 +75,7 @@ class LtConfig
 	 * 警告
 	 * 这里会包含两个用户定义的配置文件，为了不和配置文件里的变量名发生重名
 	 * 本方法不定义和使用变量名
+	 * @param string $configFile
 	 */
 	public function loadConfigFile($configFile)
 	{
@@ -68,6 +101,10 @@ class LtConfig
 		}
 	}
 
+	/**
+	 * 保存或者更新配置
+	 * @param array $configArray
+	 */
 	public function addConfig($configArray)
 	{
 		foreach($configArray as $key => $value)
