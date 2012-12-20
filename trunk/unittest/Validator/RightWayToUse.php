@@ -57,7 +57,7 @@ class RightWayToUseValidator extends PHPUnit_Framework_TestCase
 		$dtd = $dtds['username'];
 		foreach ($dtd->rules as $ruleKey => $ruleValue)
 		{
-			if ($ruleValue instanceof ConfigExpression)
+			if ($ruleValue instanceof LtConfigExpression)
 			{
 				eval('$_ruleValue = ' . $ruleValue->__toString());
 				$dtd->rules[$ruleKey] = $_ruleValue;
@@ -73,7 +73,7 @@ class RightWayToUseValidator extends PHPUnit_Framework_TestCase
 		$dtd = $dtds['password'];
 		foreach ($dtd->rules as $ruleKey => $ruleValue)
 		{
-			if ($ruleValue instanceof ConfigExpression)
+			if ($ruleValue instanceof LtConfigExpression)
 			{
 				eval('$_ruleValue = ' . $ruleValue->__toString());
 				$dtd->rules[$ruleKey] = $_ruleValue;

@@ -141,7 +141,7 @@ abstract class LtAction
 
 				foreach ($dtd->rules as $ruleKey => $ruleValue)
 				{
-					if ($ruleValue instanceof ConfigExpression)
+					if ($ruleValue instanceof LtConfigExpression)
 					{
 						eval('$_ruleValue = ' . $ruleValue->__toString());
 						$dtd->rules[$ruleKey] = $_ruleValue;
