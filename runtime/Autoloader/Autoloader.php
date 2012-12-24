@@ -26,8 +26,8 @@
  * <ul>
  * <li>目录名和文件名变化引起程序代码变化。</li>
  * <li>Windows和Linux对文件路径的大小写和目录分隔符号的处理不同导致代码在不同平台迁移时出现问题。</li>
- * <li>include_path相对路径的性能低。</li>
- * <li>为了保证不重复包含，使用include_once和require_once导致效率低。</li>
+ * <li>include_path相对路径的性能低（显著地低）。</li>
+ * <li>为了保证不重复包含，使用include_once和require_once导致效率低（不是显著的低）。</li>
  * </ul>
  * @author Jianxiang Qin <TalkativeDoggy@gmail.com> Yi Zhao <zhao5908@gmail.com>
  * @category runtime
