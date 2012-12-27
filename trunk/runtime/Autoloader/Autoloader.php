@@ -398,6 +398,7 @@ class LtAutoloader
 	 * 将文件添加到自动加载的FileMap，
 	 * 添加之前会判断自从上次扫描后有没有修改，若没有修改则无需重复添加，
 	 * 若修改过，则分析文件内容，根据内容中包含的类、接口，函数添加到FileMap
+     * @todo 判断文件是否个性不能仅凭mtime,应该加上filesize或者file hash判断,因为某些情况下(如yum安装或者更新软件包),文件内容变了,mtime却不变
 	 * @param string $file
 	 * @return boolean
 	 */
