@@ -56,7 +56,7 @@ class LtAutoloader
 	 * 若该属性设置为array(".svn", ".setting")，
 	 * 则所有名为".setting"的目录也会被忽略
 	 */
-	public $skipDirNames = array('.svn');
+	public $skipDirNames = array('.svn', '.git');
 
 	/** @var LtStoreFile 存储句柄默认使用 @link LtStoreFile */
 	public $storeHandle;
@@ -75,6 +75,9 @@ class LtAutoloader
 
     /** @var array 类名 -> 文件路径  映射 */
     private $classFileMapping = array();
+
+    /** @var array 定义了函数的文件列表 */
+    private $functionFiles = array();
 
     /** @var LtStoreFile 持久存储句柄,存储文件的get_token_all分析结果/filesize/filehash @link LtStoreFile */
     private $persistentStoreHandle;
@@ -124,7 +127,12 @@ class LtAutoloader
         }
 
 		// Whether scanning directory
-		if (false === $this->storeHandle->get(".lib_file_amount"))
+		if ($storedMap = $this->storeHandle->get("map"))
+        {
+            $this->classFileMapping = $storedMap["classes"];
+            $this->functionFiles = $storedMap["functions"];
+        }
+        else
 		{
             $this->setPersistentStoreHandle();
 			$autoloadPath = $this->preparePath($this->autoloadPath);
@@ -159,9 +167,9 @@ class LtAutoloader
 	 */
 	protected function loadFunctionFiles()
 	{
-		if ($this->isLoadFunction && $functionFiles = $this->storeHandle->get(".functions"))
+		if ($this->isLoadFunction && count($this->functionFiles))
 		{
-			foreach ($functionFiles as $functionFile)
+			foreach ($this->functionFiles as $functionFile)
 			{
 				include_once($functionFile);
 			}
@@ -175,9 +183,9 @@ class LtAutoloader
 	 */
 	protected function loadClass($className)
 	{
-		if ($classFile = $this->storeHandle->get(strtolower($className)))
+		if ($filePath = $this->getFilePathByClassName($className))
 		{
-			include($classFile);
+			include($filePath);
 		}
 	}
 
@@ -280,31 +288,20 @@ class LtAutoloader
 
         if(0 == $this->parseErrorAmount)
         {
-            if(count($this->functionFileMapping))
+            $this->functionFiles = array_unique(array_values($this->functionFileMapping));
+            $map = array("classes" => $this->classFileMapping, "functions" => $this->functionFiles);
+            if ($this->storeHandle->get("map"))
             {
-                if(!$this->storeHandle->add('.functions', array_unique(array_values($this->functionFileMapping))))
-                {
-                    trigger_error("Found saved class mapping, please clean up your cache");
-                }
+                $this->storeHandle->update("map", $map);
             }
-            if(count($this->classFileMapping))
+            else
             {
-                foreach($this->classFileMapping as $class => $filePath)
-                {
-                    if(!$this->storeHandle->add(strtolower($class), $filePath))
-                    {
-                        trigger_error("Found saved class mapping, please clean up your cache");
-                    }
-                }
-            }
-            if (0 < $this->libFileAmount)
-            {
-                $this->storeHandle->add('.lib_file_amount', $this->libFileAmount);
+                $this->storeHandle->add("map", $map);
             }
         }
         else
         {
-            trigger_error($this->parseErrorAmount . " error(s) occoured when scaning and parsing your lib files");
+            trigger_error($this->parseErrorAmount . " error(s) occoured when scanning and parsing your lib files");
         }
 	}
 
@@ -430,15 +427,21 @@ class LtAutoloader
         $savedFileInfo = $this->persistentStoreHandle->get($filePath);
 		if (!isset($savedFileInfo['file_size']) || $savedFileInfo['file_size'] != $fileSize || $savedFileInfo['file_hash'] != $fileHash)
 		{
-            $libNames = $this->parseLibNames(trim(file_get_contents($filePath)));
-			$newFileInfo = array('file_size' => $fileSize, 'file_hash' => $fileHash, 'lib_names' => $libNames);
-            if (isset($savedFileInfo['file_size']))
+            if($libNames = $this->parseLibNames(trim(file_get_contents($filePath))))
             {
-                $this->persistentStoreHandle->update($filePath, $newFileInfo);
+                $newFileInfo = array('file_size' => $fileSize, 'file_hash' => $fileHash, 'lib_names' => $libNames);
+                if (isset($savedFileInfo['file_size']))
+                {
+                    $this->persistentStoreHandle->update($filePath, $newFileInfo);
+                }
+                else
+                {
+                    $this->persistentStoreHandle->add($filePath, $newFileInfo);
+                }
             }
-            else
+			else
             {
-                $this->persistentStoreHandle->add($filePath, $newFileInfo);
+                $this->parseErrorAmount ++;
             }
 		}
         else
@@ -451,9 +454,25 @@ class LtAutoloader
             $method = "function" == $libType ? "addFunction" : "addClass";
             foreach ($libArray as $libName)
             {
-                $this->$method($libName, $filePath);
+                if (!$this->$method($libName, $filePath))
+                {
+                    $this->parseErrorAmount ++;
+                }
             }
         }
 		return true;
 	}
+
+    protected function getFilePathByClassName($className)
+    {
+        $key = strtolower($className);
+        if (isset($this->classFileMapping[$key]))
+        {
+            return $this->classFileMapping[$key];
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
