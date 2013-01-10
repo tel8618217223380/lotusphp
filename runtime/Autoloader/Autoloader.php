@@ -195,7 +195,7 @@ class LtAutoloader
 			return false;
 		}
 		$path = rtrim(realpath($path), '\\/');
-		if ("WINNT" != PHP_OS && preg_match("/\s/i", $path))
+		if (preg_match("/\s/i", $path))
 		{
 			trigger_error("Directory contains space/tab/newline is not supported: {$path}");
 			return false;
