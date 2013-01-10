@@ -172,20 +172,26 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 本用例展示了怎样设置允许加载的文件类型 
 	 * 
 	 * 添加新的测试条请增加一个数组 
-	 * array('允许加载的文件类型', '用于测试的文件名', '正确结果')
+	 * array('允许加载的文件类型', '用于测试的目录', '期望结果')
 	 */
 	public function allowedFileDataProvider()
 	{
+        $cd = dirname(__FILE__);
 		return array(
+            array(
+                array("php"),
+                array("$cd/test_data/is_allowed_file"),
+                true,
+            ),
 			array(
-				array("php3", "php5"),
-				"test_data/is_allowed_file/test.php",
+				array("php3"),
+				array("$cd/test_data/is_allowed_file"),
 				false,
 				),
 
 			array(
-				array("php", "php5"),
-				"test_data/is_allowed_file/test.php5",
+				array("inc", "php5"),
+                array("$cd/test_data/is_allowed_file"),
 				true,
 				),
 			);
@@ -195,7 +201,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 本用例展示了怎样设置禁止扫描的子目录名称
 	 * 
 	 * 添加新的测试条请增加一个数组 
-	 * array(array('禁止扫描的子目录'), '用于测试的目录名', '正确结果')
+	 * array(array('禁止扫描的目录'), '用于测试的目录', '期望结果')
 	 */
 	public function skippedDirDataProvider()
 	{
@@ -204,13 +210,13 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			array(
 				array(".svn", "subdir"),
 				array("$cd/test_data/class_dir_2"),
-				true,
+				false,
 				),
 
 			array(
 				array(".svn", "bak"),
 				array("$cd/test_data/class_dir_2"),
-				false,
+				true,
 				),
 			);
 	} 
@@ -226,14 +232,14 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$cd = dirname(__FILE__); //current dir, 当前目录
 		return array(
 			array(
-				"$cd/test_data/is_load_func/welcome.php", 
+				array("$cd/test_data/is_load_func/sub_dir"),
 				'welcome',
-				true,
+				false,
 				),
 			array(
-				"$cd/test_data/is_load_func/welcome2.php", 
+                array("$cd/test_data/is_load_func/sub_dir2"),
 				'welcome2',
-				false,
+				true,
 				),
 			);
 	} 
@@ -312,11 +318,13 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 
 	 * @dataProvider allowedFileDataProvider
 	 */
-	public function testAllowedFile($extArray, $filename, $expected)
+	public function testAllowedFile($extArray, $dir, $expected)
 	{
 		$ap = new LtAutoloaderProxy;
 		$ap->allowFileExtension = $extArray;
-		$this->assertEquals($expected, $ap->addFileMap($filename));
+        $ap->scanDirs($dir);
+        $foundClass = $ap->storeHandle->get('helloworld') ? true : false;
+		$this->assertEquals($expected, $foundClass);
 	}
 
 	/**
@@ -331,8 +339,8 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap = new LtAutoloaderProxy;
 		$ap->skipDirNames = $dirBlackListArray;
 		$ap->scanDirs($dir);
-		$isSkip = $ap->storeHandle->get('hellolotus', $ap->namespace) ? false : true;
-		$this->assertEquals($expected, $isSkip);
+        $foundClass = $ap->storeHandle->get('hellolotus') ? true : false;
+		$this->assertEquals($expected, $foundClass);
 	}
 
 	/**
@@ -340,18 +348,12 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 * 
 	 * @dataProvider loadFunctionDataProvider
 	 */
-	public function testLoadFunction($pathfile, $function, $isLoadFunction)
+	public function testLoadFunction($dir, $function, $isLoadFunction)
 	{
 		$ap = new LtAutoloaderProxy;
-		// for update
-		$ap->storeHandle->add(".function_total", 0);
-		$ap->storeHandle->add(".functions", array(), 0);
-		$ap->isLoadFunction = $isLoadFunction;
-		$ap->addFileMap($pathfile);
-		if($ap->isLoadFunction)
-		{
-			$ap->loadFunction();
-		}
+        $ap->isLoadFunction = $isLoadFunction;
+        $ap->scanDirs($dir);
+		$ap->loadFunctionFiles();
 		$this->assertEquals($isLoadFunction, function_exists($function));
 	}
 
