@@ -34,7 +34,6 @@
  * @package Lotusphp\Autoloader
  * @todo addClass, addFunction的时候只更新class的成员变量,不操作StoresHandle,全部parse成功才写入StoreHandle
  * @todo 所有class-file mapping当成一个数据写入storeHandle
- * @todo devmode使用StoreMemory,不要使用StoreFile
  */
 class LtAutoloader
 {
@@ -99,27 +98,34 @@ class LtAutoloader
 	{
         $this->storeNameSpaceId = sprintf("%u", crc32(serialize($this->autoloadPath)));
 
-		if ($this->storeHandle instanceof LtStore)
-		{
-            $this->storeHandle->prefix = 'Lt-Autoloader-' . $this->storeNameSpaceId;
-		}
-        else
+        if (true != $this->devMode)
         {
-            if (null == $this->storeHandle)
+            if ($this->storeHandle instanceof LtStore)
             {
-                $this->storeHandle = new LtStoreFile;
                 $this->storeHandle->prefix = 'Lt-Autoloader-' . $this->storeNameSpaceId;
-                $this->storeHandle->useSerialize = true;
-                $this->storeHandle->init();
             }
             else
             {
-                trigger_error("You passed a value to autoloader::storeHandle, but it is NOT an instance of LtStore");
+                if (null == $this->storeHandle)
+                {
+                    $this->storeHandle = new LtStoreFile;
+                    $this->storeHandle->prefix = 'Lt-Autoloader-' . $this->storeNameSpaceId;
+                    $this->storeHandle->useSerialize = true;
+                    $this->storeHandle->init();
+                }
+                else
+                {
+                    trigger_error("You passed a value to autoloader::storeHandle, but it is NOT an instance of LtStore");
+                }
             }
+        }
+        else
+        {
+            $this->storeHandle = new LtStoreMemory;
         }
 
 		// Whether scanning directory
-		if (true == $this->devMode || false === $this->storeHandle->get(".lib_file_amount"))
+		if (false === $this->storeHandle->get(".lib_file_amount"))
 		{
             $this->setPersistentStoreHandle();
 			$autoloadPath = $this->preparePath($this->autoloadPath);
@@ -367,7 +373,6 @@ class LtAutoloader
 		else
 		{
             $this->classFileMapping[$key] = $file;
-			$this->storeHandle->add($key, $file);
 			return true;
 		}
 	}
