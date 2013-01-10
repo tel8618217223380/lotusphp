@@ -1,5 +1,6 @@
 <?php
 $lotusHome = substr(__FILE__, 0, strpos(__FILE__, "unittest"));
+require_once $lotusHome . "unittest/unittest_util.func.php";
 require_once $lotusHome . "runtime/Store.php";
 require_once $lotusHome . "runtime/StoreMemory.php";
 require_once $lotusHome . "runtime/StoreFile.php";
@@ -13,6 +14,7 @@ class LtAutoloaderProxy extends LtAutoloader
 	public function __construct()
 	{
 		$this->storeHandle = new LtStoreMemory;
+        $this->setPersistentStoreHandle();
 	}
 	public function __get($prop)
 	{
@@ -52,9 +54,9 @@ class LtAutoloaderProxy extends LtAutoloader
 		return parent::scanDirs($dir);
 	}
 
-	public function loadFunction()
+	public function loadFunctionFiles()
 	{
-		return parent::loadFunction();
+		return parent::loadFunctionFiles();
 	}
 
 	public function loadClass($className)
