@@ -11,6 +11,7 @@
  * @author Jianxiang Qin <TalkativeDoggy@gmail.com>
  * @category runtime
  * @package Lotusphp\Store
+ * @todo 增加setNameSpace()方法取代LtStore->prefix="", useSerialize
  */
 Interface LtStore
 {
