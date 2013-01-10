@@ -63,4 +63,9 @@ class LtAutoloaderProxy extends LtAutoloader
 	{
 		return parent::loadClass($className);
 	}
+
+    public function getFilePathByClassName($className)
+    {
+        return parent::getFilePathByClassName($className);
+    }
 }

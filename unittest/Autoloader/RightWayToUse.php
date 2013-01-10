@@ -323,8 +323,8 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap = new LtAutoloaderProxy;
 		$ap->allowFileExtension = $extArray;
         $ap->scanDirs($dir);
-        $foundClass = $ap->storeHandle->get('helloworld') ? true : false;
-		$this->assertEquals($expected, $foundClass);
+        $scanned = $ap->getFilePathByClassName("HelloWorld") ?  true : false;
+        $this->assertEquals($expected, $scanned);
 	}
 
 	/**
@@ -339,8 +339,8 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap = new LtAutoloaderProxy;
 		$ap->skipDirNames = $dirBlackListArray;
 		$ap->scanDirs($dir);
-        $foundClass = $ap->storeHandle->get('hellolotus') ? true : false;
-		$this->assertEquals($expected, $foundClass);
+        $scanned = $ap->getFilePathByClassName("HelloLotus") ?  true : false;
+		$this->assertEquals($expected, $scanned);
 	}
 
 	/**
@@ -371,7 +371,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 		$ap->scanDirs($path);
 		foreach($classORfunction as $key=>$value)
 		{
-			$this->assertEquals($pathFile[$key], $ap->storeHandle->get($classORfunction[$key], $ap->namespace));
+			$this->assertEquals($pathFile[$key], $ap->getFilePathByClassName($value));
 		}
 	}
 
