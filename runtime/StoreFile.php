@@ -40,10 +40,6 @@ class LtStoreFile implements LtStore
 	 */
 	public function init()
 	{
-		/**
-		 * 目录不存在和是否可写在调用add是测试
-		 * @todo detect dir is exists and writable
-		 */
 		if (null == $this->storeDir)
 		{
 			$this->storeDir = self::$defaultStoreDir;
@@ -56,8 +52,8 @@ class LtStoreFile implements LtStore
 	 * 当key存在时:
 	 * 如果没有过期, 不更新值, 返回 false
 	 * 如果已经过期,   更新值, 返回 true
-	 * @param type $key
-	 * @param type $value
+	 * @param string $key
+	 * @param mixed $value
 	 * @return boolean
 	 */
 	public function add($key, $value)
