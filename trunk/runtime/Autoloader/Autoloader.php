@@ -32,7 +32,6 @@
  * @author Jianxiang Qin <TalkativeDoggy@gmail.com> Yi Zhao <zhao5908@gmail.com>
  * @category runtime
  * @package Lotusphp\Autoloader
- * @todo addClass, addFunction的时候只更新class的成员变量,不操作StoresHandle,全部parse成功才写入StoreHandle
  * @todo 所有class-file mapping当成一个数据写入storeHandle
  */
 class LtAutoloader
@@ -283,7 +282,20 @@ class LtAutoloader
         {
             if(count($this->functionFileMapping))
             {
-                $this->storeHandle->add('.functions', array_unique(array_values($this->functionFileMapping)));
+                if(!$this->storeHandle->add('.functions', array_unique(array_values($this->functionFileMapping))))
+                {
+                    trigger_error("Found saved class mapping, please clean up your cache");
+                }
+            }
+            if(count($this->classFileMapping))
+            {
+                foreach($this->classFileMapping as $class => $filePath)
+                {
+                    if(!$this->storeHandle->add(strtolower($class), $filePath))
+                    {
+                        trigger_error("Found saved class mapping, please clean up your cache");
+                    }
+                }
             }
             if (0 < $this->libFileAmount)
             {
