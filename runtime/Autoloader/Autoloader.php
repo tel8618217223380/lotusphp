@@ -34,6 +34,7 @@
  * @package Lotusphp\Autoloader
  * @todo addClass, addFunction的时候只更新class的成员变量,不操作StoresHandle,全部parse成功才写入StoreHandle
  * @todo 所有class-file mapping当成一个数据写入storeHandle
+ * @todo devmode使用StoreMemory,不要使用StoreFile
  */
 class LtAutoloader
 {
@@ -247,33 +248,26 @@ class LtAutoloader
 			$files = scandir($dir);
 			foreach ($files as $file)
 			{
-				if (in_array($file, array(".", "..")) || in_array($file, $this->skipDirNames))
-				{
-					continue;
-				}
-                else
+                $currentFile = $dir . DIRECTORY_SEPARATOR . $file;
+                if (is_file($currentFile))
                 {
-                    $currentFile = $dir . DIRECTORY_SEPARATOR . $file;
-                    if (is_file($currentFile))
+                    $this->addFileMap($currentFile);
+                }
+                else if (is_dir($currentFile))
+                {
+                    if (in_array($file, array(".", "..")) || in_array($file, $this->skipDirNames))
                     {
-                        if (in_array(pathinfo($file, PATHINFO_EXTENSION), $this->allowFileExtension))
-                        {
-                            $this->addFileMap($currentFile);
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                        continue;
                     }
-                    else if (is_dir($currentFile))
+                    else
                     {
                         // if $currentFile is a directory, pass through the next loop.
                         $dirs[] = $currentFile;
                     }
-                    else
-                    {
-                        trigger_error("$currentFile is not a file or a directory.");
-                    }
+                }
+                else
+                {
+                    trigger_error("$currentFile is not a file or a directory.");
                 }
 			} //end foreach
 			$i ++;
@@ -409,6 +403,10 @@ class LtAutoloader
 	 */
 	protected function addFileMap($filePath)
 	{
+        if (!in_array(pathinfo($filePath, PATHINFO_EXTENSION), $this->allowFileExtension))
+        {//init()会调用这个方法, 不要将这个判断移动到scanDir()中
+            return false;
+        }
         $fileSize = filesize($filePath);
         $fileHash = md5_file($filePath);
 
