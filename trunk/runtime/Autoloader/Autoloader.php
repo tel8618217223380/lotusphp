@@ -88,9 +88,6 @@ class LtAutoloader
     /** @var int number of parse error */
     private $parseErrorAmount = 0;
 
-    /** @var int number of library files successfully parsed */
-    private $libFileAmount = 0;
-
 	/**
 	 * 递归扫描指定的目录列表，根据@see LtAutoloader::$isLoadFunction是否加载全部的函数定义文件。
 	 * 注册自动加载函数，按需加载类文件。
@@ -250,7 +247,7 @@ class LtAutoloader
 	 * 递归扫描目录包含子目录，保存自动加载的文件地图。
 	 * @param array $dirs one-dimensional
 	 * @return void
-     * @todo in_array换成array_key_exists以提升性能
+     * @todo in_array换成array_key_exists以提升性能(autoloadPath不能传文件名,要不单元测试代码不太好写)
 	 */
 	protected function scanDirs($dirs)
 	{
@@ -422,14 +419,14 @@ class LtAutoloader
             return false;
         }
         $fileSize = filesize($filePath);
-        $fileHash = md5_file($filePath);
+        $fileChecksum = crc32($filePath);
 
         $savedFileInfo = $this->persistentStoreHandle->get($filePath);
-		if (!isset($savedFileInfo['file_size']) || $savedFileInfo['file_size'] != $fileSize || $savedFileInfo['file_hash'] != $fileHash)
+		if (!isset($savedFileInfo['file_size']) || $savedFileInfo['file_size'] != $fileSize || $savedFileInfo['file_checksum'] != $fileChecksum)
 		{
-            if($libNames = $this->parseLibNames(trim(file_get_contents($filePath))))
+            if($libNames = $this->parseLibNames(file_get_contents($filePath)))
             {
-                $newFileInfo = array('file_size' => $fileSize, 'file_hash' => $fileHash, 'lib_names' => $libNames);
+                $newFileInfo = array('file_size' => $fileSize, 'file_checksum' => $fileChecksum, 'lib_names' => $libNames);
                 if (isset($savedFileInfo['file_size']))
                 {
                     $this->persistentStoreHandle->update($filePath, $newFileInfo);
