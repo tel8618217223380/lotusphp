@@ -221,28 +221,7 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 			);
 	} 
 
-	/**
-	 * 本用例展示了怎样设置是否自动加载函数文件
-	 * 
-	 * 添加新的测试条请增加一个数组 
-	 * array('文件', '函数名', '是否加载')
-	 */
-	public function loadFunctionDataProvider()
-	{
-		$cd = dirname(__FILE__); //current dir, 当前目录
-		return array(
-			array(
-				array("$cd/test_data/is_load_func/sub_dir"),
-				'welcome',
-				false,
-				),
-			array(
-                array("$cd/test_data/is_load_func/sub_dir2"),
-				'welcome2',
-				true,
-				),
-			);
-	} 
+
 
 /**
  * ============================================================
@@ -250,7 +229,28 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
  * 使用者可以不往下看
  * ============================================================
  */
-	/**
+    /**
+     * 测试自动加载function文件
+     *
+     * 添加新的测试条请增加一个数组
+     * array('文件', '函数名')
+     */
+    public function loadFunctionDataProvider()
+    {
+        $cd = dirname(__FILE__); //current dir, 当前目录
+        return array(
+            array(
+                array("$cd/test_data/is_load_func/sub_dir"),
+                'welcome',
+            ),
+            array(
+                array("$cd/test_data/is_load_func/sub_dir2"),
+                'welcome2',
+            ),
+        );
+    }
+
+    /**
 	 * 测试scanDirs()扫描目录 
 	 * 
 	 * 添加新的测试条请增加一个数组 
@@ -344,17 +344,16 @@ class RightWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * 测试 conf->isLoadFunction 能否加载函数文件 
+	 * 测试能否加载函数文件
 	 * 
 	 * @dataProvider loadFunctionDataProvider
 	 */
-	public function testLoadFunction($dir, $function, $isLoadFunction)
+	public function testLoadFunction($dir, $function)
 	{
 		$ap = new LtAutoloaderProxy;
-        $ap->isLoadFunction = $isLoadFunction;
         $ap->scanDirs($dir);
 		$ap->loadFunctionFiles();
-		$this->assertEquals($isLoadFunction, function_exists($function));
+		$this->assertEquals(true, function_exists($function));
 	}
 
 	/**

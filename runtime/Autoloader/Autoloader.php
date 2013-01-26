@@ -32,17 +32,9 @@
  * @author Jianxiang Qin <TalkativeDoggy@gmail.com> Yi Zhao <zhao5908@gmail.com>
  * @category runtime
  * @package Lotusphp\Autoloader
- * @todo 所有class-file mapping当成一个数据写入storeHandle
  */
 class LtAutoloader
 {
-	/** 
-	 * @var bool true|false 是否自动加载定义了函数的文件。
-	 * false 只自动加载定义了class或者interface的文件。
-	 * true （默认） 自动加载定义了函数的文件。
-	 */
-	public $isLoadFunction = true;
-	
 	/**
 	 * @var array 要扫描的文件类型
 	 * 若该属性设置为array("php","inc","php3")，
@@ -89,7 +81,7 @@ class LtAutoloader
     private $parseErrorAmount = 0;
 
 	/**
-	 * 递归扫描指定的目录列表，根据@see LtAutoloader::$isLoadFunction是否加载全部的函数定义文件。
+	 * 递归扫描指定的目录列表，加载全部的函数定义文件。
 	 * 注册自动加载函数，按需加载类文件。
 	 * @return void
 	 */
@@ -157,14 +149,13 @@ class LtAutoloader
     }
 
 	/**
-	 * Autoloader扫描项目，若某个php文件中定义了函数，则此文件的绝对路径被缓存，
-	 * 每次执行LtAutoloader->init()方法时，自动include所有定义了函数的php文件。
+	 * 自动include所有定义了函数的php文件。
      * 因为PHP的Autoload机制是针对Class的.function文件没有办法按需加载
 	 * @return void
 	 */
 	protected function loadFunctionFiles()
 	{
-		if ($this->isLoadFunction && count($this->functionFiles))
+		if (count($this->functionFiles))
 		{
 			foreach ($this->functionFiles as $functionFile)
 			{
@@ -307,6 +298,7 @@ class LtAutoloader
      * @param string $src
      * @return array
      * @todo 若当前文件包含了直接执行的php语句,或者html,输出警告
+     * @todo 若类库文件没有省略唯一一个“?>”标签，输出警告
      * @todo 若当前文件有语法错误,抛出异常
      */
 	protected function parseLibNames($src)
