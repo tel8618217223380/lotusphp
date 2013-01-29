@@ -77,9 +77,6 @@ class LtAutoloader
     /** @var int store name space id */
     private $storeNameSpaceId;
 
-    /** @var int number of parse error */
-    private $parseErrorAmount = 0;
-
 	/**
 	 * 递归扫描指定的目录列表，加载全部的函数定义文件。
 	 * 注册自动加载函数，按需加载类文件。
@@ -274,22 +271,15 @@ class LtAutoloader
 			$i ++;
 		} //end while
 
-        if(0 == $this->parseErrorAmount)
+        $this->functionFiles = array_unique(array_values($this->functionFileMapping));
+        $map = array("classes" => $this->classFileMapping, "functions" => $this->functionFiles);
+        if ($this->storeHandle->get("map"))
         {
-            $this->functionFiles = array_unique(array_values($this->functionFileMapping));
-            $map = array("classes" => $this->classFileMapping, "functions" => $this->functionFiles);
-            if ($this->storeHandle->get("map"))
-            {
-                $this->storeHandle->update("map", $map);
-            }
-            else
-            {
-                $this->storeHandle->add("map", $map);
-            }
+            $this->storeHandle->update("map", $map);
         }
         else
         {
-            trigger_error($this->parseErrorAmount . " error(s) occoured when scanning and parsing your lib files");
+            $this->storeHandle->add("map", $map);
         }
 	}
 
@@ -430,7 +420,7 @@ class LtAutoloader
             }
 			else
             {
-                $this->parseErrorAmount ++;
+                trigger_error("Can't find any class/function in file: $filePath");
             }
 		}
         else
@@ -440,12 +430,15 @@ class LtAutoloader
 
         foreach ($libNames as $libType => $libArray)
         {
-            $method = "function" == $libType ? "addFunction" : "addClass";
             foreach ($libArray as $libName)
             {
-                if (!$this->$method($libName, $filePath))
+                if ("class" == $libType)
                 {
-                    $this->parseErrorAmount ++;
+                    $this->addClass($libName, $filePath);
+                }
+                else
+                {
+                    $this->addFunction($libName, $filePath);
                 }
             }
         }
