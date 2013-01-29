@@ -17,10 +17,6 @@ class WrongWayToUseAutoloader extends PHPUnit_Framework_TestCase
 	 */
 	public function testDirNameWithSpace()
 	{
-		if ("WINNT" == PHP_OS)
-		{
-			trigger_error('windows平台支持空格');
-		}
 		$autoloader = new LtAutoloader;
 		$autoloader->autoloadPath = dirname(__FILE__) . "/test_data/dirname with space"; //这个目录确实存在
 		$autoloader->init();
